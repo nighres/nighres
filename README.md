@@ -1,4 +1,4 @@
-## Seeking wisdom of the crowd
+## Wisdom of the crowd
 
 This week, GSoC started with the "community bonding" phase. I already feel pretty bonded with my software community (in fact I constitute 1/3rd of it), so I use the time to reach out to the larger neuroimaging community regarding one of the first issues I want to address: 
 
