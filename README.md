@@ -1,4 +1,4 @@
-## Distribution
+## Distributing
 
 Recently researched "conventional" ways of distributing Python packages through PyPI or conda. While that seems pretty straightforward for pure Python projects, the story gets more complicated for our case of a package with extensions in other languages, that need to be compiled in a platform-dependent manner. I ended up with some insights, but also a lot of remaining confusion. What follows is an attempt to summarize what I learned, but I am not yet sure all of it is actually correct.
 
@@ -10,10 +10,11 @@ For 1. I found very little information on how to actually implement that. One op
 
 I found much more information on option 2. The preferred way to package binary extensions through are [wheels](https://python-packaging-user-guide.readthedocs.io/tutorials/distributing-packages/#wheels). 
 >A wheel is a built package that can be installed without needing to go through the “build” process. Installing wheels is substantially faster for the end user than installing from a source distribution
+In our case we would need to create a platform wheel, which is a platform dependent wheel that contains compiled extensions. PyPI currently supports wheels for Windows and OS X but only a compatible [subset of linux distributions](https://www.python.org/dev/peps/pep-0513/). Wheels appear to be the preferred and more standardized way of packaging versus the older egg format (see this [discussion](https://packaging.python.org/discussions/wheel-vs-egg/))
+
+It appears to me that option 2 is the recommended way to go. It's also how it works e.g. for [Numpy](https://pypi.python.org/pypi/numpy). However, then the wheels still have to be distributed.
 
 [...]
-
-It appears to me that option 2 is the recommended way to go. It's also how it works e.g. for [Numpy](https://pypi.python.org/pypi/numpy). 
 
 Some helpful general links:
 https://python-packaging-user-guide.readthedocs.io/tutorials/distributing-packages/
