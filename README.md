@@ -1,12 +1,12 @@
 ## Distributing
 
-Recently I tried to learn about [distributing Python packages through PyPI](https://python-packaging-user-guide.readthedocs.io/tutorials/distributing-packages/). While that seems more or less straightforward for pure Python projects, the story gets more complicated for our case, where extensions in another language need to be compiled in a platform-dependent manner. I ended up with some insights, but also a lot of remaining confusion...
+Recently I tried to learn about [distributing Python packages through PyPI](https://python-packaging-user-guide.readthedocs.io/tutorials/distributing-packages/). While that seems more or less straightforward for pure Python projects, the story gets more complicated for our case, where extensions in another language need to be compiled in a platform-dependent manner. I ended up with some insights, but also a lot of remaining confusion.
 
 Generally there are two options: 
 1. compiling the extensions during installation
 2. distributing pre-compiled binaries
 
-For 1. I found very little information on how to actually implement that. One option seems to [build the extensions using distutils](https://docs.python.org/2/extending/building.html) in the setup.py script. Although I am not sure if that requires the user to install from source, instead of installing using e.g. pip. One [post](https://stackoverflow.com/questions/31380578/how-to-avoid-building-c-library-with-my-python-package) mentions that they used `build_ext` with pip to build a C extension during installation, but I could just not find any information on how exactly that works.
+For 1. I found very little information on how to actually implement that. One option seems to [build the extensions using distutils](https://docs.python.org/2/extending/building.html) in the setup.py script, although I am not sure if that requires the user to install from source, instead of installing using e.g. pip. One [post](https://stackoverflow.com/questions/31380578/how-to-avoid-building-c-library-with-my-python-package) mentions that they used `build_ext` with pip to build a C extension during installation, but I could just not find any information on how exactly that works.
 
 I found much more information on option 2. The preferred way to package binary extensions through are [wheels](https://python-packaging-user-guide.readthedocs.io/tutorials/distributing-packages/#wheels). 
 >A wheel is a built package that can be installed without needing to go through the build process. Installing wheels is substantially faster for the end user than installing from a source distribution.
