@@ -11,6 +11,7 @@ For 1. I found very little information on how to actually implement that. One op
 I found much more information on option 2. The preferred way to package binary extensions through are [wheels](https://python-packaging-user-guide.readthedocs.io/tutorials/distributing-packages/#wheels). 
 >A wheel is a built package that can be installed without needing to go through the “build” process. Installing wheels is substantially faster for the end user than installing from a source distribution
 
+[...]
 
 It appears to me that option 2 is the recommended way to go. It's also how it works e.g. for [Numpy](https://pypi.python.org/pypi/numpy). 
 
