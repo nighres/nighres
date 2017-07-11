@@ -1,6 +1,18 @@
 * naming /saving conventions
+* save data true or false?
+* mute java output
 * Python 3
 * which skullstrip?
 
-requirements
-nibabel
+
+requirements:
+* nibabel
+* numpy
+* os
+* cbstools
+
+PyPI:
+* update setup.py
+* remake wheel
+* rename wheel
+* upload to PyPI

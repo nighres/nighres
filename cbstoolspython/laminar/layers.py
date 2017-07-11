@@ -1,7 +1,9 @@
-import argparse
+import os
 import numpy as np
 import nibabel as nb
-import os
+import cbstools
+from ..io import load_volume, save_volume
+
 
 def layering(gwb_levelset, cgb_levelset, n_layers=10, lut_dir='lookuptables/',
              save_data=True, base_name=None):
@@ -48,17 +50,17 @@ def layering(gwb_levelset, cgb_levelset, n_layers=10, lut_dir='lookuptables/',
     cgb_data = load_volume(cgb_levelset).get_data()
 
     try:
-        cbstoolsjcc.initVM(initialheap='6000m', maxheap='6000m')
+        cbstools.initVM(initialheap='6000m', maxheap='6000m')
     except ValueError:
         pass
 
-    lamination = cbstoolsjcc.LaminarVolumetricLayering()
+    lamination = cbstools.LaminarVolumetricLayering()
     lamination.setDimensions(gwb_data.shape[0], gwb_data.shape[1], gwb_data.shape[2])
     zooms = [x.item() for x in hdr.get_zooms()]
     lamination.setResolutions(zooms[0], zooms[1], zooms[2])
 
-    lamination.setInnerDistanceImage(cbstoolsjcc.JArray('float')((gwb_data.flatten('F')).astype(float)))
-    lamination.setOuterDistanceImage(cbstoolsjcc.JArray('float')((cgb_data.flatten('F')).astype(float)))
+    lamination.setInnerDistanceImage(cbstools.JArray('float')((gwb_data.flatten('F')).astype(float)))
+    lamination.setOuterDistanceImage(cbstools.JArray('float')((cgb_data.flatten('F')).astype(float)))
     lamination.setNumberOfLayers(n_layers)
     lamination.setTopologyLUTdirectory(lut_dir)
     lamination.execute()
@@ -88,6 +90,7 @@ def layering(gwb_levelset, cgb_levelset, n_layers=10, lut_dir='lookuptables/',
                 base_name = os.path.basename(gwb_levelset)
                 base_name = os.path.join(dir_name,
                                          base_name[:base_name.find('.')]) + '_'
+                print "saving to %s" % base_name
 
         save_volume(base_name + 'depth.nii.gz', depth_img)
         save_volume(base_name + 'layers.nii.gz', layer_img)

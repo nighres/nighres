@@ -1,3 +1,10 @@
+import os
+import numpy as np
+import nibabel as nb
+import cbstools
+from ..io import load_volume, save_volume
+
+
 def create_levelsets(tissue_prob_img, save_data=True, base_name=None):
 
     '''
@@ -34,7 +41,6 @@ def create_levelsets(tissue_prob_img, save_data=True, base_name=None):
         pass
 
     prob2level = cbstools.SurfaceProbabilityToLevelset()
-
     prob2level.setProbabilityImage(cbstools.JArray('float')((prob_data.flatten('F')).astype(float)))
     prob2level.setDimensions(prob_data.shape)
     zooms = [x.item() for x in hdr.get_zooms()]
@@ -58,6 +64,7 @@ def create_levelsets(tissue_prob_img, save_data=True, base_name=None):
                 base_name = os.path.basename(tissue_prob_img)
                 base_name = os.path.join(dir_name,
                                          base_name[:base_name.find('.')]) + '_'
+                print "saving to %s" % base_name
 
         save_volume(base_name+'levelset.nii.gz', levelset_img)
 

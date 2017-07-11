@@ -1,3 +1,10 @@
+import os
+import numpy as np
+import nibabel as nb
+import cbstools
+from ..io import load_volume, save_volume
+
+
 def profile_sampling(boundary_img, intensity_img,
                      save_data=True, base_name=None):
 
@@ -36,13 +43,13 @@ def profile_sampling(boundary_img, intensity_img,
     intensity_data = load_volume(intensity_img).get_data()
 
     try:
-        cbstoolsjcc.initVM(initialheap='6000m', maxheap='6000m')
+        cbstools.initVM(initialheap='6000m', maxheap='6000m')
     except ValueError:
         pass
 
-    sampler = cbstoolsjcc.LaminarProfileSampling()
-    sampler.setIntensityImage(cbstoolsjcc.JArray('float')((intensity_data.flatten('F')).astype(float)))
-    sampler.setProfileSurfaceImage(cbstoolsjcc.JArray('float')((boundary_data.flatten('F')).astype(float)))
+    sampler = cbstools.LaminarProfileSampling()
+    sampler.setIntensityImage(cbstools.JArray('float')((intensity_data.flatten('F')).astype(float)))
+    sampler.setProfileSurfaceImage(cbstools.JArray('float')((boundary_data.flatten('F')).astype(float)))
     zooms = [x.item() for x in hdr.get_zooms()]
     sampler.setResolutions(zooms[0], zooms[1], zooms[2])
     sampler.setDimensions(boundary_data.shape)
