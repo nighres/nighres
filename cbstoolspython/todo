@@ -2,7 +2,9 @@
 * save data true or false?
 * mute java output
 * Python 3
-* which skullstrip?
+* which skullstrip? (mp2rage)
+* brainregion extractor
+* java VM hepasizes -> make variable?
 
 
 requirements:
@@ -16,3 +18,12 @@ PyPI:
 * remake wheel
 * rename wheel
 * upload to PyPI
+
+
+MGDM
+* what are the contrast inputs? why lists?
+* rename contrast parameters to something more informative, update docstring
+* default directories and save directories
+* where will atlases and luts be stored?
+* setAdjustIntensityPriors: should be false or true?
+* line 191    # --> mgdm.setOrientations(mgdm.AXIAL, mgdm.R2L, mgdm.A2P, mgdm.I2S) # this is the default of the atlas used for MGDM, <-

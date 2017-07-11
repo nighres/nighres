@@ -55,7 +55,8 @@ def layering(gwb_levelset, cgb_levelset, n_layers=10, lut_dir='lookuptables/',
         pass
 
     lamination = cbstools.LaminarVolumetricLayering()
-    lamination.setDimensions(gwb_data.shape[0], gwb_data.shape[1], gwb_data.shape[2])
+    lamination.setDimensions(gwb_data.shape[0], gwb_data.shape[1],
+                             gwb_data.shape[2])
     zooms = [x.item() for x in hdr.get_zooms()]
     lamination.setResolutions(zooms[0], zooms[1], zooms[2])
 
