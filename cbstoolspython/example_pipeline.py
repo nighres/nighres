@@ -64,3 +64,9 @@ for i in range(n_layers + 1):
                       title='Depth %s' % str(i), cmap='inferno',
                       vmin=0, vmax=0.6 * 1e8)
 plotting.show()
+
+
+
+t1 = '/SCR/data/BP4T/t1/BP4T_140527_S9_mp2rage_0p5iso_rechts_T1_Images_merged.nii.gz'
+atlas = '/home/julia/workspace/cbstools-python/atlases/brain-segmentation-prior3.0/brain-atlas-3.0.3.txt'
+out1, out2, out3 = cbstoolspython.mgdm_segmentation([t1], "Mp2rage7T", save_data=True)

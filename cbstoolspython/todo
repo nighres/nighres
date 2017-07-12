@@ -1,17 +1,15 @@
-* naming /saving conventions
-* save data true or false?
-* mute java output
-* Python 3
-* which skullstrip? (mp2rage)
-* brainregion extractor
-* java VM hepasizes -> make variable?
+* naming /saving conventions -> make utils function for outdir/ basename
+* rename submodule files (for later command line)
+* skullstrip
+* full example (which inputs?)
 
-
-requirements:
-* nibabel
-* numpy
-* os
-* cbstools
+MGDM
+* flip AP/LR/IS  # L2R,P2A,I2S is nibabel default (i.e., RAS) (line 228)
+* line 191    # --> mgdm.setOrientations(mgdm.AXIAL, mgdm.R2L, mgdm.A2P, mgdm.I2S) # this is the default of the atlas used for MGDM, <-
+* what are the contrast inputs? why lists?
+* what are the other functions for? esp flip
+* rename contrast parameters to something more informative, update docstring
+* default directories atlas / lut
 
 PyPI:
 * update setup.py
@@ -19,11 +17,13 @@ PyPI:
 * rename wheel
 * upload to PyPI
 
+requirements:
+* nibabel
+* numpy
+* os
+* cbstools
 
-MGDM
-* what are the contrast inputs? why lists?
-* rename contrast parameters to something more informative, update docstring
-* default directories and save directories
-* where will atlases and luts be stored?
-* setAdjustIntensityPriors: should be false or true?
-* line 191    # --> mgdm.setOrientations(mgdm.AXIAL, mgdm.R2L, mgdm.A2P, mgdm.I2S) # this is the default of the atlas used for MGDM, <-
+later
+* mute java output
+* java VM hepasizes -> make variable?
+* Python 3
