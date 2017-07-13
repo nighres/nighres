@@ -5,8 +5,9 @@ import cbstools
 from ..io import load_volume, save_volume
 
 
-def layering(gwb_levelset, cgb_levelset, n_layers=10, lut_dir='lookuptables/',
-             save_data=True, base_name=None):
+def volumetric_layering(gwb_levelset, cgb_levelset, n_layers=10,
+                        lut_dir='lookuptables/',
+                        save_data=True, base_name=None):
 
     '''
     Equivolumetric layering of the cortical sheet.

@@ -1,6 +1,5 @@
 * change naming /saving conventions in all interfaces using new functions
-* default directories for atlases and LUTs
-* rename submodule files (for later command line)
+* default directories for atlases and LUTs (change in mgdm and layering)
 * skullstrip
 * full example (which inputs?)
 * I/O test if input is an image and raise valid error

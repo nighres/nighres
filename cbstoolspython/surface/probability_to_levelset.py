@@ -5,7 +5,7 @@ import cbstools
 from ..io import load_volume, save_volume
 
 
-def create_levelsets(tissue_prob_img, save_data=True, base_name=None):
+def probability_to_levelset(tissue_prob_img, save_data=True, base_name=None):
 
     '''
     Creates levelset surface representations from a tissue classification.
