@@ -1,15 +1,26 @@
-* naming /saving conventions -> make utils function for outdir/ basename
+* change naming /saving conventions in all interfaces using new functions
+* default directories for atlases and LUTs
 * rename submodule files (for later command line)
 * skullstrip
 * full example (which inputs?)
+* I/O test if input is an image and raise valid error
 
 MGDM
-* flip AP/LR/IS  # L2R,P2A,I2S is nibabel default (i.e., RAS) (line 228)
-* line 191    # --> mgdm.setOrientations(mgdm.AXIAL, mgdm.R2L, mgdm.A2P, mgdm.I2S) # this is the default of the atlas used for MGDM, <-
-* what are the contrast inputs? why lists?
-* what are the other functions for? esp flip
-* rename contrast parameters to something more informative, update docstring
-* default directories atlas / lut
+Inputs
+* I find the intputs con1, con1_type, con2 etc. very hard to understand unless someone is intimately familiar with the MGDM algorithm. Could we rename them to  "input_img_1", "contrast_type_1", "input_img_2" etc ? Or do you have a different idea? I would also try to work on a more informative docstring for those inputs then
+* Why are these inputs given as lists? It makes the interface (as well as the code) a bit complicated. Is this to run multiple subjects at once?
+If so, wouldnt it be easier to have the interface just to run for one subject and then people can loop / parallelize multiple subjects by calling the interface multiple times? We could also think about providing a little utility for parallelizing pipelines later
+
+Additional funcitons
+* These functions (https://github.com/juhuntenburg/cbstools-python/blob/master/cbstoolspython/brain/mgdm.py) are not directly necessary for just using MGDM right? Except "get_MGDM_contrast_names"
+
+Orientation / Flipping
+* There are some comments about the image orientation and a function for flipping, which i is not used however. Do we need any flipping?
+https://github.com/steelec/cbstools-public/blob/brainhack-2016/python/cbstools.py#L67-L75
+https://github.com/steelec/cbstools-public/blob/brainhack-2016/python/cbstools.py#L175
+https://github.com/steelec/cbstools-public/blob/brainhack-2016/python/cbstools.py#L200-L208
+https://github.com/steelec/cbstools-public/blob/brainhack-2016/python/cbstools.py#L211
+
 
 PyPI:
 * update setup.py
