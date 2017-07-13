@@ -70,3 +70,9 @@ plotting.show()
 t1 = '/SCR/data/BP4T/t1/BP4T_140527_S9_mp2rage_0p5iso_rechts_T1_Images_merged.nii.gz'
 atlas = '/home/julia/workspace/cbstools-python/atlases/brain-segmentation-prior3.0/brain-atlas-3.0.3.txt'
 out1, out2, out3 = cbstoolspython.mgdm_segmentation([t1], "Mp2rage7T", save_data=True)
+
+# JavaError: java.lang.NullPointerException
+#     Java stacktrace:
+# java.lang.NullPointerException
+# 	at de.mpg.cbs.methods.MgdmFastSegmentation2.importBestGainFunctions(MgdmFastSegmentation2.java:377)
+# 	at de.mpg.cbs.core.brain.BrainMgdmMultiSegmentation2.execute(BrainMgdmMultiSegmentation2.java:417)

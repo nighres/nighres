@@ -4,6 +4,7 @@ import os
 import cbstools
 from ..io import load_volume, save_volume
 from ..utils import create_dir
+import pdb
 
 # TODO
 ATLAS_DIR = '/home/julia/workspace/cbstools-python/atlases/brain-segmentation-prior3.0/'
@@ -213,64 +214,65 @@ def mgdm_segmentation(con1_files, con1_type,
                     mgdm.setContrastType4(con4_type)
 
         # execute MGDM
-        try:
-            print("Executing MGDM on your inputs")
-            mgdm.execute()
+#        try:
+        print("Executing MGDM on your inputs")
+        mgdm.execute()
 
-            # reshape output to what nibabel likes
-            seg_data = np.reshape(np.array(mgdm.getSegmentedBrainImage(),
-                                         dtype=np.uint32), dimensions, 'F')
-            lbl_data = np.reshape(np.array(mgdm.getPosteriorMaximumLabels4D(),
-                                         dtype=np.uint32), dimensions, 'F')
-            ids_data = np.reshape(np.array(mgdm.getSegmentedIdsImage(),
-                                         dtype=np.uint32), dimensions, 'F')
+        pdb.set_trace()
+        # reshape output to what nibabel likes
+        seg_data = np.reshape(np.array(mgdm.getSegmentedBrainImage(),
+                                     dtype=np.uint32), dimensions, 'F')
+        lbl_data = np.reshape(np.array(mgdm.getPosteriorMaximumLabels4D(),
+                                     dtype=np.uint32), dimensions, 'F')
+        ids_data = np.reshape(np.array(mgdm.getSegmentedIdsImage(),
+                                     dtype=np.uint32), dimensions, 'F')
 
-            # adapt header max for each image so that correct max is displayed
-            # and create nifiti objects
-            header['data_type'] = np.array(32).astype('uint32')
-            header['cal_max'] = np.max(seg_data)
-            seg_nii = nb.Nifti1Image(seg_data, affine, header)
+        # adapt header max for each image so that correct max is displayed
+        # and create nifiti objects
+        header['data_type'] = np.array(32).astype('uint32')
+        header['cal_max'] = np.max(seg_data)
+        seg_nii = nb.Nifti1Image(seg_data, affine, header)
 
-            header['cal_max'] = np.max(lbl_data)
-            lbl_nii = nb.Nifti1Image(lbl_data, affine, header)
+        header['cal_max'] = np.max(lbl_data)
+        lbl_nii = nb.Nifti1Image(lbl_data, affine, header)
 
-            header['cal_max'] = np.max(ids_data)
-            ids_nii = nb.Nifti1Image(ids_data, affine, header)
+        header['cal_max'] = np.max(ids_data)
+        ids_nii = nb.Nifti1Image(ids_data, affine, header)
 
-            out_files_seg.append(seg_nii)
-            out_files_lbl.append(lbl_nii)
-            out_files_ids.append(ids_nii)
+        out_files_seg.append(seg_nii)
+        out_files_lbl.append(lbl_nii)
+        out_files_ids.append(ids_nii)
 
-            #  TODO: fix saving conventions
-            #  save files
-            # # set output dir if not given, create output dir if not exist
-            # if output_dir is None:
-            #     output_dir = os.path.dirname(con1_files[0])
-            # create_dir(output_dir)
-            if save_data:
-                if base_name is None:
-                    base_name = os.getcwd() + '/'
-                    print "saving to %s" % base_name
+        #  TODO: fix saving conventions
+        #  save files
+        # # set output dir if not given, create output dir if not exist
+        # if output_dir is None:
+        #     output_dir = os.path.dirname(con1_files[0])
+        # create_dir(output_dir)
+        if save_data:
+            if base_name is None:
+                base_name = os.getcwd() + '/'
+                print "saving to %s" % base_name
 
-                if file_suffix is not None:
-                    seg_file = os.path.join(base_name +
-                                            '_seg' + file_suffix + '.nii.gz')
-                    lbl_file = os.path.join(base_name +
-                                            '_lbl' + file_suffix + '.nii.gz')
-                    ids_file = os.path.join(base_name +
-                                            '_ids' + file_suffix + '.nii.gz')
-                else:
-                    seg_file = os.path.join(base_name + '_seg.nii.gz')
-                    lbl_file = os.path.join(base_name + '_lbl.nii.gz')
-                    ids_file = os.path.join(base_name + '_ids.nii.gz')
+            if file_suffix is not None:
+                seg_file = os.path.join(base_name +
+                                        '_seg' + file_suffix + '.nii.gz')
+                lbl_file = os.path.join(base_name +
+                                        '_lbl' + file_suffix + '.nii.gz')
+                ids_file = os.path.join(base_name +
+                                        '_ids' + file_suffix + '.nii.gz')
+            else:
+                seg_file = os.path.join(base_name + '_seg.nii.gz')
+                lbl_file = os.path.join(base_name + '_lbl.nii.gz')
+                ids_file = os.path.join(base_name + '_ids.nii.gz')
 
-                save_volume(seg_file, seg_nii)
-                save_volume(lbl_file, lbl_nii)
-                save_volume(ids_file, ids_nii)
+            save_volume(seg_file, seg_nii)
+            save_volume(lbl_file, lbl_nii)
+            save_volume(ids_file, ids_nii)
 
-        except:
-            # TODO: Catch specific errors and print informative messages
-            print("Sorry, MGDM failed")
-            return
+        # except:
+        #     # TODO: Catch specific errors and print informative messages
+        #     print("Sorry, MGDM failed")
+        #     return
 
     return out_files_seg, out_files_lbl, out_files_ids
