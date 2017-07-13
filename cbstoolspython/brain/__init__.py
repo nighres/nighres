@@ -1,1 +1,1 @@
-from mgdm import mgdm_segmentation
+from mgdm_segmentation import mgdm_segmentation

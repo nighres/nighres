@@ -5,10 +5,9 @@
 * I/O test if input is an image and raise valid error
 
 MGDM
-Inputs
-* I find the intputs con1, con1_type, con2 etc. very hard to understand unless someone is intimately familiar with the MGDM algorithm. Could we rename them to  "input_img_1", "contrast_type_1", "input_img_2" etc ? Or do you have a different idea? I would also try to work on a more informative docstring for those inputs then
-* Why are these inputs given as lists? It makes the interface (as well as the code) a bit complicated. Is this to run multiple subjects at once?
-If so, wouldnt it be easier to have the interface just to run for one subject and then people can loop / parallelize multiple subjects by calling the interface multiple times? We could also think about providing a little utility for parallelizing pipelines later
+* collect other outputs, fix suffixes
+* maybe catch specific errors
+* docstring update
 
 Additional funcitons
 * These functions (https://github.com/juhuntenburg/cbstools-python/blob/master/cbstoolspython/brain/mgdm.py) are not directly necessary for just using MGDM right? Except "get_MGDM_contrast_names"
