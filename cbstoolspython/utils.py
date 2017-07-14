@@ -2,7 +2,7 @@ import os
 import warnings
 
 
-def _output_dir_4saving(output_dir_None, rootfile=None):
+def _output_dir_4saving(output_dir=None, rootfile=None):
     if output_dir is None:
         if rootfile is None:
             # if nothing is specified, use current working dir
@@ -19,13 +19,14 @@ def _output_dir_4saving(output_dir_None, rootfile=None):
     if not(output_dir[-1] == os.path.sep):
         output_dir += os.path.sep
 
+    print ""
     print "Outputs are saved to %s" % output_dir
     return output_dir
 
 
 def _fname_4saving(rootfile=None, suffix=None,
                    base_name=None, extension=None):
-
+    # TODO: give informative error if rootfile is not really a filename
     # if both base_name and extension are given, jump right to inserting suffix
     if (base_name is None or extension is None):
         # else, if a rootfile is given, find base_name and extension

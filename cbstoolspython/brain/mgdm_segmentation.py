@@ -185,56 +185,56 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         print("Executing MGDM on your inputs")
         mgdm.execute()
 
-        # TODO collect other outputs
-        # reshape output to what nibabel likes
-        seg_data = np.reshape(np.array(mgdm.getSegmentedBrainImage(),
-                                       dtype=np.uint32), dimensions, 'F')
-        lbl_data = np.reshape(np.array(mgdm.getPosteriorMaximumLabels4D(),
-                                       dtype=np.uint32), dimensions, 'F')
-        ids_data = np.reshape(np.array(mgdm.getSegmentedIdsImage(),
-                                       dtype=np.uint32), dimensions, 'F')
+    except:
+        # if the Java module fails, reraise the error it throws
+        print ""
+        print "The underlying Java code did not execute cleanly: "
+        print sys.exc_info()[0]
+        raise
+        return
 
-        # adapt header max for each image so that correct max is displayed
-        # and create nifiti objects
-        header['data_type'] = np.array(32).astype('uint32')
-        header['cal_max'] = np.max(seg_data)
-        seg_nii = nb.Nifti1Image(seg_data, affine, header)
+    # TODO collect other outputs
+    # reshape output to what nibabel likes
+    seg_data = np.reshape(np.array(mgdm.getSegmentedBrainImage(),
+                                   dtype=np.uint32), dimensions, 'F')
+    lbl_data = np.reshape(np.array(mgdm.getPosteriorMaximumLabels4D(),
+                                   dtype=np.uint32), dimensions, 'F')
+    ids_data = np.reshape(np.array(mgdm.getSegmentedIdsImage(),
+                                    dtype=np.uint32), dimensions, 'F')
 
-        header['cal_max'] = np.max(lbl_data)
-        lbl_nii = nb.Nifti1Image(lbl_data, affine, header)
+    # adapt header max for each image so that correct max is displayed
+    # and create nifiti objects
+    header['data_type'] = np.array(32).astype('uint32')
+    header['cal_max'] = np.max(seg_data)
+    seg_nii = nb.Nifti1Image(seg_data, affine, header)
 
-        header['cal_max'] = np.max(ids_data)
-        ids_nii = nb.Nifti1Image(ids_data, affine, header)
+    header['cal_max'] = np.max(lbl_data)
+    lbl_nii = nb.Nifti1Image(lbl_data, affine, header)
 
-        if save_data:
-            output_dir = _output_dir_4saving(output_dir, contrast_image1[0])
+    header['cal_max'] = np.max(ids_data)
+    ids_nii = nb.Nifti1Image(ids_data, affine, header)
 
-            # TODO fix the suffixes
-            suffs = ['seg', 'lbl', 'ids']
+    if save_data:
+        output_dir = _output_dir_4saving(output_dir, contrast_image1)
 
-            seg_file = _fname_4saving(rootfile=contrast_image1[0],
-                                      suffix=suffs[0],
-                                      base_name=file_name,
-                                      extension=file_extension)
+        # TODO fix the suffixes
+        seg_file = _fname_4saving(rootfile=contrast_image1,
+                                  suffix='seg',
+                                  base_name=file_name,
+                                  extension=file_extension)
 
-            lbl_file = _fname_4saving(rootfile=contrast_image1[0],
-                                      suffix=suffs[1],
-                                      base_name=file_name,
-                                      extension=file_extension)
+        lbl_file = _fname_4saving(rootfile=contrast_image1,
+                                  suffix='lbls',
+                                  base_name=file_name,
+                                  extension=file_extension)
 
-            lbl_file = _fname_4saving(rootfile=contrast_image1[0],
-                                      suffix=suffs[2],
-                                      base_name=file_name,
-                                      extension=file_extension)
+        ids_file = _fname_4saving(rootfile=contrast_image1,
+                                  suffix='ids',
+                                  base_name=file_name,
+                                  extension=file_extension)
 
-            save_volume(seg_file, seg_nii)
-            save_volume(lbl_file, lbl_nii)
-            save_volume(ids_file, ids_nii)
-
-        except:
-            # if the Java module fails, reraise the error it throws
-            print "The underlying Java code did not execute cleanly: "
-            print sys.exc_info()[0]
-            raise
+        save_volume(os.path.join(output_dir, seg_file), seg_nii)
+        save_volume(os.path.join(output_dir, lbl_file), lbl_nii)
+        save_volume(os.path.join(output_dir, ids_file), ids_nii)
 
     return seg_nii, lbl_nii, ids_nii
