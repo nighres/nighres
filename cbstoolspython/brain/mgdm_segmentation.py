@@ -5,7 +5,6 @@ import sys
 import cbstools
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving
-import pdb
 
 # TODO
 ATLAS_DIR = '/home/julia/workspace/cbstools-python/atlases/brain-segmentation-prior3.0/'
@@ -75,7 +74,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     """ MGDM segmentation
 
     Estimate brain structures from an atlas for MRI dataset using
-    a Multiple Object Geometric Deformable Model (MGDM)
+    a Multiple Object Geometric Deformable Model (MGDM) [1,2]
 
     Parameters
     ----------
@@ -156,10 +155,6 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         if not(topology_lut_dir[-1] == os.path.sep):
             topology_lut_dir += os.path.sep
 
-    print("Atlas file: " + atlas_file)
-    print("Topology LUT directory: " + topology_lut_dir)
-    print("")
-
     # find available intensity priors in selected MGDM atlas
     mgdm_intensity_priors = _get_mgdm_intensity_priors(atlas_file)
 
@@ -172,7 +167,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
             raise ValueError(("If specifying contrast_image{0}, please also "
                               "specify contrast_type{0}".format(idx+1, idx+1)))
 
-        elif ctype is not None ctype not in mgdm_intensity_priors:
+        elif ctype is not None and ctype not in mgdm_intensity_priors:
             raise ValueError(("{0} is not a valid contrast type for  "
                               "contrast_type{1} please choose from the "
                               "following contrasts provided by the chosen "
@@ -244,13 +239,12 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     except:
         # if the Java module fails, reraise the error it throws
-        print ""
-        print "The underlying Java code did not execute cleanly: "
+        print("\n The underlying Java code did not execute cleanly: ")
         print sys.exc_info()[0]
         raise
         return
 
-    # TODO collect other outputs
+    # TODO collect other outputs and double check data types
     # reshape output to what nibabel likes
     seg_data = np.reshape(np.array(mgdm.getSegmentedBrainImage(),
                                    dtype=np.uint32), dimensions, 'F')
@@ -278,6 +272,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     if save_data:
         output_dir = _output_dir_4saving(output_dir, contrast_image1)
+        print("\n Saving outputs to {0}".format(output_dir))
 
         # TODO fix the suffixes
         seg_file = _fname_4saving(rootfile=contrast_image1,
