@@ -10,7 +10,7 @@ import pdb
 # TODO
 ATLAS_DIR = '/home/julia/workspace/cbstools-python/atlases/brain-segmentation-prior3.0/'
 TOPOLOGY_LUT_DIR = '/home/julia/workspace/cbstools-python/lut/'
-DEFAULT_ATLAS = "brain-atlas-3.0.3.txt"
+DEFAULT_ATLAS = os.path.join(ATLAS_DIR, "brain-atlas-3.0.3.txt")
 
 
 def _get_mgdm_orientation(affine, mgdm):
@@ -49,9 +49,6 @@ def _get_mgdm_intensity_priors(atlas_file):
     """
     Returns a list of available as intensity priors
     in the MGDM atlas that you are using
-    :param atlas_file:              atlas file
-    :return: seg_contrast_names     list of names of contrasts that have
-                                    intensity priors available
     """
     priors = []
     with open(atlas_file) as fp:
@@ -75,32 +72,81 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                       diffuse_probabilities=False,
                       save_data=False, output_dir=None,
                       file_name=None, file_extension=None):
-    """
-    Performs MGDM segmentation
-    simplified inputs for a total of 4 different contrasts
-    :param contrast_image1:              List of files for contrast 1, required
-    :param contrast_type1:               Contrast 1 type (from __get_mgdm_intensity_priors(atlas_file))
-    :param contrast_image2:              List of files for contrast 2, optional, must be matched to contrast_image1
-    :param contrast_type2:               Contrast 2 type
-    :param contrast_image3:              List of files for contrast 3, optional, must be matched to contrast_image1
-    :param contrast_type3:               Contrast 3 type
-    :param contrast_image4:              List of files for contrast 4, optional, must be matched to contrast_image1
-    :param contrast_type4:               Contrast 4 type
-    :param output_dir:              Directory to place output, defaults to input directory if = None
-    :param n_steps:               Number of steps for MGDM, default = 5, set to 0 for quick testing of registration of priors (not true segmentation)
-    :param topology:                Topology setting {'wcs', 'no'} ('no' for no topology)
-    :param atlas_file:              Path to atlas file
-    :param topology_lut_dir:        Directory for topology files
-    :param adjust_intensity_priors: Adjust intensity priors based on dataset: True/False
-    :param compute_posterior:       Compute posterior: True/False
-    :param diffuse_probabilities:   Compute diffuse probabilities: True/False
-    :return:
+    """ MGDM segmentation
+
+    Estimate brain structures from an atlas for MRI dataset using
+    a Multiple Object Geometric Deformable Model (MGDM)
+
+    Parameters
+    ----------
+    contrast_image1: TODO:type
+        First input image to perform segmentation on
+    contrast_type1: str
+        Contrast type of first input image, must be listed as a prior in used
+        atlas(specified in atlas_file)
+    contrast_image2: TODO:type, optional
+        Additional input image to inform segmentation, must be in the same
+        space as constrast_image1, requires contrast_type2
+    contrast_type2: str, optional
+        Contrast type of second input image, must be listed as a prior in used
+        atlas (specified in atlas_file)
+    contrast_image3: TODO:type, optional
+        Additional input image to inform segmentation, must be in the same
+        space as constrast_image1, requires contrast_type3
+    contrast_type3: str, optional
+        Contrast type of third input image, must be listed as a prior in used
+        atlas (specified in atlas_file)
+    contrast_image4: TODO:type, optional
+        Additional input image to inform segmentation, must be in the same
+        space as constrast_image1, requires contrast_type4
+    contrast_type4: str, optional
+        Contrast type of fourth input image, must be listed as a prior in used
+        atlas (specified in atlas_file)
+    n_steps: int, optional
+        Number of steps for MGDM (default is 5, set to 0 for quick testing of
+        registration of priors, which does not perform true segmentation)
+    topology: {'wcs', 'no'}, optional
+        Topology setting (default is 'wcs', choose 'no' for no topology)
+    atlas_file: str, optional
+        Path to plain text atlas file (default is stored in DEFAULT_ATLAS)
+    topology_lut_dir: str, optional
+        Path to directory in which topology files are stored (default is stored
+        in TOPOLOGY_LUT_DIR)
+    adjust_intensity_priors: bool
+        Adjust intensity priors based on dataset (default is False)
+    compute_posterior: bool
+        Compute posteriors (default is False)
+    diffuse_probabilities: bool
+        Compute diffuse probabilities (default is False)
+    save_data: bool
+        Save output data to file (default is False)
+    output_dir: str, optional
+        Path to desired output directory, will be created if it doesn't exist
+    file_name: str, optional
+        Desired base name for output files (suffixes will be added)
+    file_extension: str, optional
+        Desired extension for output files (determines file type)
+
+    Returns
+    ----------
+    tuple
+        segmentation: Segmented brain ... (file suffix _mgdm_seg)
+        labels: Labels of ... (file suffix _mgdm_lbls)
+        indices: Indices of ... (file suffix _mgdm_ids)
+        memberships: Memberships of ... (file suffix _mgdm_mems)
+
+    References
+    ----------
+    [1] Bogovic, Prince and Bazin (2013). A multiple object geometric
+    deformable model for image segmentation. DOI: 10.1016/j.cviu.2012.10.006.A
+    [2] Fan, Bazin and Prince (2008). A multi-compartment segmentation
+    framework with homeomorphic level sets. DOI: 10.1109/CVPR.2008.4587475
     """
 
     # set default atlas if not given
     # TODO search given atlas file in default atlas dir?
     if atlas_file is None:
-        atlas_file = os.path.join(ATLAS_DIR, DEFAULT_ATLAS)
+        atlas_file = DEFAULT_ATLAS
 
     # set default topology lut dir if not given
     if topology_lut_dir is None:
@@ -118,14 +164,21 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     mgdm_intensity_priors = _get_mgdm_intensity_priors(atlas_file)
 
     # sanity check contrast types
-    for idx, ctype in enumerate([contrast_type1, contrast_type2,
-                                 contrast_type3, contrast_type4]):
-        if ctype is not None and ctype not in mgdm_intensity_priors:
+    contrasts = [contrast_image1, contrast_image2,
+                 contrast_image3, contrast_image4]
+    ctypes = [contrast_type1, contrast_type2, contrast_type3, contrast_type4]
+    for idx, ctype in enumerate(ctypes):
+        if ctype is None and contrasts[idx] is not None:
+            raise ValueError(("If specifying contrast_image{0}, please also "
+                              "specify contrast_type{0}".format(idx+1, idx+1)))
+
+        elif ctype is not None ctype not in mgdm_intensity_priors:
             raise ValueError(("{0} is not a valid contrast type for  "
                               "contrast_type{1} please choose from the "
                               "following contrasts provided by the chosen "
-                              "atlas: ").format(ctype, idx),
+                              "atlas: ").format(ctype, idx+1),
                              ", ".join(mgdm_intensity_priors))
+
 
     # start virtual machine, if not already running
     try:
@@ -161,23 +214,27 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     mgdm.setOrientations(sliceorder, LR, AP, IS)
 
     # input image 1
-    mgdm.setContrastImage1(cbstools.JArray('float')((data.flatten('F')).astype(float)))
+    mgdm.setContrastImage1(cbstools.JArray('float')(
+                                            (data.flatten('F')).astype(float)))
     mgdm.setContrastType1(contrast_type1)
 
     # if further contrast are specified, input them
     if contrast_image2 is not None:
         data = load_volume(contrast_image2[idx]).get_data()
-        mgdm.setContrastImage2(cbstools.JArray('float')((data.flatten('F')).astype(float)))
+        mgdm.setContrastImage2(cbstools.JArray('float')(
+                                            (data.flatten('F')).astype(float)))
         mgdm.setContrastType2(contrast_type2)
 
         if contrast_image3 is not None:
             data = load_volume(contrast_image3[idx]).get_data()
-            mgdm.setContrastImage3(cbstools.JArray('float')((data.flatten('F')).astype(float)))
+            mgdm.setContrastImage3(cbstools.JArray('float')(
+                                            (data.flatten('F')).astype(float)))
             mgdm.setContrastType3(contrast_type3)
 
             if contrast_image4 is not None:
                 data = load_volume(contrast_image4[idx]).get_data()
-                mgdm.setContrastImage4(cbstools.JArray('float')((data.flatten('F')).astype(float)))
+                mgdm.setContrastImage4(cbstools.JArray('float')(
+                                            (data.flatten('F')).astype(float)))
                 mgdm.setContrastType4(contrast_type4)
 
     # execute MGDM
@@ -200,41 +257,48 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     lbl_data = np.reshape(np.array(mgdm.getPosteriorMaximumLabels4D(),
                                    dtype=np.uint32), dimensions, 'F')
     ids_data = np.reshape(np.array(mgdm.getSegmentedIdsImage(),
+                                   dtype=np.uint32), dimensions, 'F')
+    mems_data = np.reshape(np.array(mgdm.getPosteriorMaximumMemberships4D(),
                                     dtype=np.uint32), dimensions, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
     header['data_type'] = np.array(32).astype('uint32')
     header['cal_max'] = np.max(seg_data)
-    seg_nii = nb.Nifti1Image(seg_data, affine, header)
+    segmentation = nb.Nifti1Image(seg_data, affine, header)
 
     header['cal_max'] = np.max(lbl_data)
-    lbl_nii = nb.Nifti1Image(lbl_data, affine, header)
+    labels = nb.Nifti1Image(lbl_data, affine, header)
 
     header['cal_max'] = np.max(ids_data)
-    ids_nii = nb.Nifti1Image(ids_data, affine, header)
+    indices = nb.Nifti1Image(ids_data, affine, header)
+
+    header['cal_max'] = np.max(mems_data)
+    memberships = nb.Nifti1Image(mems_data, affine, header)
 
     if save_data:
         output_dir = _output_dir_4saving(output_dir, contrast_image1)
 
         # TODO fix the suffixes
         seg_file = _fname_4saving(rootfile=contrast_image1,
-                                  suffix='seg',
-                                  base_name=file_name,
+                                  suffix='mgdm_seg', base_name=file_name,
                                   extension=file_extension)
 
         lbl_file = _fname_4saving(rootfile=contrast_image1,
-                                  suffix='lbls',
-                                  base_name=file_name,
+                                  suffix='mgmd_lbls', base_name=file_name,
                                   extension=file_extension)
 
         ids_file = _fname_4saving(rootfile=contrast_image1,
-                                  suffix='ids',
-                                  base_name=file_name,
+                                  suffix='mgdm_ids', base_name=file_name,
                                   extension=file_extension)
 
-        save_volume(os.path.join(output_dir, seg_file), seg_nii)
-        save_volume(os.path.join(output_dir, lbl_file), lbl_nii)
-        save_volume(os.path.join(output_dir, ids_file), ids_nii)
+        mems_file = _fname_4saving(rootfile=contrast_image1,
+                                   suffix='mgdm_mems', base_name=file_name,
+                                   extension=file_extension)
 
-    return seg_nii, lbl_nii, ids_nii
+        save_volume(os.path.join(output_dir, seg_file), segmentation)
+        save_volume(os.path.join(output_dir, lbl_file), labels)
+        save_volume(os.path.join(output_dir, ids_file), indices)
+        save_volume(os.path.join(output_dir, mems_file), memberships)
+
+    return segmentation, labels, indices, memberships

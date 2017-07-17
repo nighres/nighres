@@ -1,24 +1,22 @@
 * change naming /saving conventions in all interfaces using new functions
+* should all saving related things be tested before interface is run?
+* adapt docstrings in all interfaces
 * default directories for atlases and LUTs (change in mgdm and layering)
 * skullstrip
 * full example (which inputs?)
 * I/O test if input is an image and raise valid error
+* I/O raise error if file type not understood (maybe little test function,
+so it can be tested before whole interface is run)
+* write tests
+* input/ output types --> niimg?
+* general documentation on valid input / output and output saving conventions
 
 MGDM
-* collect other outputs, fix suffixes
-* maybe catch specific errors
+* atlas and lut default dirs / default atlas
+* add mgdm output, suffixes?
 * docstring update
-
-Additional funcitons
-* These functions (https://github.com/juhuntenburg/cbstools-python/blob/master/cbstoolspython/brain/mgdm.py) are not directly necessary for just using MGDM right? Except "get_MGDM_contrast_names"
-
-Orientation / Flipping
-* There are some comments about the image orientation and a function for flipping, which i is not used however. Do we need any flipping?
-https://github.com/steelec/cbstools-public/blob/brainhack-2016/python/cbstools.py#L67-L75
-https://github.com/steelec/cbstools-public/blob/brainhack-2016/python/cbstools.py#L175
-https://github.com/steelec/cbstools-public/blob/brainhack-2016/python/cbstools.py#L200-L208
-https://github.com/steelec/cbstools-public/blob/brainhack-2016/python/cbstools.py#L211
-
+* maybe catch specific errors
+* test on right and wrong data, test multiple contrasts
 
 PyPI:
 * update setup.py
@@ -36,3 +34,18 @@ later
 * mute java output
 * java VM hepasizes -> make variable?
 * Python 3
+
+
+notes for blog
+numpy standard for docstrings
+https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt#docstring-standard
+http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html
+
+
+questions
+suffixes MGDM
+use niimg from Nilearn?
+what is wcs topology?
+what is compute_posterior and compute_diff
+diffuse_probabilities
+how to describe the outputs?
