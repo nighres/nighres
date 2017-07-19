@@ -219,19 +219,19 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     # if further contrast are specified, input them
     if contrast_image2 is not None:
-        data = load_volume(contrast_image2[idx]).get_data()
+        data = load_volume(contrast_image2).get_data()
         mgdm.setContrastImage2(cbstools.JArray('float')(
                                             (data.flatten('F')).astype(float)))
         mgdm.setContrastType2(contrast_type2)
 
         if contrast_image3 is not None:
-            data = load_volume(contrast_image3[idx]).get_data()
+            data = load_volume(contrast_image3).get_data()
             mgdm.setContrastImage3(cbstools.JArray('float')(
                                             (data.flatten('F')).astype(float)))
             mgdm.setContrastType3(contrast_type3)
 
             if contrast_image4 is not None:
-                data = load_volume(contrast_image4[idx]).get_data()
+                data = load_volume(contrast_image4).get_data()
                 mgdm.setContrastImage4(cbstools.JArray('float')(
                                             (data.flatten('F')).astype(float)))
                 mgdm.setContrastType4(contrast_type4)
@@ -274,7 +274,6 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     if save_data:
         output_dir = _output_dir_4saving(output_dir, contrast_image1)
-        print("\n Saving outputs to {0}".format(output_dir))
 
         # TODO fix the suffixes
         seg_file = _fname_4saving(rootfile=contrast_image1,
@@ -282,7 +281,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                                   extension=file_extension)
 
         lbl_file = _fname_4saving(rootfile=contrast_image1,
-                                  suffix='mgmd_lbls', base_name=file_name,
+                                  suffix='mgdm_lbls', base_name=file_name,
                                   extension=file_extension)
 
         mems_file = _fname_4saving(rootfile=contrast_image1,
@@ -296,7 +295,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         save_volume(os.path.join(output_dir, seg_file), seg)
         save_volume(os.path.join(output_dir, lbl_file), lbls)
         save_volume(os.path.join(output_dir, mems_file), mems)
-        save_volume(os.path.join(output_dir, levels_file), levels)
+        save_volume(os.path.join(output_dir, dist_file), dist)
 
     return {'segmentation': seg, 'labels': lbls,
             'memberships': mems, 'distance': dist}

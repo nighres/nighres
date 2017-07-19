@@ -137,7 +137,6 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     if save_data:
         output_dir = _output_dir_4saving(output_dir, second_inversion)
-        print("\n Saving outputs to {0}".format(output_dir))
 
         inv2_file = _fname_4saving(rootfile=second_inversion,
                                    suffix='strip_inv2',
