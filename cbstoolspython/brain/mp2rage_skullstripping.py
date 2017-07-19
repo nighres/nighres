@@ -10,8 +10,8 @@ from ..utils import _output_dir_4saving, _fname_4saving
 TOPOLOGY_LUT_DIR = '/home/julia/workspace/cbstools-python/lut/'
 
 
-def mp2rage_skullstripping(t1_weighted=None, t1_map=None,
-                           second_inversion=None, topology_lut_dir=None,
+def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
+                           skip_zero_values=True, topology_lut_dir=None,
                            save_data=False, output_dir=None,
                            file_name=None, file_extension=None):
     """ MP2RAGE skull stripping
@@ -21,17 +21,17 @@ def mp2rage_skullstripping(t1_weighted=None, t1_map=None,
 
     Parameters
     ----------
+    second_inversion: TODO:type
+        Second inversion image derived from MP2RAGE sequence
     t1_weighted: TODO:type
         T1-weighted image derived from MP2RAGE sequence (also referred to as
-        "uniform" image) to perform skullstripping on.
+        "uniform" image)
         At least one of t1_weighted and t1_map is required
     t1_map: TODO:type
-        Quantitative T1 map image derived from MP2RAGE sequence to perform
-        skullstripping on.
+        Quantitative T1 map image derived from MP2RAGE sequence
         At least one of t1_weighted and t1_map is required
-    second_inversion: TODO:type, optional
-        Second inversion image derived from MP2RAGE sequence to aid
-        skullstripping.
+    skip_zero_values: bool
+         Ignores voxels with zero value (default is True)
     topology_lut_dir: str, optional
         Path to directory in which topology files are stored (default is stored
         in TOPOLOGY_LUT_DIR)
@@ -44,11 +44,15 @@ def mp2rage_skullstripping(t1_weighted=None, t1_map=None,
 
     Returns
     ----------
-    tuple (dictionary?)
-        brain_mask
-        masked_t1w
-        masked_t1map
-        masked_inv2
+    outputs: dict
+        Dictionary collecting outputs under the following keys:
+        - 'brain_mask': Binary brain mask (_strip_mask)
+        - 'inv2_masked': Masked second inversion imamge (_strip_inv2)
+        - 't1w_masked': Masked T1-weighted image (_strip_t1w),
+                        only created if t1_weighted was given
+        - 't1map_masked': Masked T1 map (_strip_t1map),
+                          only created if t1_map  was given
+        (suffix of output files if save_data is set to True)
 
     References
     ----------
@@ -56,12 +60,6 @@ def mp2rage_skullstripping(t1_weighted=None, t1_map=None,
     for improved segmentation and T1-mapping at high field.
     DOI: 10.1016/j.neuroimage.2009.10.002
     """
-
-    # make sure one of t1_weighted or t1_map is given and set one as
-    # main image for dimensions, resolution and base for saving
-    if (t1_weighted is None and t1_map is None):
-        raise ValueError('You must specify at least one of '
-                         't1_weighted and t1_map')
 
     # set default topology lut dir if not given
     if topology_lut_dir is None:
@@ -80,34 +78,36 @@ def mp2rage_skullstripping(t1_weighted=None, t1_map=None,
     # create skulltripping instance
     stripper = cbstools.BrainMp2rageSkullStripping()
 
-    # pass input images to skull stripper class
-    if t1_weighted is not None:
-        img = load_volume(t1_weighted)
-        data = img.get_data()
-        stripper.setT1weightedImage(cbstools.JArray('float')(
-                                            (data.flatten('F')).astype(float)))
-        if t1_map is not None:
-            data2 = load_volume(t1_map).get_data()
-            stripper.setT1MapImage(cbstools.JArray('float')(
-                                        (data2.flatten('F')).astype(float)))
-
-    elif t1_weighted is None and t1_map is not None:
-        img = load_volume(t1_map)
-        data = img.get_data()
-        stripper.setT1MapImage(cbstools.JArray('float')(
-                                    (data.flatten('F')).astype(float)))
-
-    # set dimensions and resolutions from input
-    # (whichever given, stored in variables img and data above
-    affine = img.get_affine()
-    header = img.get_header()
-    resolution = [x.item() for x in header.get_zooms()]
-    dimensions = data.shape
+    # get dimensions and resolution from second inversion image
+    inv2_img = load_volume(second_inversion)
+    inv2_data = inv2_img.get_data()
+    inv2_affine = inv2_img.get_affine()
+    inv2_hdr = inv2_img.get_header()
+    resolution = [x.item() for x in inv2_hdr.get_zooms()]
+    dimensions = inv2_data.shape
     stripper.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     stripper.setResolutions(resolution[0], resolution[1], resolution[2])
+    stripper.setSecondInversionImage(cbstools.JArray('float')(
+                                    (inv2_data.flatten('F')).astype(float)))
 
-    # skip zero values?
-    # stripper.setSkipZeroValues
+    # pass other inputs
+    if (t1_weighted is None and t1_map is None):
+        raise ValueError('You must specify at least one of '
+                         't1_weighted and t1_map')
+    if t1_weighted is not None:
+        t1w_img = load_volume(t1_weighted)
+        t1w_data = t1w_img.get_data()
+        t1w_hdr = t1w_img.get_header()
+        stripper.setT1weightedImage(cbstools.JArray('float')(
+                                      (t1w_data.flatten('F')).astype(float)))
+    if t1_map is not None:
+        t1map_img = load_volume(t1_map)
+        t1map_data = t1map_img.get_data()
+        t1map_hdr = t1map_img.get_header()
+        stripper.setT1MapImage(cbstools.JArray('float')(
+                                    (t1map_data.flatten('F')).astype(float)))
+
+    stripper.setSkipZeroValues(skip_zero_values)
 
     # execute skull stripping
     try:
@@ -122,62 +122,57 @@ def mp2rage_skullstripping(t1_weighted=None, t1_map=None,
         return
 
     # collect outputs and potentially save
-    # TODO: also do the header max recalculation?
+    inv2_masked_data = np.reshape(np.array(
+                                mgdm.stripper.getMaskedSecondINversionImage(),
+                                dtype=np.float32), dimensions, 'F')
+    inv2_hdr['cal_max'] = np.nanmax(inv2_masked_data)
+    inv2_masked = nb.Nifti1Image(inv2_masked_data, inv2_affine, inv2_hdr)
+
+    mask_data = np.reshape(np.array(mgdm.stripper.getBrainMaskImage(),
+                                    dtype=np.uint32), dimensions, 'F')
+    inv2_hdr['cal_max'] = np.nanmax(mask_data)
+    mask = nb.Nifti1Image(mask_data, inv2_affine, inv2_hdr)
+
+    outputs = {'brain_mask': mask, 'inv2_masked': inv2_masked}
+
     if save_data:
-        if t1_weighted is not None:
-            output_dir = _output_dir_4saving(output_dir, t1_weighted)
-        else:
-            output_dir = _output_dir_4saving(output_dir, t1_map)
+        output_dir = _output_dir_4saving(output_dir, second_inversion)
         print("\n Saving outputs to {0}".format(output_dir))
 
-    if t1_weighted is not None:
-            t1w_masked = nb.Nifti1Image(
-                            np.reshape(np.array(
-                                    mgdm.stripper.getMaskedT1weightedImage(),
-                                    dtype=np.float32), dimensions, 'F'),
-                            affine, header)
-            if save_data:
-                t1w_file = _fname_4saving(rootfile=t1_weighted,
-                                          suffix='masked',
-                                          extension=file_extension)
-                mask_file = _fname_4saving(rootfile=t1_weighted, suffix='mask',
-                                           extension=file_extension)
-
-                save_volume(os.path.join(output_dir, t1w_file), t1w_masked)
-
-    if t1_map is not None:
-            t1map_masked = nb.Nifti1Image(
-                                np.reshape(np.array(
-                                      mgdm.stripper.getMaskedT1mapImage(),
-                                      dtype=np.float32), dimensions, 'F'),
-                                affine, header)
-            if save_data:
-                t1map_file = _fname_4saving(rootfile=t1_map, suffix='masked',
-                                            extension=file_extension)
-                if t1_weighted is None:
-                    mask_file = _fname_4saving(rootfile=t1_map, suffix='mask',
-                                               extension=file_extension)
-
-                save_volume(os.path.join(output_dir, t1map_file), t1map_masked)
-
-    if second_inversion is not None:
-            inv2_masked = nb.Nifti1Image(
-                            np.reshape(np.array(
-                                mgdm.stripper.getMaskedSecondINversionImage(),
-                                dtype=np.float32), dimensions, 'F'),
-                            affine, header)
-            if save_data:
-                inv2_file = _fname_4saving(rootfile=second_inversion,
-                                           suffix='masked',
-                                           extension=file_extension)
-                save_volume(os.path.join(output_dir, inv2_file), inv2_masked)
-
-    mask = nb.Nifti1Image(
-                np.reshape(np.array(mgdm.stripper.getBrainMaskImage(),
-                           dtype=np.uint32), dimensions, 'F'),
-                affine, header)
-
-    if save_data:
+        inv2_file = _fname_4saving(rootfile=second_inversion,
+                                   suffix='strip_inv2',
+                                   extension=file_extension)
+        mask_file = _fname_4saving(rootfile=second_inversion,
+                                   suffix='strip_mask',
+                                   extension=file_extension)
+        save_volume(os.path.join(output_dir, inv2_file), inv2_masked)
         save_volume(os.path.join(output_dir, mask_file), mask)
 
-    return
+    if t1_weighted is not None:
+        t1w_masked_data = np.reshape(np.array(
+                                mgdm.stripper.getMaskedT1weightedImage(),
+                                dtype=np.float32), dimensions, 'F')
+        t1w_hdr['cal_max'] = np.nanmax(t1w_masked_data)
+        t1w_masked = nb.Nifti1Image(t1w_masked_data, t1w_affine, t1w_hdr)
+        outputs['t1w_masked'] = t1w_masked
+
+        if save_data:
+            t1w_file = _fname_4saving(rootfile=t1_weighted, suffix='strip_t1w',
+                                      extension=file_extension)
+            save_volume(os.path.join(output_dir, t1w_file), t1w_masked)
+
+    if t1_map is not None:
+        t1map_masked_data = np.reshape(np.array(
+                                        mgdm.stripper.getMaskedT1mapImage(),
+                                        dtype=np.float32), dimensions, 'F')
+        t1map_hdr['cal_max'] = np.nanmax(t1map_masked_data)
+        t1map_masked = nb.Nifti1Image(t1map_masked_data, t1map_affine,
+                                      t1map_hdr)
+        outputs['t1map_masked'] = t1map_masked
+
+        if save_data:
+            t1map_file = _fname_4saving(rootfile=t1_map, suffix='strip_t1map',
+                                        extension=file_extension)
+            save_volume(os.path.join(output_dir, t1map_file), t1map_masked)
+
+    return outputs

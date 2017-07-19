@@ -298,5 +298,5 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         save_volume(os.path.join(output_dir, mems_file), mems)
         save_volume(os.path.join(output_dir, levels_file), levels)
 
-    return dict{'segmentation': seg, 'labels': lbls,
-                'memberships': mems, 'distance': dist}
+    return {'segmentation': seg, 'labels': lbls,
+            'memberships': mems, 'distance': dist}
