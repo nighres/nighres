@@ -133,11 +133,11 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     ----------
     outputs: dict
         Dictionary collecting outputs under the following keys
-        (suffix of output files if save_data is set to True)
         - 'segmentation': Hard brain segmentation (_mgdm_seg)
         - 'labels': Maximum tissue probability labels (_mgdm_lbls)
         - 'memberships': Maximum tissue probability values (_mgdm_mems)
-        - 'levelset': Minimum distance to a segmentation boundary (_mgdm_pv)
+        - 'distance': Minimum distance to a segmentation boundary (_mgdm_dist)
+        (suffix of output files if save_data is set to True)
 
     References
     ----------
@@ -255,8 +255,8 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                                    dtype=np.int32), dimensions, 'F')
     mems_data = np.reshape(np.array(mgdm.getPosteriorMaximumMemberships4D(),
                                     dtype=np.float32), dimensions, 'F')
-    levels_data = np.reshape(np.array(mgdm.getLevelsetBoundaryImage(),
-                                      dtype=np.float32), dimensions, 'F')
+    dist_data = np.reshape(np.array(mgdm.getLevelsetBoundaryImage(),
+                                    dtype=np.float32), dimensions, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -270,8 +270,8 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     header['cal_max'] = np.max(mems_data)
     mems = nb.Nifti1Image(mems_data, affine, header)
 
-    header['cal_max'] = np.max(levels_data)
-    levels = nb.Nifti1Image(levels_data, affine, header)
+    header['cal_max'] = np.max(dist_data)
+    dist = nb.Nifti1Image(dist_data, affine, header)
 
     if save_data:
         output_dir = _output_dir_4saving(output_dir, contrast_image1)
@@ -290,9 +290,9 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                                    suffix='mgdm_mems', base_name=file_name,
                                    extension=file_extension)
 
-        levels_file = _fname_4saving(rootfile=contrast_image1,
-                                     suffix='mgdm_pv', base_name=file_name,
-                                     extension=file_extension)
+        dist_file = _fname_4saving(rootfile=contrast_image1,
+                                   suffix='mgdm_dist', base_name=file_name,
+                                   extension=file_extension)
 
         save_volume(os.path.join(output_dir, seg_file), seg)
         save_volume(os.path.join(output_dir, lbl_file), lbls)
@@ -300,4 +300,4 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         save_volume(os.path.join(output_dir, levels_file), levels)
 
     return dict{'segmentation': seg, 'labels': lbls,
-                'memberships': mems, 'levelset': levels}
+                'memberships': mems, 'distance': dist}
