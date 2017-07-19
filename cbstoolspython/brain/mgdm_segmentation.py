@@ -260,7 +260,6 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
-    header['data_type'] = np.array(32).astype('uint32')
     header['cal_max'] = np.max(seg_data)
     seg = nb.Nifti1Image(seg_data, affine, header)
 
