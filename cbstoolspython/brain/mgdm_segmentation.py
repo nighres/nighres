@@ -105,7 +105,8 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         Number of steps for MGDM (default is 5, set to 0 for quick testing of
         registration of priors, which does not perform true segmentation)
     topology: {'wcs', 'no'}, optional
-        Topology setting (default is 'wcs', choose 'no' for no topology)
+        Topology setting, choose 'wcs' (well-composed surfaces) for strongest
+        topology constraint, 'no' for no topology constraint (default is 'wcs')
     atlas_file: str, optional
         Path to plain text atlas file (default is stored in DEFAULT_ATLAS)
     topology_lut_dir: str, optional
@@ -114,9 +115,11 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     adjust_intensity_priors: bool
         Adjust intensity priors based on dataset (default is False)
     compute_posterior: bool
-        Compute posteriors (default is False)
+        Compute posterior probabilities for segmented structures
+        (default is False)
     diffuse_probabilities: bool
-        Compute diffuse probabilities (default is False)
+        Regularize probability distribution with a non-linear diffusion scheme
+        (default is False)
     save_data: bool
         Save output data to file (default is False)
     output_dir: str, optional
@@ -128,11 +131,13 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     Returns
     ----------
-    tuple
-        segmentation: Segmented brain ... (file suffix _mgdm_seg)
-        labels: Labels of ... (file suffix _mgdm_lbls)
-        indices: Indices of ... (file suffix _mgdm_ids)
-        memberships: Memberships of ... (file suffix _mgdm_mems)
+    outputs: dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files if save_data is set to True)
+        - 'segmentation': Hard brain segmentation (_mgdm_seg)
+        - 'labels': Maximum tissue probability labels (_mgdm_lbls)
+        - 'memberships': Maximum tissue probability values (_mgdm_mems)
+        - 'levelset': Minimum distance to a segmentation boundary (_mgdm_pv)
 
     References
     ----------
@@ -173,7 +178,6 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                               "following contrasts provided by the chosen "
                               "atlas: ").format(ctype, idx+1),
                              ", ".join(mgdm_intensity_priors))
-
 
     # start virtual machine, if not already running
     try:
@@ -244,31 +248,30 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         raise
         return
 
-    # TODO collect other outputs and double check data types
     # reshape output to what nibabel likes
     seg_data = np.reshape(np.array(mgdm.getSegmentedBrainImage(),
-                                   dtype=np.uint32), dimensions, 'F')
+                                   dtype=np.int32), dimensions, 'F')
     lbl_data = np.reshape(np.array(mgdm.getPosteriorMaximumLabels4D(),
-                                   dtype=np.uint32), dimensions, 'F')
-    ids_data = np.reshape(np.array(mgdm.getSegmentedIdsImage(),
-                                   dtype=np.uint32), dimensions, 'F')
+                                   dtype=np.int32), dimensions, 'F')
     mems_data = np.reshape(np.array(mgdm.getPosteriorMaximumMemberships4D(),
-                                    dtype=np.uint32), dimensions, 'F')
+                                    dtype=np.float32), dimensions, 'F')
+    levels_data = np.reshape(np.array(mgdm.getLevelsetBoundaryImage(),
+                                      dtype=np.float32), dimensions, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
     header['data_type'] = np.array(32).astype('uint32')
     header['cal_max'] = np.max(seg_data)
-    segmentation = nb.Nifti1Image(seg_data, affine, header)
+    seg = nb.Nifti1Image(seg_data, affine, header)
 
     header['cal_max'] = np.max(lbl_data)
-    labels = nb.Nifti1Image(lbl_data, affine, header)
-
-    header['cal_max'] = np.max(ids_data)
-    indices = nb.Nifti1Image(ids_data, affine, header)
+    lbls = nb.Nifti1Image(lbl_data, affine, header)
 
     header['cal_max'] = np.max(mems_data)
-    memberships = nb.Nifti1Image(mems_data, affine, header)
+    mems = nb.Nifti1Image(mems_data, affine, header)
+
+    header['cal_max'] = np.max(levels_data)
+    levels = nb.Nifti1Image(levels_data, affine, header)
 
     if save_data:
         output_dir = _output_dir_4saving(output_dir, contrast_image1)
@@ -283,17 +286,18 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                                   suffix='mgmd_lbls', base_name=file_name,
                                   extension=file_extension)
 
-        ids_file = _fname_4saving(rootfile=contrast_image1,
-                                  suffix='mgdm_ids', base_name=file_name,
-                                  extension=file_extension)
-
         mems_file = _fname_4saving(rootfile=contrast_image1,
                                    suffix='mgdm_mems', base_name=file_name,
                                    extension=file_extension)
 
-        save_volume(os.path.join(output_dir, seg_file), segmentation)
-        save_volume(os.path.join(output_dir, lbl_file), labels)
-        save_volume(os.path.join(output_dir, ids_file), indices)
-        save_volume(os.path.join(output_dir, mems_file), memberships)
+        levels_file = _fname_4saving(rootfile=contrast_image1,
+                                     suffix='mgdm_pv', base_name=file_name,
+                                     extension=file_extension)
 
-    return segmentation, labels, indices, memberships
+        save_volume(os.path.join(output_dir, seg_file), seg)
+        save_volume(os.path.join(output_dir, lbl_file), lbls)
+        save_volume(os.path.join(output_dir, mems_file), mems)
+        save_volume(os.path.join(output_dir, levels_file), levels)
+
+    return dict{'segmentation': seg, 'labels': lbls,
+                'memberships': mems, 'levelset': levels}
