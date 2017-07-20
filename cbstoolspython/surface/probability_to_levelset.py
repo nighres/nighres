@@ -68,7 +68,7 @@ def probability_to_levelset(probability_image,
 
     # execute class
     try:
-        print("Creating Levelset")
+        print("Creating levelset")
         prob2level.execute()
 
     except:

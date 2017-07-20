@@ -97,7 +97,7 @@ def volumetric_layering(inner_levelset, outer_levelset,
 
     # execute class
     try:
-        print("Creating Levelset")
+        print("Creating layers")
         lamination.execute()
 
     except:
