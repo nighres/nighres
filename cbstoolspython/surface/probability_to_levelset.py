@@ -18,7 +18,7 @@ def probability_to_levelset(probability_image,
     positive values outside of the brain.
 
     Parameters
-    -----------
+    ----------
     probability_image: TODO:type
         Tissue segmentation to be turned into levelset. Either a ??? or
         a binary tissue classfication with value 1 inside and 0 outside the
@@ -33,7 +33,7 @@ def probability_to_levelset(probability_image,
         Desired extension for output files (determines file type)
 
     Returns
-    -------
+    ----------
     levelset: TODO:type
         Levelset representation of surface as Nibabel Nifti1Image
         (If save_data is True, the image is saved with suffix _levelset)
@@ -80,7 +80,7 @@ def probability_to_levelset(probability_image,
 
     # collect outputs
     levelset_data = np.reshape(np.array(prob2level.getLevelSetImage(),
-                               dtype=np.float32), prob_data.shape, 'F')
+                               dtype=np.float32), dimensions, 'F')
 
     hdr['cal_max'] = np.nanmax(levelset_data)
     levelset = nb.Nifti1Image(levelset_data, aff, hdr)
