@@ -16,7 +16,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
                            file_name=None, file_extension=None):
     """ MP2RAGE skull stripping
 
-    Estimate a brain mask from MRI data acquired with the MP2RAGE sequence [1].
+    Estimate a brain mask from MRI data acquired with the MP2RAGE sequence.
     At least a T1-weighted or a T1 map image is required
 
     Parameters
@@ -53,6 +53,11 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         - 't1map_masked': Masked T1 map (_strip_t1map),
                           only created if t1_map  was given
         (suffix of output files if save_data is set to True)
+
+    Notes
+    ----------
+    Original Java module by Pierre-Louis Bazin. Details on the MP2RAGE
+    sequence can be found in [1]
 
     References
     ----------

@@ -6,12 +6,12 @@ import nibabel as nb
 # from nilearn._utils.niimg_conversions import _index_img
 
 data_dir = '/SCR/data/cbstools_testing/'
-out_dir = '/tmp'
+out_dir = '/SCR/data/cbstools_testing/out/'
 inv2 = data_dir + '7t_trt/test_nii/INV2.nii.gz'
 t1w = data_dir + '7t_trt/test_nii/T1w.nii.gz'
 t1map = data_dir + '7t_trt/test_nii/T1map.nii.gz'
 
-# skullstripping of mp2rage images
+# Skullstripping of MP2RAGE images
 skullstripping_results = cbstoolspython.mp2rage_skullstripping(
                                                         second_inversion=inv2,
                                                         t1_weighted=t1w,
@@ -19,7 +19,7 @@ skullstripping_results = cbstoolspython.mp2rage_skullstripping(
                                                         save_data=True,
                                                         output_dir=out_dir)
 
-# mgdm segmentation
+# MGDM segmentation using both the T1 weighted and image
 segmentation_results = cbstoolspython.mgdm_segmentation(
                         contrast_image1=skullstripping_results.t1w_masked,
                         contrast_type1="Mp2rage7T",
@@ -28,7 +28,7 @@ segmentation_results = cbstoolspython.mgdm_segmentation(
                         save_data=True, output_dir=out_dir)
 
 
-# creating binary representations of the gm/wm and gm/csf boundaries from
+# Creating binary representations of the GM/WM and GM/CSF boundaries from the
 # segmentation output
 wm = [11, 12, 13, 17, 18, 30, 31, 32, 33, 34, 35, 36, 37,
       38, 39, 40, 41, 47, 48]
@@ -47,11 +47,11 @@ for x in gm:
 gm_nii = nb.Nifti1Image(gm_mask,
                         segmentation_results['segmentation'].get_affine())
 
-# creating levelsets from binary tissue images
+# Creating levelsets from binary tissue images
 gm_wm_levelset = cbstoolspython.create_levelsets(wm_mask, save_data=True)
 gm_csf_levelset = cbstoolspython.create_levelsets(gm_mask, save_data=True)
 
-# perform volumetric layering of the cortical sheet
+# Perform volumetric layering of the cortical sheet
 depth, layers, boundaries = cbstoolspython.layering(gm_wm_levelset,
                                                     gm_csf_levelset,
                                                     n_layers=3,

@@ -74,7 +74,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     """ MGDM segmentation
 
     Estimate brain structures from an atlas for MRI dataset using
-    a Multiple Object Geometric Deformable Model (MGDM) [1,2]
+    a Multiple Object Geometric Deformable Model (MGDM)
 
     Parameters
     ----------
@@ -133,11 +133,17 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     ----------
     outputs: dict
         Dictionary collecting outputs under the following keys
-        - 'segmentation': Hard brain segmentation (_mgdm_seg)
+        - 'segmentation': Hard brain segmentation with topological constraints
+                          (if chosen) (_mgdm_seg)
         - 'labels': Maximum tissue probability labels (_mgdm_lbls)
         - 'memberships': Maximum tissue probability values (_mgdm_mems)
         - 'distance': Minimum distance to a segmentation boundary (_mgdm_dist)
         (suffix of output files if save_data is set to True)
+
+    Notes
+    ----------
+    Original Java module by Pierre-Louis Bazin. Algorithm details can be
+    found in [1] and [2]
 
     References
     ----------
@@ -260,22 +266,21 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
-    header['cal_max'] = np.max(seg_data)
+    header['cal_max'] = np.nanmax(seg_data)
     seg = nb.Nifti1Image(seg_data, affine, header)
 
-    header['cal_max'] = np.max(lbl_data)
+    header['cal_max'] = np.nanmax(lbl_data)
     lbls = nb.Nifti1Image(lbl_data, affine, header)
 
-    header['cal_max'] = np.max(mems_data)
+    header['cal_max'] = np.nanmax(mems_data)
     mems = nb.Nifti1Image(mems_data, affine, header)
 
-    header['cal_max'] = np.max(dist_data)
+    header['cal_max'] = np.nanmax(dist_data)
     dist = nb.Nifti1Image(dist_data, affine, header)
 
     if save_data:
         output_dir = _output_dir_4saving(output_dir, contrast_image1)
 
-        # TODO fix the suffixes
         seg_file = _fname_4saving(rootfile=contrast_image1,
                                   suffix='mgdm_seg', base_name=file_name,
                                   extension=file_extension)
