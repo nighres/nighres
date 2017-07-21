@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<ExtModuleXML>
+<ModuleName>FreeSurfer</ModuleName>
+<ModuleScriptFile>/atlases/freesurfer-adapters/freesurfer_v2.sh</ModuleScriptFile>
+<ConvertInputImgsToType>nii</ConvertInputImgsToType>
+<InputParams>
+<Param>
+<ParamName>Output Directory</ParamName>
+<ParamType>STRING</ParamType>
+</Param>
+<Param>
+<ParamName>Input Image</ParamName>
+<ParamType>VOLUME</ParamType>
+</Param>
+<Param>
+<ParamName>MPRAGE Input</ParamName>
+<ParamType>BOOLEAN</ParamType>
+<InputDefault>true</InputDefault>
+</Param>
+<Param>
+<ParamName>Segmentation Only</ParamName>
+<ParamType>BOOLEAN</ParamType>
+<InputDefault>false</InputDefault>
+</Param>
+<Param>
+<ParamName>Skullstripped Data</ParamName>
+<ParamType>BOOLEAN</ParamType>
+<InputDefault>false</InputDefault>
+</Param>
+</InputParams>
+<OutputParams>
+<Param>
+<ParamName>Volumetric Segmentation</ParamName>
+<ParamType>VOLUME</ParamType>
+<OutputFileName>Segmentation.nii</OutputFileName>
+</Param>
+<Param>
+<ParamName>Right Inner Surface</ParamName>
+<ParamType>SURFACE</ParamType>
+<OutputFileName>innerSurface_rh.vtk</OutputFileName>
+<Mandatory>false</Mandatory>
+</Param>
+<Param>
+<ParamName>Left Inner Surface</ParamName>
+<ParamType>SURFACE</ParamType>
+<OutputFileName>innerSurface_lh.vtk</OutputFileName>
+<Mandatory>false</Mandatory>
+</Param>
+<Param>
+<ParamName>Right Outer Surface</ParamName>
+<ParamType>SURFACE</ParamType>
+<OutputFileName>outerSurface_rh.vtk</OutputFileName>
+<Mandatory>false</Mandatory>
+</Param>
+<Param>
+<ParamName>Left Outer Surface</ParamName>
+<ParamType>SURFACE</ParamType>
+<OutputFileName>outerSurface_lh.vtk</OutputFileName>
+<Mandatory>false</Mandatory>
+</Param>
+</OutputParams>
+</ExtModuleXML>

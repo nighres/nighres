@@ -1,0 +1,465 @@
+Structure Atlas File (edit at your own risks)
+ 
+Structures:	30
+Background			1	mask
+Dura				50	wm
+Arteries			8	wm
+Sulcal-CSF			10	csf
+VentricleL			11	csf
+VentricleR			12	csf
+Ventricle3			13	csf
+Ventricle4			14	csf
+ChoroidPlexusL		17	gm
+ChoroidPlexusR		18	gm
+Sinuses				20	gm
+Cerebellum-GM		25	gm
+Cerebrum-GML		26	gm
+Cerebrum-GMR		27	gm
+AmygdalaL			30	gm
+AmygdalaR			31	gm
+CaudateL			32	gm
+CaudateR			33	gm
+HippocampusL		34	gm
+HippocampusR		35	gm
+PutamenL			36	gm
+PutamenR			37	gm
+ThalamusL			38	wm
+ThalamusR			39	wm
+GlobusPallidusL		40	wm
+GlobusPallidusR		41	wm
+Brainstem			43	wm
+Cerebellum-WM		46	wm
+Cerebrum-WML		47	wm
+Cerebrum-WMR		48	wm
+ 
+Topology Atlas: 
+File:	topology-atlas.raw
+Dimensions:		106	133	112
+Resolutions:	2.0	2.0	2.0
+ 
+Shape Atlas:	18
+Dimensions:		106	133	112
+Resolutions:	2.0	2.0	2.0
+Structure:	Background
+File:	atlas_background.raw
+Structure:	Dura
+File:	atlas_dura_mater.raw
+Structure:	Arteries
+File:	atlas_arteries.raw
+Structure:	Sulcal-CSF
+File:	atlas_sulcal_csf.raw
+Structure:	VentricleL
+File:	atlas_ventricleL.raw
+Structure:	VentricleR
+File:	atlas_ventricleR.raw
+Structure:	Ventricle3
+File:	atlas_ventricle3.raw
+Structure:	Ventricle4
+File:	atlas_ventricle4.raw
+Structure:	ChoroidPlexusL
+File:	atlas_ventricleL.raw
+Structure:	ChoroidPlexusR
+File:	atlas_ventricleR.raw
+Structure:	Sinuses
+File:	atlas_sinuses.raw
+Structure:	Cerebellum-GM
+File:	atlas_cerebellum_gm.raw
+Structure:	Cerebrum-GML
+File:	atlas_cerebrum_gmL.raw
+Structure:	Cerebrum-GMR
+File:	atlas_cerebrum_gmR.raw
+Structure:	AmygdalaL
+File:	atlas_amygdalaL.raw
+Structure:	AmygdalaR
+File:	atlas_amygdalaR.raw
+Structure:	CaudateL
+File:	atlas_caudateL.raw
+Structure:	CaudateR
+File:	atlas_caudateR.raw
+Structure:	HippocampusL
+File:	atlas_hippocampusL.raw
+Structure:	HippocampusR
+File:	atlas_hippocampusR.raw
+Structure:	PutamenL
+File:	atlas_putamenL.raw
+Structure:	PutamenR
+File:	atlas_putamenR.raw
+Structure:	ThalamusL
+File:	atlas_thalamusL.raw
+Structure:	ThalamusR
+File:	atlas_thalamusR.raw
+Structure:	GlobusPallidusL
+File:	atlas_globus_pallidusL.raw
+Structure:	GlobusPallidusR
+File:	atlas_globus_pallidusR.raw
+Structure:	Brainstem
+File:	atlas_brainstem.raw
+Structure:	Cerebellum-WM
+File:	atlas_cerebellum_wm.raw
+Structure:	Cerebrum-WML
+File:	atlas_cerebrum_wmL.raw
+Structure:	Cerebrum-WMR
+File:	atlas_cerebrum_wmR.raw
+ 
+Registered Shapes: 
+BG	DS	ART	CSF	VEN	VEN	VEN	VEN	CPL	CPR	SIN	CBG	CGL	CGR	AMG	AMG	HIP	HIP	CAU	CAU	THA	THA	PUT	PUT	GPA	GPA	BST	CBW	CWL	CWR
+1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	1	1
+ 
+Regularization Factor: 
+BG	DUR	ART	CSF	VEN	VEN	VEN	VEN	CPL	CPR	SIN	CBG	CGL	CGR	AMG	AMG	HIP	HIP	CAU	CAU	THA	THA	PUT	PUT	GPA	GPA	BST	CBW	CWL	CWR
+5.0	8.0	1.0	1.0	2.0	2.0	2.0	2.0	1.0	1.0	8.0	1.0	1.0	1.0	5.0	5.0	2.0	2.0	5.0	5.0	5.0	5.0	5.0	5.0	5.0	5.0	2.0	1.0	1.0	1.0
+ 
+Intensity Prior Lists:	11
+ 
+Intensity Prior:	T1map7T
+Background		0.00	0.10	1.00
+Dura			0.40	0.10	1.00
+Arteries		0.10	0.20	1.00
+Sulcal-CSF		0.95	0.15	1.00
+VentricleL		0.90	0.10	1.00
+VentricleR		0.90	0.10	1.00
+Ventricle3		0.80	0.20	1.00
+Ventricle4		0.90	0.10	1.00
+ChoroidPlexusL	0.60	0.20	1.00
+ChoroidPlexusR	0.60	0.20	1.00
+Sinuses			0.50	0.20	1.00
+Cerebellum-GM	0.55	0.30	1.00
+Cerebrum-GML	0.55	0.30	1.00
+Cerebrum-GMR	0.55	0.30	1.00
+AmygdalaL		0.55	0.30	1.00
+AmygdalaR		0.55	0.30	1.00
+CaudateL		0.40	0.30	1.00
+CaudateR		0.40	0.30	1.00
+HippocampusL	0.55	0.30	1.00
+HippocampusR	0.55	0.30	1.00
+PutamenL		0.40	0.30	1.00
+PutamenR		0.40	0.30	1.00
+ThalamusL		0.35	0.30	1.00
+ThalamusR		0.35	0.30	1.00
+GlobusPallidusL	0.25	0.15	1.00
+GlobusPallidusR	0.25	0.15	1.00
+Brainstem		0.30	0.25	1.00
+Cerebellum-WM	0.25	0.25	1.00
+Cerebrum-WML	0.20	0.20	1.00
+Cerebrum-WMR	0.20	0.20	1.00
+ 
+Intensity Prior:	Mp2rage7T
+Background		0.00	0.10	1.00
+Dura			0.65	0.10	1.00
+Arteries		0.95	0.20	1.00
+Sulcal-CSF		0.15	0.15	1.00
+VentricleL		0.25	0.20	1.00
+VentricleR		0.25	0.20	1.00
+Ventricle3		0.25	0.20	1.00
+Ventricle4		0.25	0.20	1.00
+ChoroidPlexusL	0.40	0.20	1.00
+ChoroidPlexusR	0.40	0.20	1.00
+Sinuses			0.30	0.20	1.00
+Cerebellum-GM	0.50	0.30	1.00
+Cerebrum-GML	0.50	0.30	1.00
+Cerebrum-GMR	0.50	0.30	1.00
+AmygdalaL		0.50	0.30	1.00
+AmygdalaR		0.50	0.30	1.00
+CaudateL		0.60	0.30	1.00
+CaudateR		0.60	0.30	1.00
+HippocampusL	0.45	0.30	1.00
+HippocampusR	0.45	0.30	1.00
+PutamenL		0.60	0.30	1.00
+PutamenR		0.60	0.30	1.00
+ThalamusL		0.75	0.25	1.00
+ThalamusR		0.75	0.25	1.00
+GlobusPallidusL	0.80	0.10	1.00
+GlobusPallidusR	0.80	0.10	1.00
+Brainstem		0.70	0.20	1.00
+Cerebellum-WM	0.75	0.20	1.00
+Cerebrum-WML	0.85	0.15	1.00
+Cerebrum-WMR	0.85	0.15	1.00
+ 
+Intensity Prior:	PV
+Background		0.00	0.00	1.00
+Dura			1.00	0.00	1.00
+Arteries		0.00	0.00	1.00
+Sulcal-CSF		0.00	1.00	1.00
+VentricleL		0.00	1.00	1.00
+VentricleR		0.00	1.00	1.00
+Ventricle3		0.00	1.00	1.00
+Ventricle4		0.00	1.00	1.00
+ChoroidPlexusL	0.00	0.00	1.00
+ChoroidPlexusR	0.00	0.00	1.00
+Sinuses			0.00	0.00	1.00
+Cerebellum-GM	-1.00	-1.00	1.00
+Cerebrum-GML	-1.00	-1.00	1.00
+Cerebrum-GMR	-1.00	-1.00	1.00
+AmygdalaL		0.00	0.00	1.00
+AmygdalaR		0.00	0.00	1.00
+CaudateL		0.00	0.00	1.00
+CaudateR		0.00	0.00	1.00
+HippocampusL	0.00	0.00	1.00
+HippocampusR	0.00	0.00	1.00
+PutamenL		0.00	0.00	1.00
+PutamenR		0.00	0.00	1.00
+ThalamusL		0.00	0.00	1.00
+ThalamusR		0.00	0.00	1.00
+GlobusPallidusL	0.00	0.00	1.00
+GlobusPallidusR	0.00	0.00	1.00
+Brainstem		-1.00	-1.00	1.00
+Cerebellum-WM	-1.00	-1.00	1.00
+Cerebrum-WML	-1.00	-1.00	1.00
+Cerebrum-WMR	-1.00	-1.00	1.00
+ 
+Intensity Prior:	Filters
+Background		0.00	0.00	0.00
+Dura			1.00	0.00	0.00
+Arteries		0.00	0.00	1.00
+Sulcal-CSF		0.00	1.00	1.00
+VentricleL		0.00	1.00	0.00
+VentricleR		0.00	1.00	0.00
+Ventricle3		0.00	1.00	0.00
+Ventricle4		0.00	1.00	0.00
+ChoroidPlexusL	0.00	0.00	0.00
+ChoroidPlexusR	0.00	0.00	0.00
+Sinuses			0.00	0.00	0.00
+Cerebellum-GM	-1.00	-1.00	0.00
+Cerebrum-GML	-1.00	-1.00	-1.00
+Cerebrum-GMR	-1.00	-1.00	-1.00
+AmygdalaL		0.00	0.00	0.00
+AmygdalaR		0.00	0.00	0.00
+CaudateL		0.00	0.00	0.00
+CaudateR		0.00	0.00	0.00
+HippocampusL	0.00	0.00	0.00
+HippocampusR	0.00	0.00	0.00
+PutamenL		0.00	0.00	0.00
+PutamenR		0.00	0.00	0.00
+ThalamusL		0.00	0.00	0.00
+ThalamusR		0.00	0.00	0.00
+GlobusPallidusL	0.00	0.00	0.00
+GlobusPallidusR	0.00	0.00	0.00
+Brainstem		-1.00	-1.00	0.00
+Cerebellum-WM	-1.00	-1.00	0.00
+Cerebrum-WML	-1.00	-1.00	-1.00
+Cerebrum-WMR	-1.00	-1.00	-1.00
+ 
+Intensity Prior:	T1pv
+Background		0.00	0.50	1.00
+Dura			0.00	0.50	1.00
+Arteries		0.00	0.50	1.00
+Sulcal-CSF		1.00	0.50	1.00
+VentricleL		1.00	0.50	1.00
+VentricleR		1.00	0.50	1.00
+Ventricle3		1.00	0.50	1.00
+Ventricle4		1.00	0.50	1.00
+ChoroidPlexusL	0.00	0.50	1.00
+ChoroidPlexusR	0.00	0.50	1.00
+Sinuses			0.00	0.50	1.00
+Cerebellum-GM	0.00	0.50	1.00
+Cerebrum-GML	0.00	0.50	1.00
+Cerebrum-GMR	0.00	0.50	1.00
+AmygdalaL		0.00	0.50	1.00
+AmygdalaR		0.00	0.50	1.00
+CaudateL		0.00	0.50	1.00
+CaudateR		0.00	0.50	1.00
+HippocampusL	0.00	0.50	1.00
+HippocampusR	0.00	0.50	1.00
+PutamenL		0.00	0.50	1.00
+PutamenR		0.00	0.50	1.00
+ThalamusL		0.00	0.50	1.00
+ThalamusR		0.00	0.50	1.00
+GlobusPallidusL	0.00	0.50	1.00
+GlobusPallidusR	0.00	0.50	1.00
+Brainstem		0.00	0.50	1.00
+Cerebellum-WM	0.00	0.50	1.00
+Cerebrum-WML	0.00	0.50	1.00
+Cerebrum-WMR	0.00	0.50	1.00
+ 
+Intensity Prior:	Mprage3T
+Background		0.00	0.10	1.00
+Dura			0.50	0.10	1.00
+Arteries		0.95	0.10	1.00
+Sulcal-CSF		0.18	0.15	1.00
+VentricleL		0.23	0.20	1.00
+VentricleR		0.23	0.20	1.00
+Ventricle3		0.23	0.20	1.00
+Ventricle4		0.23	0.20	1.00
+ChoroidPlexusL	0.50	0.20	1.00
+ChoroidPlexusR	0.50	0.20	1.00
+Sinuses			0.50	0.20	1.00
+Cerebellum-GM	0.59	0.20	1.00
+Cerebrum-GML	0.53	0.20	1.00
+Cerebrum-GMR	0.53	0.20	1.00
+AmygdalaL		0.69	0.15	1.00
+AmygdalaR		0.69	0.15	1.00
+CaudateL		0.69	0.15	1.00
+CaudateR		0.69	0.15	1.00
+HippocampusL	0.63	0.20	1.00
+HippocampusR	0.63	0.20	1.00
+PutamenL		0.78	0.15	1.00
+PutamenR		0.78	0.15	1.00
+ThalamusL		0.78	0.20	1.00
+ThalamusR		0.78	0.20	1.00
+GlobusPallidusL	0.95	0.10	1.00
+GlobusPallidusR	0.95	0.10	1.00
+Brainstem		0.93	0.15	1.00
+Cerebellum-WM	0.92	0.15	1.00
+Cerebrum-WML	0.93	0.15	1.00
+Cerebrum-WMR	0.93	0.15	1.00
+ 
+Intensity Prior:	T1map3T
+Background		0.00	0.10	1.00
+Dura			0.15	0.30	0.00
+Arteries		0.35	0.10	1.00
+Sulcal-CSF		0.65	0.20	1.00
+VentricleL		0.68	0.20	1.00
+VentricleR		0.68	0.20	1.00
+Ventricle3		0.68	0.20	1.00
+Ventricle4		0.68	0.20	1.00
+ChoroidPlexusL	0.50	0.15	1.00
+ChoroidPlexusR	0.50	0.15	1.00
+Sinuses			0.55	0.20	1.00
+Cerebellum-GM	0.39	0.10	1.00
+Cerebrum-GML	0.41	0.15	1.00
+Cerebrum-GMR	0.41	0.15	1.00
+AmygdalaL		0.41	0.15	1.00
+AmygdalaR		0.41	0.15	1.00
+CaudateL		0.35	0.10	1.00
+CaudateR		0.35	0.10	1.00
+HippocampusL	0.37	0.15	1.00
+HippocampusR	0.37	0.15	1.00
+PutamenL		0.33	0.15	1.00
+PutamenR		0.33	0.15	1.00
+ThalamusL		0.31	0.20	1.00
+ThalamusR		0.31	0.20	1.00
+GlobusPallidusL	0.27	0.10	1.00
+GlobusPallidusR	0.27	0.10	1.00
+Brainstem		0.27	0.15	1.00
+Cerebellum-WM	0.25	0.10	1.00
+Cerebrum-WML	0.24	0.15	1.00
+Cerebrum-WMR	0.24	0.15	1.00
+ 
+Intensity Prior:	Mp2rage3T
+Background		0.00	0.10	1.00
+Dura			0.75	0.25	0.00
+Arteries		0.28	0.20	1.00
+Sulcal-CSF		0.05	0.10	1.00
+VentricleL		0.12	0.15	1.00
+VentricleR		0.12	0.15	1.00
+Ventricle3		0.12	0.15	1.00
+Ventricle4		0.11	0.10	1.00
+ChoroidPlexusL	0.20	0.15	1.00
+ChoroidPlexusR	0.20	0.15	1.00
+Sinuses			0.15	0.20	1.00
+Cerebellum-GM	0.34	0.15	1.00
+Cerebrum-GML	0.31	0.20	1.00
+Cerebrum-GMR	0.31	0.20	1.00
+AmygdalaL		0.31	0.15	1.00
+AmygdalaR		0.31	0.15	1.00
+CaudateL		0.41	0.10	1.00
+CaudateR		0.41	0.10	1.00
+HippocampusL	0.35	0.15	1.00
+HippocampusR	0.35	0.15	1.00
+PutamenL		0.45	0.15	1.00
+PutamenR		0.45	0.15	1.00
+ThalamusL		0.49	0.20	1.00
+ThalamusR		0.49	0.20	1.00
+GlobusPallidusL	0.57	0.15	1.00
+GlobusPallidusR	0.57	0.15	1.00
+Brainstem		0.56	0.15	1.00
+Cerebellum-WM	0.62	0.10	1.00
+Cerebrum-WML	0.64	0.15	1.00
+Cerebrum-WMR	0.64	0.15	1.00
+ 
+Intensity Prior:	HCPT1w
+Background		0.00	0.10	1.00
+Dura			0.05	0.20	1.00
+Arteries		0.84	0.20	1.00
+Sulcal-CSF		0.28	0.20	1.00
+VentricleL		0.34	0.20	1.00
+VentricleR		0.34	0.20	1.00
+Ventricle3		0.42	0.20	1.00
+Ventricle4		0.42	0.20	1.00
+ChoroidPlexusL	0.50	0.25	1.00
+ChoroidPlexusR	0.50	0.25	1.00
+Sinuses			0.50	0.15	1.00
+Cerebellum-GM	0.64	0.15	1.00
+Cerebrum-GML	0.62	0.15	1.00
+Cerebrum-GMR	0.62	0.15	1.00
+AmygdalaL		0.68	0.15	1.00
+AmygdalaR		0.68	0.15	1.00
+CaudateL		0.71	0.15	1.00
+CaudateR		0.71	0.15	1.00
+HippocampusL	0.66	0.15	1.00
+HippocampusR	0.66	0.15	1.00
+PutamenL		0.78	0.15	1.00
+PutamenR		0.78	0.15	1.00
+ThalamusL		0.79	0.15	1.00
+ThalamusR		0.79	0.15	1.00
+GlobusPallidusL	0.94	0.15	1.00
+GlobusPallidusR	0.94	0.15	1.00
+Brainstem		0.87	0.15	1.00
+Cerebellum-WM	0.85	0.15	1.00
+Cerebrum-WML	0.87	0.15	1.00
+Cerebrum-WMR	0.87	0.15	1.00
+ 
+Intensity Prior:	HCPT2w
+Background		0.00	0.10	1.00
+Dura			0.05	0.20	1.00
+Arteries		0.18	0.20	1.00
+Sulcal-CSF		0.85	0.25	1.00
+VentricleL		0.85	0.25	1.00
+VentricleR		0.85	0.25	1.00
+Ventricle3		0.80	0.25	1.00
+Ventricle4		0.80	0.25	1.00
+ChoroidPlexusL	0.63	0.30	1.00
+ChoroidPlexusR	0.63	0.30	1.00
+Sinuses			0.22	0.30	1.00
+Cerebellum-GM	0.42	0.15	1.00
+Cerebrum-GML	0.44	0.15	1.00
+Cerebrum-GMR	0.44	0.15	1.00
+AmygdalaL		0.39	0.15	1.00
+AmygdalaR		0.39	0.10	1.00
+CaudateL		0.38	0.15	1.00
+CaudateR		0.38	0.15	1.00
+HippocampusL	0.42	0.15	1.00
+HippocampusR	0.42	0.15	1.00
+PutamenL		0.34	0.15	1.00
+PutamenR		0.34	0.15	1.00
+ThalamusL		0.32	0.15	1.00
+ThalamusR		0.32	0.15	1.00
+GlobusPallidusL	0.22	0.15	1.00
+GlobusPallidusR	0.22	0.15	1.00
+Brainstem		0.28	0.15	1.00
+Cerebellum-WM	0.29	0.15	1.00
+Cerebrum-WML	0.30	0.15	1.00
+Cerebrum-WMR	0.30	0.15	1.00
+ 
+Intensity Prior:	NormMPRAGE
+Background		0.00	0.10	1.00
+Dura			0.70	0.20	1.00
+Arteries		0.70	0.20	1.00
+Sulcal-CSF		0.05	0.10	1.00
+VentricleL		0.05	0.10	1.00
+VentricleR		0.05	0.10	1.00
+Ventricle3		0.05	0.10	1.00
+Ventricle4		0.05	0.10	1.00
+ChoroidPlexusL	0.25	0.20	1.00
+ChoroidPlexusR	0.25	0.20	1.00
+Sinuses			0.23	0.20	1.00
+Cerebellum-GM	0.50	0.20	1.00
+Cerebrum-GML	0.50	0.20	1.00
+Cerebrum-GMR	0.50	0.20	1.00
+AmygdalaL		0.50	0.20	1.00
+AmygdalaR		0.50	0.20	1.00
+CaudateL		0.60	0.20	1.00
+CaudateR		0.60	0.20	1.00
+HippocampusL	0.50	0.20	1.00
+HippocampusR	0.50	0.20	1.00
+PutamenL		0.60	0.20	1.00
+PutamenR		0.60	0.20	1.00
+ThalamusL		0.65	0.20	1.00
+ThalamusR		0.65	0.20	1.00
+GlobusPallidusL	0.70	0.20	1.00
+GlobusPallidusR	0.70	0.20	1.00
+Brainstem		0.70	0.20	1.00
+Cerebellum-WM	0.75	0.20	1.00
+Cerebrum-WML	0.75	0.20	1.00
+Cerebrum-WMR	0.75	0.20	1.00
+ 
