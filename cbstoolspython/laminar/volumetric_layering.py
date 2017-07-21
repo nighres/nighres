@@ -3,9 +3,7 @@ import numpy as np
 import nibabel as nb
 import cbstools
 from ..io import load_volume, save_volume
-
-# TODO:replace
-TOPOLOGY_LUT_DIR = '/home/julia/workspace/cbstools-python/lut/'
+from ..global_settings import TOPOLOGY_LUT_DIR
 
 
 def volumetric_layering(inner_levelset, outer_levelset,
@@ -62,6 +60,10 @@ def volumetric_layering(inner_levelset, outer_levelset,
     if topology_lut_dir is None:
         topology_lut_dir = TOPOLOGY_LUT_DIR
     else:
+        # check if dir exists
+        if not os.path.isdir(topology_lut_dir):
+            raise ValueError('The topology_lut_dir you have specified ({0}) '
+                             'does not exist'.format(topology_lut_dir))
         # if we don't end in a path sep, we need to make sure that we add it
         if not(topology_lut_dir[-1] == os.path.sep):
             topology_lut_dir += os.path.sep

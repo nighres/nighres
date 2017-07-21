@@ -5,9 +5,7 @@ import sys
 import cbstools
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving
-
-# TODO: set default LUT dir
-TOPOLOGY_LUT_DIR = '/home/julia/workspace/cbstools-python/lut/'
+from ..global_settings import TOPOLOGY_LUT_DIR
 
 
 def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
@@ -70,6 +68,10 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
     if topology_lut_dir is None:
         topology_lut_dir = TOPOLOGY_LUT_DIR
     else:
+        # check if dir exists
+        if not os.path.isdir(topology_lut_dir):
+            raise ValueError('The topology_lut_dir you have specified ({0}) '
+                             'does not exist'.format(topology_lut_dir))
         # if we don't end in a path sep, we need to make sure that we add it
         if not(topology_lut_dir[-1] == os.path.sep):
             topology_lut_dir += os.path.sep

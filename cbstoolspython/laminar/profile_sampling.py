@@ -7,7 +7,7 @@ from ..io import load_volume, save_volume
 
 def profile_sampling(profile_surface_image, intensity_image,
                      save_data=False, output_dir=None,
-                     file_name=None, file_extension=Non):
+                     file_name=None, file_extension=None):
 
     '''Sampling data on multiple intracortical layers
 

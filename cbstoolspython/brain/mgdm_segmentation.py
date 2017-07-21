@@ -5,11 +5,7 @@ import sys
 import cbstools
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving
-
-# TODO
-ATLAS_DIR = '/home/julia/workspace/cbstools-python/atlases/brain-segmentation-prior3.0/'
-TOPOLOGY_LUT_DIR = '/home/julia/workspace/cbstools-python/lut/'
-DEFAULT_ATLAS = os.path.join(ATLAS_DIR, "brain-atlas-3.0.3.txt")
+from ..global_settings import ATLAS_DIR, DEFAULT_ATLAS, TOPOLOGY_LUT_DIR
 
 
 def _get_mgdm_orientation(affine, mgdm):
@@ -19,7 +15,6 @@ def _get_mgdm_orientation(affine, mgdm):
     '''
     orientation = nb.aff2axcodes(affine)
     # set mgdm slice order
-    # TODO how clean is this?
     if orientation[-1] == "I" or orientation[-1] == "S":
         sliceorder = mgdm.AXIAL
     elif orientation[-1] == "L" or orientation[-1] == "R":
@@ -109,6 +104,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         topology constraint, 'no' for no topology constraint (default is 'wcs')
     atlas_file: str, optional
         Path to plain text atlas file (default is stored in DEFAULT_ATLAS)
+        or atlas name to be searched in ATLAS_DIR
     topology_lut_dir: str, optional
         Path to directory in which topology files are stored (default is stored
         in TOPOLOGY_LUT_DIR)
@@ -154,14 +150,25 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     """
 
     # set default atlas if not given
-    # TODO search given atlas file in default atlas dir?
     if atlas_file is None:
         atlas_file = DEFAULT_ATLAS
+    else:
+        # check if file exists, if not try search atlas in default atlas dir
+        if not os.path.isfile(atlas_file):
+            if not os.path.isfile(os.path.join(ATLAS_DIR, atlas_file)):
+                raise ValueError('The atlas_file you have specified ({0}) '
+                                 'does not exist'.format(atlas_file))
+            else:
+                atlas_file = os.path.join(ATLAS_DIR, atlas_file)
 
     # set default topology lut dir if not given
     if topology_lut_dir is None:
         topology_lut_dir = TOPOLOGY_LUT_DIR
     else:
+        # check if dir exists
+        if not os.path.isdir(topology_lut_dir):
+            raise ValueError('The topology_lut_dir you have specified ({0}) '
+                             'does not exist'.format(topology_lut_dir))
         # if we don't end in a path sep, we need to make sure that we add it
         if not(topology_lut_dir[-1] == os.path.sep):
             topology_lut_dir += os.path.sep
