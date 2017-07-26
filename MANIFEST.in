@@ -1,0 +1,6 @@
+include README.md
+include LICENSE.md
+include MANIFEST.in
+include cbstools/*.jar
+include cbstools/_cbstools.so
+recursive-include nires/atlases *
