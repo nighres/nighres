@@ -12,7 +12,7 @@ setup(
     url='TODO',
     author='Julia M Huntenburg, Pierre-Louis Bazin, Chris Steele',
     author_email='ju.huntenburg@gmail.com',
-    license='CC BY-SA 4.0',
+    license='TODO',
     classifiers=[
                  'Development Status :: 3 - Alpha',
                  'Intended Audience :: Researchers',
