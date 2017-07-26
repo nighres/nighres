@@ -166,4 +166,4 @@ cd ..
 # remove unused folders
 rm -rf build
 rm -rf cbstools-public
-rm -rf nires.egg-info
+rm -rf nighres.egg-info

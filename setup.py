@@ -2,10 +2,11 @@ from setuptools import setup, find_packages
 from os import path
 
 here = path.abspath(path.dirname(__file__))
-long_description = 'load from README'
+with open('README.md') as f:
+    long_description = f.read()
 
 setup(
-    name='nires',
+    name='nighres',
     version='0.1.0',
     description='Processing tools for high-resolution neuroimaging',
     long_description=long_description,
