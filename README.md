@@ -1,4 +1,3 @@
 requirements:
 * nibabel
 * numpy
-* cbstools
