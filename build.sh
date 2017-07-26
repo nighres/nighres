@@ -156,14 +156,14 @@ cp -rv build/cbstools/ ../
 find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' ../cbstools/_cbstools.so
 cd ..
 
-# Make the python wheel (add upload)
+# Make the python wheel
+# TODO get platform and python version from system
+# TODO add upload
 (
-	python setup.py bdist_wheel
+	python setup.py bdist_wheel --dist-dir dist --plat-name manylinux1_x86_64 --python-tag py2
 )
 
 # remove unused folders
 rm -rf build
 rm -rf cbstools-public
 rm -rf nires.egg-info
-
-mv dist/nires-0.1.0-py2-none-any.whl dist/nires-0.1.0-py2-manylinux1_x86_64.whl
