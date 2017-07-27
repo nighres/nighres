@@ -38,11 +38,11 @@ def volumetric_layering(inner_levelset, outer_levelset,
     outputs: dict
         Dictionary collecting outputs under the following keys
         - 'depth': Continuous depth from 0 (inner surface) to 1 (outer surface)
-                   (layer_depth)
+                   (layering_depth)
         - 'layers': Discrete layers from 1 (bordering inner surface) to
-                    n_layers (bordering outer surface) (_layer_layers)
+                    n_layers (bordering outer surface) (_layering_layers)
         - 'boundaries': Levelset representations of boundaries between
-                        all layers (4D image) (_layer_boundaries)
+                        all layers (4D image) (_layering_boundaries)
         (suffix of output files if save_data is set to True)
 
     Notes
@@ -132,17 +132,18 @@ def volumetric_layering(inner_levelset, outer_levelset,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, inner_levelset)
 
-        depth_file = _fname_4saving(rootfile=inner_image, suffix='layer_depth',
+        depth_file = _fname_4saving(rootfile=inner_image,
+                                    suffix='layering_depth',
                                     base_name=file_name,
                                     extension=file_extension)
 
         layer_file = _fname_4saving(rootfile=inner_image,
-                                    suffix='layer_layers',
+                                    suffix='layering_layers',
                                     base_name=file_name,
                                     extension=file_extension)
 
         boundary_file = _fname_4saving(rootfile=inner_image,
-                                       suffix='layer_boundaries',
+                                       suffix='layering_boundaries',
                                        base_name=file_name,
                                        extension=file_extension)
 
