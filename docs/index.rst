@@ -10,6 +10,8 @@ Welcome to nighres's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   nighres.io.rst
+
 
 
 Indices and tables
