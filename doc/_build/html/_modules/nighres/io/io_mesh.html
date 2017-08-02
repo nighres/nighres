@@ -1,0 +1,502 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>nighres.io.io_mesh &#8212; nighres 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nighres.io.io_mesh</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nb</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># function to load mesh geometry</span>
+<div class="viewcode-block" id="load_mesh_geometry"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.load_mesh_geometry">[docs]</a><span class="k">def</span> <span class="nf">load_mesh_geometry</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">):</span>
+    <span class="c1"># if input is a filename, try to load it with nibabel</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">surf_mesh</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;orig&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">surf_mesh</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;pial&#39;</span><span class="p">)</span> <span class="ow">or</span>
+                <span class="n">surf_mesh</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">surf_mesh</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;sphere&#39;</span><span class="p">)</span> <span class="ow">or</span>
+                <span class="n">surf_mesh</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;inflated&#39;</span><span class="p">)):</span>
+            <span class="n">coords</span><span class="p">,</span> <span class="n">faces</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">freesurfer</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_geometry</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">surf_mesh</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;gii&#39;</span><span class="p">):</span>
+            <span class="n">coords</span><span class="p">,</span> <span class="n">faces</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">gifti</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">)</span><span class="o">.</span><span class="n">getArraysFromIntent</span><span class="p">(</span><span class="n">nb</span><span class="o">.</span><span class="n">nifti1</span><span class="o">.</span><span class="n">intent_codes</span><span class="p">[</span><span class="s1">&#39;NIFTI_INTENT_POINTSET&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> \
+                            <span class="n">nb</span><span class="o">.</span><span class="n">gifti</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">)</span><span class="o">.</span><span class="n">getArraysFromIntent</span><span class="p">(</span><span class="n">nb</span><span class="o">.</span><span class="n">nifti1</span><span class="o">.</span><span class="n">intent_codes</span><span class="p">[</span><span class="s1">&#39;NIFTI_INTENT_TRIANGLE&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">elif</span> <span class="n">surf_mesh</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;vtk&#39;</span><span class="p">):</span>
+            <span class="n">coords</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">read_vtk</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">surf_mesh</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;ply&#39;</span><span class="p">):</span>
+            <span class="n">coords</span><span class="p">,</span> <span class="n">faces</span> <span class="o">=</span> <span class="n">read_ply</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">surf_mesh</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;obj&#39;</span><span class="p">):</span>
+            <span class="n">coords</span><span class="p">,</span> <span class="n">faces</span> <span class="o">=</span> <span class="n">read_obj</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;faces&#39;</span> <span class="ow">in</span> <span class="n">surf_mesh</span> <span class="ow">and</span> <span class="s1">&#39;coords&#39;</span> <span class="ow">in</span> <span class="n">surf_mesh</span><span class="p">):</span>
+                <span class="n">coords</span><span class="p">,</span> <span class="n">faces</span> <span class="o">=</span> <span class="n">surf_mesh</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">],</span> <span class="n">surf_mesh</span><span class="p">[</span><span class="s1">&#39;faces&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;If surf_mesh is given as a dictionary it must &#39;</span>
+                                 <span class="s1">&#39;contain items with keys &quot;coords&quot; and &quot;faces&quot;&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;surf_mesh must be a either filename or a dictionary &#39;</span>
+                             <span class="s1">&#39;containing items with keys &quot;coords&quot; and &quot;faces&quot;&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;coords&#39;</span><span class="p">:</span><span class="n">coords</span><span class="p">,</span><span class="s1">&#39;faces&#39;</span><span class="p">:</span><span class="n">faces</span><span class="p">}</span></div>
+
+
+<span class="c1"># function to load mesh data</span>
+<div class="viewcode-block" id="load_mesh_data"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.load_mesh_data">[docs]</a><span class="k">def</span> <span class="nf">load_mesh_data</span><span class="p">(</span><span class="n">surf_data</span><span class="p">,</span> <span class="n">gii_darray</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="c1"># if the input is a filename, load it</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">surf_data</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">surf_data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;nii&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">surf_data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;nii.gz&#39;</span><span class="p">)</span> <span class="ow">or</span>
+                <span class="n">surf_data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;mgz&#39;</span><span class="p">)):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">surf_data</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">surf_data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;curv&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">surf_data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;sulc&#39;</span><span class="p">)</span> <span class="ow">or</span>
+                <span class="n">surf_data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;thickness&#39;</span><span class="p">)):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">freesurfer</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_morph_data</span><span class="p">(</span><span class="n">surf_data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">surf_data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;annot&#39;</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">freesurfer</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_annot</span><span class="p">(</span><span class="n">surf_data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">surf_data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">freesurfer</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read_label</span><span class="p">(</span><span class="n">surf_data</span><span class="p">)</span>
+        <span class="c1"># check if this works with multiple indices (if dim(data)&gt;1)</span>
+        <span class="k">elif</span> <span class="n">surf_data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;gii&#39;</span><span class="p">):</span>
+            <span class="n">fulldata</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">gifti</span><span class="o">.</span><span class="n">giftiio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">surf_data</span><span class="p">)</span>
+            <span class="n">n_vectors</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fulldata</span><span class="o">.</span><span class="n">darrays</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n_vectors</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">fulldata</span><span class="o">.</span><span class="n">darrays</span><span class="p">[</span><span class="n">gii_darray</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span> <span class="s2">&quot;Multiple data files found, output will be matrix&quot;</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">fulldata</span><span class="o">.</span><span class="n">darrays</span><span class="p">[</span><span class="n">gii_darray</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">),</span> <span class="n">n_vectors</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">gii_darray</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_vectors</span><span class="p">):</span>
+                    <span class="n">data</span><span class="p">[:,</span><span class="n">gii_darray</span><span class="p">]</span> <span class="o">=</span> <span class="n">fulldata</span><span class="o">.</span><span class="n">darrays</span><span class="p">[</span><span class="n">gii_darray</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">elif</span> <span class="n">surf_data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;vtk&#39;</span><span class="p">):</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">read_vtk</span><span class="p">(</span><span class="n">surf_data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">surf_data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;txt&#39;</span><span class="p">):</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">surf_data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Format of data file not recognized.&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">surf_data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">surf_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+<span class="c1">## function to write mesh data</span>
+<div class="viewcode-block" id="save_mesh_data"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.save_mesh_data">[docs]</a><span class="k">def</span> <span class="nf">save_mesh_data</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">surf_data</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">basestring</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">surf_data</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;curv&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;thickness&#39;</span><span class="p">)</span> <span class="ow">or</span>
+                <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;sulc&#39;</span><span class="p">)):</span>
+            <span class="n">nb</span><span class="o">.</span><span class="n">freesurfer</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">write_morph_data</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="n">surf_data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;txt&#39;</span><span class="p">):</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="n">surf_data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;vtk&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s1">&#39;data&#39;</span> <span class="ow">in</span> <span class="n">surf_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">write_vtk</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">],</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;faces&#39;</span><span class="p">],</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">write_vtk</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">],</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;faces&#39;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;gii&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;please write lovely write gifti command&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;mgh&#39;</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;please write lovely write mgh command, or retry saving as .curv file&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;fname must be a filename and surf_data must be a numpy array&#39;</span><span class="p">)</span></div>
+
+
+
+
+
+<span class="c1"># function to read vtk files</span>
+<span class="c1"># ideally use pyvtk, but it didn&#39;t work for our data, look into why</span>
+<div class="viewcode-block" id="read_vtk"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.read_vtk">[docs]</a><span class="k">def</span> <span class="nf">read_vtk</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Reads ASCII coded vtk files using pandas,</span>
+<span class="sd">    returning vertices, faces and data as three numpy arrays.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+    <span class="kn">import</span> <span class="nn">csv</span>
+    <span class="c1"># read full file while dropping empty lines</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">vtk_df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">csv</span><span class="o">.</span><span class="n">Error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;This vtk file appears to be binary coded currently only ASCII coded vtk files can be read&#39;</span><span class="p">)</span>
+    <span class="n">vtk_df</span><span class="o">=</span><span class="n">vtk_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="c1"># extract number of vertices and faces</span>
+    <span class="n">number_vertices</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">vtk_df</span><span class="p">[</span><span class="n">vtk_df</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;POINTS&#39;</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">number_faces</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">vtk_df</span><span class="p">[</span><span class="n">vtk_df</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;POLYGONS&#39;</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="c1"># read vertices into df and array</span>
+    <span class="n">start_vertices</span><span class="o">=</span> <span class="p">(</span><span class="n">vtk_df</span><span class="p">[</span><span class="n">vtk_df</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;POINTS&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span>
+    <span class="n">vertex_df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">start_vertices</span><span class="p">),</span> <span class="n">nrows</span><span class="o">=</span><span class="n">number_vertices</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;\s*&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vertex_df</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+        <span class="n">vertex_array</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vertex_df</span><span class="p">)</span>
+    <span class="c1"># sometimes the vtk format is weird with 9 indices per line, then it has to be reshaped</span>
+    <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vertex_df</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="mi">9</span><span class="p">:</span>
+        <span class="n">vertex_df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">start_vertices</span><span class="p">),</span> <span class="n">nrows</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">number_vertices</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;\s*&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">)</span>
+        <span class="n">vertex_array</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vertex_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">vertex_array</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vertex_array</span><span class="p">,</span> <span class="n">vertex_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">vertex_array</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vertex_array</span><span class="p">,</span> <span class="n">vertex_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">:</span><span class="mi">9</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,(</span><span class="nb">int</span><span class="p">(</span><span class="n">number_vertices</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">]:</span>
+                <span class="n">vertex_array</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vertex_array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vertex_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">row</span><span class="p">:(</span><span class="n">row</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="n">col</span><span class="p">:(</span><span class="n">col</span><span class="o">+</span><span class="mi">3</span><span class="p">)]),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># strip rows containing nans</span>
+        <span class="n">vertex_array</span><span class="o">=</span><span class="n">vertex_array</span><span class="p">[</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">vertex_array</span><span class="p">)</span> <span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">number_vertices</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span> <span class="s2">&quot;vertex indices out of shape&quot;</span>
+    <span class="c1"># read faces into df and array</span>
+    <span class="n">start_faces</span><span class="o">=</span> <span class="p">(</span><span class="n">vtk_df</span><span class="p">[</span><span class="n">vtk_df</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;POLYGONS&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span>
+    <span class="n">face_df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">start_faces</span><span class="p">),</span> <span class="n">nrows</span><span class="o">=</span><span class="n">number_faces</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;\s*&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">)</span>
+    <span class="n">face_array</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">face_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
+    <span class="c1"># read data into df and array if exists</span>
+    <span class="k">if</span> <span class="n">vtk_df</span><span class="p">[</span><span class="n">vtk_df</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;POINT_DATA&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">!=</span><span class="p">[]:</span>
+        <span class="n">start_data</span><span class="o">=</span><span class="p">(</span><span class="n">vtk_df</span><span class="p">[</span><span class="n">vtk_df</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;POINT_DATA&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span><span class="o">+</span><span class="mi">3</span>
+        <span class="n">number_data</span> <span class="o">=</span> <span class="n">number_vertices</span>
+        <span class="n">data_df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">start_data</span><span class="p">),</span> <span class="n">nrows</span><span class="o">=</span><span class="n">number_data</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;\s*&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">)</span>
+        <span class="n">data_array</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">vertex_array</span><span class="p">,</span> <span class="n">face_array</span><span class="p">,</span> <span class="n">data_array</span></div>
+
+<span class="c1"># function to read ASCII coded ply file</span>
+<div class="viewcode-block" id="read_ply"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.read_ply">[docs]</a><span class="k">def</span> <span class="nf">read_ply</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+    <span class="kn">import</span> <span class="nn">csv</span>
+    <span class="c1"># read full file and drop empty lines</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ply_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">csv</span><span class="o">.</span><span class="n">Error</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;This ply file appears to be binary coded currently only ASCII coded ply files can be read&#39;</span><span class="p">)</span>
+    <span class="n">ply_df</span> <span class="o">=</span> <span class="n">ply_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="c1"># extract number of vertices and faces, and row that marks the end of header</span>
+    <span class="n">number_vertices</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ply_df</span><span class="p">[</span><span class="n">ply_df</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;element vertex&#39;</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">number_faces</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ply_df</span><span class="p">[</span><span class="n">ply_df</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;element face&#39;</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">end_header</span> <span class="o">=</span> <span class="n">ply_df</span><span class="p">[</span><span class="n">ply_df</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">&#39;end_header&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># read vertex coordinates into dict</span>
+    <span class="n">vertex_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">end_header</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                            <span class="n">nrows</span><span class="o">=</span><span class="n">number_vertices</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;\s*&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">)</span>
+    <span class="n">vertex_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vertex_df</span><span class="p">)</span>
+    <span class="c1"># read face indices into dict</span>
+    <span class="n">face_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">end_header</span> <span class="o">+</span> <span class="n">number_vertices</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                          <span class="n">nrows</span><span class="o">=</span><span class="n">number_faces</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;\s*&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">)</span>
+    <span class="n">face_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">face_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">vertex_array</span><span class="p">,</span> <span class="n">face_array</span></div>
+
+
+<span class="c1"># function to read MNI obj mesh format</span>
+<div class="viewcode-block" id="read_obj"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.read_obj">[docs]</a><span class="k">def</span> <span class="nf">read_obj</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">chunks</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+
+      <span class="sd">&quot;&quot;&quot;Yield n-sized chunks from l&quot;&quot;&quot;</span>
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">),</span> <span class="n">n</span><span class="p">):</span>
+          <span class="k">yield</span> <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">n</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">indices</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span><span class="n">element</span><span class="p">):</span>
+        <span class="n">result</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">offset</span><span class="o">=</span><span class="n">lst</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">element</span><span class="p">,</span><span class="n">offset</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">result</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span>
+    <span class="n">fp</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">n_vert</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">n_poly</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">k</span><span class="o">=</span><span class="mi">0</span>
+    <span class="n">Polys</span><span class="o">=</span><span class="p">[]</span>
+	<span class="c1"># Find number of vertices and number of polygons, stored in .obj file.</span>
+	<span class="c1">#Then extract list of all vertices in polygons</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fp</span><span class="p">):</span>
+         <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+    	<span class="c1">#Number of vertices</span>
+             <span class="n">n_vert</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">6</span><span class="p">])</span>
+             <span class="n">XYZ</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_vert</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+         <span class="k">elif</span> <span class="n">i</span><span class="o">&lt;=</span><span class="n">n_vert</span><span class="p">:</span>
+             <span class="n">XYZ</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+         <span class="k">elif</span> <span class="n">i</span><span class="o">&gt;</span><span class="mi">2</span><span class="o">*</span><span class="n">n_vert</span><span class="o">+</span><span class="mi">5</span><span class="p">:</span>
+             <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                 <span class="n">k</span><span class="o">=</span><span class="mi">1</span>
+             <span class="k">elif</span> <span class="n">k</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                 <span class="n">Polys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+    <span class="n">Polys</span><span class="o">=</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span><span class="n">Polys</span><span class="p">)</span>
+    <span class="n">npPolys</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Polys</span><span class="p">)</span>
+    <span class="n">triangles</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">chunks</span><span class="p">(</span><span class="n">Polys</span><span class="p">,</span><span class="mi">3</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">XYZ</span><span class="p">,</span> <span class="n">triangles</span><span class="p">;</span></div>
+
+
+
+<span class="c1"># function to save mesh geometry</span>
+<div class="viewcode-block" id="save_mesh_geometry"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.save_mesh_geometry">[docs]</a><span class="k">def</span> <span class="nf">save_mesh_geometry</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="n">surf_dict</span><span class="p">):</span>
+    <span class="c1"># if input is a filename, try to load it with nibabel</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">basestring</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">surf_dict</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;orig&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;pial&#39;</span><span class="p">)</span> <span class="ow">or</span>
+                <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;sphere&#39;</span><span class="p">)</span> <span class="ow">or</span>
+                <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;inflated&#39;</span><span class="p">)):</span>
+            <span class="n">nb</span><span class="o">.</span><span class="n">freesurfer</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">write_geometry</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">],</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;faces&#39;</span><span class="p">])</span>
+<span class="c1">#            save_freesurfer(fname,surf_dict[&#39;coords&#39;],surf_dict[&#39;faces&#39;])</span>
+        <span class="k">elif</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;gii&#39;</span><span class="p">):</span>
+            <span class="n">write_gifti</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">],</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;faces&#39;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;vtk&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s1">&#39;data&#39;</span> <span class="ow">in</span> <span class="n">surf_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">write_vtk</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">],</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;faces&#39;</span><span class="p">],</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">write_vtk</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">],</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;faces&#39;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;ply&#39;</span><span class="p">):</span>
+            <span class="n">write_ply</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">],</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;faces&#39;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;obj&#39;</span><span class="p">):</span>
+            <span class="n">save_obj</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;coords&#39;</span><span class="p">],</span><span class="n">surf_dict</span><span class="p">[</span><span class="s1">&#39;faces&#39;</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;to view mesh in brainview, run the command:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;average_objects &#39;</span> <span class="o">+</span> <span class="n">fname</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">fname</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;fname must be a filename and surf_dict must be a dictionary&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="write_gifti"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.write_gifti">[docs]</a><span class="k">def</span> <span class="nf">write_gifti</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">faces</span><span class="p">):</span>
+    <span class="n">coord_array</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">gifti</span><span class="o">.</span><span class="n">GiftiDataArray</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+                                       <span class="n">intent</span><span class="o">=</span><span class="n">nb</span><span class="o">.</span><span class="n">nifti1</span><span class="o">.</span><span class="n">intent_codes</span><span class="p">[</span>
+                                           <span class="s1">&#39;NIFTI_INTENT_POINTSET&#39;</span><span class="p">])</span>
+    <span class="n">face_array</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">gifti</span><span class="o">.</span><span class="n">GiftiDataArray</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">faces</span><span class="p">,</span>
+                                      <span class="n">intent</span><span class="o">=</span><span class="n">nb</span><span class="o">.</span><span class="n">nifti1</span><span class="o">.</span><span class="n">intent_codes</span><span class="p">[</span>
+                                           <span class="s1">&#39;NIFTI_INTENT_TRIANGLE&#39;</span><span class="p">])</span>
+    <span class="n">gii</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">gifti</span><span class="o">.</span><span class="n">GiftiImage</span><span class="p">(</span><span class="n">darrays</span><span class="o">=</span><span class="p">[</span><span class="n">coord_array</span><span class="p">,</span> <span class="n">face_array</span><span class="p">])</span>
+    <span class="n">nb</span><span class="o">.</span><span class="n">gifti</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">gii</span><span class="p">,</span> <span class="n">surf_mesh</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="save_obj"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.save_obj">[docs]</a><span class="k">def</span> <span class="nf">save_obj</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">,</span><span class="n">coords</span><span class="p">,</span><span class="n">faces</span><span class="p">):</span>
+<span class="c1">#write out MNI - obj format</span>
+    <span class="n">n_vert</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+    <span class="n">XYZ</span><span class="o">=</span><span class="n">coords</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">Tri</span><span class="o">=</span><span class="n">faces</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
+        <span class="n">line1</span><span class="o">=</span><span class="s2">&quot;P 0.3 0.3 0.4 10 1 &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n_vert</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line1</span><span class="p">)</span>
+        <span class="n">k</span><span class="o">=-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">XYZ</span><span class="p">:</span>
+            <span class="n">k</span><span class="o">+=</span><span class="mi">1</span>
+            <span class="n">cor</span><span class="o">=</span><span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">XYZ</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">cor</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">XYZ</span><span class="p">:</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; 0 0 0</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">l</span><span class="o">=</span><span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Tri</span><span class="p">))</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; 0 1 1 1 1</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">nt</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">Tri</span><span class="p">)</span><span class="o">*</span><span class="mi">3</span>
+        <span class="n">Triangles</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">nt</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">Rounded8</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">Triangles</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">8</span>
+        <span class="n">N8</span><span class="o">=</span><span class="mi">8</span><span class="o">*</span><span class="n">Rounded8</span>
+        <span class="n">Triangles8</span><span class="o">=</span><span class="n">Triangles</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">N8</span><span class="p">]</span>
+        <span class="n">RowsOf8</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">Triangles8</span><span class="p">,</span><span class="n">N8</span><span class="o">/</span><span class="mi">8</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">RowsOf8</span><span class="p">:</span>
+            <span class="n">L</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">Lint</span><span class="o">=</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span><span class="n">L</span><span class="p">)</span>
+            <span class="n">Line</span><span class="o">=</span><span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Lint</span><span class="p">))</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">Line</span><span class="p">)</span>
+        <span class="n">L</span><span class="o">=</span><span class="n">Triangles</span><span class="p">[</span><span class="n">N8</span><span class="p">:]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">Lint</span><span class="o">=</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span><span class="n">L</span><span class="p">)</span>
+        <span class="n">Line</span><span class="o">=</span><span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Lint</span><span class="p">))</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">Line</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">ListOfTriangles</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Tri</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="n">Rounded8</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">ListOfTriangles</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">8</span>
+        <span class="n">N8</span><span class="o">=</span><span class="mi">8</span><span class="o">*</span><span class="n">Rounded8</span>
+        <span class="n">Triangles8</span><span class="o">=</span><span class="n">ListOfTriangles</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">N8</span><span class="p">]</span>
+        <span class="n">ListTri8</span><span class="o">=</span><span class="n">ListOfTriangles</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">N8</span><span class="p">]</span>
+        <span class="n">RowsOf8</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">Triangles8</span><span class="p">,</span><span class="n">N8</span><span class="o">/</span><span class="mi">8</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">RowsOf8</span><span class="p">:</span>
+            <span class="n">L</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">Lint</span><span class="o">=</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span><span class="n">L</span><span class="p">)</span>
+            <span class="n">Line</span><span class="o">=</span><span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Lint</span><span class="p">))</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">Line</span><span class="p">)</span>
+        <span class="n">L</span><span class="o">=</span><span class="n">ListOfTriangles</span><span class="p">[</span><span class="n">N8</span><span class="p">:]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">Lint</span><span class="o">=</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span><span class="n">L</span><span class="p">)</span>
+        <span class="n">Line</span><span class="o">=</span><span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Lint</span><span class="p">))</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">Line</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="write_vtk"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.write_vtk">[docs]</a><span class="k">def</span> <span class="nf">write_vtk</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Creates ASCII coded vtk file from numpy arrays using pandas.</span>
+<span class="sd">    Inputs:</span>
+<span class="sd">    -------</span>
+<span class="sd">    (mandatory)</span>
+<span class="sd">    * filename: str, path to location where vtk file should be stored</span>
+<span class="sd">    * vertices: numpy array with vertex coordinates,  shape (n_vertices, 3)</span>
+<span class="sd">    * faces: numpy array with face specifications, shape (n_faces, 3)</span>
+<span class="sd">    (optional)</span>
+<span class="sd">    * data: numpy array with data points, shape (n_vertices, n_datapoints)</span>
+<span class="sd">        NOTE: n_datapoints can be =1 but cannot be skipped (n_vertices,)</span>
+<span class="sd">    * comment: str, is written into the comment section of the vtk file</span>
+<span class="sd">    Usage:</span>
+<span class="sd">    ---------------------</span>
+<span class="sd">    write_vtk(&#39;/path/to/vtk/file.vtk&#39;, v_array, f_array)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+    <span class="c1"># infer number of vertices and faces</span>
+    <span class="n">number_vertices</span><span class="o">=</span><span class="n">vertices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">number_faces</span><span class="o">=</span><span class="n">faces</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">number_data</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># make header and subheader dataframe</span>
+    <span class="n">header</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;# vtk DataFile Version 3.0&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">comment</span><span class="p">,</span>
+            <span class="s1">&#39;ASCII&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;DATASET POLYDATA&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;POINTS </span><span class="si">%i</span><span class="s1"> float&#39;</span><span class="o">%</span><span class="n">number_vertices</span>
+             <span class="p">]</span>
+    <span class="n">header_df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+    <span class="n">sub_header</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POLYGONS </span><span class="si">%i</span><span class="s1"> </span><span class="si">%i</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">number_faces</span><span class="p">,</span> <span class="mi">4</span><span class="o">*</span><span class="n">number_faces</span><span class="p">)]</span>
+    <span class="n">sub_header_df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sub_header</span><span class="p">)</span>
+    <span class="c1"># make dataframe from vertices</span>
+    <span class="n">vertex_df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span>
+    <span class="c1"># make dataframe from faces, appending first row of 3&#39;s (indicating the polygons are triangles)</span>
+    <span class="n">triangles</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">number_faces</span><span class="p">)),</span> <span class="p">(</span><span class="n">number_faces</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">triangles</span><span class="o">=</span><span class="n">triangles</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">faces</span><span class="o">=</span><span class="n">faces</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">faces_df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">triangles</span><span class="p">,</span><span class="n">faces</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="c1"># write dfs to csv</span>
+    <span class="n">header_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">vertex_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.3f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">sub_header_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">faces_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.0f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="c1"># if there is data append second subheader and data</span>
+    <span class="k">if</span> <span class="n">data</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">datapoints</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">sub_header2</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POINT_DATA </span><span class="si">%i</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">number_data</span><span class="p">),</span>
+                     <span class="s1">&#39;SCALARS EmbedVertex float </span><span class="si">%i</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">datapoints</span><span class="p">),</span>
+                     <span class="s1">&#39;LOOKUP_TABLE default&#39;</span><span class="p">]</span>
+        <span class="n">sub_header_df2</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sub_header2</span><span class="p">)</span>
+        <span class="n">data_df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">sub_header_df2</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.16f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="write_ply"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.write_ply">[docs]</a><span class="k">def</span> <span class="nf">write_ply</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+    <span class="nb">print</span> <span class="s2">&quot;writing ply format&quot;</span>
+    <span class="c1"># infer number of vertices and faces</span>
+    <span class="n">number_vertices</span> <span class="o">=</span> <span class="n">vertices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">number_faces</span> <span class="o">=</span> <span class="n">faces</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># make header dataframe</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ply&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;format ascii 1.0&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;comment </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">comment</span><span class="p">,</span>
+            <span class="s1">&#39;element vertex </span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">number_vertices</span><span class="p">,</span>
+            <span class="s1">&#39;property float x&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;property float y&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;property float z&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;element face </span><span class="si">%i</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">number_faces</span><span class="p">,</span>
+            <span class="s1">&#39;property list uchar int vertex_indices&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;end_header&#39;</span>
+             <span class="p">]</span>
+    <span class="n">header_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+    <span class="c1"># make dataframe from vertices</span>
+    <span class="n">vertex_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span>
+    <span class="c1"># make dataframe from faces, adding first row of 3s (indicating triangles)</span>
+    <span class="n">triangles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">number_faces</span><span class="p">)),</span> <span class="p">(</span><span class="n">number_faces</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">triangles</span> <span class="o">=</span> <span class="n">triangles</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">faces</span> <span class="o">=</span> <span class="n">faces</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">faces_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">triangles</span><span class="p">,</span> <span class="n">faces</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="c1"># write dfs to csv</span>
+    <span class="n">header_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">vertex_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                         <span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.3f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">faces_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.0f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">nighres</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../nighres.html">nighres package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Julia Huntenburg.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

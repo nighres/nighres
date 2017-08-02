@@ -1,0 +1,255 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>nighres.laminar.volumetric_layering &#8212; nighres 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nighres.laminar.volumetric_layering</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nb</span>
+<span class="kn">import</span> <span class="nn">cbstools</span>
+<span class="kn">from</span> <span class="nn">..io</span> <span class="k">import</span> <span class="n">load_volume</span><span class="p">,</span> <span class="n">save_volume</span>
+<span class="kn">from</span> <span class="nn">..global_settings</span> <span class="k">import</span> <span class="n">TOPOLOGY_LUT_DIR</span>
+
+
+<div class="viewcode-block" id="volumetric_layering"><a class="viewcode-back" href="../../../nighres.laminar.volumetric_layering.html#nighres.laminar.volumetric_layering.volumetric_layering">[docs]</a><span class="k">def</span> <span class="nf">volumetric_layering</span><span class="p">(</span><span class="n">inner_levelset</span><span class="p">,</span> <span class="n">outer_levelset</span><span class="p">,</span>
+                        <span class="n">n_layers</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">topology_lut_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">save_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">file_extension</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;Equivolumetric layering of the cortical sheet.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    inner_levelset: TODO:type</span>
+<span class="sd">        Levelset representation of the inner surface, typically GM/WM surface</span>
+<span class="sd">    outer_levelset : TODO:type</span>
+<span class="sd">        Levelset representation of the outer surface, typically GM/CSF surface</span>
+<span class="sd">    n_layers : int, optional</span>
+<span class="sd">        Number of layers to be created (default is 10)</span>
+<span class="sd">    topology_lut_dir: str, optional</span>
+<span class="sd">        Path to directory in which topology files are stored (default is stored</span>
+<span class="sd">        in TOPOLOGY_LUT_DIR)</span>
+<span class="sd">    save_data: bool</span>
+<span class="sd">        Save output data to file (default is False)</span>
+<span class="sd">    output_dir: str, optional</span>
+<span class="sd">        Path to desired output directory, will be created if it doesn&#39;t exist</span>
+<span class="sd">    file_name: str, optional</span>
+<span class="sd">        Desired base name for output files (suffixes will be added)</span>
+<span class="sd">    file_extension: str, optional</span>
+<span class="sd">        Desired extension for output files (determines file type)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ----------</span>
+<span class="sd">    outputs: dict</span>
+<span class="sd">        Dictionary collecting outputs under the following keys</span>
+<span class="sd">        - &#39;depth&#39;: Continuous depth from 0 (inner surface) to 1 (outer surface)</span>
+<span class="sd">                   (layering_depth)</span>
+<span class="sd">        - &#39;layers&#39;: Discrete layers from 1 (bordering inner surface) to</span>
+<span class="sd">                    n_layers (bordering outer surface) (_layering_layers)</span>
+<span class="sd">        - &#39;boundaries&#39;: Levelset representations of boundaries between</span>
+<span class="sd">                        all layers (4D image) (_layering_boundaries)</span>
+<span class="sd">        (suffix of output files if save_data is set to True)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Original Java module by Miriam Waehnert, Pierre-Louis Bazin and</span>
+<span class="sd">    Juliane Dinse. Algorithm details can be found in [1].</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    [1] Waehnert et al (2014). Anatomically motivated modeling of cortical</span>
+<span class="sd">    laminae. DOI: 10.1016/j.neuroimage.2013.03.078</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># set default topology lut dir if not given</span>
+    <span class="k">if</span> <span class="n">topology_lut_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">topology_lut_dir</span> <span class="o">=</span> <span class="n">TOPOLOGY_LUT_DIR</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># check if dir exists</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The topology_lut_dir you have specified (</span><span class="si">{0}</span><span class="s1">) &#39;</span>
+                             <span class="s1">&#39;does not exist&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">))</span>
+        <span class="c1"># if we don&#39;t end in a path sep, we need to make sure that we add it</span>
+        <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">):</span>
+            <span class="n">topology_lut_dir</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span>
+
+    <span class="c1"># load the data as well as filenames and headers for saving later</span>
+    <span class="n">inner_img</span> <span class="o">=</span> <span class="n">load_volume</span><span class="p">(</span><span class="n">inner_levelset</span><span class="p">)</span>
+    <span class="n">inner_data</span> <span class="o">=</span> <span class="n">inner_img</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+    <span class="n">hdr</span> <span class="o">=</span> <span class="n">inner_img</span><span class="o">.</span><span class="n">get_header</span><span class="p">()</span>
+    <span class="n">aff</span> <span class="o">=</span> <span class="n">inner_img</span><span class="o">.</span><span class="n">get_affine</span><span class="p">()</span>
+    <span class="n">resolution</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">hdr</span><span class="o">.</span><span class="n">get_zooms</span><span class="p">()]</span>
+    <span class="n">dimensions</span> <span class="o">=</span> <span class="n">inner_data</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">outer_data</span> <span class="o">=</span> <span class="n">load_volume</span><span class="p">(</span><span class="n">outer_levelset</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+
+    <span class="c1"># start virutal machine if not already running</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cbstools</span><span class="o">.</span><span class="n">initVM</span><span class="p">(</span><span class="n">initialheap</span><span class="o">=</span><span class="s1">&#39;6000m&#39;</span><span class="p">,</span> <span class="n">maxheap</span><span class="o">=</span><span class="s1">&#39;6000m&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># initate class</span>
+    <span class="n">lamination</span> <span class="o">=</span> <span class="n">cbstools</span><span class="o">.</span><span class="n">LaminarVolumetricLayering</span><span class="p">()</span>
+
+    <span class="c1"># set parameters from input images</span>
+    <span class="n">lamination</span><span class="o">.</span><span class="n">setDimensions</span><span class="p">(</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dimensions</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">lamination</span><span class="o">.</span><span class="n">setResolutions</span><span class="p">(</span><span class="n">resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">resolution</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">resolution</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">lamination</span><span class="o">.</span><span class="n">setInnerDistanceImage</span><span class="p">(</span><span class="n">cbstools</span><span class="o">.</span><span class="n">JArray</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">)(</span>
+                                    <span class="p">(</span><span class="n">inner_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)))</span>
+    <span class="n">lamination</span><span class="o">.</span><span class="n">setOuterDistanceImage</span><span class="p">(</span><span class="n">cbstools</span><span class="o">.</span><span class="n">JArray</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">)(</span>
+                                    <span class="p">(</span><span class="n">outer_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)))</span>
+    <span class="n">lamination</span><span class="o">.</span><span class="n">setNumberOfLayers</span><span class="p">(</span><span class="n">n_layers</span><span class="p">)</span>
+    <span class="n">lamination</span><span class="o">.</span><span class="n">setTopologyLUTdirectory</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">)</span>
+
+    <span class="c1"># execute class</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating layers&quot;</span><span class="p">)</span>
+        <span class="n">lamination</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="c1"># if the Java module fails, reraise the error it throws</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> The underlying Java code did not execute cleanly: &quot;</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">raise</span>
+        <span class="k">return</span>
+
+    <span class="c1"># collect data</span>
+    <span class="n">depth_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                                    <span class="n">lamination</span><span class="o">.</span><span class="n">getContinuousDepthMeasurement</span><span class="p">(),</span>
+                                    <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">dimensions</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">)</span>
+    <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;cal_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">depth_data</span><span class="p">)</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">depth_data</span><span class="p">,</span> <span class="n">aff</span><span class="p">,</span> <span class="n">hdr</span><span class="p">)</span>
+
+    <span class="n">layer_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lamination</span><span class="o">.</span><span class="n">getDiscreteSampledLayers</span><span class="p">(),</span>
+                                     <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span> <span class="n">dimensions</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">)</span>
+    <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;cal_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">layer_data</span><span class="p">)</span>
+    <span class="n">layers</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">layer_data</span><span class="p">,</span> <span class="n">aff</span><span class="p">,</span> <span class="n">hdr</span><span class="p">)</span>
+
+    <span class="n">boundary_len</span> <span class="o">=</span> <span class="n">lamination</span><span class="o">.</span><span class="n">getLayerBoundarySurfacesLength</span><span class="p">()</span>
+    <span class="n">boundary_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lamination</span><span class="o">.</span><span class="n">getLayerBoundarySurfaces</span><span class="p">(),</span>
+                               <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="p">(</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                               <span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dimensions</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">boundary_len</span><span class="p">),</span>
+                               <span class="s1">&#39;F&#39;</span><span class="p">)</span>
+    <span class="n">hdr</span><span class="p">[</span><span class="s1">&#39;cal_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">boundary_data</span><span class="p">)</span>
+    <span class="n">boundaries</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">boundary_data</span><span class="p">,</span> <span class="n">aff</span><span class="p">,</span> <span class="n">hdr</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">save_data</span><span class="p">:</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">_output_dir_4saving</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">inner_levelset</span><span class="p">)</span>
+
+        <span class="n">depth_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">inner_image</span><span class="p">,</span>
+                                    <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;layering_depth&#39;</span><span class="p">,</span>
+                                    <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                    <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
+
+        <span class="n">layer_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">inner_image</span><span class="p">,</span>
+                                    <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;layering_layers&#39;</span><span class="p">,</span>
+                                    <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                    <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
+
+        <span class="n">boundary_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">inner_image</span><span class="p">,</span>
+                                       <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;layering_boundaries&#39;</span><span class="p">,</span>
+                                       <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                       <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
+
+        <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">depth_file</span><span class="p">),</span> <span class="n">depths</span><span class="p">)</span>
+        <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">layer_file</span><span class="p">),</span> <span class="n">layers</span><span class="p">)</span>
+        <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">boundary_file</span><span class="p">),</span> <span class="n">boundaries</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;depth&#39;</span><span class="p">:</span> <span class="n">depth</span><span class="p">,</span> <span class="s1">&#39;layers&#39;</span><span class="p">:</span> <span class="n">layers</span><span class="p">,</span> <span class="s1">&#39;boundaries&#39;</span><span class="p">:</span> <span class="n">boundaries</span><span class="p">}</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">nighres</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../nighres.html">nighres package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Julia Huntenburg.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

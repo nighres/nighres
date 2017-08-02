@@ -1,0 +1,285 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>nighres.brain.mp2rage_skullstripping &#8212; nighres 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nighres.brain.mp2rage_skullstripping</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nb</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">cbstools</span>
+<span class="kn">from</span> <span class="nn">..io</span> <span class="k">import</span> <span class="n">load_volume</span><span class="p">,</span> <span class="n">save_volume</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">_output_dir_4saving</span><span class="p">,</span> <span class="n">_fname_4saving</span>
+<span class="kn">from</span> <span class="nn">..global_settings</span> <span class="k">import</span> <span class="n">TOPOLOGY_LUT_DIR</span>
+
+
+<div class="viewcode-block" id="mp2rage_skullstripping"><a class="viewcode-back" href="../../../nighres.brain.mp2rage_skullstripping.html#nighres.brain.mp2rage_skullstripping.mp2rage_skullstripping">[docs]</a><span class="k">def</span> <span class="nf">mp2rage_skullstripping</span><span class="p">(</span><span class="n">second_inversion</span><span class="p">,</span> <span class="n">t1_weighted</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">t1_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                           <span class="n">skip_zero_values</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">topology_lut_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                           <span class="n">save_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                           <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">file_extension</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; MP2RAGE skull stripping</span>
+
+<span class="sd">    Estimate a brain mask from MRI data acquired with the MP2RAGE sequence.</span>
+<span class="sd">    At least a T1-weighted or a T1 map image is required</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    second_inversion: TODO:type</span>
+<span class="sd">        Second inversion image derived from MP2RAGE sequence</span>
+<span class="sd">    t1_weighted: TODO:type</span>
+<span class="sd">        T1-weighted image derived from MP2RAGE sequence (also referred to as</span>
+<span class="sd">        &quot;uniform&quot; image)</span>
+<span class="sd">        At least one of t1_weighted and t1_map is required</span>
+<span class="sd">    t1_map: TODO:type</span>
+<span class="sd">        Quantitative T1 map image derived from MP2RAGE sequence</span>
+<span class="sd">        At least one of t1_weighted and t1_map is required</span>
+<span class="sd">    skip_zero_values: bool</span>
+<span class="sd">         Ignores voxels with zero value (default is True)</span>
+<span class="sd">    topology_lut_dir: str, optional</span>
+<span class="sd">        Path to directory in which topology files are stored (default is stored</span>
+<span class="sd">        in TOPOLOGY_LUT_DIR)</span>
+<span class="sd">    save_data: bool</span>
+<span class="sd">        Save output data to file (default is False)</span>
+<span class="sd">    output_dir: str, optional</span>
+<span class="sd">        Path to desired output directory, will be created if it doesn&#39;t exist</span>
+<span class="sd">    file_extension: str, optional</span>
+<span class="sd">        Desired extension for output files (determines file type)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ----------</span>
+<span class="sd">    outputs: dict</span>
+<span class="sd">        Dictionary collecting outputs under the following keys:</span>
+<span class="sd">        - &#39;brain_mask&#39;: Binary brain mask (_strip_mask)</span>
+<span class="sd">        - &#39;inv2_masked&#39;: Masked second inversion imamge (_strip_inv2)</span>
+<span class="sd">        - &#39;t1w_masked&#39;: Masked T1-weighted image (_strip_t1w),</span>
+<span class="sd">                        only created if t1_weighted was given</span>
+<span class="sd">        - &#39;t1map_masked&#39;: Masked T1 map (_strip_t1map),</span>
+<span class="sd">                          only created if t1_map  was given</span>
+<span class="sd">        (suffix of output files if save_data is set to True)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Original Java module by Pierre-Louis Bazin. Details on the MP2RAGE</span>
+<span class="sd">    sequence can be found in [1]</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    [1] Marques et al. (2010). MP2RAGE, a self bias-field corrected sequence</span>
+<span class="sd">    for improved segmentation and T1-mapping at high field.</span>
+<span class="sd">    DOI: 10.1016/j.neuroimage.2009.10.002</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># set default topology lut dir if not given</span>
+    <span class="k">if</span> <span class="n">topology_lut_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">topology_lut_dir</span> <span class="o">=</span> <span class="n">TOPOLOGY_LUT_DIR</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># check if dir exists</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The topology_lut_dir you have specified (</span><span class="si">{0}</span><span class="s1">) &#39;</span>
+                             <span class="s1">&#39;does not exist&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">))</span>
+        <span class="c1"># if we don&#39;t end in a path sep, we need to make sure that we add it</span>
+        <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">):</span>
+            <span class="n">topology_lut_dir</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span>
+
+    <span class="c1"># start virtual machine, if not already running</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cbstools</span><span class="o">.</span><span class="n">initVM</span><span class="p">(</span><span class="n">initialheap</span><span class="o">=</span><span class="s1">&#39;6000m&#39;</span><span class="p">,</span> <span class="n">maxheap</span><span class="o">=</span><span class="s1">&#39;6000m&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># create skulltripping instance</span>
+    <span class="n">stripper</span> <span class="o">=</span> <span class="n">cbstools</span><span class="o">.</span><span class="n">BrainMp2rageSkullStripping</span><span class="p">()</span>
+
+    <span class="c1"># get dimensions and resolution from second inversion image</span>
+    <span class="n">inv2_img</span> <span class="o">=</span> <span class="n">load_volume</span><span class="p">(</span><span class="n">second_inversion</span><span class="p">)</span>
+    <span class="n">inv2_data</span> <span class="o">=</span> <span class="n">inv2_img</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+    <span class="n">inv2_affine</span> <span class="o">=</span> <span class="n">inv2_img</span><span class="o">.</span><span class="n">get_affine</span><span class="p">()</span>
+    <span class="n">inv2_hdr</span> <span class="o">=</span> <span class="n">inv2_img</span><span class="o">.</span><span class="n">get_header</span><span class="p">()</span>
+    <span class="n">resolution</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inv2_hdr</span><span class="o">.</span><span class="n">get_zooms</span><span class="p">()]</span>
+    <span class="n">dimensions</span> <span class="o">=</span> <span class="n">inv2_data</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">stripper</span><span class="o">.</span><span class="n">setDimensions</span><span class="p">(</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dimensions</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">stripper</span><span class="o">.</span><span class="n">setResolutions</span><span class="p">(</span><span class="n">resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">resolution</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">resolution</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">stripper</span><span class="o">.</span><span class="n">setSecondInversionImage</span><span class="p">(</span><span class="n">cbstools</span><span class="o">.</span><span class="n">JArray</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">)(</span>
+                                    <span class="p">(</span><span class="n">inv2_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)))</span>
+
+    <span class="c1"># pass other inputs</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">t1_weighted</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">t1_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;You must specify at least one of &#39;</span>
+                         <span class="s1">&#39;t1_weighted and t1_map&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">t1_weighted</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">t1w_img</span> <span class="o">=</span> <span class="n">load_volume</span><span class="p">(</span><span class="n">t1_weighted</span><span class="p">)</span>
+        <span class="n">t1w_data</span> <span class="o">=</span> <span class="n">t1w_img</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+        <span class="n">t1w_hdr</span> <span class="o">=</span> <span class="n">t1w_img</span><span class="o">.</span><span class="n">get_header</span><span class="p">()</span>
+        <span class="n">stripper</span><span class="o">.</span><span class="n">setT1weightedImage</span><span class="p">(</span><span class="n">cbstools</span><span class="o">.</span><span class="n">JArray</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">)(</span>
+                                      <span class="p">(</span><span class="n">t1w_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">t1_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">t1map_img</span> <span class="o">=</span> <span class="n">load_volume</span><span class="p">(</span><span class="n">t1_map</span><span class="p">)</span>
+        <span class="n">t1map_data</span> <span class="o">=</span> <span class="n">t1map_img</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+        <span class="n">t1map_hdr</span> <span class="o">=</span> <span class="n">t1map_img</span><span class="o">.</span><span class="n">get_header</span><span class="p">()</span>
+        <span class="n">stripper</span><span class="o">.</span><span class="n">setT1MapImage</span><span class="p">(</span><span class="n">cbstools</span><span class="o">.</span><span class="n">JArray</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">)(</span>
+                                    <span class="p">(</span><span class="n">t1map_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)))</span>
+
+    <span class="n">stripper</span><span class="o">.</span><span class="n">setSkipZeroValues</span><span class="p">(</span><span class="n">skip_zero_values</span><span class="p">)</span>
+
+    <span class="c1"># execute skull stripping</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running skull stripping&quot;</span><span class="p">)</span>
+        <span class="n">stripper</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+
+    <span class="k">except</span><span class="p">:</span>
+        <span class="c1"># if the Java module fails, reraise the error it throws</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> The underlying Java code did not execute cleanly: &quot;</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">raise</span>
+        <span class="k">return</span>
+
+    <span class="c1"># collect outputs and potentially save</span>
+    <span class="n">inv2_masked_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                                <span class="n">mgdm</span><span class="o">.</span><span class="n">stripper</span><span class="o">.</span><span class="n">getMaskedSecondINversionImage</span><span class="p">(),</span>
+                                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">dimensions</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">)</span>
+    <span class="n">inv2_hdr</span><span class="p">[</span><span class="s1">&#39;cal_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">inv2_masked_data</span><span class="p">)</span>
+    <span class="n">inv2_masked</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">inv2_masked_data</span><span class="p">,</span> <span class="n">inv2_affine</span><span class="p">,</span> <span class="n">inv2_hdr</span><span class="p">)</span>
+
+    <span class="n">mask_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mgdm</span><span class="o">.</span><span class="n">stripper</span><span class="o">.</span><span class="n">getBrainMaskImage</span><span class="p">(),</span>
+                                    <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">),</span> <span class="n">dimensions</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">)</span>
+    <span class="n">inv2_hdr</span><span class="p">[</span><span class="s1">&#39;cal_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">mask_data</span><span class="p">)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">mask_data</span><span class="p">,</span> <span class="n">inv2_affine</span><span class="p">,</span> <span class="n">inv2_hdr</span><span class="p">)</span>
+
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;brain_mask&#39;</span><span class="p">:</span> <span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;inv2_masked&#39;</span><span class="p">:</span> <span class="n">inv2_masked</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">save_data</span><span class="p">:</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">_output_dir_4saving</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">second_inversion</span><span class="p">)</span>
+
+        <span class="n">inv2_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">second_inversion</span><span class="p">,</span>
+                                   <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;strip_inv2&#39;</span><span class="p">,</span>
+                                   <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
+        <span class="n">mask_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">second_inversion</span><span class="p">,</span>
+                                   <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;strip_mask&#39;</span><span class="p">,</span>
+                                   <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
+        <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">inv2_file</span><span class="p">),</span> <span class="n">inv2_masked</span><span class="p">)</span>
+        <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">),</span> <span class="n">mask</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">t1_weighted</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">t1w_masked_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                                <span class="n">mgdm</span><span class="o">.</span><span class="n">stripper</span><span class="o">.</span><span class="n">getMaskedT1weightedImage</span><span class="p">(),</span>
+                                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">dimensions</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">)</span>
+        <span class="n">t1w_hdr</span><span class="p">[</span><span class="s1">&#39;cal_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">t1w_masked_data</span><span class="p">)</span>
+        <span class="n">t1w_masked</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">t1w_masked_data</span><span class="p">,</span> <span class="n">t1w_affine</span><span class="p">,</span> <span class="n">t1w_hdr</span><span class="p">)</span>
+        <span class="n">outputs</span><span class="p">[</span><span class="s1">&#39;t1w_masked&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t1w_masked</span>
+
+        <span class="k">if</span> <span class="n">save_data</span><span class="p">:</span>
+            <span class="n">t1w_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">t1_weighted</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;strip_t1w&#39;</span><span class="p">,</span>
+                                      <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
+            <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">t1w_file</span><span class="p">),</span> <span class="n">t1w_masked</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">t1_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">t1map_masked_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                                        <span class="n">mgdm</span><span class="o">.</span><span class="n">stripper</span><span class="o">.</span><span class="n">getMaskedT1mapImage</span><span class="p">(),</span>
+                                        <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">dimensions</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">)</span>
+        <span class="n">t1map_hdr</span><span class="p">[</span><span class="s1">&#39;cal_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">t1map_masked_data</span><span class="p">)</span>
+        <span class="n">t1map_masked</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">t1map_masked_data</span><span class="p">,</span> <span class="n">t1map_affine</span><span class="p">,</span>
+                                      <span class="n">t1map_hdr</span><span class="p">)</span>
+        <span class="n">outputs</span><span class="p">[</span><span class="s1">&#39;t1map_masked&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t1map_masked</span>
+
+        <span class="k">if</span> <span class="n">save_data</span><span class="p">:</span>
+            <span class="n">t1map_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">t1_map</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;strip_t1map&#39;</span><span class="p">,</span>
+                                        <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
+            <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">t1map_file</span><span class="p">),</span> <span class="n">t1map_masked</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">outputs</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">nighres</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../nighres.html">nighres package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Julia Huntenburg.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
