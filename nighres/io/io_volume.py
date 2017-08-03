@@ -1,70 +1,84 @@
 import nibabel as nb
 import numpy as np
 
-# function to read volumetric tissue classification and turn into 3D array
-def load_volume(mri_vol):
+
+def load_volume(volume):
+    """Load volumetric data
+
+    Function to load volumetric data into a Nibabel SpatialImage [1]
+
+    Parameters
+    ----------
+    volume: TODO:type
+        Volumetric data to be loaded, can be a path to a file that nibabel can
+        load, or a Nibabel SpatialImage
+
+    Returns
+    ----------
+    image: Nibabel SpatialImage
+
+    Notes
+    ----------
+    Originally created as part of Laminar Python [2]
+
+    References
+    -----------
+    [1] http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage
+    [2] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+        depth-resolved analysis of high-resolution brain imaging data in
+        Python. DOI: 10.3897/rio.3.e12346
+    """  # noqa
+
     # if input is a filename, try to load it
-    if isinstance(mri_vol, basestring):
-    # importing nifti files
-        if (mri_vol.endswith('nii') or mri_vol.endswith('nii.gz')):
-            img=nb.load(mri_vol)
-            # importing mnc files using pyminc, suggest to download if missing
-        elif mri_vol.endswith('mnc'):
-            try:
-                import minc as pyezminc
-                img=pyezminc.mnc2nii(mri_vol)
-            except ValueError:
-                print "failed import pyezminc. try installing"
-# option to add in more file types here, eg analyze
-# if volume is already an np array
-    elif isinstance(mri_vol, nb.spatialimages.SpatialImage):
-        img=mri_vol
-# img_data=np.array(mri_vol)
+    if isinstance(volume, basestring):
+        # importing nifti files
+        image = nb.load(volume)
+    # if volume is already a nibabel object
+    elif isinstance(volume, nb.spatialimages.SpatialImage):
+        image = volume
     else:
-                raise ValueError('volume must be a either filename or a nibabel image')
-    return img;
+        raise ValueError('Input volume must be a either a path to a file in a '
+                         'that Nibabel can load, or a nibabel SpatialImage.')
+    return image
 
 
-# function to save volume data
-def save_volume(fname, img, dtype='float32', CLOBBER=True):
-    """
-    Function to write volume data to file. Filetype is based on filename suffix
-    Input:
-        - fname:    you can figure that out
-        - data:             numpy array
-        - affine:              affine matrix
-        - header:        header data to write to file (use img.header to get the header of root file)
-        - data_type:        numpy data type ('uint32', 'float32' etc)
-        - CLOBBER:          overwrite existing file
-    """
+def save_volume(filename, volume, dtype='float32', overwrite_file=True):
+    """Save volumetric data
+
+    Function to save volumetric data that is a Nibabel SpatialImage [1]
+    to a file
+
+    Parameters
+    ----------
+    filename: str
+        Full path and filename under which volume should be saved. The
+        extension determines the file format (must be supported by Nibabel)
+    volume: Nibabel SpatialImage
+        Volumetric data to be saved
+    dtype: str, optional
+        Datatype in which volumetric data should be stored (default is float32)
+    overwrite_file: bool, optional
+        Overwrite existing files (default is True)
+
+    Notes
+    ----------
+    Originally created as part of Laminar Python [2]
+
+    References
+    -----------
+    [1] http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage
+    [2] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+        depth-resolved analysis of high-resolution brain imaging data in
+        Python. DOI: 10.3897/rio.3.e12346
+    """  # noqa
     import os
-    if (fname.endswith('nii') or fname.endswith('nii.gz')):
-        if dtype is not None:  # if there is a particular data_type chosen, set it
-        # data=data.astype(data_type)
-            img.set_data_dtype(dtype)
-        if not (os.path.isfile(fname)) or CLOBBER:
-            img.to_filename(fname)
+    if dtype is not None:
+        volume.set_data_dtype(dtype)
+    if os.path.isfile(filename) and overwrite_file is False:
+        print("This file exists and overwrite_file was set to False, ""
+              "file not saved.")
         else:
-            print("This file exists and CLOBBER was set to false, file not saved.")
- #    elif full_fileName.endswith('mnc')
-#               save minc using Thomas code
-
-
-#loading in minc and converting to nii
-def mnc2nii(input_fn):
-	'''For a MINC input file, returns a nibabel nifti image.
-		This image can then be saved as a nifti file.'''
-	img_mnc=pyezminc.Image(fname=input_fn)
-
-	#Create empty instance of a Nibabel image
-	img_nii = nib.Nifti1Image(img_mnc.data, np.eye(4))
-
-	for space, row in zip(['xspace', 'yspace', 'zspace'],['srow_x', 'srow_y', 'srow_z'] ):
-		img_nii.header[row]=img_mnc.header[space]['direction_cosines'] + img_mnc.header[space]['start']
-	affine= [img_nii.header['srow_x'], img_nii.header['srow_y'], img_nii.header['srow_z'], [0,0,0,1]]
-
-
-	#Return data structure, data, header, affine
-	return(img_nii) #, img_mnc.data, img_nii.header, affine )
-
-
+            try:
+                volume.to_filename(filename)
+            except AttributeError:
+                print('Input volume must be a Nibabel SpatialImage.')
