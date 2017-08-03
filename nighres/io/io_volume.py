@@ -3,9 +3,8 @@ import numpy as np
 
 
 def load_volume(volume):
-    """Load volumetric data
-
-    Function to load volumetric data into a Nibabel SpatialImage [1]
+    """
+    Load volumetric data into a Nibabel SpatialImage [1]
 
     Parameters
     ----------
@@ -43,9 +42,8 @@ def load_volume(volume):
 
 
 def save_volume(filename, volume, dtype='float32', overwrite_file=True):
-    """Save volumetric data
-
-    Function to save volumetric data that is a Nibabel SpatialImage [1]
+    """
+    Save volumetric data that is a Nibabel SpatialImage [1]
     to a file
 
     Parameters
@@ -75,10 +73,10 @@ def save_volume(filename, volume, dtype='float32', overwrite_file=True):
     if dtype is not None:
         volume.set_data_dtype(dtype)
     if os.path.isfile(filename) and overwrite_file is False:
-        print("This file exists and overwrite_file was set to False, ""
+        print("This file exists and overwrite_file was set to False, "
               "file not saved.")
-        else:
-            try:
-                volume.to_filename(filename)
-            except AttributeError:
-                print('Input volume must be a Nibabel SpatialImage.')
+    else:
+        try:
+            volume.to_filename(filename)
+        except AttributeError:
+            print('Input volume must be a Nibabel SpatialImage.')
