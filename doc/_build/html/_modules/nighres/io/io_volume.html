@@ -63,73 +63,85 @@
 <span></span><span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nb</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="c1"># function to read volumetric tissue classification and turn into 3D array</span>
-<span class="k">def</span> <span class="nf">load_volume</span><span class="p">(</span><span class="n">mri_vol</span><span class="p">):</span>
-    <span class="c1"># if input is a filename, try to load it</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mri_vol</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
-    <span class="c1"># importing nifti files</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">mri_vol</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;nii&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mri_vol</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;nii.gz&#39;</span><span class="p">)):</span>
-            <span class="n">img</span><span class="o">=</span><span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">mri_vol</span><span class="p">)</span>
-            <span class="c1"># importing mnc files using pyminc, suggest to download if missing</span>
-        <span class="k">elif</span> <span class="n">mri_vol</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;mnc&#39;</span><span class="p">):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="kn">import</span> <span class="nn">minc</span> <span class="k">as</span> <span class="nn">pyezminc</span>
-                <span class="n">img</span><span class="o">=</span><span class="n">pyezminc</span><span class="o">.</span><span class="n">mnc2nii</span><span class="p">(</span><span class="n">mri_vol</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="nb">print</span> <span class="s2">&quot;failed import pyezminc. try installing&quot;</span>
-<span class="c1"># option to add in more file types here, eg analyze</span>
-<span class="c1"># if volume is already an np array</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mri_vol</span><span class="p">,</span> <span class="n">nb</span><span class="o">.</span><span class="n">spatialimages</span><span class="o">.</span><span class="n">SpatialImage</span><span class="p">):</span>
-        <span class="n">img</span><span class="o">=</span><span class="n">mri_vol</span>
-<span class="c1"># img_data=np.array(mri_vol)</span>
-    <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;volume must be a either filename or a nibabel image&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">img</span><span class="p">;</span>
 
-
-<span class="c1"># function to save volume data</span>
-<div class="viewcode-block" id="save_volume"><a class="viewcode-back" href="../../../io/io_volume.html#nighres.io.io_volume.save_volume">[docs]</a><span class="k">def</span> <span class="nf">save_volume</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">,</span> <span class="n">CLOBBER</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="load_volume"><a class="viewcode-back" href="../../../io/io_volume.html#nighres.io.io_volume.load_volume">[docs]</a><span class="k">def</span> <span class="nf">load_volume</span><span class="p">(</span><span class="n">volume</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Function to write volume data to file. Filetype is based on filename suffix</span>
-<span class="sd">    Input:</span>
-<span class="sd">        - fname:    you can figure that out</span>
-<span class="sd">        - data:             numpy array</span>
-<span class="sd">        - affine:              affine matrix</span>
-<span class="sd">        - header:        header data to write to file (use img.header to get the header of root file)</span>
-<span class="sd">        - data_type:        numpy data type (&#39;uint32&#39;, &#39;float32&#39; etc)</span>
-<span class="sd">        - CLOBBER:          overwrite existing file</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    Load volumetric data into a Nibabel SpatialImage [1]</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    volume: TODO:type</span>
+<span class="sd">        Volumetric data to be loaded, can be a path to a file that nibabel can</span>
+<span class="sd">        load, or a Nibabel SpatialImage</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image: Nibabel SpatialImage</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Originally created as part of Laminar Python [2]</span>
+
+<span class="sd">    References</span>
+<span class="sd">    -----------</span>
+<span class="sd">    [1] http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage</span>
+<span class="sd">    [2] Huntenburg et al. (2017), Laminar Python: Tools for cortical</span>
+<span class="sd">        depth-resolved analysis of high-resolution brain imaging data in</span>
+<span class="sd">        Python. DOI: 10.3897/rio.3.e12346</span>
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
+
+    <span class="c1"># if input is a filename, try to load it</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">volume</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+        <span class="c1"># importing nifti files</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">volume</span><span class="p">)</span>
+    <span class="c1"># if volume is already a nibabel object</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">volume</span><span class="p">,</span> <span class="n">nb</span><span class="o">.</span><span class="n">spatialimages</span><span class="o">.</span><span class="n">SpatialImage</span><span class="p">):</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">volume</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input volume must be a either a path to a file in a &#39;</span>
+                         <span class="s1">&#39;that Nibabel can load, or a nibabel SpatialImage.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">image</span></div>
+
+
+<div class="viewcode-block" id="save_volume"><a class="viewcode-back" href="../../../io/io_volume.html#nighres.io.io_volume.save_volume">[docs]</a><span class="k">def</span> <span class="nf">save_volume</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">volume</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">,</span> <span class="n">overwrite_file</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save volumetric data that is a Nibabel SpatialImage [1]</span>
+<span class="sd">    to a file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename: str</span>
+<span class="sd">        Full path and filename under which volume should be saved. The</span>
+<span class="sd">        extension determines the file format (must be supported by Nibabel)</span>
+<span class="sd">    volume: Nibabel SpatialImage</span>
+<span class="sd">        Volumetric data to be saved</span>
+<span class="sd">    dtype: str, optional</span>
+<span class="sd">        Datatype in which volumetric data should be stored (default is float32)</span>
+<span class="sd">    overwrite_file: bool, optional</span>
+<span class="sd">        Overwrite existing files (default is True)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Originally created as part of Laminar Python [2]</span>
+
+<span class="sd">    References</span>
+<span class="sd">    -----------</span>
+<span class="sd">    [1] http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage</span>
+<span class="sd">    [2] Huntenburg et al. (2017), Laminar Python: Tools for cortical</span>
+<span class="sd">        depth-resolved analysis of high-resolution brain imaging data in</span>
+<span class="sd">        Python. DOI: 10.3897/rio.3.e12346</span>
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
     <span class="kn">import</span> <span class="nn">os</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;nii&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;nii.gz&#39;</span><span class="p">)):</span>
-        <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># if there is a particular data_type chosen, set it</span>
-        <span class="c1"># data=data.astype(data_type)</span>
-            <span class="n">img</span><span class="o">.</span><span class="n">set_data_dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">))</span> <span class="ow">or</span> <span class="n">CLOBBER</span><span class="p">:</span>
-            <span class="n">img</span><span class="o">.</span><span class="n">to_filename</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This file exists and CLOBBER was set to false, file not saved.&quot;</span><span class="p">)</span></div>
- <span class="c1">#    elif full_fileName.endswith(&#39;mnc&#39;)</span>
-<span class="c1">#               save minc using Thomas code</span>
-
-
-<span class="c1">#loading in minc and converting to nii</span>
-<div class="viewcode-block" id="mnc2nii"><a class="viewcode-back" href="../../../io/io_volume.html#nighres.io.io_volume.mnc2nii">[docs]</a><span class="k">def</span> <span class="nf">mnc2nii</span><span class="p">(</span><span class="n">input_fn</span><span class="p">):</span>
-	<span class="sd">&#39;&#39;&#39;For a MINC input file, returns a nibabel nifti image.</span>
-<span class="sd">		This image can then be saved as a nifti file.&#39;&#39;&#39;</span>
-	<span class="n">img_mnc</span><span class="o">=</span><span class="n">pyezminc</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">input_fn</span><span class="p">)</span>
-
-	<span class="c1">#Create empty instance of a Nibabel image</span>
-	<span class="n">img_nii</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">img_mnc</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
-
-	<span class="k">for</span> <span class="n">space</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="s1">&#39;xspace&#39;</span><span class="p">,</span> <span class="s1">&#39;yspace&#39;</span><span class="p">,</span> <span class="s1">&#39;zspace&#39;</span><span class="p">],[</span><span class="s1">&#39;srow_x&#39;</span><span class="p">,</span> <span class="s1">&#39;srow_y&#39;</span><span class="p">,</span> <span class="s1">&#39;srow_z&#39;</span><span class="p">]</span> <span class="p">):</span>
-		<span class="n">img_nii</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">row</span><span class="p">]</span><span class="o">=</span><span class="n">img_mnc</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">space</span><span class="p">][</span><span class="s1">&#39;direction_cosines&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">img_mnc</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="n">space</span><span class="p">][</span><span class="s1">&#39;start&#39;</span><span class="p">]</span>
-	<span class="n">affine</span><span class="o">=</span> <span class="p">[</span><span class="n">img_nii</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;srow_x&#39;</span><span class="p">],</span> <span class="n">img_nii</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;srow_y&#39;</span><span class="p">],</span> <span class="n">img_nii</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;srow_z&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span>
-
-
-	<span class="c1">#Return data structure, data, header, affine</span>
-	<span class="k">return</span><span class="p">(</span><span class="n">img_nii</span><span class="p">)</span> <span class="c1">#, img_mnc.data, img_nii.header, affine )</span></div>
-
-
+    <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">volume</span><span class="o">.</span><span class="n">set_data_dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="ow">and</span> <span class="n">overwrite_file</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This file exists and overwrite_file was set to False, &quot;</span>
+              <span class="s2">&quot;file not saved.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">volume</span><span class="o">.</span><span class="n">to_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Input volume must be a Nibabel SpatialImage.&#39;</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

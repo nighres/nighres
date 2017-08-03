@@ -82,27 +82,73 @@
   <div class="section" id="module-nighres.io.io_volume">
 <span id="io-io-volume"></span><h1>io.io_volume<a class="headerlink" href="#module-nighres.io.io_volume" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="nighres.io.io_volume.mnc2nii">
-<code class="descclassname">nighres.io.io_volume.</code><code class="descname">mnc2nii</code><span class="sig-paren">(</span><em>input_fn</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_volume.html#mnc2nii"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.io_volume.mnc2nii" title="Permalink to this definition">¶</a></dt>
-<dd><p>For a MINC input file, returns a nibabel nifti image.
-This image can then be saved as a nifti file.</p>
+<dt id="nighres.io.io_volume.load_volume">
+<code class="descclassname">nighres.io.io_volume.</code><code class="descname">load_volume</code><span class="sig-paren">(</span><em>volume</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_volume.html#load_volume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.io_volume.load_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load volumetric data into a Nibabel SpatialImage [1]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>volume: TODO:type</strong></p>
+<blockquote>
+<div><p>Volumetric data to be loaded, can be a path to a file that nibabel can
+load, or a Nibabel SpatialImage</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">image: Nibabel SpatialImage</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Originally created as part of Laminar Python [2]</p>
+<p class="rubric">References</p>
+<p>[1] <a class="reference external" href="http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage">http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage</a>
+[2] Huntenburg et al. (2017), Laminar Python: Tools for cortical</p>
+<blockquote>
+<div>depth-resolved analysis of high-resolution brain imaging data in
+Python. DOI: 10.3897/rio.3.e12346</div></blockquote>
 </dd></dl>
 
 <dl class="function">
 <dt id="nighres.io.io_volume.save_volume">
-<code class="descclassname">nighres.io.io_volume.</code><code class="descname">save_volume</code><span class="sig-paren">(</span><em>fname</em>, <em>img</em>, <em>dtype='float32'</em>, <em>CLOBBER=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_volume.html#save_volume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.io_volume.save_volume" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to write volume data to file. Filetype is based on filename suffix
-Input:</p>
+<code class="descclassname">nighres.io.io_volume.</code><code class="descname">save_volume</code><span class="sig-paren">(</span><em>filename</em>, <em>volume</em>, <em>dtype='float32'</em>, <em>overwrite_file=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_volume.html#save_volume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.io_volume.save_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save volumetric data that is a Nibabel SpatialImage [1]
+to a file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename: str</strong></p>
 <blockquote>
-<div><ul class="simple">
-<li>fname:    you can figure that out</li>
-<li>data:             numpy array</li>
-<li>affine:              affine matrix</li>
-<li>header:        header data to write to file (use img.header to get the header of root file)</li>
-<li>data_type:        numpy data type (‘uint32’, ‘float32’ etc)</li>
-<li>CLOBBER:          overwrite existing file</li>
-</ul>
+<div><p>Full path and filename under which volume should be saved. The
+extension determines the file format (must be supported by Nibabel)</p>
 </div></blockquote>
+<p><strong>volume: Nibabel SpatialImage</strong></p>
+<blockquote>
+<div><p>Volumetric data to be saved</p>
+</div></blockquote>
+<p><strong>dtype: str, optional</strong></p>
+<blockquote>
+<div><p>Datatype in which volumetric data should be stored (default is float32)</p>
+</div></blockquote>
+<p><strong>overwrite_file: bool, optional</strong></p>
+<blockquote class="last">
+<div><p>Overwrite existing files (default is True)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Originally created as part of Laminar Python [2]</p>
+<p class="rubric">References</p>
+<p>[1] <a class="reference external" href="http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage">http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage</a>
+[2] Huntenburg et al. (2017), Laminar Python: Tools for cortical</p>
+<blockquote>
+<div>depth-resolved analysis of high-resolution brain imaging data in
+Python. DOI: 10.3897/rio.3.e12346</div></blockquote>
 </dd></dl>
 
 </div>

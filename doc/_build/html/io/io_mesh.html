@@ -81,33 +81,6 @@
             
   <div class="section" id="module-nighres.io.io_mesh">
 <span id="io-io-mesh"></span><h1>io.io_mesh<a class="headerlink" href="#module-nighres.io.io_mesh" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="nighres.io.io_mesh.read_vtk">
-<code class="descclassname">nighres.io.io_mesh.</code><code class="descname">read_vtk</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_mesh.html#read_vtk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.io_mesh.read_vtk" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads ASCII coded vtk files using pandas,
-returning vertices, faces and data as three numpy arrays.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="nighres.io.io_mesh.write_vtk">
-<code class="descclassname">nighres.io.io_mesh.</code><code class="descname">write_vtk</code><span class="sig-paren">(</span><em>filename</em>, <em>vertices</em>, <em>faces</em>, <em>data=None</em>, <em>comment=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_mesh.html#write_vtk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.io_mesh.write_vtk" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates ASCII coded vtk file from numpy arrays using pandas.
-Inputs:
-——-
-(mandatory)
-* filename: str, path to location where vtk file should be stored
-* vertices: numpy array with vertex coordinates,  shape (n_vertices, 3)
-* faces: numpy array with face specifications, shape (n_faces, 3)
-(optional)
-* data: numpy array with data points, shape (n_vertices, n_datapoints)</p>
-<blockquote>
-<div>NOTE: n_datapoints can be =1 but cannot be skipped (n_vertices,)</div></blockquote>
-<ul class="simple">
-<li>comment: str, is written into the comment section of the vtk file</li>
-</ul>
-<p>write_vtk(‘/path/to/vtk/file.vtk’, v_array, f_array)</p>
-</dd></dl>
-
 </div>
 
 
