@@ -81,6 +81,149 @@
             
   <div class="section" id="module-nighres.io.io_mesh">
 <span id="io-io-mesh"></span><h1>io.io_mesh<a class="headerlink" href="#module-nighres.io.io_mesh" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="nighres.io.io_mesh.load_mesh_data">
+<code class="descclassname">nighres.io.io_mesh.</code><code class="descname">load_mesh_data</code><span class="sig-paren">(</span><em>surf_data</em>, <em>gii_darray=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_mesh.html#load_mesh_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.io_mesh.load_mesh_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads mesh data into a Numpy array</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>surf_data:</strong></p>
+<blockquote>
+<div><p>Mesh data to be loaded, can be a Numpy array or a path to a file.
+Currently supported formats are freesurfer data formats (mgz, curv,
+sulc, thickness, annot, label), nii, gii, ASCII-coded vtk and txt</p>
+</div></blockquote>
+<p><strong>gii_darray: int, optional</strong></p>
+<blockquote>
+<div><p>Index of gii data array to load (default is to load all)</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">np.ndarray</p>
+<blockquote class="last">
+<div><p>Numpy array containing the data</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Originally created as part of Laminar Python [1]</p>
+<p class="rubric">References</p>
+<dl class="docutils">
+<dt>[1] Huntenburg et al. (2017), Laminar Python: Tools for cortical</dt>
+<dd>depth-resolved analysis of high-resolution brain imaging data in
+Python. DOI: 10.3897/rio.3.e12346</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="nighres.io.io_mesh.load_mesh_geometry">
+<code class="descclassname">nighres.io.io_mesh.</code><code class="descname">load_mesh_geometry</code><span class="sig-paren">(</span><em>surf_mesh</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_mesh.html#load_mesh_geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.io_mesh.load_mesh_geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a mesh geometry into a dictionary with entries
+“coords” and “faces”</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>surf_mesh:</strong></p>
+<blockquote>
+<div><p>Mesh geometry to be loaded, can be a path to a file
+(currently supported formats are freesurfer geometry formats,
+gii and ASCII-coded vtk, ply or obj) or a dictionary with the
+keys “coords” and “faces”</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dict</p>
+<blockquote class="last">
+<div><p>Dictionary with a numpy array with key “coords” for a Numpy array of
+the x-y-z coordinates of the mesh vertices and key “faces2 for a
+Numpy array of the the indices (into coords) of the mesh faces</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Originally created as part of Laminar Python [1]</p>
+<p class="rubric">References</p>
+<dl class="docutils">
+<dt>[1] Huntenburg et al. (2017), Laminar Python: Tools for cortical</dt>
+<dd>depth-resolved analysis of high-resolution brain imaging data in
+Python. DOI: 10.3897/rio.3.e12346</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="nighres.io.io_mesh.save_mesh_data">
+<code class="descclassname">nighres.io.io_mesh.</code><code class="descname">save_mesh_data</code><span class="sig-paren">(</span><em>filename</em>, <em>surf_data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_mesh.html#save_mesh_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.io_mesh.save_mesh_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves surface data that is a Numpy array to file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename: str</strong></p>
+<blockquote>
+<div><p>Full path and filename under which surfaces data should be saved. The
+extension determines the file format. Currently supported are
+freesurfer formats curv, thickness, sulc and ASCII-coded txt’</p>
+</div></blockquote>
+<p><strong>surf_data: np.ndarray</strong></p>
+<blockquote class="last">
+<div><p>Surface data to be saved</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Originally created as part of Laminar Python [1]</p>
+<p class="rubric">References</p>
+<dl class="docutils">
+<dt>[1] Huntenburg et al. (2017), Laminar Python: Tools for cortical</dt>
+<dd>depth-resolved analysis of high-resolution brain imaging data in
+Python. DOI: 10.3897/rio.3.e12346</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="nighres.io.io_mesh.save_mesh_geometry">
+<code class="descclassname">nighres.io.io_mesh.</code><code class="descname">save_mesh_geometry</code><span class="sig-paren">(</span><em>filename</em>, <em>surf_dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_mesh.html#save_mesh_geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.io_mesh.save_mesh_geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves surface mesh geometry to file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename: str</strong></p>
+<blockquote>
+<div><p>Full path and filename under which surfaces data should be saved. The
+extension determines the file format. Currently supported are
+freesurfer geometry formats, gii and ASCII-coded vtk, obj, ply’</p>
+</div></blockquote>
+<p><strong>surf_dict: dict</strong></p>
+<blockquote class="last">
+<div><p>Surface mesh geometry to be saved. Dictionary with a numpy array with
+key “coords” for a Numpy array of the x-y-z coordinates of the mesh
+vertices and key “faces2 for a Numpy array of the the indices
+(into coords) of the mesh faces</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Originally created as part of Laminar Python [1]</p>
+<p class="rubric">References</p>
+<dl class="docutils">
+<dt>[1] Huntenburg et al. (2017), Laminar Python: Tools for cortical</dt>
+<dd>depth-resolved analysis of high-resolution brain imaging data in
+Python. DOI: 10.3897/rio.3.e12346</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
