@@ -1,9 +1,39 @@
 import nibabel as nb
 import numpy as np
 
+# TODO: compare with Nibabel functions and possibly extend
 
-# function to load mesh geometry
+
 def load_mesh_geometry(surf_mesh):
+    '''
+    Load a mesh geometry into a dictionary with entries
+    "coords" and "faces"
+
+    Parameters
+    ----------
+    surf_mesh:
+        Mesh geometry to be loaded, can be a path to a file
+        (currently supported formats are freesurfer geometry formats,
+        gii and ASCII-coded vtk, ply or obj) or a dictionary with the
+        keys "coords" and "faces"
+
+    Returns
+    ----------
+    dict
+        Dictionary with a numpy array with key "coords" for a Numpy array of
+        the x-y-z coordinates of the mesh vertices and key "faces2 for a
+        Numpy array of the the indices (into coords) of the mesh faces
+
+    Notes
+    ----------
+    Originally created as part of Laminar Python [1]
+
+    References
+    -----------
+    [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+        depth-resolved analysis of high-resolution brain imaging data in
+        Python. DOI: 10.3897/rio.3.e12346
+    '''
     # if input is a filename, try to load it with nibabel
     if isinstance(surf_mesh, basestring):
         if (surf_mesh.endswith('orig') or surf_mesh.endswith('pial') or
@@ -21,22 +51,51 @@ def load_mesh_geometry(surf_mesh):
             coords, faces = _read_ply(surf_mesh)
         elif surf_mesh.endswith('obj'):
             coords, faces = _read_obj(surf_mesh)
-        elif isinstance(surf_mesh, dict):
-            if ('faces' in surf_mesh and 'coords' in surf_mesh):
-                coords, faces = surf_mesh['coords'], surf_mesh['faces']
-            else:
-                raise ValueError('If surf_mesh is given as a dictionary it '
-                                 'must contain items with keys "coords" and '
-                                 '"faces"')
         else:
-            raise ValueError('surf_mesh must be a either filename or a '
-                             'dictionary containing items with keys "coords" '
-                             'and "faces"')
+            raise ValueError('Currently supported file formats are freesurfer '
+                             'geometry formats and gii, vtk, ply, obj')
+    elif isinstance(surf_mesh, dict):
+        if ('faces' in surf_mesh and 'coords' in surf_mesh):
+            coords, faces = surf_mesh['coords'], surf_mesh['faces']
+        else:
+            raise ValueError('If surf_mesh is given as a dictionary it '
+                             'must contain items with keys "coords" and '
+                             '"faces"')
+    else:
+        raise ValueError('Input surf_mesh must be a either filename or a '
+                         'dictionary containing items with keys "coords" '
+                         'and "faces"')
     return {'coords': coords, 'faces': faces}
 
 
-# function to load mesh data
-def load_mesh_data(surf_data, gii_darray=0):
+def load_mesh_data(surf_data, gii_darray=None):
+    '''
+    Loads mesh data into a Numpy array
+
+    Parameters
+    ----------
+    surf_data:
+        Mesh data to be loaded, can be a Numpy array or a path to a file.
+        Currently supported formats are freesurfer data formats (mgz, curv,
+        sulc, thickness, annot, label), nii, gii, ASCII-coded vtk and txt
+    gii_darray: int, optional
+        Index of gii data array to load (default is to load all)
+
+    Returns
+    ----------
+    np.ndarray
+        Numpy array containing the data
+
+    Notes
+    ----------
+    Originally created as part of Laminar Python [1]
+
+    References
+    -----------
+    [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+        depth-resolved analysis of high-resolution brain imaging data in
+        Python. DOI: 10.3897/rio.3.e12346
+    '''
     # if the input is a filename, load it
     if isinstance(surf_data, basestring):
         if (surf_data.endswith('nii') or surf_data.endswith('nii.gz') or
@@ -54,77 +113,117 @@ def load_mesh_data(surf_data, gii_darray=0):
             fulldata = nb.gifti.giftiio.read(surf_data)
             n_vectors = len(fulldata.darrays)
             if n_vectors == 1:
-                data = fulldata.darrays[gii_darray].data
+                data = fulldata.darrays[0].data
             else:
-                print "Multiple data files found, output will be matrix"
-                data = np.zeros([len(fulldata.darrays[gii_darray].data),
-                                 n_vectors])
-                for gii_darray in range(n_vectors):
-                    data[:, gii_darray] = fulldata.darrays[gii_darray].data
+                if gii_darray is not None:
+                    data = fulldata.darrays[gii_darray].data
+                else:
+                    print('Multiple gii data arrays found and gii_darray is '
+                          'not set, output will be a matrix')
+                    data = np.zeros([len(fulldata.darrays[gii_darray].data),
+                                     n_vectors])
+                    for gii_darray in range(n_vectors):
+                        data[:, gii_darray] = fulldata.darrays[gii_darray].data
         elif surf_data.endswith('vtk'):
             _, _, data = _read_vtk(surf_data)
         elif surf_data.endswith('txt'):
             data = np.loadtxt(surf_data)
         else:
-            raise ValueError('Format of data file not recognized.')
+            raise ValueError('Format of data file not recognized. Currently '
+                             'supported formats are freesurfer data formats '
+                             '(mgz, sulc, curv, thickness, annot, label)'
+                             'nii', 'gii, ASCII-coded vtk and txt')
     elif isinstance(surf_data, np.ndarray):
         data = np.squeeze(surf_data)
     return data
 
-# function to write mesh data
 
+def save_mesh_data(filename, surf_data):
+    '''
+    Saves surface data that is a Numpy array to file
 
-def save_mesh_data(fname, surf_data):
-    if isinstance(fname, basestring) and isinstance(surf_data, np.ndarray):
-        if (fname.endswith('curv') or fname.endswith('thickness') or
-                fname.endswith('sulc')):
-            nb.freesurfer.io.write_morph_data(fname, surf_data)
-        elif fname.endswith('txt'):
-            np.savetxt(fname, surf_data)
-        elif fname.endswith('vtk'):
-            if 'data' in surf_dict.keys():
-                _write_vtk(fname, surf_dict['coords'], surf_dict['faces'],
-                           surf_dict['data'])
-            else:
-                _write_vtk(fname, surf_dict['coords'], surf_dict['faces'])
-        elif fname.endswith('gii'):
-            print('please write lovely write gifti command')
-        elif fname.endswith('mgh'):
-            print('please write lovely write mgh command, or retry saving as '
-                  ' .curv file')
+    Parameters
+    ----------
+    filename: str
+        Full path and filename under which surfaces data should be saved. The
+        extension determines the file format. Currently supported are
+        freesurfer formats curv, thickness, sulc and ASCII-coded txt'
+    surf_data: np.ndarray
+        Surface data to be saved
+
+    Notes
+    ----------
+    Originally created as part of Laminar Python [1]
+
+    References
+    -----------
+    [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+        depth-resolved analysis of high-resolution brain imaging data in
+        Python. DOI: 10.3897/rio.3.e12346
+    '''
+    if isinstance(filename, basestring) and isinstance(surf_data, np.ndarray):
+        if (filename.endswith('curv') or filename.endswith('thickness') or
+                filename.endswith('sulc')):
+            nb.freesurfer.io.write_morph_data(filename, surf_data)
+        elif filename.endswith('txt'):
+            np.savetxt(filename, surf_data)
+        else:
+            raise ValueError('File format not recognized. Currently supported '
+                             'are freesurfer formats curv, sulc, thickness '
+                             'and ASCII coded txt')
     else:
-        raise ValueError('fname must be a filename and surf_data must be a '
-                         'numpy array')
-
-# function to save mesh geometry
+        raise ValueError('Filename must be a string')
 
 
-def save_mesh_geometry(fname, surf_dict):
-    # if input is a filename, try to load it with nibabel
-    if isinstance(fname, basestring) and isinstance(surf_dict, dict):
-        if (fname.endswith('orig') or fname.endswith('pial') or
-                fname.endswith('white') or fname.endswith('sphere') or
-                fname.endswith('inflated')):
-            nb.freesurfer.io.write_geometry(fname, surf_dict['coords'],
+def save_mesh_geometry(filename, surf_dict):
+    '''
+    Saves surface mesh geometry to file
+
+    Parameters
+    ----------
+    filename: str
+        Full path and filename under which surfaces data should be saved. The
+        extension determines the file format. Currently supported are
+        freesurfer geometry formats, gii and ASCII-coded vtk, obj, ply'
+    surf_dict: dict
+        Surface mesh geometry to be saved. Dictionary with a numpy array with
+        key "coords" for a Numpy array of the x-y-z coordinates of the mesh
+        vertices and key "faces2 for a Numpy array of the the indices
+        (into coords) of the mesh faces
+
+    Notes
+    ----------
+    Originally created as part of Laminar Python [1]
+
+    References
+    -----------
+    [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+        depth-resolved analysis of high-resolution brain imaging data in
+        Python. DOI: 10.3897/rio.3.e12346
+    '''
+    if isinstance(filename, basestring) and isinstance(surf_dict, dict):
+        if (filename.endswith('orig') or filename.endswith('pial') or
+                filename.endswith('white') or filename.endswith('sphere') or
+                filename.endswith('inflated')):
+            nb.freesurfer.io.write_geometry(filename, surf_dict['coords'],
                                             surf_dict['faces'])
-#            save_freesurfer(fname,surf_dict['coords'],surf_dict['faces'])
-        elif fname.endswith('gii'):
-            _write_gifti(fname, surf_dict['coords'], surf_dict['faces'])
-        elif fname.endswith('vtk'):
+        elif filename.endswith('gii'):
+            _write_gifti(filename, surf_dict['coords'], surf_dict['faces'])
+        elif filename.endswith('vtk'):
             if 'data' in surf_dict.keys():
-                _write_vtk(fname, surf_dict['coords'], surf_dict['faces'],
+                _write_vtk(filename, surf_dict['coords'], surf_dict['faces'],
                            surf_dict['data'])
             else:
-                _write_vtk(fname, surf_dict['coords'], surf_dict['faces'])
-        elif fname.endswith('ply'):
-            _write_ply(fname, surf_dict['coords'], surf_dict['faces'])
-        elif fname.endswith('obj'):
-            _write_obj(fname, surf_dict['coords'], surf_dict['faces'])
+                _write_vtk(filename, surf_dict['coords'], surf_dict['faces'])
+        elif filename.endswith('ply'):
+            _write_ply(filename, surf_dict['coords'], surf_dict['faces'])
+        elif filename.endswith('obj'):
+            _write_obj(filename, surf_dict['coords'], surf_dict['faces'])
             print('to view mesh in brainview, run the command:\n')
-            print('average_objects ' + fname + ' ' + fname)
+            print('average_objects ' + filename + ' ' + filename)
     else:
-        raise ValueError('fname must be a filename and surf_dict must be a '
-                         'dictionary')
+        raise ValueError('Filename must be a string and surf_dict must be a '
+                         'dictionary with keys "coords" and "faces"')
 
 
 # function to read vtk files
@@ -197,8 +296,6 @@ def _read_vtk(file):
         data_array = np.empty(0)
 
     return vertex_array, face_array, data_array
-
-# function to read ASCII coded ply file
 
 
 def _read_ply(file):
