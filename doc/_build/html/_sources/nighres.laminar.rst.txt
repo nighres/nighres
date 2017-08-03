@@ -1,7 +1,0 @@
-laminar
-=======
-
-.. toctree::
-
-   nighres.laminar.profile_sampling
-   nighres.laminar.volumetric_layering

@@ -5,8 +5,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>mgdm_segmentation &#8212; nighres 0.1.0 documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <title>brain.mgdm_segmentation &#8212; nighres</title>
+    <link rel="stylesheet" href="../_static/nighres.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
@@ -24,15 +24,55 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-   
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
+    <link rel="next" title="brain.mp2rage_skullstripping" href="mp2rage_skullstripping.html" />
+    <link rel="prev" title="io.io_volume" href="../io/io_volume.html" /> 
   </head>
   <body>
-  
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="mp2rage_skullstripping.html" title="brain.mp2rage_skullstripping"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../io/io_volume.html" title="io.io_volume"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">nighres</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../io/io_volume.html"
+                        title="previous chapter">io.io_volume</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="mp2rage_skullstripping.html"
+                        title="next chapter">brain.mp2rage_skullstripping</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/brain/mgdm_segmentation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -40,7 +80,7 @@
           <div class="body" role="main">
             
   <div class="section" id="module-nighres.brain.mgdm_segmentation">
-<span id="mgdm-segmentation"></span><h1>mgdm_segmentation<a class="headerlink" href="#module-nighres.brain.mgdm_segmentation" title="Permalink to this headline">¶</a></h1>
+<span id="brain-mgdm-segmentation"></span><h1>brain.mgdm_segmentation<a class="headerlink" href="#module-nighres.brain.mgdm_segmentation" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="nighres.brain.mgdm_segmentation.mgdm_segmentation">
 <code class="descclassname">nighres.brain.mgdm_segmentation.</code><code class="descname">mgdm_segmentation</code><span class="sig-paren">(</span><em>contrast_image1</em>, <em>contrast_type1</em>, <em>contrast_image2=None</em>, <em>contrast_type2=None</em>, <em>contrast_image3=None</em>, <em>contrast_type3=None</em>, <em>contrast_image4=None</em>, <em>contrast_type4=None</em>, <em>n_steps=5</em>, <em>topology='wcs'</em>, <em>atlas_file=None</em>, <em>topology_lut_dir=None</em>, <em>adjust_intensity_priors=False</em>, <em>compute_posterior=False</em>, <em>diffuse_probabilities=False</em>, <em>save_data=False</em>, <em>output_dir=None</em>, <em>file_name=None</em>, <em>file_extension=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/brain/mgdm_segmentation.html#mgdm_segmentation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.brain.mgdm_segmentation.mgdm_segmentation" title="Permalink to this definition">¶</a></dt>
@@ -176,57 +216,29 @@ framework with homeomorphic level sets. DOI: 10.1109/CVPR.2008.4587475</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../index.html">nighres</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../io/index.html">io</a></li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
       <div class="clearer"></div>
     </div>
-    <div class="footer">
-      &copy;2017, Julia Huntenburg.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
-      
-      |
-      <a href="../_sources/brain/mgdm_segmentation.rst.txt"
-          rel="nofollow">Page source</a>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="mp2rage_skullstripping.html" title="brain.mp2rage_skullstripping"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../io/io_volume.html" title="io.io_volume"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">nighres</a> &#187;</li> 
+      </ul>
     </div>
-
-    
-
-    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Julia Huntenburg.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+    </div>
   </body>
 </html>

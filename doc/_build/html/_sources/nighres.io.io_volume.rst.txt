@@ -1,7 +1,0 @@
-io\_volume
-==========
-
-.. automodule:: nighres.io.io_volume
-    :members:
-    :undoc-members:
-    :show-inheritance:

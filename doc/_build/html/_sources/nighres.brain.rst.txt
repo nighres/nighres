@@ -1,7 +1,0 @@
-brain
-======
-
-.. toctree::
-
-   nighres.brain.mgdm_segmentation
-   nighres.brain.mp2rage_skullstripping
