@@ -1,0 +1,243 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>mgdm_segmentation &#8212; nighres 0.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="mp2rage_skullstripping" href="mp2rage_skullstripping.html" />
+    <link rel="prev" title="brain" href="brain.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-nighres.brain.mgdm_segmentation">
+<span id="mgdm-segmentation"></span><h1>mgdm_segmentation<a class="headerlink" href="#module-nighres.brain.mgdm_segmentation" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="nighres.brain.mgdm_segmentation.mgdm_segmentation">
+<code class="descclassname">nighres.brain.mgdm_segmentation.</code><code class="descname">mgdm_segmentation</code><span class="sig-paren">(</span><em>contrast_image1</em>, <em>contrast_type1</em>, <em>contrast_image2=None</em>, <em>contrast_type2=None</em>, <em>contrast_image3=None</em>, <em>contrast_type3=None</em>, <em>contrast_image4=None</em>, <em>contrast_type4=None</em>, <em>n_steps=5</em>, <em>topology='wcs'</em>, <em>atlas_file=None</em>, <em>topology_lut_dir=None</em>, <em>adjust_intensity_priors=False</em>, <em>compute_posterior=False</em>, <em>diffuse_probabilities=False</em>, <em>save_data=False</em>, <em>output_dir=None</em>, <em>file_name=None</em>, <em>file_extension=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nighres/brain/mgdm_segmentation.html#mgdm_segmentation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.brain.mgdm_segmentation.mgdm_segmentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>MGDM segmentation</p>
+<p>Estimate brain structures from an atlas for MRI dataset using
+a Multiple Object Geometric Deformable Model (MGDM)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>contrast_image1: TODO:type</strong></p>
+<blockquote>
+<div><p>First input image to perform segmentation on</p>
+</div></blockquote>
+<p><strong>contrast_type1: str</strong></p>
+<blockquote>
+<div><p>Contrast type of first input image, must be listed as a prior in used
+atlas(specified in atlas_file)</p>
+</div></blockquote>
+<p><strong>contrast_image2: TODO:type, optional</strong></p>
+<blockquote>
+<div><p>Additional input image to inform segmentation, must be in the same
+space as constrast_image1, requires contrast_type2</p>
+</div></blockquote>
+<p><strong>contrast_type2: str, optional</strong></p>
+<blockquote>
+<div><p>Contrast type of second input image, must be listed as a prior in used
+atlas (specified in atlas_file)</p>
+</div></blockquote>
+<p><strong>contrast_image3: TODO:type, optional</strong></p>
+<blockquote>
+<div><p>Additional input image to inform segmentation, must be in the same
+space as constrast_image1, requires contrast_type3</p>
+</div></blockquote>
+<p><strong>contrast_type3: str, optional</strong></p>
+<blockquote>
+<div><p>Contrast type of third input image, must be listed as a prior in used
+atlas (specified in atlas_file)</p>
+</div></blockquote>
+<p><strong>contrast_image4: TODO:type, optional</strong></p>
+<blockquote>
+<div><p>Additional input image to inform segmentation, must be in the same
+space as constrast_image1, requires contrast_type4</p>
+</div></blockquote>
+<p><strong>contrast_type4: str, optional</strong></p>
+<blockquote>
+<div><p>Contrast type of fourth input image, must be listed as a prior in used
+atlas (specified in atlas_file)</p>
+</div></blockquote>
+<p><strong>n_steps: int, optional</strong></p>
+<blockquote>
+<div><p>Number of steps for MGDM (default is 5, set to 0 for quick testing of
+registration of priors, which does not perform true segmentation)</p>
+</div></blockquote>
+<p><strong>topology: {‘wcs’, ‘no’}, optional</strong></p>
+<blockquote>
+<div><p>Topology setting, choose ‘wcs’ (well-composed surfaces) for strongest
+topology constraint, ‘no’ for no topology constraint (default is ‘wcs’)</p>
+</div></blockquote>
+<p><strong>atlas_file: str, optional</strong></p>
+<blockquote>
+<div><p>Path to plain text atlas file (default is stored in DEFAULT_ATLAS)
+or atlas name to be searched in ATLAS_DIR</p>
+</div></blockquote>
+<p><strong>topology_lut_dir: str, optional</strong></p>
+<blockquote>
+<div><p>Path to directory in which topology files are stored (default is stored
+in TOPOLOGY_LUT_DIR)</p>
+</div></blockquote>
+<p><strong>adjust_intensity_priors: bool</strong></p>
+<blockquote>
+<div><p>Adjust intensity priors based on dataset (default is False)</p>
+</div></blockquote>
+<p><strong>compute_posterior: bool</strong></p>
+<blockquote>
+<div><p>Compute posterior probabilities for segmented structures
+(default is False)</p>
+</div></blockquote>
+<p><strong>diffuse_probabilities: bool</strong></p>
+<blockquote>
+<div><p>Regularize probability distribution with a non-linear diffusion scheme
+(default is False)</p>
+</div></blockquote>
+<p><strong>save_data: bool</strong></p>
+<blockquote>
+<div><p>Save output data to file (default is False)</p>
+</div></blockquote>
+<p><strong>output_dir: str, optional</strong></p>
+<blockquote>
+<div><p>Path to desired output directory, will be created if it doesn’t exist</p>
+</div></blockquote>
+<p><strong>file_name: str, optional</strong></p>
+<blockquote>
+<div><p>Desired base name for output files (suffixes will be added)</p>
+</div></blockquote>
+<p><strong>file_extension: str, optional</strong></p>
+<blockquote>
+<div><p>Desired extension for output files (determines file type)</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">outputs: dict</p>
+<blockquote class="last">
+<div><p>Dictionary collecting outputs under the following keys
+- ‘segmentation’: Hard brain segmentation with topological constraints</p>
+<blockquote>
+<div><p>(if chosen) (_mgdm_seg)</p>
+</div></blockquote>
+<ul class="simple">
+<li>‘labels’: Maximum tissue probability labels (_mgdm_lbls)</li>
+<li>‘memberships’: Maximum tissue probability values (_mgdm_mems)</li>
+<li>‘distance’: Minimum distance to a segmentation boundary (_mgdm_dist)</li>
+</ul>
+<p>(suffix of output files if save_data is set to True)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Original Java module by Pierre-Louis Bazin. Algorithm details can be
+found in [1] and [2]</p>
+<p class="rubric">References</p>
+<p>[1] Bogovic, Prince and Bazin (2013). A multiple object geometric
+deformable model for image segmentation. DOI: 10.1016/j.cviu.2012.10.006.A
+[2] Fan, Bazin and Prince (2008). A multi-compartment segmentation
+framework with homeomorphic level sets. DOI: 10.1109/CVPR.2008.4587475</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">nighres</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="brain.html">brain</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">mgdm_segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mp2rage_skullstripping.html">mp2rage_skullstripping</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="brain.html">brain</a><ul>
+      <li>Previous: <a href="brain.html" title="previous chapter">brain</a></li>
+      <li>Next: <a href="mp2rage_skullstripping.html" title="next chapter">mp2rage_skullstripping</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Julia Huntenburg.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/mgdm_segmentation.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

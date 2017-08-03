@@ -44,7 +44,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="c1"># function to load mesh geometry</span>
-<div class="viewcode-block" id="load_mesh_geometry"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.load_mesh_geometry">[docs]</a><span class="k">def</span> <span class="nf">load_mesh_geometry</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">):</span>
+<div class="viewcode-block" id="load_mesh_geometry"><a class="viewcode-back" href="../../../io/io_mesh.html#nighres.io.io_mesh.load_mesh_geometry">[docs]</a><span class="k">def</span> <span class="nf">load_mesh_geometry</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">):</span>
     <span class="c1"># if input is a filename, try to load it with nibabel</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">surf_mesh</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;orig&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">surf_mesh</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;pial&#39;</span><span class="p">)</span> <span class="ow">or</span>
@@ -73,7 +73,7 @@
 
 
 <span class="c1"># function to load mesh data</span>
-<div class="viewcode-block" id="load_mesh_data"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.load_mesh_data">[docs]</a><span class="k">def</span> <span class="nf">load_mesh_data</span><span class="p">(</span><span class="n">surf_data</span><span class="p">,</span> <span class="n">gii_darray</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="load_mesh_data"><a class="viewcode-back" href="../../../io/io_mesh.html#nighres.io.io_mesh.load_mesh_data">[docs]</a><span class="k">def</span> <span class="nf">load_mesh_data</span><span class="p">(</span><span class="n">surf_data</span><span class="p">,</span> <span class="n">gii_darray</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="c1"># if the input is a filename, load it</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">surf_data</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">surf_data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;nii&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">surf_data</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;nii.gz&#39;</span><span class="p">)</span> <span class="ow">or</span>
@@ -108,7 +108,7 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 <span class="c1">## function to write mesh data</span>
-<div class="viewcode-block" id="save_mesh_data"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.save_mesh_data">[docs]</a><span class="k">def</span> <span class="nf">save_mesh_data</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">surf_data</span><span class="p">):</span>
+<div class="viewcode-block" id="save_mesh_data"><a class="viewcode-back" href="../../../io/io_mesh.html#nighres.io.io_mesh.save_mesh_data">[docs]</a><span class="k">def</span> <span class="nf">save_mesh_data</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">surf_data</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">basestring</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">surf_data</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;curv&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;thickness&#39;</span><span class="p">)</span> <span class="ow">or</span>
                 <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;sulc&#39;</span><span class="p">)):</span>
@@ -133,7 +133,7 @@
 
 <span class="c1"># function to read vtk files</span>
 <span class="c1"># ideally use pyvtk, but it didn&#39;t work for our data, look into why</span>
-<div class="viewcode-block" id="read_vtk"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.read_vtk">[docs]</a><span class="k">def</span> <span class="nf">read_vtk</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<div class="viewcode-block" id="read_vtk"><a class="viewcode-back" href="../../../io/io_mesh.html#nighres.io.io_mesh.read_vtk">[docs]</a><span class="k">def</span> <span class="nf">read_vtk</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Reads ASCII coded vtk files using pandas,</span>
 <span class="sd">    returning vertices, faces and data as three numpy arrays.</span>
@@ -183,7 +183,7 @@
     <span class="k">return</span> <span class="n">vertex_array</span><span class="p">,</span> <span class="n">face_array</span><span class="p">,</span> <span class="n">data_array</span></div>
 
 <span class="c1"># function to read ASCII coded ply file</span>
-<div class="viewcode-block" id="read_ply"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.read_ply">[docs]</a><span class="k">def</span> <span class="nf">read_ply</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<div class="viewcode-block" id="read_ply"><a class="viewcode-back" href="../../../io/io_mesh.html#nighres.io.io_mesh.read_ply">[docs]</a><span class="k">def</span> <span class="nf">read_ply</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
     <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
     <span class="kn">import</span> <span class="nn">csv</span>
     <span class="c1"># read full file and drop empty lines</span>
@@ -211,7 +211,7 @@
 
 
 <span class="c1"># function to read MNI obj mesh format</span>
-<div class="viewcode-block" id="read_obj"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.read_obj">[docs]</a><span class="k">def</span> <span class="nf">read_obj</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<div class="viewcode-block" id="read_obj"><a class="viewcode-back" href="../../../io/io_mesh.html#nighres.io.io_mesh.read_obj">[docs]</a><span class="k">def</span> <span class="nf">read_obj</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">chunks</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
 
@@ -254,7 +254,7 @@
 
 
 <span class="c1"># function to save mesh geometry</span>
-<div class="viewcode-block" id="save_mesh_geometry"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.save_mesh_geometry">[docs]</a><span class="k">def</span> <span class="nf">save_mesh_geometry</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="n">surf_dict</span><span class="p">):</span>
+<div class="viewcode-block" id="save_mesh_geometry"><a class="viewcode-back" href="../../../io/io_mesh.html#nighres.io.io_mesh.save_mesh_geometry">[docs]</a><span class="k">def</span> <span class="nf">save_mesh_geometry</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="n">surf_dict</span><span class="p">):</span>
     <span class="c1"># if input is a filename, try to load it with nibabel</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">basestring</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">surf_dict</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;orig&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;pial&#39;</span><span class="p">)</span> <span class="ow">or</span>
@@ -278,7 +278,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;fname must be a filename and surf_dict must be a dictionary&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="write_gifti"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.write_gifti">[docs]</a><span class="k">def</span> <span class="nf">write_gifti</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">faces</span><span class="p">):</span>
+<div class="viewcode-block" id="write_gifti"><a class="viewcode-back" href="../../../io/io_mesh.html#nighres.io.io_mesh.write_gifti">[docs]</a><span class="k">def</span> <span class="nf">write_gifti</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">faces</span><span class="p">):</span>
     <span class="n">coord_array</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">gifti</span><span class="o">.</span><span class="n">GiftiDataArray</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
                                        <span class="n">intent</span><span class="o">=</span><span class="n">nb</span><span class="o">.</span><span class="n">nifti1</span><span class="o">.</span><span class="n">intent_codes</span><span class="p">[</span>
                                            <span class="s1">&#39;NIFTI_INTENT_POINTSET&#39;</span><span class="p">])</span>
@@ -289,7 +289,7 @@
     <span class="n">nb</span><span class="o">.</span><span class="n">gifti</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">gii</span><span class="p">,</span> <span class="n">surf_mesh</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="save_obj"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.save_obj">[docs]</a><span class="k">def</span> <span class="nf">save_obj</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">,</span><span class="n">coords</span><span class="p">,</span><span class="n">faces</span><span class="p">):</span>
+<div class="viewcode-block" id="save_obj"><a class="viewcode-back" href="../../../io/io_mesh.html#nighres.io.io_mesh.save_obj">[docs]</a><span class="k">def</span> <span class="nf">save_obj</span><span class="p">(</span><span class="n">surf_mesh</span><span class="p">,</span><span class="n">coords</span><span class="p">,</span><span class="n">faces</span><span class="p">):</span>
 <span class="c1">#write out MNI - obj format</span>
     <span class="n">n_vert</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
     <span class="n">XYZ</span><span class="o">=</span><span class="n">coords</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
@@ -343,7 +343,7 @@
         <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">Line</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="write_vtk"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.write_vtk">[docs]</a><span class="k">def</span> <span class="nf">write_vtk</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="write_vtk"><a class="viewcode-back" href="../../../io/io_mesh.html#nighres.io.io_mesh.write_vtk">[docs]</a><span class="k">def</span> <span class="nf">write_vtk</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Creates ASCII coded vtk file from numpy arrays using pandas.</span>
@@ -407,7 +407,7 @@
             <span class="n">data_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.16f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="write_ply"><a class="viewcode-back" href="../../../nighres.io.io_mesh.html#nighres.io.io_mesh.write_ply">[docs]</a><span class="k">def</span> <span class="nf">write_ply</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="write_ply"><a class="viewcode-back" href="../../../io/io_mesh.html#nighres.io.io_mesh.write_ply">[docs]</a><span class="k">def</span> <span class="nf">write_ply</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
     <span class="nb">print</span> <span class="s2">&quot;writing ply format&quot;</span>
     <span class="c1"># infer number of vertices and faces</span>
@@ -458,9 +458,11 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../nighres.html">nighres package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../io/index.html">io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../brain/index.html">brain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../laminar/index.html">laminar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../surface/index.html">surface</a></li>
 </ul>
 
 <div class="relations">

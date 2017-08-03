@@ -24,7 +24,6 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="nighres.laminar.profile_sampling module" href="nighres.laminar.profile_sampling.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -50,41 +49,62 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>inner_levelset</strong> (<em>TODO:type</em>) – Levelset representation of the inner surface, typically GM/WM surface</li>
-<li><strong>outer_levelset</strong> (<em>TODO:type</em>) – Levelset representation of the outer surface, typically GM/CSF surface</li>
-<li><strong>n_layers</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – Number of layers to be created (default is 10)</li>
-<li><strong>topology_lut_dir</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Path to directory in which topology files are stored (default is stored
-in TOPOLOGY_LUT_DIR)</li>
-<li><strong>save_data</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – Save output data to file (default is False)</li>
-<li><strong>output_dir</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Path to desired output directory, will be created if it doesn’t exist</li>
-<li><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Desired base name for output files (suffixes will be added)</li>
-<li><strong>file_extension</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Desired extension for output files (determines file type)</li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>inner_levelset: TODO:type</strong></p>
+<blockquote>
+<div><p>Levelset representation of the inner surface, typically GM/WM surface</p>
+</div></blockquote>
+<p><strong>outer_levelset</strong> : TODO:type</p>
+<blockquote>
+<div><p>Levelset representation of the outer surface, typically GM/CSF surface</p>
+</div></blockquote>
+<p><strong>n_layers</strong> : int, optional</p>
+<blockquote>
+<div><p>Number of layers to be created (default is 10)</p>
+</div></blockquote>
+<p><strong>topology_lut_dir: str, optional</strong></p>
+<blockquote>
+<div><p>Path to directory in which topology files are stored (default is stored
+in TOPOLOGY_LUT_DIR)</p>
+</div></blockquote>
+<p><strong>save_data: bool</strong></p>
+<blockquote>
+<div><p>Save output data to file (default is False)</p>
+</div></blockquote>
+<p><strong>output_dir: str, optional</strong></p>
+<blockquote>
+<div><p>Path to desired output directory, will be created if it doesn’t exist</p>
+</div></blockquote>
+<p><strong>file_name: str, optional</strong></p>
+<blockquote>
+<div><p>Desired base name for output files (suffixes will be added)</p>
+</div></blockquote>
+<p><strong>file_extension: str, optional</strong></p>
+<blockquote>
+<div><p>Desired extension for output files (determines file type)</p>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>outputs</strong> – Dictionary collecting outputs under the following keys
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">outputs: dict</p>
+<blockquote class="last">
+<div><p>Dictionary collecting outputs under the following keys
 - ‘depth’: Continuous depth from 0 (inner surface) to 1 (outer surface)</p>
 <blockquote>
 <div><p>(layering_depth)</p>
 </div></blockquote>
 <ul class="simple">
 <li><dl class="first docutils">
-<dt>’layers’: Discrete layers from 1 (bordering inner surface) to</dt>
+<dt>‘layers’: Discrete layers from 1 (bordering inner surface) to</dt>
 <dd>n_layers (bordering outer surface) (_layering_layers)</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>’boundaries’: Levelset representations of boundaries between</dt>
+<dt>‘boundaries’: Levelset representations of boundaries between</dt>
 <dd>all layers (4D image) (_layering_boundaries)</dd>
 </dl>
 </li>
 </ul>
 <p>(suffix of output files if save_data is set to True)</p>
-</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)">dict</a></p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -115,22 +135,15 @@ laminae. DOI: 10.1016/j.neuroimage.2013.03.078</p>
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="nighres.laminar.html">nighres.laminar package</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="nighres.laminar.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nighres.laminar.html#module-nighres.laminar">Module contents</a></li>
-</ul>
-</li>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="brain.html">brain</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-  <li><a href="nighres.laminar.html">nighres.laminar package</a><ul>
-      <li>Previous: <a href="nighres.laminar.profile_sampling.html" title="previous chapter">nighres.laminar.profile_sampling module</a></li>
-  </ul></li>
   </ul></li>
 </ul>
 </div>

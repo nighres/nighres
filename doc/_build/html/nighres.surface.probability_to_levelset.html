@@ -53,21 +53,34 @@ positive values outside of the brain.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>probability_image</strong> (<em>TODO:type</em>) – Tissue segmentation to be turned into levelset. Values should be in
-[0, 1], either a binary mask or defining the boundary at 0.5.</li>
-<li><strong>save_data</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – Save output data to file (default is False)</li>
-<li><strong>output_dir</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Path to desired output directory, will be created if it doesn’t exist</li>
-<li><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Desired base name for output files (suffixes will be added)</li>
-<li><strong>file_extension</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Desired extension for output files (determines file type)</li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>probability_image: TODO:type</strong></p>
+<blockquote>
+<div><p>Tissue segmentation to be turned into levelset. Values should be in
+[0, 1], either a binary mask or defining the boundary at 0.5.</p>
+</div></blockquote>
+<p><strong>save_data: bool</strong></p>
+<blockquote>
+<div><p>Save output data to file (default is False)</p>
+</div></blockquote>
+<p><strong>output_dir: str, optional</strong></p>
+<blockquote>
+<div><p>Path to desired output directory, will be created if it doesn’t exist</p>
+</div></blockquote>
+<p><strong>file_name: str, optional</strong></p>
+<blockquote>
+<div><p>Desired base name for output files (suffixes will be added)</p>
+</div></blockquote>
+<p><strong>file_extension: str, optional</strong></p>
+<blockquote>
+<div><p>Desired extension for output files (determines file type)</p>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>levelset</strong> – Levelset representation of surface as Nibabel Nifti1Image
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">levelset: TODO:type</p>
+<blockquote class="last">
+<div><p>Levelset representation of surface as Nibabel Nifti1Image
 (If save_data is True, the image is saved with suffix _levelset)</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">TODO:type</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -94,9 +107,9 @@ positive values outside of the brain.</p>
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption"><span class="caption-text">Modules</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="nighres.laminar.html">nighres.laminar package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brain.html">brain</a></li>
 </ul>
 
 <div class="relations">

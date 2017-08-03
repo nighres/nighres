@@ -1,5 +1,5 @@
-nighres\.io\.io\_volume module
-==============================
+io\_volume
+==========
 
 .. automodule:: nighres.io.io_volume
     :members:

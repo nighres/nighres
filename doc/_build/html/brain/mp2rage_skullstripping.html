@@ -1,0 +1,182 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>mp2rage_skullstripping &#8212; nighres 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-nighres.brain.mp2rage_skullstripping">
+<span id="mp2rage-skullstripping"></span><h1>mp2rage_skullstripping<a class="headerlink" href="#module-nighres.brain.mp2rage_skullstripping" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="nighres.brain.mp2rage_skullstripping.mp2rage_skullstripping">
+<code class="descclassname">nighres.brain.mp2rage_skullstripping.</code><code class="descname">mp2rage_skullstripping</code><span class="sig-paren">(</span><em>second_inversion</em>, <em>t1_weighted=None</em>, <em>t1_map=None</em>, <em>skip_zero_values=True</em>, <em>topology_lut_dir=None</em>, <em>save_data=False</em>, <em>output_dir=None</em>, <em>file_name=None</em>, <em>file_extension=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/brain/mp2rage_skullstripping.html#mp2rage_skullstripping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.brain.mp2rage_skullstripping.mp2rage_skullstripping" title="Permalink to this definition">¶</a></dt>
+<dd><p>MP2RAGE skull stripping</p>
+<p>Estimate a brain mask from MRI data acquired with the MP2RAGE sequence.
+At least a T1-weighted or a T1 map image is required</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>second_inversion: TODO:type</strong></p>
+<blockquote>
+<div><p>Second inversion image derived from MP2RAGE sequence</p>
+</div></blockquote>
+<p><strong>t1_weighted: TODO:type</strong></p>
+<blockquote>
+<div><p>T1-weighted image derived from MP2RAGE sequence (also referred to as
+“uniform” image)
+At least one of t1_weighted and t1_map is required</p>
+</div></blockquote>
+<p><strong>t1_map: TODO:type</strong></p>
+<blockquote>
+<div><p>Quantitative T1 map image derived from MP2RAGE sequence
+At least one of t1_weighted and t1_map is required</p>
+</div></blockquote>
+<p><strong>skip_zero_values: bool</strong></p>
+<blockquote>
+<div><p>Ignores voxels with zero value (default is True)</p>
+</div></blockquote>
+<p><strong>topology_lut_dir: str, optional</strong></p>
+<blockquote>
+<div><p>Path to directory in which topology files are stored (default is stored
+in TOPOLOGY_LUT_DIR)</p>
+</div></blockquote>
+<p><strong>save_data: bool</strong></p>
+<blockquote>
+<div><p>Save output data to file (default is False)</p>
+</div></blockquote>
+<p><strong>output_dir: str, optional</strong></p>
+<blockquote>
+<div><p>Path to desired output directory, will be created if it doesn’t exist</p>
+</div></blockquote>
+<p><strong>file_extension: str, optional</strong></p>
+<blockquote>
+<div><p>Desired extension for output files (determines file type)</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">outputs: dict</p>
+<blockquote class="last">
+<div><p>Dictionary collecting outputs under the following keys:
+- ‘brain_mask’: Binary brain mask (_strip_mask)
+- ‘inv2_masked’: Masked second inversion imamge (_strip_inv2)
+- ‘t1w_masked’: Masked T1-weighted image (_strip_t1w),</p>
+<blockquote>
+<div><p>only created if t1_weighted was given</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>‘t1map_masked’: Masked T1 map (_strip_t1map),</dt>
+<dd>only created if t1_map  was given</dd>
+</dl>
+</li>
+</ul>
+<p>(suffix of output files if save_data is set to True)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Original Java module by Pierre-Louis Bazin. Details on the MP2RAGE
+sequence can be found in [1]</p>
+<p class="rubric">References</p>
+<p>[1] Marques et al. (2010). MP2RAGE, a self bias-field corrected sequence
+for improved segmentation and T1-mapping at high field.
+DOI: 10.1016/j.neuroimage.2009.10.002</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">nighres</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../io/index.html">io</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Julia Huntenburg.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/brain/mp2rage_skullstripping.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

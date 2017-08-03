@@ -1,8 +1,5 @@
-nighres\.laminar package
-========================
-
-Submodules
-----------
+laminar
+=======
 
 .. toctree::
 

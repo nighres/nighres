@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>nighres.laminar.profile_sampling &#8212; nighres 0.1.0 documentation</title>
+    <title>laminar.profile_sampling &#8212; nighres 0.1.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -24,8 +24,6 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="nighres.laminar.volumetric_layering module" href="nighres.laminar.volumetric_layering.html" />
-    <link rel="prev" title="nighres.laminar package" href="nighres.laminar.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -42,7 +40,7 @@
           <div class="body" role="main">
             
   <div class="section" id="module-nighres.laminar.profile_sampling">
-<span id="nighres-laminar-profile-sampling"></span><h1>nighres.laminar.profile_sampling<a class="headerlink" href="#module-nighres.laminar.profile_sampling" title="Permalink to this headline">¶</a></h1>
+<span id="laminar-profile-sampling"></span><h1>laminar.profile_sampling<a class="headerlink" href="#module-nighres.laminar.profile_sampling" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="nighres.laminar.profile_sampling.profile_sampling">
 <code class="descclassname">nighres.laminar.profile_sampling.</code><code class="descname">profile_sampling</code><span class="sig-paren">(</span><em>profile_surface_image</em>, <em>intensity_image</em>, <em>save_data=False</em>, <em>output_dir=None</em>, <em>file_name=None</em>, <em>file_extension=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nighres/laminar/profile_sampling.html#profile_sampling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.laminar.profile_sampling.profile_sampling" title="Permalink to this definition">¶</a></dt>
@@ -51,22 +49,38 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>profile_surface_image</strong> (<em>TODO:type</em>) – 4D image containing levelset representations of different intracortical
-surfaces on which data should be sampled</li>
-<li><strong>intensity_image</strong> (<em>TODO:type</em>) – Image from which data should be sampled</li>
-<li><strong>save_data</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – Save output data to file (default is False)</li>
-<li><strong>output_dir</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Path to desired output directory, will be created if it doesn’t exist</li>
-<li><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Desired base name for output files (suffixes will be added)</li>
-<li><strong>file_extension</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Desired extension for output files (determines file type)</li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>profile_surface_image: TODO:type</strong></p>
+<blockquote>
+<div><p>4D image containing levelset representations of different intracortical
+surfaces on which data should be sampled</p>
+</div></blockquote>
+<p><strong>intensity_image: TODO:type</strong></p>
+<blockquote>
+<div><p>Image from which data should be sampled</p>
+</div></blockquote>
+<p><strong>save_data: bool</strong></p>
+<blockquote>
+<div><p>Save output data to file (default is False)</p>
+</div></blockquote>
+<p><strong>output_dir: str, optional</strong></p>
+<blockquote>
+<div><p>Path to desired output directory, will be created if it doesn’t exist</p>
+</div></blockquote>
+<p><strong>file_name: str, optional</strong></p>
+<blockquote>
+<div><p>Desired base name for output files (suffixes will be added)</p>
+</div></blockquote>
+<p><strong>file_extension: str, optional</strong></p>
+<blockquote>
+<div><p>Desired extension for output files (determines file type)</p>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>profile_data_image</strong> – Profile image as 4D Nibabel Nifti1Image, where the 4th dimension
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">profile_data_image: TODO:type</p>
+<blockquote class="last">
+<div><p>Profile image as 4D Nibabel Nifti1Image, where the 4th dimension
 represents the profile for each voxel</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">TODO:type</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -93,23 +107,15 @@ represents the profile for each voxel</p>
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="nighres.laminar.html">nighres.laminar package</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="nighres.laminar.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nighres.laminar.html#module-nighres.laminar">Module contents</a></li>
-</ul>
-</li>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="brain.html">brain</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-  <li><a href="nighres.laminar.html">nighres.laminar package</a><ul>
-      <li>Previous: <a href="nighres.laminar.html" title="previous chapter">nighres.laminar package</a></li>
-      <li>Next: <a href="nighres.laminar.volumetric_layering.html" title="next chapter">nighres.laminar.volumetric_layering module</a></li>
-  </ul></li>
   </ul></li>
 </ul>
 </div>

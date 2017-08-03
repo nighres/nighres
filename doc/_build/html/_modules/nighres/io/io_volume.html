@@ -44,7 +44,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="c1"># function to read volumetric tissue classification and turn into 3D array</span>
-<div class="viewcode-block" id="load_volume"><a class="viewcode-back" href="../../../nighres.io.io_volume.html#nighres.io.io_volume.load_volume">[docs]</a><span class="k">def</span> <span class="nf">load_volume</span><span class="p">(</span><span class="n">mri_vol</span><span class="p">):</span>
+<div class="viewcode-block" id="load_volume"><a class="viewcode-back" href="../../../io/io_volume.html#nighres.io.io_volume.load_volume">[docs]</a><span class="k">def</span> <span class="nf">load_volume</span><span class="p">(</span><span class="n">mri_vol</span><span class="p">):</span>
     <span class="c1"># if input is a filename, try to load it</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mri_vol</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
     <span class="c1"># importing nifti files</span>
@@ -68,7 +68,7 @@
 
 
 <span class="c1"># function to save volume data</span>
-<div class="viewcode-block" id="save_volume"><a class="viewcode-back" href="../../../nighres.io.io_volume.html#nighres.io.io_volume.save_volume">[docs]</a><span class="k">def</span> <span class="nf">save_volume</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">,</span> <span class="n">CLOBBER</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="save_volume"><a class="viewcode-back" href="../../../io/io_volume.html#nighres.io.io_volume.save_volume">[docs]</a><span class="k">def</span> <span class="nf">save_volume</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">,</span> <span class="n">CLOBBER</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to write volume data to file. Filetype is based on filename suffix</span>
 <span class="sd">    Input:</span>
@@ -93,7 +93,7 @@
 
 
 <span class="c1">#loading in minc and converting to nii</span>
-<div class="viewcode-block" id="mnc2nii"><a class="viewcode-back" href="../../../nighres.io.io_volume.html#nighres.io.io_volume.mnc2nii">[docs]</a><span class="k">def</span> <span class="nf">mnc2nii</span><span class="p">(</span><span class="n">input_fn</span><span class="p">):</span>
+<div class="viewcode-block" id="mnc2nii"><a class="viewcode-back" href="../../../io/io_volume.html#nighres.io.io_volume.mnc2nii">[docs]</a><span class="k">def</span> <span class="nf">mnc2nii</span><span class="p">(</span><span class="n">input_fn</span><span class="p">):</span>
 	<span class="sd">&#39;&#39;&#39;For a MINC input file, returns a nibabel nifti image.</span>
 <span class="sd">		This image can then be saved as a nifti file.&#39;&#39;&#39;</span>
 	<span class="n">img_mnc</span><span class="o">=</span><span class="n">pyezminc</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">input_fn</span><span class="p">)</span>
@@ -127,9 +127,11 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../nighres.html">nighres package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../io/index.html">io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../brain/index.html">brain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../laminar/index.html">laminar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../surface/index.html">surface</a></li>
 </ul>
 
 <div class="relations">
