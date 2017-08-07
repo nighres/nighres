@@ -1,18 +1,28 @@
-import cbstoolspython
+import os
+import urllib
 import numpy as np
 import nibabel as nb
-# from nilearn import plotting
-# import matplotlib.pyplot as plt
-# from nilearn._utils.niimg_conversions import _index_img
+import nighres
+from utils import _download_from_url
+
+
+out_dir = '/SCR/data/nighres_testing/'
+t1map = os.path.join(out_dir, "T1map.nii.gz")
+t1w = os.path.join(out_dir, "T1w.nii.gz")
+# TODO: where to get the INV2 file?
+
+_download_from_url("http://openscience.cbs.mpg.de/bazin/7T_Quantitative/MP2RAGE-05mm/subject01_mp2rage_0p5iso_qT1.nii.gz", t1map)  # noqa
+
+_download_from_url("http://openscience.cbs.mpg.de/bazin/7T_Quantitative/MP2RAGE-05mm/subject01_mp2rage_0p5iso_uni.nii.gz", t1w)  # noqa
 
 data_dir = '/SCR/data/cbstools_testing/'
-out_dir = '/SCR/data/cbstools_testing/out/'
 inv2 = data_dir + '7t_trt/test_nii/INV2.nii.gz'
-t1w = data_dir + '7t_trt/test_nii/T1w.nii.gz'
-t1map = data_dir + '7t_trt/test_nii/T1map.nii.gz'
+# out_dir = '/SCR/data/cbstools_testing/out/'
+# t1w = data_dir + '7t_trt/test_nii/T1w.nii.gz'
+# t1map = data_dir + '7t_trt/test_nii/T1map.nii.gz'
 
 # Skullstripping of MP2RAGE images
-skullstripping_results = cbstoolspython.mp2rage_skullstripping(
+skullstripping_results = nighres.mp2rage_skullstripping(
                                                         second_inversion=inv2,
                                                         t1_weighted=t1w,
                                                         t1_map=t1map,
@@ -20,7 +30,7 @@ skullstripping_results = cbstoolspython.mp2rage_skullstripping(
                                                         output_dir=out_dir)
 
 # MGDM segmentation using both the T1 weighted and image
-segmentation_results = cbstoolspython.mgdm_segmentation(
+segmentation_results = nighres.mgdm_segmentation(
                         contrast_image1=skullstripping_results.t1w_masked,
                         contrast_type1="Mp2rage7T",
                         contrast_image2=skullstripping_results.t1map_masked,
@@ -48,31 +58,37 @@ gm_nii = nb.Nifti1Image(gm_mask,
                         segmentation_results['segmentation'].get_affine())
 
 # Creating levelsets from binary tissue images
-gm_wm_levelset = cbstoolspython.create_levelsets(wm_mask, save_data=True)
-gm_csf_levelset = cbstoolspython.create_levelsets(gm_mask, save_data=True)
+gm_wm_levelset = nighres.create_levelsets(wm_mask, save_data=True)
+gm_csf_levelset = nighres.create_levelsets(gm_mask, save_data=True)
 
 # Perform volumetric layering of the cortical sheet
-depth, layers, boundaries = cbstoolspython.layering(gm_wm_levelset,
+depth, layers, boundaries = nighres.layering(gm_wm_levelset,
                                                     gm_csf_levelset,
                                                     n_layers=3,
                                                     save_data=False)
 
 # sample t1 across cortical layers
-profiles = cbstoolspython.profile_sampling(boundaries, t1map,
+profiles = nighres.profile_sampling(boundaries, t1map,
                                            save_data=False)
 
 # t1map_stripped = data_dir + 'cbsopen/t1map_1mm.nii.gz'
 # t1w_stripped = data_dir + 'cbsopen/uni_1mm.nii.gz'
-# segmentation_results = cbstoolspython.mgdm_segmentation(
+# segmentation_results = nighres.mgdm_segmentation(
 #                         contrast_image1=t1w_stripped,
 #                         contrast_type1="Mp2rage7T",
 #                         contrast_image2=t1map_stripped,
 #                         contrast_type2="T1map7T",
 #                         save_data=True, output_dir=out_dir)
 
-# get gm / wm tissue class images
-#
 
+
+
+
+
+
+# from nilearn import plotting
+# import matplotlib.pyplot as plt
+# from nilearn._utils.niimg_conversions import _index_img
 #n_layers = 3
 #coords = (-5, -2, 1)
 #gwb_prob = './data/adult_F04_intern_orig_binmask.nii.gz'

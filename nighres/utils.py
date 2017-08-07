@@ -1,5 +1,6 @@
 import os
 import warnings
+import urllib
 
 
 def _output_dir_4saving(output_dir=None, rootfile=None):
@@ -73,3 +74,17 @@ def _fname_4saving(rootfile=None, suffix=None,
     fname = base_name + '.' + extension
 
     return fname
+
+
+def _download_from_url(url, filename, overwrite_file=False):
+
+    dirname = os.path.dirname(filename)
+    if not os.path.isdir(dirname):
+        os.makedirs(dirname)
+
+    if os.path.isfile(filename) and overwrite_file is False:
+        print("The file {0} exists and overwrite_file was set to False. "
+              "Not downloading.").format(filename)
+    else:
+        print("Downloading to {0}").format(filename)
+        urllib.urlretrieve(url, filename)
