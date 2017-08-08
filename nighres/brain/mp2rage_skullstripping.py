@@ -76,6 +76,25 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         if not(topology_lut_dir[-1] == os.path.sep):
             topology_lut_dir += os.path.sep
 
+    # make sure that saving related parameters are correct
+    if save_data:
+        output_dir = _output_dir_4saving(output_dir, second_inversion)
+
+        inv2_file = _fname_4saving(rootfile=second_inversion,
+                                   suffix='strip_inv2',
+                                   extension=file_extension)
+        mask_file = _fname_4saving(rootfile=second_inversion,
+                                   suffix='strip_mask',
+                                   extension=file_extension)
+        if t1_weighted is not None:
+            t1w_file = _fname_4saving(rootfile=t1_weighted,
+                                      suffix='strip_t1w',
+                                      extension=file_extension)
+
+        if t1_map is not None:
+            t1map_file = _fname_4saving(rootfile=t1_map, suffix='strip_t1map',
+                                        extension=file_extension)
+
     # start virtual machine, if not already running
     try:
         cbstools.initVM(initialheap='6000m', maxheap='6000m')
@@ -118,7 +137,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     # execute skull stripping
     try:
-        print("Running skull stripping")
+        print("Executing MP2RAGE skull stripping")
         stripper.execute()
 
     except:
@@ -143,14 +162,6 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
     outputs = {'brain_mask': mask, 'inv2_masked': inv2_masked}
 
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, second_inversion)
-
-        inv2_file = _fname_4saving(rootfile=second_inversion,
-                                   suffix='strip_inv2',
-                                   extension=file_extension)
-        mask_file = _fname_4saving(rootfile=second_inversion,
-                                   suffix='strip_mask',
-                                   extension=file_extension)
         save_volume(os.path.join(output_dir, inv2_file), inv2_masked)
         save_volume(os.path.join(output_dir, mask_file), mask)
 
@@ -163,8 +174,6 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         outputs['t1w_masked'] = t1w_masked
 
         if save_data:
-            t1w_file = _fname_4saving(rootfile=t1_weighted, suffix='strip_t1w',
-                                      extension=file_extension)
             save_volume(os.path.join(output_dir, t1w_file), t1w_masked)
 
     if t1_map is not None:
@@ -177,8 +186,6 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         outputs['t1map_masked'] = t1map_masked
 
         if save_data:
-            t1map_file = _fname_4saving(rootfile=t1_map, suffix='strip_t1map',
-                                        extension=file_extension)
             save_volume(os.path.join(output_dir, t1map_file), t1map_masked)
 
     return outputs

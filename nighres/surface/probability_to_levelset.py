@@ -41,14 +41,13 @@ def probability_to_levelset(probability_image,
     ----------
     Original Java module by Pierre-Louis Bazin
     """
+    # make sure that saving related parameters are correct
+    if save_data:
+        output_dir = _output_dir_4saving(output_dir, probability_image)
 
-    # load the data
-    prob_img = load_volume(probability_image)
-    prob_data = prob_img.get_data()
-    hdr = prob_img.get_header()
-    aff = prob_img.get_affine()
-    resolution = [x.item() for x in hdr.get_zooms()]
-    dimensions = prob_data.shape
+        levelset_file = _fname_4saving(rootfile=probability_image,
+                                       suffix='levelset', base_name=file_name,
+                                       extension=file_extension)
 
     # start virtual machine if not running
     try:
@@ -59,6 +58,14 @@ def probability_to_levelset(probability_image,
     # initiate class
     prob2level = cbstools.SurfaceProbabilityToLevelset()
 
+    # load the data
+    prob_img = load_volume(probability_image)
+    prob_data = prob_img.get_data()
+    hdr = prob_img.get_header()
+    aff = prob_img.get_affine()
+    resolution = [x.item() for x in hdr.get_zooms()]
+    dimensions = prob_data.shape
+
     # set parameters from input data
     prob2level.setProbabilityImage(cbstools.JArray('float')(
                                     (prob_data.flatten('F')).astype(float)))
@@ -67,7 +74,7 @@ def probability_to_levelset(probability_image,
 
     # execute class
     try:
-        print("Creating levelset")
+        print("Executing create levelsets")
         prob2level.execute()
 
     except:
@@ -85,12 +92,6 @@ def probability_to_levelset(probability_image,
     levelset = nb.Nifti1Image(levelset_data, aff, hdr)
 
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, probability_image)
-
-        levelset_file = _fname_4saving(rootfile=probability_image,
-                                       suffix='levelset', base_name=file_name,
-                                       extension=file_extension)
-
         save_volume(os.path.join(output_dir, levelset_file), levelset)
 
     return levelset

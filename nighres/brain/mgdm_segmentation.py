@@ -192,6 +192,26 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                               "atlas: ").format(ctype, idx+1),
                              ", ".join(mgdm_intensity_priors))
 
+    # make sure that saving related parameters are correct
+    if save_data:
+        output_dir = _output_dir_4saving(output_dir, contrast_image1)
+
+        seg_file = _fname_4saving(rootfile=contrast_image1,
+                                  suffix='mgdm_seg', base_name=file_name,
+                                  extension=file_extension)
+
+        lbl_file = _fname_4saving(rootfile=contrast_image1,
+                                  suffix='mgdm_lbls', base_name=file_name,
+                                  extension=file_extension)
+
+        mems_file = _fname_4saving(rootfile=contrast_image1,
+                                   suffix='mgdm_mems', base_name=file_name,
+                                   extension=file_extension)
+
+        dist_file = _fname_4saving(rootfile=contrast_image1,
+                                   suffix='mgdm_dist', base_name=file_name,
+                                   extension=file_extension)
+
     # start virtual machine, if not already running
     try:
         cbstools.initVM(initialheap='6000m', maxheap='6000m')
@@ -251,7 +271,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     # execute MGDM
     try:
-        print("Executing MGDM on your inputs")
+        print("Executing MGDM segmentation")
         mgdm.execute()
 
     except:
@@ -286,24 +306,6 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     dist = nb.Nifti1Image(dist_data, affine, header)
 
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, contrast_image1)
-
-        seg_file = _fname_4saving(rootfile=contrast_image1,
-                                  suffix='mgdm_seg', base_name=file_name,
-                                  extension=file_extension)
-
-        lbl_file = _fname_4saving(rootfile=contrast_image1,
-                                  suffix='mgdm_lbls', base_name=file_name,
-                                  extension=file_extension)
-
-        mems_file = _fname_4saving(rootfile=contrast_image1,
-                                   suffix='mgdm_mems', base_name=file_name,
-                                   extension=file_extension)
-
-        dist_file = _fname_4saving(rootfile=contrast_image1,
-                                   suffix='mgdm_dist', base_name=file_name,
-                                   extension=file_extension)
-
         save_volume(os.path.join(output_dir, seg_file), seg)
         save_volume(os.path.join(output_dir, lbl_file), lbls)
         save_volume(os.path.join(output_dir, mems_file), mems)

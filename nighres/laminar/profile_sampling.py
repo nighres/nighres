@@ -37,6 +37,22 @@ def profile_sampling(profile_surface_image, intensity_image,
     ----------
     Original Java module by Pierre-Louis Bazin and Juliane Dinse
     '''
+    # make sure that saving related parameters are correct
+    if save_data:
+        output_dir = _output_dir_4saving(output_dir, intensity_image)
+
+        profile_file = _fname_4saving(rootfile=intensity_image,
+                                      suffix='profiles', base_name=file_name,
+                                      extension=file_extension)
+
+    # start VM if not already running
+    try:
+        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+    except ValueError:
+        pass
+
+    # initate class
+    sampler = cbstools.LaminarProfileSampling()
 
     # load the data
     surface_img = load_volume(profile_surface_image)
@@ -48,15 +64,6 @@ def profile_sampling(profile_surface_image, intensity_image,
 
     intensity_data = load_volume(intensity_img).get_data()
 
-    # start VM if not already running
-    try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
-    except ValueError:
-        pass
-
-    # initate class
-    sampler = cbstools.LaminarProfileSampling()
-
     # pass inputs
     sampler.setIntensityImage(cbstools.JArray('float')(
                                   (intensity_data.flatten('F')).astype(float)))
@@ -66,9 +73,8 @@ def profile_sampling(profile_surface_image, intensity_image,
     sampler.setDimensions(dimensions[0], dimensions[1], dimensions[2])
 
     # execute class
-    # execute class
     try:
-        print("Sampling profiles")
+        print("Executing profile sampling")
         sampler.execute()
 
     except:
@@ -87,12 +93,6 @@ def profile_sampling(profile_surface_image, intensity_image,
     profiles = nb.Nifti1Image(profile_data, aff, hdr)
 
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, intensity_image)
-
-        profile_file = _fname_4saving(rootfile=intensity_image,
-                                      suffix='profiles', base_name=file_name,
-                                      extension=file_extension)
-
         save_volume(os.path.join(output_dir, profile_file), profiles)
 
     return profiles

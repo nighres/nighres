@@ -68,15 +68,24 @@ def volumetric_layering(inner_levelset, outer_levelset,
         if not(topology_lut_dir[-1] == os.path.sep):
             topology_lut_dir += os.path.sep
 
-    # load the data as well as filenames and headers for saving later
-    inner_img = load_volume(inner_levelset)
-    inner_data = inner_img.get_data()
-    hdr = inner_img.get_header()
-    aff = inner_img.get_affine()
-    resolution = [x.item() for x in hdr.get_zooms()]
-    dimensions = inner_data.shape
+    # make sure that saving related parameters are correct
+    if save_data:
+        output_dir = _output_dir_4saving(output_dir, inner_levelset)
 
-    outer_data = load_volume(outer_levelset).get_data()
+        depth_file = _fname_4saving(rootfile=inner_image,
+                                    suffix='layering_depth',
+                                    base_name=file_name,
+                                    extension=file_extension)
+
+        layer_file = _fname_4saving(rootfile=inner_image,
+                                    suffix='layering_layers',
+                                    base_name=file_name,
+                                    extension=file_extension)
+
+        boundary_file = _fname_4saving(rootfile=inner_image,
+                                       suffix='layering_boundaries',
+                                       base_name=file_name,
+                                       extension=file_extension)
 
     # start virutal machine if not already running
     try:
@@ -86,6 +95,16 @@ def volumetric_layering(inner_levelset, outer_levelset,
 
     # initate class
     lamination = cbstools.LaminarVolumetricLayering()
+
+    # load the data
+    inner_img = load_volume(inner_levelset)
+    inner_data = inner_img.get_data()
+    hdr = inner_img.get_header()
+    aff = inner_img.get_affine()
+    resolution = [x.item() for x in hdr.get_zooms()]
+    dimensions = inner_data.shape
+
+    outer_data = load_volume(outer_levelset).get_data()
 
     # set parameters from input images
     lamination.setDimensions(dimensions[0], dimensions[1], dimensions[2])
@@ -99,7 +118,7 @@ def volumetric_layering(inner_levelset, outer_levelset,
 
     # execute class
     try:
-        print("Creating layers")
+        print("Executing volumetric layering")
         lamination.execute()
 
     except:
@@ -130,23 +149,6 @@ def volumetric_layering(inner_levelset, outer_levelset,
     boundaries = nb.Nifti1Image(boundary_data, aff, hdr)
 
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, inner_levelset)
-
-        depth_file = _fname_4saving(rootfile=inner_image,
-                                    suffix='layering_depth',
-                                    base_name=file_name,
-                                    extension=file_extension)
-
-        layer_file = _fname_4saving(rootfile=inner_image,
-                                    suffix='layering_layers',
-                                    base_name=file_name,
-                                    extension=file_extension)
-
-        boundary_file = _fname_4saving(rootfile=inner_image,
-                                       suffix='layering_boundaries',
-                                       base_name=file_name,
-                                       extension=file_extension)
-
         save_volume(os.path.join(output_dir, depth_file), depths)
         save_volume(os.path.join(output_dir, layer_file), layers)
         save_volume(os.path.join(output_dir, boundary_file), boundaries)

@@ -20,18 +20,31 @@ def _output_dir_4saving(output_dir=None, rootfile=None):
     if not(output_dir[-1] == os.path.sep):
         output_dir += os.path.sep
 
-    print ""
-    print "Outputs are saved to %s" % output_dir
+    # check if there is write access to the directory
+    if not os.access(output_dir, os.W_OK | os.X_OK):
+        raise ValueError("Cannot write to {0}, please specify a different "
+                         "output_dir. (Note that if you don't set output_dir "
+                         "explicitly, it will be set to the directory of the "
+                         "input file, if applicable, or to the current "
+                         "working directory otherwise)").format(output_dir)
+
+    print("\n Outputs will be saved to {0}").format(output_dir)
     return output_dir
 
 
 def _fname_4saving(rootfile=None, suffix=None,
                    base_name=None, extension=None):
-    # TODO: give informative error if rootfile is not really a filename
     # if both base_name and extension are given, jump right to inserting suffix
     if (base_name is None or extension is None):
         # else, if a rootfile is given, find base_name and extension
         if isinstance(rootfile, basestring):
+            # avoid empty strings
+            if len(rootfile) <= 1:
+                raise ValueError("When trying to determine the file name for "
+                                 "saving from the input {0}, the input file "
+                                 "name seems empty. Check if your inputs "
+                                 "exist, or try to specify the base_name "
+                                 "parameter for saving.").format(rootfile)
             split_root = os.path.basename(rootfile).split('.')
             # if there was only one dot in the filename, it is good to go
             if len(split_root) == 2:

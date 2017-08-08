@@ -78,5 +78,6 @@ def save_volume(filename, volume, dtype='float32', overwrite_file=True):
     else:
         try:
             volume.to_filename(filename)
+            print("Saving {0}").format(filename)
         except AttributeError:
             print('Input volume must be a Nibabel SpatialImage.')

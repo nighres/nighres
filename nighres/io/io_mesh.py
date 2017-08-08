@@ -165,8 +165,10 @@ def save_mesh_data(filename, surf_data):
         if (filename.endswith('curv') or filename.endswith('thickness') or
                 filename.endswith('sulc')):
             nb.freesurfer.io.write_morph_data(filename, surf_data)
+            print("Saving {0}").format(filename)
         elif filename.endswith('txt'):
             np.savetxt(filename, surf_data)
+            print("Saving {0}").format(filename)
         else:
             raise ValueError('File format not recognized. Currently supported '
                              'are freesurfer formats curv, sulc, thickness '
