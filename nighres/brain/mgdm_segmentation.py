@@ -4,9 +4,8 @@ import os
 import sys
 import cbstools
 from ..io import load_volume, save_volume
-from ..utils import _output_dir_4saving, _fname_4saving
-from ..global_settings import ATLAS_DIR, DEFAULT_ATLAS, TOPOLOGY_LUT_DIR
-
+from ..utils import _output_dir_4saving, _fname_4saving, \
+                    _check_topology_lut_dir, _check_atlas_file
 
 def _get_mgdm_orientation(affine, mgdm):
     '''
@@ -149,29 +148,11 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     framework with homeomorphic level sets. DOI: 10.1109/CVPR.2008.4587475
     """
 
-    # set default atlas if not given
-    if atlas_file is None:
-        atlas_file = DEFAULT_ATLAS
-    else:
-        # check if file exists, if not try search atlas in default atlas dir
-        if not os.path.isfile(atlas_file):
-            if not os.path.isfile(os.path.join(ATLAS_DIR, atlas_file)):
-                raise ValueError('The atlas_file you have specified ({0}) '
-                                 'does not exist'.format(atlas_file))
-            else:
-                atlas_file = os.path.join(ATLAS_DIR, atlas_file)
+    # check atlas_file and set default if not given
+    atlas_file = _check_atlas_file(atlas_file)
 
-    # set default topology lut dir if not given
-    if topology_lut_dir is None:
-        topology_lut_dir = TOPOLOGY_LUT_DIR
-    else:
-        # check if dir exists
-        if not os.path.isdir(topology_lut_dir):
-            raise ValueError('The topology_lut_dir you have specified ({0}) '
-                             'does not exist'.format(topology_lut_dir))
-    # if we don't end in a path sep, we need to make sure that we add it
-    if not(topology_lut_dir[-1] == os.path.sep):
-        topology_lut_dir += os.path.sep
+    # check topology_lut_dir and set default if not given
+    topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
 
     # find available intensity priors in selected MGDM atlas
     mgdm_intensity_priors = _get_mgdm_intensity_priors(atlas_file)

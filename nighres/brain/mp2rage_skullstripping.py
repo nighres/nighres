@@ -4,8 +4,8 @@ import os
 import sys
 import cbstools
 from ..io import load_volume, save_volume
-from ..utils import _output_dir_4saving, _fname_4saving
-from ..global_settings import TOPOLOGY_LUT_DIR
+from ..utils import _output_dir_4saving, _fname_4saving, \
+                    _check_topology_lut_dir
 
 
 def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
@@ -64,17 +64,8 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
     DOI: 10.1016/j.neuroimage.2009.10.002
     """
 
-    # set default topology lut dir if not given
-    if topology_lut_dir is None:
-        topology_lut_dir = TOPOLOGY_LUT_DIR
-    else:
-        # check if dir exists
-        if not os.path.isdir(topology_lut_dir):
-            raise ValueError('The topology_lut_dir you have specified ({0}) '
-                             'does not exist'.format(topology_lut_dir))
-    # if we don't end in a path sep, we need to make sure that we add it
-    if not(topology_lut_dir[-1] == os.path.sep):
-        topology_lut_dir += os.path.sep
+    # check topology lut dir and set default if not given
+    topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
 
     # make sure that saving related parameters are correct
     if save_data:
@@ -135,6 +126,8 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     stripper.setSkipZeroValues(skip_zero_values)
     stripper.setTopologyLUTdirectory(topology_lut_dir)
+
+
 
     # execute skull stripping
     try:
