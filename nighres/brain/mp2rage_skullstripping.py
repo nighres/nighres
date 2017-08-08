@@ -72,9 +72,9 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         if not os.path.isdir(topology_lut_dir):
             raise ValueError('The topology_lut_dir you have specified ({0}) '
                              'does not exist'.format(topology_lut_dir))
-        # if we don't end in a path sep, we need to make sure that we add it
-        if not(topology_lut_dir[-1] == os.path.sep):
-            topology_lut_dir += os.path.sep
+    # if we don't end in a path sep, we need to make sure that we add it
+    if not(topology_lut_dir[-1] == os.path.sep):
+        topology_lut_dir += os.path.sep
 
     # make sure that saving related parameters are correct
     if save_data:
@@ -134,6 +134,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
                                     (t1map_data.flatten('F')).astype(float)))
 
     stripper.setSkipZeroValues(skip_zero_values)
+    stripper.setTopologyLUTdirectory(topology_lut_dir)
 
     # execute skull stripping
     try:

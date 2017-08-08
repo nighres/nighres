@@ -169,9 +169,9 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         if not os.path.isdir(topology_lut_dir):
             raise ValueError('The topology_lut_dir you have specified ({0}) '
                              'does not exist'.format(topology_lut_dir))
-        # if we don't end in a path sep, we need to make sure that we add it
-        if not(topology_lut_dir[-1] == os.path.sep):
-            topology_lut_dir += os.path.sep
+    # if we don't end in a path sep, we need to make sure that we add it
+    if not(topology_lut_dir[-1] == os.path.sep):
+        topology_lut_dir += os.path.sep
 
     # find available intensity priors in selected MGDM atlas
     mgdm_intensity_priors = _get_mgdm_intensity_priors(atlas_file)
