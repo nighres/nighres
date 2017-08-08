@@ -3,4 +3,4 @@ include LICENSE
 include MANIFEST.in
 include cbstools/*.jar
 include cbstools/_cbstools.so
-recursive-include nires/atlases *
+recursive-include nighres/atlases *
