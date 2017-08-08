@@ -73,11 +73,11 @@ def save_volume(filename, volume, dtype='float32', overwrite_file=True):
     if dtype is not None:
         volume.set_data_dtype(dtype)
     if os.path.isfile(filename) and overwrite_file is False:
-        print("This file exists and overwrite_file was set to False, "
+        print("\nThis file exists and overwrite_file was set to False, "
               "file not saved.")
     else:
         try:
             volume.to_filename(filename)
-            print("Saving {0}").format(filename)
+            print("\nSaving {0}").format(filename)
         except AttributeError:
-            print('Input volume must be a Nibabel SpatialImage.')
+            print('\nInput volume must be a Nibabel SpatialImage.')

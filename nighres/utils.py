@@ -28,7 +28,7 @@ def _output_dir_4saving(output_dir=None, rootfile=None):
                          "input file, if applicable, or to the current "
                          "working directory otherwise)").format(output_dir)
 
-    print("\n Outputs will be saved to {0}").format(output_dir)
+    print("\nOutputs will be saved to {0}").format(output_dir)
     return output_dir
 
 
@@ -96,8 +96,8 @@ def _download_from_url(url, filename, overwrite_file=False):
         os.makedirs(dirname)
 
     if os.path.isfile(filename) and overwrite_file is False:
-        print("The file {0} exists and overwrite_file was set to False. "
+        print("\nThe file {0} exists and overwrite_file was set to False. "
               "Not downloading.").format(filename)
     else:
-        print("Downloading to {0}").format(filename)
+        print("\nDownloading to {0}").format(filename)
         urllib.urlretrieve(url, filename)

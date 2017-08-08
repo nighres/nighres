@@ -1,7 +1,7 @@
 import nibabel as nb
 import numpy as np
 
-# TODO: compare with Nibabel functions and possibly extend
+# TODO: compare with Nilearn functions and possibly extend
 
 
 def load_mesh_geometry(surf_mesh):
@@ -165,10 +165,10 @@ def save_mesh_data(filename, surf_data):
         if (filename.endswith('curv') or filename.endswith('thickness') or
                 filename.endswith('sulc')):
             nb.freesurfer.io.write_morph_data(filename, surf_data)
-            print("Saving {0}").format(filename)
+            print("\nSaving {0}").format(filename)
         elif filename.endswith('txt'):
             np.savetxt(filename, surf_data)
-            print("Saving {0}").format(filename)
+            print("\nSaving {0}").format(filename)
         else:
             raise ValueError('File format not recognized. Currently supported '
                              'are freesurfer formats curv, sulc, thickness '
@@ -209,19 +209,25 @@ def save_mesh_geometry(filename, surf_dict):
                 filename.endswith('inflated')):
             nb.freesurfer.io.write_geometry(filename, surf_dict['coords'],
                                             surf_dict['faces'])
+            print("\nSaving {0}").format(filename)
         elif filename.endswith('gii'):
             _write_gifti(filename, surf_dict['coords'], surf_dict['faces'])
+            print("\nSaving {0}").format(filename)
         elif filename.endswith('vtk'):
             if 'data' in surf_dict.keys():
                 _write_vtk(filename, surf_dict['coords'], surf_dict['faces'],
                            surf_dict['data'])
+                print("\nSaving {0}").format(filename)
             else:
                 _write_vtk(filename, surf_dict['coords'], surf_dict['faces'])
+                print("\nSaving {0}").format(filename)
         elif filename.endswith('ply'):
             _write_ply(filename, surf_dict['coords'], surf_dict['faces'])
+            print("\nSaving {0}").format(filename)
         elif filename.endswith('obj'):
             _write_obj(filename, surf_dict['coords'], surf_dict['faces'])
-            print('to view mesh in brainview, run the command:\n')
+            print("\nSaving {0}").format(filename)
+            print('To view mesh in brainview, run the command:\n')
             print('average_objects ' + filename + ' ' + filename)
     else:
         raise ValueError('Filename must be a string and surf_dict must be a '
