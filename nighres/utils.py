@@ -96,8 +96,8 @@ def _download_from_url(url, filename, overwrite_file=False):
         os.makedirs(dirname)
 
     if os.path.isfile(filename) and overwrite_file is False:
-        print("\nThe file {0} exists and overwrite_file was set to False. "
-              "Not downloading.").format(filename)
+        print("\nThe file {0} exists and overwrite_file was set to False -- "
+              "not downloading.").format(filename)
     else:
         print("\nDownloading to {0}").format(filename)
         urllib.urlretrieve(url, filename)
