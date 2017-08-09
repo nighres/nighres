@@ -1,5 +1,4 @@
-laminar\.volumetric\_layering
-=============================
+volumetric\_layering
+====================
 
-.. automodule:: nighres.laminar.volumetric_layering
-    :members:
+.. autofunction:: nighres.laminar.volumetric_layering

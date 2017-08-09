@@ -1,5 +1,4 @@
-brain\.mgdm\_segmentation
-=========================
+mgdm\_segmentation
+==================
 
-.. automodule:: nighres.brain.mgdm_segmentation
-    :members:
+.. autofunction:: nighres.brain.mgdm_segmentation

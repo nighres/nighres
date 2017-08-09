@@ -14,7 +14,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
                            file_name=None, file_extension=None):
     """ MP2RAGE skull stripping
 
-    Estimate a brain mask from MRI data acquired with the MP2RAGE sequence.
+    Estimates a brain mask from MRI data acquired with the MP2RAGE sequence.
     At least a T1-weighted or a T1 map image is required
 
     Parameters
@@ -42,26 +42,25 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     Returns
     ----------
-    outputs: dict
-        Dictionary collecting outputs under the following keys:
-        - 'brain_mask': Binary brain mask (_strip_mask)
-        - 'inv2_masked': Masked second inversion imamge (_strip_inv2)
-        - 't1w_masked': Masked T1-weighted image (_strip_t1w),
-                        only created if t1_weighted was given
-        - 't1map_masked': Masked T1 map (_strip_t1map),
-                          only created if t1_map  was given
-        (suffix of output files if save_data is set to True)
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files in brackets)
+
+        * brain_mask (niimg): Binary brain mask (_strip_mask)
+        * inv2_masked (niimg): Masked second inversion imamge (_strip_inv2)
+        * t1w_masked (niimg): Masked T1-weighted image (_strip_t1w)
+        * t1map_masked (niimg): Masked T1 map (_strip_t1map)
 
     Notes
     ----------
     Original Java module by Pierre-Louis Bazin. Details on the MP2RAGE
-    sequence can be found in [1]
+    sequence can be found in [1]_
 
     References
     ----------
-    [1] Marques et al. (2010). MP2RAGE, a self bias-field corrected sequence
-    for improved segmentation and T1-mapping at high field.
-    DOI: 10.1016/j.neuroimage.2009.10.002
+    .. [1] Marques et al. (2010). MP2RAGE, a self bias-field corrected sequence
+       for improved segmentation and T1-mapping at high field.
+       DOI: 10.1016/j.neuroimage.2009.10.002
     """
 
     # check topology lut dir and set default if not given

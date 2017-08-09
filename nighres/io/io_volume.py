@@ -4,7 +4,8 @@ import numpy as np
 
 def load_volume(volume):
     """
-    Load volumetric data into a Nibabel SpatialImage [1]
+    Load volumetric data into a
+    `Nibabel SpatialImage <http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage>`_
 
     Parameters
     ----------
@@ -18,14 +19,13 @@ def load_volume(volume):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [2]
+    Originally created as part of Laminar Python [1]_ .
 
     References
     -----------
-    [1] http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage
-    [2] Huntenburg et al. (2017), Laminar Python: Tools for cortical
-        depth-resolved analysis of high-resolution brain imaging data in
-        Python. DOI: 10.3897/rio.3.e12346
+    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+       depth-resolved analysis of high-resolution brain imaging data in
+       Python. DOI: 10.3897/rio.3.e12346
     """  # noqa
 
     # if input is a filename, try to load it
@@ -43,7 +43,8 @@ def load_volume(volume):
 
 def save_volume(filename, volume, dtype='float32', overwrite_file=True):
     """
-    Save volumetric data that is a Nibabel SpatialImage [1]
+    Save volumetric data that is a
+    `Nibabel SpatialImage <http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage>`_
     to a file
 
     Parameters
@@ -60,14 +61,13 @@ def save_volume(filename, volume, dtype='float32', overwrite_file=True):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [2]
+    Originally created as part of Laminar Python [1]_ .
 
     References
     -----------
-    [1] http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage
-    [2] Huntenburg et al. (2017), Laminar Python: Tools for cortical
-        depth-resolved analysis of high-resolution brain imaging data in
-        Python. DOI: 10.3897/rio.3.e12346
+    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+       depth-resolved analysis of high-resolution brain imaging data in
+       Python. DOI: 10.3897/rio.3.e12346
     """  # noqa
     import os
     if dtype is not None:

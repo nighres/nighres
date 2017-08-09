@@ -29,9 +29,9 @@ def profile_sampling(profile_surface_image, intensity_image,
 
     Returns
     -----------
-    profile_data_image: TODO:type
-        Profile image as 4D Nibabel Nifti1Image, where the 4th dimension
-        represents the profile for each voxel
+    niimg
+        4D profile image , where the 4th dimension represents the
+        profile for each voxel (output file suffix _profiles)
 
     Notes
     ----------

@@ -1,194 +1,306 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>brain.mp2rage_skullstripping &#8212; nighres</title>
-    <link rel="stylesheet" href="../_static/nighres.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.1.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="laminar.profile_sampling" href="../laminar/profile_sampling.html" />
-    <link rel="prev" title="brain.mgdm_segmentation" href="mgdm_segmentation.html" /> 
-  </head>
-  <body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="../laminar/profile_sampling.html" title="laminar.profile_sampling"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="mgdm_segmentation.html" title="brain.mgdm_segmentation"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">nighres</a> &#187;</li> 
-      </ul>
-    </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="mgdm_segmentation.html"
-                        title="previous chapter">brain.mgdm_segmentation</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="../laminar/profile_sampling.html"
-                        title="next chapter">laminar.profile_sampling</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/brain/mp2rage_skullstripping.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>mp2rage_skullstripping &mdash; Nighres</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Nighres" href="../index.html"/>
+        <link rel="up" title="Brain" href="index.html"/>
+        <link rel="next" title="Laminar" href="../laminar/index.html"/>
+        <link rel="prev" title="mgdm_segmentation" href="mgdm_segmentation.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> nighres
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing Nighres</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Modules and Functions</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../io/index.html">IO</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Brain</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mgdm_segmentation.html">mgdm_segmentation</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">mp2rage_skullstripping</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../laminar/index.html">Laminar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../surface/index.html">Surface</a></li>
+</ul>
+
+            
+          
         </div>
       </div>
+    </nav>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">nighres</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Brain</a> &raquo;</li>
+        
+      <li>mp2rage_skullstripping</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
             
-  <div class="section" id="module-nighres.brain.mp2rage_skullstripping">
-<span id="brain-mp2rage-skullstripping"></span><h1>brain.mp2rage_skullstripping<a class="headerlink" href="#module-nighres.brain.mp2rage_skullstripping" title="Permalink to this headline">¶</a></h1>
+            <a href="../_sources/brain/mp2rage_skullstripping.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="mp2rage-skullstripping">
+<h1>mp2rage_skullstripping<a class="headerlink" href="#mp2rage-skullstripping" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="nighres.brain.mp2rage_skullstripping.mp2rage_skullstripping">
-<code class="descclassname">nighres.brain.mp2rage_skullstripping.</code><code class="descname">mp2rage_skullstripping</code><span class="sig-paren">(</span><em>second_inversion</em>, <em>t1_weighted=None</em>, <em>t1_map=None</em>, <em>skip_zero_values=True</em>, <em>topology_lut_dir=None</em>, <em>save_data=False</em>, <em>output_dir=None</em>, <em>file_name=None</em>, <em>file_extension=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/brain/mp2rage_skullstripping.html#mp2rage_skullstripping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.brain.mp2rage_skullstripping.mp2rage_skullstripping" title="Permalink to this definition">¶</a></dt>
+<dt id="nighres.brain.mp2rage_skullstripping">
+<code class="descclassname">nighres.brain.</code><code class="descname">mp2rage_skullstripping</code><span class="sig-paren">(</span><em>second_inversion</em>, <em>t1_weighted=None</em>, <em>t1_map=None</em>, <em>skip_zero_values=True</em>, <em>topology_lut_dir=None</em>, <em>save_data=False</em>, <em>output_dir=None</em>, <em>file_name=None</em>, <em>file_extension=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/brain/mp2rage_skullstripping.html#mp2rage_skullstripping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.brain.mp2rage_skullstripping" title="Permalink to this definition">¶</a></dt>
 <dd><p>MP2RAGE skull stripping</p>
-<p>Estimate a brain mask from MRI data acquired with the MP2RAGE sequence.
+<p>Estimates a brain mask from MRI data acquired with the MP2RAGE sequence.
 At least a T1-weighted or a T1 map image is required</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>second_inversion: TODO:type</strong></p>
-<blockquote>
-<div><p>Second inversion image derived from MP2RAGE sequence</p>
-</div></blockquote>
-<p><strong>t1_weighted: TODO:type</strong></p>
-<blockquote>
-<div><p>T1-weighted image derived from MP2RAGE sequence (also referred to as
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>second_inversion</strong> (<em>TODO:type</em>) – Second inversion image derived from MP2RAGE sequence</li>
+<li><strong>t1_weighted</strong> (<em>TODO:type</em>) – T1-weighted image derived from MP2RAGE sequence (also referred to as
 “uniform” image)
-At least one of t1_weighted and t1_map is required</p>
-</div></blockquote>
-<p><strong>t1_map: TODO:type</strong></p>
-<blockquote>
-<div><p>Quantitative T1 map image derived from MP2RAGE sequence
-At least one of t1_weighted and t1_map is required</p>
-</div></blockquote>
-<p><strong>skip_zero_values: bool</strong></p>
-<blockquote>
-<div><p>Ignores voxels with zero value (default is True)</p>
-</div></blockquote>
-<p><strong>topology_lut_dir: str, optional</strong></p>
-<blockquote>
-<div><p>Path to directory in which topology files are stored (default is stored
-in TOPOLOGY_LUT_DIR)</p>
-</div></blockquote>
-<p><strong>save_data: bool</strong></p>
-<blockquote>
-<div><p>Save output data to file (default is False)</p>
-</div></blockquote>
-<p><strong>output_dir: str, optional</strong></p>
-<blockquote>
-<div><p>Path to desired output directory, will be created if it doesn’t exist</p>
-</div></blockquote>
-<p><strong>file_extension: str, optional</strong></p>
-<blockquote>
-<div><p>Desired extension for output files (determines file type)</p>
-</div></blockquote>
+At least one of t1_weighted and t1_map is required</li>
+<li><strong>t1_map</strong> (<em>TODO:type</em>) – Quantitative T1 map image derived from MP2RAGE sequence
+At least one of t1_weighted and t1_map is required</li>
+<li><strong>skip_zero_values</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – Ignores voxels with zero value (default is True)</li>
+<li><strong>topology_lut_dir</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Path to directory in which topology files are stored (default is stored
+in TOPOLOGY_LUT_DIR)</li>
+<li><strong>save_data</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – Save output data to file (default is False)</li>
+<li><strong>output_dir</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Path to desired output directory, will be created if it doesn’t exist</li>
+<li><strong>file_extension</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Desired extension for output files (determines file type)</li>
+</ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">outputs: dict</p>
-<blockquote class="last">
-<div><p>Dictionary collecting outputs under the following keys:
-- ‘brain_mask’: Binary brain mask (_strip_mask)
-- ‘inv2_masked’: Masked second inversion imamge (_strip_inv2)
-- ‘t1w_masked’: Masked T1-weighted image (_strip_t1w),</p>
-<blockquote>
-<div><p>only created if t1_weighted was given</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>Dictionary collecting outputs under the following keys
+(suffix of output files in brackets)</p>
 <ul class="simple">
-<li><dl class="first docutils">
-<dt>‘t1map_masked’: Masked T1 map (_strip_t1map),</dt>
-<dd>only created if t1_map  was given</dd>
-</dl>
-</li>
+<li>brain_mask (niimg): Binary brain mask (_strip_mask)</li>
+<li>inv2_masked (niimg): Masked second inversion imamge (_strip_inv2)</li>
+<li>t1w_masked (niimg): Masked T1-weighted image (_strip_t1w)</li>
+<li>t1map_masked (niimg): Masked T1 map (_strip_t1map)</li>
 </ul>
-<p>(suffix of output files if save_data is set to True)</p>
-</div></blockquote>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)">dict</a></p>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
 <p>Original Java module by Pierre-Louis Bazin. Details on the MP2RAGE
-sequence can be found in [1]</p>
+sequence can be found in <a class="footnote-reference" href="#id2" id="id1">[1]</a></p>
 <p class="rubric">References</p>
-<p>[1] Marques et al. (2010). MP2RAGE, a self bias-field corrected sequence
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Marques et al. (2010). MP2RAGE, a self bias-field corrected sequence
 for improved segmentation and T1-mapping at high field.
-DOI: 10.1016/j.neuroimage.2009.10.002</p>
+DOI: 10.1016/j.neuroimage.2009.10.002</td></tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../laminar/index.html" class="btn btn-neutral float-right" title="Laminar" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="mgdm_segmentation.html" class="btn btn-neutral" title="mgdm_segmentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Julia Huntenburg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="../laminar/profile_sampling.html" title="laminar.profile_sampling"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="mgdm_segmentation.html" title="brain.mgdm_segmentation"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">nighres</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2017, Julia Huntenburg.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
-    </div>
-  </body>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
 </html>

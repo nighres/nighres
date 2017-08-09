@@ -10,7 +10,7 @@ def probability_to_levelset(probability_image,
                             save_data=False, output_dir=None,
                             file_name=None, file_extension=None):
 
-    """Creates levelset from tissue classification
+    """Levelset from tissue classification
 
     Creates a levelset surface representations from a probabilistic or
     deterministic tissue classification. The levelset indicates each voxel's
@@ -33,9 +33,8 @@ def probability_to_levelset(probability_image,
 
     Returns
     ----------
-    levelset: TODO:type
-        Levelset representation of surface as Nibabel Nifti1Image
-        (If save_data is True, the image is saved with suffix _levelset)
+    niimg
+        Levelset representation of surface (output file suffix _levelset)
 
     Notes
     ----------

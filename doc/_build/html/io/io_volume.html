@@ -1,185 +1,315 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>io.io_volume &#8212; nighres</title>
-    <link rel="stylesheet" href="../_static/nighres.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.1.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="brain.mgdm_segmentation" href="../brain/mgdm_segmentation.html" />
-    <link rel="prev" title="io.io_mesh" href="io_mesh.html" /> 
-  </head>
-  <body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="../brain/mgdm_segmentation.html" title="brain.mgdm_segmentation"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="io_mesh.html" title="io.io_mesh"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">nighres</a> &#187;</li> 
-      </ul>
-    </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="io_mesh.html"
-                        title="previous chapter">io.io_mesh</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="../brain/mgdm_segmentation.html"
-                        title="next chapter">brain.mgdm_segmentation</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/io/io_volume.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>io_volume &mdash; Nighres</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Nighres" href="../index.html"/>
+        <link rel="up" title="IO" href="index.html"/>
+        <link rel="next" title="io_mesh" href="io_mesh.html"/>
+        <link rel="prev" title="IO" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> nighres
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing Nighres</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Modules and Functions</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">IO</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">io_volume</a></li>
+<li class="toctree-l2"><a class="reference internal" href="io_mesh.html">io_mesh</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../brain/index.html">Brain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../laminar/index.html">Laminar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../surface/index.html">Surface</a></li>
+</ul>
+
+            
+          
         </div>
       </div>
+    </nav>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">nighres</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">IO</a> &raquo;</li>
+        
+      <li>io_volume</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
             
-  <div class="section" id="module-nighres.io.io_volume">
-<span id="io-io-volume"></span><h1>io.io_volume<a class="headerlink" href="#module-nighres.io.io_volume" title="Permalink to this headline">¶</a></h1>
+            <a href="../_sources/io/io_volume.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="io-volume">
+<h1>io_volume<a class="headerlink" href="#io-volume" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="nighres.io.io_volume.load_volume">
-<code class="descclassname">nighres.io.io_volume.</code><code class="descname">load_volume</code><span class="sig-paren">(</span><em>volume</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_volume.html#load_volume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.io_volume.load_volume" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load volumetric data into a Nibabel SpatialImage [1]</p>
+<dt id="nighres.io.load_volume">
+<code class="descclassname">nighres.io.</code><code class="descname">load_volume</code><span class="sig-paren">(</span><em>volume</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_volume.html#load_volume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.load_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load volumetric data into a
+<a class="reference external" href="http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage">Nibabel SpatialImage</a></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>volume: TODO:type</strong></p>
-<blockquote>
-<div><p>Volumetric data to be loaded, can be a path to a file that nibabel can
-load, or a Nibabel SpatialImage</p>
-</div></blockquote>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>volume</strong> (<em>TODO:type</em>) – Volumetric data to be loaded, can be a path to a file that nibabel can
+load, or a Nibabel SpatialImage</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">image: Nibabel SpatialImage</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>image</strong></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Nibabel SpatialImage</td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p>Originally created as part of Laminar Python [2]</p>
+<p>Originally created as part of Laminar Python <a href="#id6"><span class="problematic" id="id7"><span id="id1"></span>[1]_</span></a> .</p>
 <p class="rubric">References</p>
-<p>[1] <a class="reference external" href="http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage">http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage</a>
-[2] Huntenburg et al. (2017), Laminar Python: Tools for cortical</p>
-<blockquote>
-<div>depth-resolved analysis of high-resolution brain imaging data in
-Python. DOI: 10.3897/rio.3.e12346</div></blockquote>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>Huntenburg et al. (2017), Laminar Python: Tools for cortical
+depth-resolved analysis of high-resolution brain imaging data in
+Python. DOI: 10.3897/rio.3.e12346</td></tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
-<dt id="nighres.io.io_volume.save_volume">
-<code class="descclassname">nighres.io.io_volume.</code><code class="descname">save_volume</code><span class="sig-paren">(</span><em>filename</em>, <em>volume</em>, <em>dtype='float32'</em>, <em>overwrite_file=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_volume.html#save_volume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.io_volume.save_volume" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save volumetric data that is a Nibabel SpatialImage [1]
+<dt id="nighres.io.save_volume">
+<code class="descclassname">nighres.io.</code><code class="descname">save_volume</code><span class="sig-paren">(</span><em>filename</em>, <em>volume</em>, <em>dtype='float32'</em>, <em>overwrite_file=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_volume.html#save_volume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.save_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save volumetric data that is a
+<a class="reference external" href="http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage">Nibabel SpatialImage</a>
 to a file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename: str</strong></p>
-<blockquote>
-<div><p>Full path and filename under which volume should be saved. The
-extension determines the file format (must be supported by Nibabel)</p>
-</div></blockquote>
-<p><strong>volume: Nibabel SpatialImage</strong></p>
-<blockquote>
-<div><p>Volumetric data to be saved</p>
-</div></blockquote>
-<p><strong>dtype: str, optional</strong></p>
-<blockquote>
-<div><p>Datatype in which volumetric data should be stored (default is float32)</p>
-</div></blockquote>
-<p><strong>overwrite_file: bool, optional</strong></p>
-<blockquote class="last">
-<div><p>Overwrite existing files (default is True)</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Full path and filename under which volume should be saved. The
+extension determines the file format (must be supported by Nibabel)</li>
+<li><strong>volume</strong> (<em>Nibabel SpatialImage</em>) – Volumetric data to be saved</li>
+<li><strong>dtype</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>optional</em>) – Datatype in which volumetric data should be stored (default is float32)</li>
+<li><strong>overwrite_file</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Overwrite existing files (default is True)</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p>Originally created as part of Laminar Python [2]</p>
+<p>Originally created as part of Laminar Python <a href="#id8"><span class="problematic" id="id9"><span id="id4"></span>[1]_</span></a> .</p>
 <p class="rubric">References</p>
-<p>[1] <a class="reference external" href="http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage">http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage</a>
-[2] Huntenburg et al. (2017), Laminar Python: Tools for cortical</p>
-<blockquote>
-<div>depth-resolved analysis of high-resolution brain imaging data in
-Python. DOI: 10.3897/rio.3.e12346</div></blockquote>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>Huntenburg et al. (2017), Laminar Python: Tools for cortical
+depth-resolved analysis of high-resolution brain imaging data in
+Python. DOI: 10.3897/rio.3.e12346</td></tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="io_mesh.html" class="btn btn-neutral float-right" title="io_mesh" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="IO" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Julia Huntenburg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="../brain/mgdm_segmentation.html" title="brain.mgdm_segmentation"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="io_mesh.html" title="io.io_mesh"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">nighres</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2017, Julia Huntenburg.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
-    </div>
-  </body>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
 </html>

@@ -1,5 +1,4 @@
-laminar\.profile\_sampling
-===========================
+profile\_sampling
+=================
 
-.. automodule:: nighres.laminar.profile_sampling
-    :members:
+.. autofunction:: nighres.laminar.profile_sampling

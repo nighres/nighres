@@ -6,21 +6,22 @@ Complete pipeline performing all steps necessary to use MP2RAGE data for
 sampling T1 at different intracortical depth levels which are determined using
 a volume-preserving approach:
 
-* Dowloading public MP2RAGE data [1] :func:`nighres.download_from_url`
+* Dowloading public MP2RAGE data [1]_ :func:`nighres.download_from_url`
 * Skull stripping :func:`nighres.mp2rage_skullstripping`
-* Tissue segmentation using MGDM [2] :func:`nighres.mgdm_segmentation`
+* Tissue segmentation using MGDM [2]_ :func:`nighres.mgdm_segmentation`
 * Creating levelset representations of the pial and white matter surface
-* Equivolumetric layering of the cortical sheet [3]
+* Equivolumetric layering of the cortical sheet [3]_
 * Sampling T1 on the different intracortical depth
 
 References
 ----------
-[1] Tardif et al (2016). Open Science CBS Neuroimaging Repository: Sharing
-ultra-high-field MR images of the brain. DOI: 10.1016/j.neuroimage.2015.08.042
-[2] Bogovic, Prince and Bazin (2013). A multiple object geometric
-deformable model for image segmentation. DOI: 10.1016/j.cviu.2012.10.006.A
-[3] Waehnert et al (2014). Anatomically motivated modeling of cortical
-laminae. DOI: 10.1016/j.neuroimage.2013.03.078
+.. [1] Tardif et al (2016). Open Science CBS Neuroimaging Repository: Sharing
+   ultra-high-field MR images of the brain.
+   DOI: 10.1016/j.neuroimage.2015.08.042
+.. [2] Bogovic, Prince and Bazin (2013). A multiple object geometric
+   deformable model for image segmentation. DOI: 10.1016/j.cviu.2012.10.006.A
+.. [3] Waehnert et al (2014). Anatomically motivated modeling of cortical
+   laminae. DOI: 10.1016/j.neuroimage.2013.03.078
 """
 
 import os

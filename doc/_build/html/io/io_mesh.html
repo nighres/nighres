@@ -1,258 +1,387 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>io.io_mesh &#8212; nighres</title>
-    <link rel="stylesheet" href="../_static/nighres.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.1.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="io.io_volume" href="io_volume.html" />
-    <link rel="prev" title="Installing nighres" href="../installation.html" /> 
-  </head>
-  <body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="io_volume.html" title="io.io_volume"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="../installation.html" title="Installing nighres"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">nighres</a> &#187;</li> 
-      </ul>
-    </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="../installation.html"
-                        title="previous chapter">Installing nighres</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="io_volume.html"
-                        title="next chapter">io.io_volume</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/io/io_mesh.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>io_mesh &mdash; Nighres</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Nighres" href="../index.html"/>
+        <link rel="up" title="IO" href="index.html"/>
+        <link rel="next" title="Brain" href="../brain/index.html"/>
+        <link rel="prev" title="io_volume" href="io_volume.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> nighres
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing Nighres</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Modules and Functions</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">IO</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="io_volume.html">io_volume</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">io_mesh</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../brain/index.html">Brain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../laminar/index.html">Laminar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../surface/index.html">Surface</a></li>
+</ul>
+
+            
+          
         </div>
       </div>
+    </nav>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">nighres</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">IO</a> &raquo;</li>
+        
+      <li>io_mesh</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
             
-  <div class="section" id="module-nighres.io.io_mesh">
-<span id="io-io-mesh"></span><h1>io.io_mesh<a class="headerlink" href="#module-nighres.io.io_mesh" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="nighres.io.io_mesh.load_mesh_data">
-<code class="descclassname">nighres.io.io_mesh.</code><code class="descname">load_mesh_data</code><span class="sig-paren">(</span><em>surf_data</em>, <em>gii_darray=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_mesh.html#load_mesh_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.io_mesh.load_mesh_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loads mesh data into a Numpy array</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>surf_data:</strong></p>
-<blockquote>
-<div><p>Mesh data to be loaded, can be a Numpy array or a path to a file.
-Currently supported formats are freesurfer data formats (mgz, curv,
-sulc, thickness, annot, label), nii, gii, ASCII-coded vtk and txt</p>
-</div></blockquote>
-<p><strong>gii_darray: int, optional</strong></p>
-<blockquote>
-<div><p>Index of gii data array to load (default is to load all)</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">np.ndarray</p>
-<blockquote class="last">
-<div><p>Numpy array containing the data</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Notes</p>
-<p>Originally created as part of Laminar Python [1]</p>
-<p class="rubric">References</p>
-<dl class="docutils">
-<dt>[1] Huntenburg et al. (2017), Laminar Python: Tools for cortical</dt>
-<dd>depth-resolved analysis of high-resolution brain imaging data in
-Python. DOI: 10.3897/rio.3.e12346</dd>
-</dl>
-</dd></dl>
+            <a href="../_sources/io/io_mesh.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
 
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="io-mesh">
+<h1>io_mesh<a class="headerlink" href="#io-mesh" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="nighres.io.io_mesh.load_mesh_geometry">
-<code class="descclassname">nighres.io.io_mesh.</code><code class="descname">load_mesh_geometry</code><span class="sig-paren">(</span><em>surf_mesh</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_mesh.html#load_mesh_geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.io_mesh.load_mesh_geometry" title="Permalink to this definition">¶</a></dt>
+<dt id="nighres.io.load_mesh_geometry">
+<code class="descclassname">nighres.io.</code><code class="descname">load_mesh_geometry</code><span class="sig-paren">(</span><em>surf_mesh</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_mesh.html#load_mesh_geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.load_mesh_geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load a mesh geometry into a dictionary with entries
 “coords” and “faces”</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>surf_mesh:</strong></p>
-<blockquote>
-<div><p>Mesh geometry to be loaded, can be a path to a file
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>surf_mesh</strong> – Mesh geometry to be loaded, can be a path to a file
 (currently supported formats are freesurfer geometry formats,
 gii and ASCII-coded vtk, ply or obj) or a dictionary with the
-keys “coords” and “faces”</p>
-</div></blockquote>
-</td>
+keys “coords” and “faces”</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dict</p>
-<blockquote class="last">
-<div><p>Dictionary with a numpy array with key “coords” for a Numpy array of
-the x-y-z coordinates of the mesh vertices and key “faces2 for a
-Numpy array of the the indices (into coords) of the mesh faces</p>
-</div></blockquote>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Dictionary with a numpy array with key “coords” for a Numpy array of
+the x-y-z coordinates of the mesh vertices and key “faces” for a
+Numpy array of the the indices (into coords) of the mesh faces</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)">dict</a></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p>Originally created as part of Laminar Python [1]</p>
+<p>Originally created as part of Laminar Python <a href="#id9"><span class="problematic" id="id10"><span id="id1"></span>[1]_</span></a></p>
 <p class="rubric">References</p>
-<dl class="docutils">
-<dt>[1] Huntenburg et al. (2017), Laminar Python: Tools for cortical</dt>
-<dd>depth-resolved analysis of high-resolution brain imaging data in
-Python. DOI: 10.3897/rio.3.e12346</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="nighres.io.io_mesh.save_mesh_data">
-<code class="descclassname">nighres.io.io_mesh.</code><code class="descname">save_mesh_data</code><span class="sig-paren">(</span><em>filename</em>, <em>surf_data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_mesh.html#save_mesh_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.io_mesh.save_mesh_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves surface data that is a Numpy array to file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename: str</strong></p>
-<blockquote>
-<div><p>Full path and filename under which surfaces data should be saved. The
-extension determines the file format. Currently supported are
-freesurfer formats curv, thickness, sulc and ASCII-coded txt’</p>
-</div></blockquote>
-<p><strong>surf_data: np.ndarray</strong></p>
-<blockquote class="last">
-<div><p>Surface data to be saved</p>
-</div></blockquote>
-</td>
-</tr>
+<tr><td class="label">[1]</td><td>Huntenburg et al. (2017), Laminar Python: Tools for cortical
+depth-resolved analysis of high-resolution brain imaging data in
+Python. DOI: 10.3897/rio.3.e12346</td></tr>
 </tbody>
 </table>
-<p class="rubric">Notes</p>
-<p>Originally created as part of Laminar Python [1]</p>
-<p class="rubric">References</p>
-<dl class="docutils">
-<dt>[1] Huntenburg et al. (2017), Laminar Python: Tools for cortical</dt>
-<dd>depth-resolved analysis of high-resolution brain imaging data in
-Python. DOI: 10.3897/rio.3.e12346</dd>
-</dl>
 </dd></dl>
 
 <dl class="function">
-<dt id="nighres.io.io_mesh.save_mesh_geometry">
-<code class="descclassname">nighres.io.io_mesh.</code><code class="descname">save_mesh_geometry</code><span class="sig-paren">(</span><em>filename</em>, <em>surf_dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_mesh.html#save_mesh_geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.io_mesh.save_mesh_geometry" title="Permalink to this definition">¶</a></dt>
+<dt id="nighres.io.save_mesh_geometry">
+<code class="descclassname">nighres.io.</code><code class="descname">save_mesh_geometry</code><span class="sig-paren">(</span><em>filename</em>, <em>surf_dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_mesh.html#save_mesh_geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.save_mesh_geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves surface mesh geometry to file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename: str</strong></p>
-<blockquote>
-<div><p>Full path and filename under which surfaces data should be saved. The
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Full path and filename under which surfaces data should be saved. The
 extension determines the file format. Currently supported are
-freesurfer geometry formats, gii and ASCII-coded vtk, obj, ply’</p>
-</div></blockquote>
-<p><strong>surf_dict: dict</strong></p>
-<blockquote class="last">
-<div><p>Surface mesh geometry to be saved. Dictionary with a numpy array with
+freesurfer geometry formats, gii and ASCII-coded vtk, obj, ply’</li>
+<li><strong>surf_dict</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – Surface mesh geometry to be saved. Dictionary with a numpy array with
 key “coords” for a Numpy array of the x-y-z coordinates of the mesh
 vertices and key “faces2 for a Numpy array of the the indices
-(into coords) of the mesh faces</p>
-</div></blockquote>
+(into coords) of the mesh faces</li>
+</ul>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p>Originally created as part of Laminar Python [1]</p>
+<p>Originally created as part of Laminar Python <a href="#id11"><span class="problematic" id="id12"><span id="id3"></span>[1]_</span></a></p>
 <p class="rubric">References</p>
-<dl class="docutils">
-<dt>[1] Huntenburg et al. (2017), Laminar Python: Tools for cortical</dt>
-<dd>depth-resolved analysis of high-resolution brain imaging data in
-Python. DOI: 10.3897/rio.3.e12346</dd>
-</dl>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>Huntenburg et al. (2017), Laminar Python: Tools for cortical
+depth-resolved analysis of high-resolution brain imaging data in
+Python. DOI: 10.3897/rio.3.e12346</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nighres.io.load_mesh_data">
+<code class="descclassname">nighres.io.</code><code class="descname">load_mesh_data</code><span class="sig-paren">(</span><em>surf_data</em>, <em>gii_darray=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_mesh.html#load_mesh_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.load_mesh_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads mesh data into a Numpy array</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>surf_data</strong> – Mesh data to be loaded, can be a Numpy array or a path to a file.
+Currently supported formats are freesurfer data formats (mgz, curv,
+sulc, thickness, annot, label), nii, gii, ASCII-coded vtk and txt</li>
+<li><strong>gii_darray</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – Index of gii data array to load (default is to load all)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Numpy array containing the data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">np.ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Originally created as part of Laminar Python <a href="#id13"><span class="problematic" id="id14"><span id="id5"></span>[1]_</span></a></p>
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>Huntenburg et al. (2017), Laminar Python: Tools for cortical
+depth-resolved analysis of high-resolution brain imaging data in
+Python. DOI: 10.3897/rio.3.e12346</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="nighres.io.save_mesh_data">
+<code class="descclassname">nighres.io.</code><code class="descname">save_mesh_data</code><span class="sig-paren">(</span><em>filename</em>, <em>surf_data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/nighres/io/io_mesh.html#save_mesh_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nighres.io.save_mesh_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves surface data that is a Numpy array to file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Full path and filename under which surfaces data should be saved. The
+extension determines the file format. Currently supported are
+freesurfer formats curv, thickness, sulc and ASCII-coded txt’</li>
+<li><strong>surf_data</strong> (<em>np.ndarray</em>) – Surface data to be saved</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Originally created as part of Laminar Python <a href="#id15"><span class="problematic" id="id16"><span id="id7"></span>[1]_</span></a></p>
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id8" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>Huntenburg et al. (2017), Laminar Python: Tools for cortical
+depth-resolved analysis of high-resolution brain imaging data in
+Python. DOI: 10.3897/rio.3.e12346</td></tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
 
 
+           </div>
+           <div class="articleComments">
+            
+           </div>
           </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../brain/index.html" class="btn btn-neutral float-right" title="Brain" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="io_volume.html" class="btn btn-neutral" title="io_volume" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Julia Huntenburg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="io_volume.html" title="io.io_volume"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="../installation.html" title="Installing nighres"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">nighres</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2017, Julia Huntenburg.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
-    </div>
-  </body>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
 </html>

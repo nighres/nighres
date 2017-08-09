@@ -1,2 +1,2 @@
-Installing nighres
+Installing Nighres
 ===================

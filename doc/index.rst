@@ -6,52 +6,22 @@
 Nighres
 ========
 
-.. container:: doc
+Nighres is a Python package for processing of high-resolution neuroimaging data. It developed out of `CBS High-Res Brain Processing Tools <https://www.cbs.mpg.de/institute/software/cbs-tools>`_.
 
-   .. admonition:: Getting started
+.. toctree::
+  :maxdepth: 1
+  :caption: Getting started
 
-      .. toctree::
-          :maxdepth: 1
+  installation
 
-          installation
+.. toctree::
+  :maxdepth: 2
+  :glob:
+  :caption: Modules and Functions
 
-   .. admonition:: Modules
+  io/index
+  brain/index
+  laminar/index
+  surface/index
 
-      .. hlist::
-         :columns: 1
-
-         * Input/Output
-
-           .. toctree::
-              :maxdepth: 2
-              :glob:
-
-              io/*
-
-         * Brain
-
-           .. toctree::
-              :maxdepth: 2
-              :glob:
-
-              brain/*
-
-         * Laminar
-
-           .. toctree::
-              :maxdepth: 2
-              :glob:
-
-              laminar/*
-
-         * Surface
-
-           .. toctree::
-              :maxdepth: 2
-              :glob:
-
-              surface/*
-
-   .. admonition:: Examples
-
-      Check out the  `example pipeline <https://github.com/nighres/nighres/blob/master/examples/example_pipeline.py>`_.
+.. tip:: Check out the `example pipeline <https://github.com/nighres/nighres/blob/master/examples/example_pipeline.py>`_.

@@ -1,5 +1,6 @@
-io\.io\_volume
-==============
+io\_volume
+===========
 
-.. automodule:: nighres.io.io_volume
-    :members:
+.. autofunction:: nighres.io.load_volume
+
+.. autofunction:: nighres.io.save_volume

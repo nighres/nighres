@@ -1,5 +1,4 @@
-surface\.probability\_to\_levelset
-==================================
+probability\_to\_levelset
+=========================
 
-.. automodule:: nighres.surface.probability_to_levelset
-    :members:
+.. autofunction:: nighres.surface.probability_to_levelset

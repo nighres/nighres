@@ -67,7 +67,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                       file_name=None, file_extension=None):
     """ MGDM segmentation
 
-    Estimate brain structures from an atlas for MRI dataset using
+    Estimates brain structures from an atlas for MRI dataset using
     a Multiple Object Geometric Deformable Model (MGDM)
 
     Parameters
@@ -126,26 +126,29 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     Returns
     ----------
-    outputs: dict
+    dict
         Dictionary collecting outputs under the following keys
-        - 'segmentation': Hard brain segmentation with topological constraints
-                          (if chosen) (_mgdm_seg)
-        - 'labels': Maximum tissue probability labels (_mgdm_lbls)
-        - 'memberships': Maximum tissue probability values (_mgdm_mems)
-        - 'distance': Minimum distance to a segmentation boundary (_mgdm_dist)
-        (suffix of output files if save_data is set to True)
+        (suffix of output files in brackets)
+
+        * segmentation (niimg): Hard brain segmentation with topological
+          constraints (if chosen) (_mgdm_seg)
+        * labels (niimg): Maximum tissue probability labels (_mgdm_lbls)
+        * memberships (niimg): Maximum tissue probability values (_mgdm_mems)
+        * distance (niimg): Minimum distance to a segmentation boundary
+          (_mgdm_dist)
 
     Notes
     ----------
     Original Java module by Pierre-Louis Bazin. Algorithm details can be
-    found in [1] and [2]
+    found in [1]_ and [2]_
 
     References
     ----------
-    [1] Bogovic, Prince and Bazin (2013). A multiple object geometric
-    deformable model for image segmentation. DOI: 10.1016/j.cviu.2012.10.006.A
-    [2] Fan, Bazin and Prince (2008). A multi-compartment segmentation
-    framework with homeomorphic level sets. DOI: 10.1109/CVPR.2008.4587475
+    .. [1] Bogovic, Prince and Bazin (2013). A multiple object geometric
+       deformable model for image segmentation.
+       doi:10.1016/j.cviu.2012.10.006.A
+    .. [2] Fan, Bazin and Prince (2008). A multi-compartment segmentation
+       framework with homeomorphic level sets. DOI: 10.1109/CVPR.2008.4587475
     """
 
     # check atlas_file and set default if not given

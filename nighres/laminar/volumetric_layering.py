@@ -35,25 +35,26 @@ def volumetric_layering(inner_levelset, outer_levelset,
 
     Returns
     ----------
-    outputs: dict
+    dict
         Dictionary collecting outputs under the following keys
-        - 'depth': Continuous depth from 0 (inner surface) to 1 (outer surface)
-                   (layering_depth)
-        - 'layers': Discrete layers from 1 (bordering inner surface) to
-                    n_layers (bordering outer surface) (_layering_layers)
-        - 'boundaries': Levelset representations of boundaries between
-                        all layers (4D image) (_layering_boundaries)
-        (suffix of output files if save_data is set to True)
+        (suffix of output files in brackets)
+
+        * depth (niimg): Continuous depth from 0 (inner surface) to 1
+          (outer surface) (_layering_depth)
+        * layers (niimg): Discrete layers from 1 (bordering inner surface) to
+          n_layers (bordering outer surface) (_layering_layers)
+        * boundaries (niimg): Levelset representations of boundaries between
+          all layers in 4D (_layering_boundaries)
 
     Notes
     ----------
     Original Java module by Miriam Waehnert, Pierre-Louis Bazin and
-    Juliane Dinse. Algorithm details can be found in [1].
+    Juliane Dinse. Algorithm details can be found in [1]_
 
     References
     ----------
-    [1] Waehnert et al (2014). Anatomically motivated modeling of cortical
-    laminae. DOI: 10.1016/j.neuroimage.2013.03.078
+    .. [1] Waehnert et al (2014). Anatomically motivated modeling of cortical
+       laminae. DOI: 10.1016/j.neuroimage.2013.03.078
     '''
 
     # set default topology lut dir if not given

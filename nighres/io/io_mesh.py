@@ -21,18 +21,18 @@ def load_mesh_geometry(surf_mesh):
     ----------
     dict
         Dictionary with a numpy array with key "coords" for a Numpy array of
-        the x-y-z coordinates of the mesh vertices and key "faces2 for a
+        the x-y-z coordinates of the mesh vertices and key "faces" for a
         Numpy array of the the indices (into coords) of the mesh faces
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]
+    Originally created as part of Laminar Python [1]_
 
     References
     -----------
-    [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
-        depth-resolved analysis of high-resolution brain imaging data in
-        Python. DOI: 10.3897/rio.3.e12346
+    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+       depth-resolved analysis of high-resolution brain imaging data in
+       Python. DOI: 10.3897/rio.3.e12346
     '''
     # if input is a filename, try to load it with nibabel
     if isinstance(surf_mesh, basestring):
@@ -88,13 +88,13 @@ def load_mesh_data(surf_data, gii_darray=None):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]
+    Originally created as part of Laminar Python [1]_
 
     References
     -----------
-    [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
-        depth-resolved analysis of high-resolution brain imaging data in
-        Python. DOI: 10.3897/rio.3.e12346
+    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+       depth-resolved analysis of high-resolution brain imaging data in
+       Python. DOI: 10.3897/rio.3.e12346
     '''
     # if the input is a filename, load it
     if isinstance(surf_data, basestring):
@@ -153,13 +153,13 @@ def save_mesh_data(filename, surf_data):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]
+    Originally created as part of Laminar Python [1]_
 
     References
     -----------
-    [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
-        depth-resolved analysis of high-resolution brain imaging data in
-        Python. DOI: 10.3897/rio.3.e12346
+    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+       depth-resolved analysis of high-resolution brain imaging data in
+       Python. DOI: 10.3897/rio.3.e12346
     '''
     if isinstance(filename, basestring) and isinstance(surf_data, np.ndarray):
         if (filename.endswith('curv') or filename.endswith('thickness') or
@@ -195,13 +195,13 @@ def save_mesh_geometry(filename, surf_dict):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]
+    Originally created as part of Laminar Python [1]_
 
     References
     -----------
-    [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
-        depth-resolved analysis of high-resolution brain imaging data in
-        Python. DOI: 10.3897/rio.3.e12346
+    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+       depth-resolved analysis of high-resolution brain imaging data in
+       Python. DOI: 10.3897/rio.3.e12346
     '''
     if isinstance(filename, basestring) and isinstance(surf_dict, dict):
         if (filename.endswith('orig') or filename.endswith('pial') or
