@@ -4,6 +4,20 @@ import urllib
 from global_settings import TOPOLOGY_LUT_DIR, ATLAS_DIR, DEFAULT_ATLAS
 
 
+def download_from_url(url, filename, overwrite_file=False):
+
+    dirname = os.path.dirname(filename)
+    if not os.path.isdir(dirname):
+        os.makedirs(dirname)
+
+    if os.path.isfile(filename) and overwrite_file is False:
+        print("\nThe file {0} exists and overwrite_file was set to False -- "
+              "not downloading.").format(filename)
+    else:
+        print("\nDownloading to {0}").format(filename)
+        urllib.urlretrieve(url, filename)
+
+
 def _output_dir_4saving(output_dir=None, rootfile=None):
     if output_dir is None:
         if rootfile is None:
@@ -88,20 +102,6 @@ def _fname_4saving(rootfile=None, suffix=None,
     fname = base_name + '.' + extension
 
     return fname
-
-
-def _download_from_url(url, filename, overwrite_file=False):
-
-    dirname = os.path.dirname(filename)
-    if not os.path.isdir(dirname):
-        os.makedirs(dirname)
-
-    if os.path.isfile(filename) and overwrite_file is False:
-        print("\nThe file {0} exists and overwrite_file was set to False -- "
-              "not downloading.").format(filename)
-    else:
-        print("\nDownloading to {0}").format(filename)
-        urllib.urlretrieve(url, filename)
 
 
 def _check_topology_lut_dir(topology_lut_dir):
