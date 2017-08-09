@@ -103,14 +103,13 @@
 <span class="sd">    ----------</span>
 <span class="sd">    Original Java module by Pierre-Louis Bazin</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># make sure that saving related parameters are correct</span>
+    <span class="k">if</span> <span class="n">save_data</span><span class="p">:</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">_output_dir_4saving</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">probability_image</span><span class="p">)</span>
 
-    <span class="c1"># load the data</span>
-    <span class="n">prob_img</span> <span class="o">=</span> <span class="n">load_volume</span><span class="p">(</span><span class="n">probability_image</span><span class="p">)</span>
-    <span class="n">prob_data</span> <span class="o">=</span> <span class="n">prob_img</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-    <span class="n">hdr</span> <span class="o">=</span> <span class="n">prob_img</span><span class="o">.</span><span class="n">get_header</span><span class="p">()</span>
-    <span class="n">aff</span> <span class="o">=</span> <span class="n">prob_img</span><span class="o">.</span><span class="n">get_affine</span><span class="p">()</span>
-    <span class="n">resolution</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">hdr</span><span class="o">.</span><span class="n">get_zooms</span><span class="p">()]</span>
-    <span class="n">dimensions</span> <span class="o">=</span> <span class="n">prob_data</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">levelset_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">probability_image</span><span class="p">,</span>
+                                       <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;levelset&#39;</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                       <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
 
     <span class="c1"># start virtual machine if not running</span>
     <span class="k">try</span><span class="p">:</span>
@@ -121,6 +120,14 @@
     <span class="c1"># initiate class</span>
     <span class="n">prob2level</span> <span class="o">=</span> <span class="n">cbstools</span><span class="o">.</span><span class="n">SurfaceProbabilityToLevelset</span><span class="p">()</span>
 
+    <span class="c1"># load the data</span>
+    <span class="n">prob_img</span> <span class="o">=</span> <span class="n">load_volume</span><span class="p">(</span><span class="n">probability_image</span><span class="p">)</span>
+    <span class="n">prob_data</span> <span class="o">=</span> <span class="n">prob_img</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+    <span class="n">hdr</span> <span class="o">=</span> <span class="n">prob_img</span><span class="o">.</span><span class="n">get_header</span><span class="p">()</span>
+    <span class="n">aff</span> <span class="o">=</span> <span class="n">prob_img</span><span class="o">.</span><span class="n">get_affine</span><span class="p">()</span>
+    <span class="n">resolution</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">hdr</span><span class="o">.</span><span class="n">get_zooms</span><span class="p">()]</span>
+    <span class="n">dimensions</span> <span class="o">=</span> <span class="n">prob_data</span><span class="o">.</span><span class="n">shape</span>
+
     <span class="c1"># set parameters from input data</span>
     <span class="n">prob2level</span><span class="o">.</span><span class="n">setProbabilityImage</span><span class="p">(</span><span class="n">cbstools</span><span class="o">.</span><span class="n">JArray</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">)(</span>
                                     <span class="p">(</span><span class="n">prob_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)))</span>
@@ -129,7 +136,7 @@
 
     <span class="c1"># execute class</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating levelset&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Executing create levelsets&quot;</span><span class="p">)</span>
         <span class="n">prob2level</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 
     <span class="k">except</span><span class="p">:</span>
@@ -147,12 +154,6 @@
     <span class="n">levelset</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">levelset_data</span><span class="p">,</span> <span class="n">aff</span><span class="p">,</span> <span class="n">hdr</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">save_data</span><span class="p">:</span>
-        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">_output_dir_4saving</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">probability_image</span><span class="p">)</span>
-
-        <span class="n">levelset_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">probability_image</span><span class="p">,</span>
-                                       <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;levelset&#39;</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
-                                       <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
-
         <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">levelset_file</span><span class="p">),</span> <span class="n">levelset</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">levelset</span></div>

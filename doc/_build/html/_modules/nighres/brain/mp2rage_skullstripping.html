@@ -66,8 +66,8 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">cbstools</span>
 <span class="kn">from</span> <span class="nn">..io</span> <span class="k">import</span> <span class="n">load_volume</span><span class="p">,</span> <span class="n">save_volume</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">_output_dir_4saving</span><span class="p">,</span> <span class="n">_fname_4saving</span>
-<span class="kn">from</span> <span class="nn">..global_settings</span> <span class="k">import</span> <span class="n">TOPOLOGY_LUT_DIR</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">_output_dir_4saving</span><span class="p">,</span> <span class="n">_fname_4saving</span><span class="p">,</span> \
+                    <span class="n">_check_topology_lut_dir</span>
 
 
 <div class="viewcode-block" id="mp2rage_skullstripping"><a class="viewcode-back" href="../../../brain/mp2rage_skullstripping.html#nighres.brain.mp2rage_skullstripping.mp2rage_skullstripping">[docs]</a><span class="k">def</span> <span class="nf">mp2rage_skullstripping</span><span class="p">(</span><span class="n">second_inversion</span><span class="p">,</span> <span class="n">t1_weighted</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">t1_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -126,17 +126,29 @@
 <span class="sd">    DOI: 10.1016/j.neuroimage.2009.10.002</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># set default topology lut dir if not given</span>
-    <span class="k">if</span> <span class="n">topology_lut_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">topology_lut_dir</span> <span class="o">=</span> <span class="n">TOPOLOGY_LUT_DIR</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># check if dir exists</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The topology_lut_dir you have specified (</span><span class="si">{0}</span><span class="s1">) &#39;</span>
-                             <span class="s1">&#39;does not exist&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">))</span>
-        <span class="c1"># if we don&#39;t end in a path sep, we need to make sure that we add it</span>
-        <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">):</span>
-            <span class="n">topology_lut_dir</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span>
+    <span class="c1"># check topology lut dir and set default if not given</span>
+    <span class="n">topology_lut_dir</span> <span class="o">=</span> <span class="n">_check_topology_lut_dir</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">)</span>
+
+    <span class="c1"># make sure that saving related parameters are correct</span>
+    <span class="k">if</span> <span class="n">save_data</span><span class="p">:</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">_output_dir_4saving</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">second_inversion</span><span class="p">)</span>
+
+        <span class="n">inv2_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">second_inversion</span><span class="p">,</span>
+                                   <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;strip_inv2&#39;</span><span class="p">,</span>
+                                   <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
+        <span class="n">mask_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">second_inversion</span><span class="p">,</span>
+                                   <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;strip_mask&#39;</span><span class="p">,</span>
+                                   <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">t1_weighted</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">t1w_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">t1_weighted</span><span class="p">,</span>
+                                      <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;strip_t1w&#39;</span><span class="p">,</span>
+                                      <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">t1_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">t1map_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">t1_map</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;strip_t1map&#39;</span><span class="p">,</span>
+                                        <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
 
     <span class="c1"># start virtual machine, if not already running</span>
     <span class="k">try</span><span class="p">:</span>
@@ -177,10 +189,13 @@
                                     <span class="p">(</span><span class="n">t1map_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)))</span>
 
     <span class="n">stripper</span><span class="o">.</span><span class="n">setSkipZeroValues</span><span class="p">(</span><span class="n">skip_zero_values</span><span class="p">)</span>
+    <span class="n">stripper</span><span class="o">.</span><span class="n">setTopologyLUTdirectory</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">)</span>
+
+
 
     <span class="c1"># execute skull stripping</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running skull stripping&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Executing MP2RAGE skull stripping&quot;</span><span class="p">)</span>
         <span class="n">stripper</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 
     <span class="k">except</span><span class="p">:</span>
@@ -205,14 +220,6 @@
     <span class="n">outputs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;brain_mask&#39;</span><span class="p">:</span> <span class="n">mask</span><span class="p">,</span> <span class="s1">&#39;inv2_masked&#39;</span><span class="p">:</span> <span class="n">inv2_masked</span><span class="p">}</span>
 
     <span class="k">if</span> <span class="n">save_data</span><span class="p">:</span>
-        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">_output_dir_4saving</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">second_inversion</span><span class="p">)</span>
-
-        <span class="n">inv2_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">second_inversion</span><span class="p">,</span>
-                                   <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;strip_inv2&#39;</span><span class="p">,</span>
-                                   <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
-        <span class="n">mask_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">second_inversion</span><span class="p">,</span>
-                                   <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;strip_mask&#39;</span><span class="p">,</span>
-                                   <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
         <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">inv2_file</span><span class="p">),</span> <span class="n">inv2_masked</span><span class="p">)</span>
         <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">mask_file</span><span class="p">),</span> <span class="n">mask</span><span class="p">)</span>
 
@@ -225,8 +232,6 @@
         <span class="n">outputs</span><span class="p">[</span><span class="s1">&#39;t1w_masked&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t1w_masked</span>
 
         <span class="k">if</span> <span class="n">save_data</span><span class="p">:</span>
-            <span class="n">t1w_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">t1_weighted</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;strip_t1w&#39;</span><span class="p">,</span>
-                                      <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
             <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">t1w_file</span><span class="p">),</span> <span class="n">t1w_masked</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">t1_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -239,8 +244,6 @@
         <span class="n">outputs</span><span class="p">[</span><span class="s1">&#39;t1map_masked&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t1map_masked</span>
 
         <span class="k">if</span> <span class="n">save_data</span><span class="p">:</span>
-            <span class="n">t1map_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">t1_map</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;strip_t1map&#39;</span><span class="p">,</span>
-                                        <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
             <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">t1map_file</span><span class="p">),</span> <span class="n">t1map_masked</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">outputs</span></div>

@@ -66,9 +66,8 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">cbstools</span>
 <span class="kn">from</span> <span class="nn">..io</span> <span class="k">import</span> <span class="n">load_volume</span><span class="p">,</span> <span class="n">save_volume</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">_output_dir_4saving</span><span class="p">,</span> <span class="n">_fname_4saving</span>
-<span class="kn">from</span> <span class="nn">..global_settings</span> <span class="k">import</span> <span class="n">ATLAS_DIR</span><span class="p">,</span> <span class="n">DEFAULT_ATLAS</span><span class="p">,</span> <span class="n">TOPOLOGY_LUT_DIR</span>
-
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">_output_dir_4saving</span><span class="p">,</span> <span class="n">_fname_4saving</span><span class="p">,</span> \
+                    <span class="n">_check_topology_lut_dir</span><span class="p">,</span> <span class="n">_check_atlas_file</span>
 
 <span class="k">def</span> <span class="nf">_get_mgdm_orientation</span><span class="p">(</span><span class="n">affine</span><span class="p">,</span> <span class="n">mgdm</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
@@ -211,29 +210,11 @@
 <span class="sd">    framework with homeomorphic level sets. DOI: 10.1109/CVPR.2008.4587475</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># set default atlas if not given</span>
-    <span class="k">if</span> <span class="n">atlas_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">atlas_file</span> <span class="o">=</span> <span class="n">DEFAULT_ATLAS</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># check if file exists, if not try search atlas in default atlas dir</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">atlas_file</span><span class="p">):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ATLAS_DIR</span><span class="p">,</span> <span class="n">atlas_file</span><span class="p">)):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The atlas_file you have specified (</span><span class="si">{0}</span><span class="s1">) &#39;</span>
-                                 <span class="s1">&#39;does not exist&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atlas_file</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">atlas_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ATLAS_DIR</span><span class="p">,</span> <span class="n">atlas_file</span><span class="p">)</span>
+    <span class="c1"># check atlas_file and set default if not given</span>
+    <span class="n">atlas_file</span> <span class="o">=</span> <span class="n">_check_atlas_file</span><span class="p">(</span><span class="n">atlas_file</span><span class="p">)</span>
 
-    <span class="c1"># set default topology lut dir if not given</span>
-    <span class="k">if</span> <span class="n">topology_lut_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">topology_lut_dir</span> <span class="o">=</span> <span class="n">TOPOLOGY_LUT_DIR</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># check if dir exists</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The topology_lut_dir you have specified (</span><span class="si">{0}</span><span class="s1">) &#39;</span>
-                             <span class="s1">&#39;does not exist&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">))</span>
-        <span class="c1"># if we don&#39;t end in a path sep, we need to make sure that we add it</span>
-        <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">):</span>
-            <span class="n">topology_lut_dir</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span>
+    <span class="c1"># check topology_lut_dir and set default if not given</span>
+    <span class="n">topology_lut_dir</span> <span class="o">=</span> <span class="n">_check_topology_lut_dir</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">)</span>
 
     <span class="c1"># find available intensity priors in selected MGDM atlas</span>
     <span class="n">mgdm_intensity_priors</span> <span class="o">=</span> <span class="n">_get_mgdm_intensity_priors</span><span class="p">(</span><span class="n">atlas_file</span><span class="p">)</span>
@@ -253,6 +234,26 @@
                               <span class="s2">&quot;following contrasts provided by the chosen &quot;</span>
                               <span class="s2">&quot;atlas: &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ctype</span><span class="p">,</span> <span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span>
                              <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mgdm_intensity_priors</span><span class="p">))</span>
+
+    <span class="c1"># make sure that saving related parameters are correct</span>
+    <span class="k">if</span> <span class="n">save_data</span><span class="p">:</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">_output_dir_4saving</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">contrast_image1</span><span class="p">)</span>
+
+        <span class="n">seg_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">contrast_image1</span><span class="p">,</span>
+                                  <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;mgdm_seg&#39;</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                  <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
+
+        <span class="n">lbl_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">contrast_image1</span><span class="p">,</span>
+                                  <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;mgdm_lbls&#39;</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                  <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
+
+        <span class="n">mems_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">contrast_image1</span><span class="p">,</span>
+                                   <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;mgdm_mems&#39;</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                   <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
+
+        <span class="n">dist_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">contrast_image1</span><span class="p">,</span>
+                                   <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;mgdm_dist&#39;</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                   <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
 
     <span class="c1"># start virtual machine, if not already running</span>
     <span class="k">try</span><span class="p">:</span>
@@ -313,7 +314,7 @@
 
     <span class="c1"># execute MGDM</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Executing MGDM on your inputs&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Executing MGDM segmentation&quot;</span><span class="p">)</span>
         <span class="n">mgdm</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 
     <span class="k">except</span><span class="p">:</span>
@@ -348,24 +349,6 @@
     <span class="n">dist</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">dist_data</span><span class="p">,</span> <span class="n">affine</span><span class="p">,</span> <span class="n">header</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">save_data</span><span class="p">:</span>
-        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">_output_dir_4saving</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">contrast_image1</span><span class="p">)</span>
-
-        <span class="n">seg_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">contrast_image1</span><span class="p">,</span>
-                                  <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;mgdm_seg&#39;</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
-                                  <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
-
-        <span class="n">lbl_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">contrast_image1</span><span class="p">,</span>
-                                  <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;mgdm_lbls&#39;</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
-                                  <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
-
-        <span class="n">mems_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">contrast_image1</span><span class="p">,</span>
-                                   <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;mgdm_mems&#39;</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
-                                   <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
-
-        <span class="n">dist_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">contrast_image1</span><span class="p">,</span>
-                                   <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;mgdm_dist&#39;</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
-                                   <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
-
         <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">seg_file</span><span class="p">),</span> <span class="n">seg</span><span class="p">)</span>
         <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">lbl_file</span><span class="p">),</span> <span class="n">lbls</span><span class="p">)</span>
         <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">mems_file</span><span class="p">),</span> <span class="n">mems</span><span class="p">)</span>

@@ -99,6 +99,22 @@
 <span class="sd">    ----------</span>
 <span class="sd">    Original Java module by Pierre-Louis Bazin and Juliane Dinse</span>
 <span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># make sure that saving related parameters are correct</span>
+    <span class="k">if</span> <span class="n">save_data</span><span class="p">:</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">_output_dir_4saving</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">intensity_image</span><span class="p">)</span>
+
+        <span class="n">profile_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">intensity_image</span><span class="p">,</span>
+                                      <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;profiles&#39;</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                      <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
+
+    <span class="c1"># start VM if not already running</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cbstools</span><span class="o">.</span><span class="n">initVM</span><span class="p">(</span><span class="n">initialheap</span><span class="o">=</span><span class="s1">&#39;6000m&#39;</span><span class="p">,</span> <span class="n">maxheap</span><span class="o">=</span><span class="s1">&#39;6000m&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># initate class</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">cbstools</span><span class="o">.</span><span class="n">LaminarProfileSampling</span><span class="p">()</span>
 
     <span class="c1"># load the data</span>
     <span class="n">surface_img</span> <span class="o">=</span> <span class="n">load_volume</span><span class="p">(</span><span class="n">profile_surface_image</span><span class="p">)</span>
@@ -110,15 +126,6 @@
 
     <span class="n">intensity_data</span> <span class="o">=</span> <span class="n">load_volume</span><span class="p">(</span><span class="n">intensity_img</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
 
-    <span class="c1"># start VM if not already running</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">cbstools</span><span class="o">.</span><span class="n">initVM</span><span class="p">(</span><span class="n">initialheap</span><span class="o">=</span><span class="s1">&#39;6000m&#39;</span><span class="p">,</span> <span class="n">maxheap</span><span class="o">=</span><span class="s1">&#39;6000m&#39;</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="k">pass</span>
-
-    <span class="c1"># initate class</span>
-    <span class="n">sampler</span> <span class="o">=</span> <span class="n">cbstools</span><span class="o">.</span><span class="n">LaminarProfileSampling</span><span class="p">()</span>
-
     <span class="c1"># pass inputs</span>
     <span class="n">sampler</span><span class="o">.</span><span class="n">setIntensityImage</span><span class="p">(</span><span class="n">cbstools</span><span class="o">.</span><span class="n">JArray</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">)(</span>
                                   <span class="p">(</span><span class="n">intensity_data</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)))</span>
@@ -128,9 +135,8 @@
     <span class="n">sampler</span><span class="o">.</span><span class="n">setDimensions</span><span class="p">(</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dimensions</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 
     <span class="c1"># execute class</span>
-    <span class="c1"># execute class</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sampling profiles&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Executing profile sampling&quot;</span><span class="p">)</span>
         <span class="n">sampler</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 
     <span class="k">except</span><span class="p">:</span>
@@ -149,12 +155,6 @@
     <span class="n">profiles</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">profile_data</span><span class="p">,</span> <span class="n">aff</span><span class="p">,</span> <span class="n">hdr</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">save_data</span><span class="p">:</span>
-        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">_output_dir_4saving</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">intensity_image</span><span class="p">)</span>
-
-        <span class="n">profile_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">intensity_image</span><span class="p">,</span>
-                                      <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;profiles&#39;</span><span class="p">,</span> <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
-                                      <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
-
         <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">profile_file</span><span class="p">),</span> <span class="n">profiles</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">profiles</span></div>

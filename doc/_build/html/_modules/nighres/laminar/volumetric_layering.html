@@ -130,15 +130,24 @@
         <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">topology_lut_dir</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">):</span>
             <span class="n">topology_lut_dir</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span>
 
-    <span class="c1"># load the data as well as filenames and headers for saving later</span>
-    <span class="n">inner_img</span> <span class="o">=</span> <span class="n">load_volume</span><span class="p">(</span><span class="n">inner_levelset</span><span class="p">)</span>
-    <span class="n">inner_data</span> <span class="o">=</span> <span class="n">inner_img</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-    <span class="n">hdr</span> <span class="o">=</span> <span class="n">inner_img</span><span class="o">.</span><span class="n">get_header</span><span class="p">()</span>
-    <span class="n">aff</span> <span class="o">=</span> <span class="n">inner_img</span><span class="o">.</span><span class="n">get_affine</span><span class="p">()</span>
-    <span class="n">resolution</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">hdr</span><span class="o">.</span><span class="n">get_zooms</span><span class="p">()]</span>
-    <span class="n">dimensions</span> <span class="o">=</span> <span class="n">inner_data</span><span class="o">.</span><span class="n">shape</span>
+    <span class="c1"># make sure that saving related parameters are correct</span>
+    <span class="k">if</span> <span class="n">save_data</span><span class="p">:</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">_output_dir_4saving</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">inner_levelset</span><span class="p">)</span>
 
-    <span class="n">outer_data</span> <span class="o">=</span> <span class="n">load_volume</span><span class="p">(</span><span class="n">outer_levelset</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+        <span class="n">depth_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">inner_image</span><span class="p">,</span>
+                                    <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;layering_depth&#39;</span><span class="p">,</span>
+                                    <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                    <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
+
+        <span class="n">layer_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">inner_image</span><span class="p">,</span>
+                                    <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;layering_layers&#39;</span><span class="p">,</span>
+                                    <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                    <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
+
+        <span class="n">boundary_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">inner_image</span><span class="p">,</span>
+                                       <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;layering_boundaries&#39;</span><span class="p">,</span>
+                                       <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+                                       <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
 
     <span class="c1"># start virutal machine if not already running</span>
     <span class="k">try</span><span class="p">:</span>
@@ -148,6 +157,16 @@
 
     <span class="c1"># initate class</span>
     <span class="n">lamination</span> <span class="o">=</span> <span class="n">cbstools</span><span class="o">.</span><span class="n">LaminarVolumetricLayering</span><span class="p">()</span>
+
+    <span class="c1"># load the data</span>
+    <span class="n">inner_img</span> <span class="o">=</span> <span class="n">load_volume</span><span class="p">(</span><span class="n">inner_levelset</span><span class="p">)</span>
+    <span class="n">inner_data</span> <span class="o">=</span> <span class="n">inner_img</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+    <span class="n">hdr</span> <span class="o">=</span> <span class="n">inner_img</span><span class="o">.</span><span class="n">get_header</span><span class="p">()</span>
+    <span class="n">aff</span> <span class="o">=</span> <span class="n">inner_img</span><span class="o">.</span><span class="n">get_affine</span><span class="p">()</span>
+    <span class="n">resolution</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">hdr</span><span class="o">.</span><span class="n">get_zooms</span><span class="p">()]</span>
+    <span class="n">dimensions</span> <span class="o">=</span> <span class="n">inner_data</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">outer_data</span> <span class="o">=</span> <span class="n">load_volume</span><span class="p">(</span><span class="n">outer_levelset</span><span class="p">)</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
 
     <span class="c1"># set parameters from input images</span>
     <span class="n">lamination</span><span class="o">.</span><span class="n">setDimensions</span><span class="p">(</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dimensions</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dimensions</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
@@ -161,7 +180,7 @@
 
     <span class="c1"># execute class</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating layers&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Executing volumetric layering&quot;</span><span class="p">)</span>
         <span class="n">lamination</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 
     <span class="k">except</span><span class="p">:</span>
@@ -192,23 +211,6 @@
     <span class="n">boundaries</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">boundary_data</span><span class="p">,</span> <span class="n">aff</span><span class="p">,</span> <span class="n">hdr</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">save_data</span><span class="p">:</span>
-        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">_output_dir_4saving</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">inner_levelset</span><span class="p">)</span>
-
-        <span class="n">depth_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">inner_image</span><span class="p">,</span>
-                                    <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;layering_depth&#39;</span><span class="p">,</span>
-                                    <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
-                                    <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
-
-        <span class="n">layer_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">inner_image</span><span class="p">,</span>
-                                    <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;layering_layers&#39;</span><span class="p">,</span>
-                                    <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
-                                    <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
-
-        <span class="n">boundary_file</span> <span class="o">=</span> <span class="n">_fname_4saving</span><span class="p">(</span><span class="n">rootfile</span><span class="o">=</span><span class="n">inner_image</span><span class="p">,</span>
-                                       <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;layering_boundaries&#39;</span><span class="p">,</span>
-                                       <span class="n">base_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
-                                       <span class="n">extension</span><span class="o">=</span><span class="n">file_extension</span><span class="p">)</span>
-
         <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">depth_file</span><span class="p">),</span> <span class="n">depths</span><span class="p">)</span>
         <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">layer_file</span><span class="p">),</span> <span class="n">layers</span><span class="p">)</span>
         <span class="n">save_volume</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">boundary_file</span><span class="p">),</span> <span class="n">boundaries</span><span class="p">)</span>

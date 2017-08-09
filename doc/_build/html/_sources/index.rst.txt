@@ -54,12 +54,4 @@ Nighres
 
    .. admonition:: Examples
 
-      Check out the  `example pipeline <https://github.com/nighres/nighres/blob/master/nighres/example_pipeline.py>`_.
-
-
-.. Indices and tables
-   ==================
-
-   * :ref:`genindex`
-   * :ref:`modindex`
-   * :ref:`search`
+      Check out the  `example pipeline <https://github.com/nighres/nighres/blob/master/examples/example_pipeline.py>`_.
