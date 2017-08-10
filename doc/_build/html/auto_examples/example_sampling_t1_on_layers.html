@@ -1,0 +1,442 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Sampling T1 at different intracortical depths &mdash; Nighres</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Nighres" href="../index.html"/>
+        <link rel="up" title="Nighres examples" href="index.html"/>
+        <link rel="prev" title="Nighres examples" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Nighres
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing Nighres</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Modules and Functions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../io/index.html">IO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../brain/index.html">Brain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../laminar/index.html">Laminar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../surface/index.html">Surface</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Good to know</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../data_formats.html">Data handling (niimg)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../saving.html">Saving outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../levelsets.html">Levelsets</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Nighres examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Sampling T1 at different intracortical depths</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-and-download">Import and download</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tissue-classification">Tissue classification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-surfaces">Creating surfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-layers-and-sampling">Creating layers and sampling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Nighres</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Nighres examples</a> &raquo;</li>
+        
+      <li>Sampling T1 at different intracortical depths</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/auto_examples/example_sampling_t1_on_layers.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sampling-t1-at-different-intracortical-depths">
+<span id="sphx-glr-auto-examples-example-sampling-t1-on-layers-py"></span><h1>Sampling T1 at different intracortical depths<a class="headerlink" href="#sampling-t1-at-different-intracortical-depths" title="Permalink to this headline">¶</a></h1>
+<p>This example shows a complete pipeline performing all steps necessary to use
+MP2RAGE data for sampling T1 at different intracortical depth levels,
+determined using a volume-preserving approach :</p>
+<ul class="simple">
+<li>Dowloading openly available MP2RAGE data <a class="footnote-reference" href="#id4" id="id1">[1]</a></li>
+<li>Skull stripping <a class="reference internal" href="../brain/mp2rage_skullstripping.html#nighres.brain.mp2rage_skullstripping" title="nighres.brain.mp2rage_skullstripping"><code class="xref py py-func docutils literal"><span class="pre">nighres.brain.mp2rage_skullstripping()</span></code></a></li>
+<li>Tissue segmentation using MGDM <a class="reference internal" href="../brain/mgdm_segmentation.html#nighres.brain.mgdm_segmentation" title="nighres.brain.mgdm_segmentation"><code class="xref py py-func docutils literal"><span class="pre">nighres.brain.mgdm_segmentation()</span></code></a> <a class="footnote-reference" href="#id5" id="id2">[2]</a></li>
+<li>Creating levelset representations of the pial and white matter surface
+<a class="reference internal" href="../surface/probability_to_levelset.html#nighres.surface.probability_to_levelset" title="nighres.surface.probability_to_levelset"><code class="xref py py-func docutils literal"><span class="pre">nighres.surface.probability_to_levelset()</span></code></a></li>
+<li>Equivolumetric layering of the cortical sheet
+<a class="reference internal" href="../laminar/volumetric_layering.html#nighres.laminar.volumetric_layering" title="nighres.laminar.volumetric_layering"><code class="xref py py-func docutils literal"><span class="pre">nighres.laminar.volumetric_layering()</span></code></a> <a class="footnote-reference" href="#id6" id="id3">[3]</a></li>
+<li>Sampling T1 on the different intracortical depth
+<a class="reference internal" href="../laminar/profile_sampling.html#nighres.laminar.profile_sampling" title="nighres.laminar.profile_sampling"><code class="xref py py-func docutils literal"><span class="pre">nighres.laminar.profile_sampling()</span></code></a></li>
+</ul>
+<div class="section" id="import-and-download">
+<h2>Import and download<a class="headerlink" href="#import-and-download" title="Permalink to this headline">¶</a></h2>
+<p>First we import nighres and the os module to set the output directory and
+filenames for the files we will download. Make sure to run this file in a
+directory you have write-access to, or change the out_dir variable below.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nighres</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">out_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">paht</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;nighres_examples/t1_sampling&#39;</span><span class="p">)</span>
+<span class="n">t1map</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;T1map.nii.gz&quot;</span><span class="p">)</span>
+<span class="n">t1w</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s2">&quot;T1w.nii.gz&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now we download an example MP2RAGE dataset from the
+CBS Open Science repository</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">nighres</span><span class="o">.</span><span class="n">download_from_url</span><span class="p">(</span><span class="s2">&quot;http://openscience.cbs.mpg.de/bazin/7T_Quantitative/MP2RAGE-05mm/subject01_mp2rage_0p5iso_qT1.nii.gz&quot;</span><span class="p">,</span>
+                          <span class="n">t1map</span><span class="p">)</span>
+<span class="n">nighres</span><span class="o">.</span><span class="n">download_from_url</span><span class="p">(</span><span class="s2">&quot;http://openscience.cbs.mpg.de/bazin/7T_Quantitative/MP2RAGE-05mm/subject01_mp2rage_0p5iso_uni.nii.gz&quot;</span><span class="p">,</span>
+                          <span class="n">t1w</span><span class="p">)</span>
+
+<span class="c1"># TODO: also download INV2, for now using local version</span>
+<span class="n">inv2</span> <span class="o">=</span> <span class="s1">&#39;/SCR/data/cbstools_testing/7t_trt/test_nii/INV2.nii.gz&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tissue-classification">
+<h2>Tissue classification<a class="headerlink" href="#tissue-classification" title="Permalink to this headline">¶</a></h2>
+<p>The first processing step is to skullstrip the images. Only the second
+inversion image is required to calculate the brain mask. But if we input
+the T1map and T1w image as well, they will be masked for us.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">skullstripping_results</span> <span class="o">=</span> <span class="n">nighres</span><span class="o">.</span><span class="n">brain</span><span class="o">.</span><span class="n">mp2rage_skullstripping</span><span class="p">(</span>
+                                                        <span class="n">second_inversion</span><span class="o">=</span><span class="n">inv2</span><span class="p">,</span>
+                                                        <span class="n">t1_weighted</span><span class="o">=</span><span class="n">t1w</span><span class="p">,</span>
+                                                        <span class="n">t1_map</span><span class="o">=</span><span class="n">t1map</span><span class="p">,</span>
+                                                        <span class="n">save_data</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                                        <span class="n">output_dir</span><span class="o">=</span><span class="n">out_dir</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">in Nighres, functions that have several outputs return a
+dictionary storing the different outputs. You can find the keys in the
+docstring or list them like this:</p>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">skullstripping_results</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Next we use the masked data as input for tissue segmentation with the MGDM
+algorithm. The segmentation works with a single contrast, but can  be
+improved with additional contrasts. In this case we use the T1-weigthed
+image as well as the quantitative T1map.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">segmentation_results</span> <span class="o">=</span> <span class="n">nighres</span><span class="o">.</span><span class="n">brain</span><span class="o">.</span><span class="n">mgdm_segmentation</span><span class="p">(</span>
+                        <span class="n">contrast_image1</span><span class="o">=</span><span class="n">skullstripping_results</span><span class="p">[</span><span class="s1">&#39;t1w_masked&#39;</span><span class="p">],</span>
+                        <span class="n">contrast_type1</span><span class="o">=</span><span class="s2">&quot;Mp2rage7T&quot;</span><span class="p">,</span>
+                        <span class="n">contrast_image2</span><span class="o">=</span><span class="n">skullstripping_results</span><span class="p">[</span><span class="s1">&#39;t1map_masked&#39;</span><span class="p">],</span>
+                        <span class="n">contrast_type2</span><span class="o">=</span><span class="s2">&quot;T1map7T&quot;</span><span class="p">,</span>
+                        <span class="n">save_data</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="n">out_dir</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-surfaces">
+<h2>Creating surfaces<a class="headerlink" href="#creating-surfaces" title="Permalink to this headline">¶</a></h2>
+<p>To create levelset representations of the pial and white matter surface,
+we first use the segmentation results to create binary masks representing
+those boundaries.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Since data is passed as Nibabel objects, we can manipulate it
+directly in Python, without ever saving or reloading the data</p>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">nibabel</span> <span class="kn">as</span> <span class="nn">nb</span>
+
+<span class="c1"># TODO: this needs explanation</span>
+<span class="n">wm</span> <span class="o">=</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">36</span><span class="p">,</span> <span class="mi">37</span><span class="p">,</span>
+      <span class="mi">38</span><span class="p">,</span> <span class="mi">39</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="mi">48</span><span class="p">]</span>
+<span class="n">gm</span> <span class="o">=</span> <span class="p">[</span><span class="mi">26</span><span class="p">,</span> <span class="mi">27</span><span class="p">]</span>
+
+<span class="n">segmentation</span> <span class="o">=</span> <span class="n">segmentation_results</span><span class="p">[</span><span class="s1">&#39;segmentation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+<span class="n">wm_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">segmentation</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">wm</span><span class="p">:</span>
+    <span class="n">wm_mask</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">segmentation</span> <span class="o">==</span> <span class="n">x</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">wm_nii</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">wm_mask</span><span class="p">,</span>
+                        <span class="n">segmentation_results</span><span class="p">[</span><span class="s1">&#39;segmentation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get_affine</span><span class="p">())</span>
+
+<span class="n">gm_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">wm_mask</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">gm</span><span class="p">:</span>
+    <span class="n">gm_mask</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">segmentation</span> <span class="o">==</span> <span class="n">x</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">gm_nii</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">Nifti1Image</span><span class="p">(</span><span class="n">gm_mask</span><span class="p">,</span>
+                        <span class="n">segmentation_results</span><span class="p">[</span><span class="s1">&#39;segmentation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get_affine</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Now we use Nighres again to create the levelsets from the binary masks</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">gm_wm_levelset</span> <span class="o">=</span> <span class="n">nighres</span><span class="o">.</span><span class="n">surface</span><span class="o">.</span><span class="n">probability_to_levelset</span><span class="p">(</span>
+                                                    <span class="n">probability_image</span><span class="o">=</span><span class="n">wm_nii</span><span class="p">,</span>
+                                                    <span class="n">save_data</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                                    <span class="n">output_dir</span><span class="o">=</span><span class="n">out_dir</span><span class="p">)</span>
+<span class="n">gm_csf_levelset</span> <span class="o">=</span> <span class="n">nighres</span><span class="o">.</span><span class="n">surface</span><span class="o">.</span><span class="n">probability_to_levelset</span><span class="p">(</span>
+                                                    <span class="n">probability_image</span><span class="o">=</span><span class="n">gm_nii</span><span class="p">,</span>
+                                                    <span class="n">save_data</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                                    <span class="n">output_dir</span><span class="o">=</span><span class="n">out_dir</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-layers-and-sampling">
+<h2>Creating layers and sampling<a class="headerlink" href="#creating-layers-and-sampling" title="Permalink to this headline">¶</a></h2>
+<p>Once we have the levelset representations of the pial and white matter
+surface we can perform volume-preserving layering of the space between the
+two surfaces. Here we choose only 3 layers to save time.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">layering_results</span> <span class="o">=</span> <span class="n">nighres</span><span class="o">.</span><span class="n">laminar</span><span class="o">.</span><span class="n">volumetric_layering</span><span class="p">(</span>
+                                                <span class="n">inner_levelset</span><span class="o">=</span><span class="n">gm_wm_levelset</span><span class="p">,</span>
+                                                <span class="n">outer_levelset</span><span class="o">=</span><span class="n">gm_csf_levelset</span><span class="p">,</span>
+                                                <span class="n">n_layers</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                                                <span class="n">save_data</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                                <span class="n">output_dir</span><span class="o">=</span><span class="n">out_dir</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, we use the intracortical layers, represented as levelsets,
+to sample T1 across the different cortical depth levels</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">profiles</span> <span class="o">=</span> <span class="n">nighres</span><span class="o">.</span><span class="n">laminarprofile_sampling</span><span class="p">(</span>
+                        <span class="n">profile_surface_image</span><span class="o">=</span><span class="n">layering_results</span><span class="p">[</span><span class="s1">&#39;boundaries&#39;</span><span class="p">],</span>
+                        <span class="n">intensity_image</span><span class="o">=</span><span class="n">t1map</span><span class="p">,</span>
+                        <span class="n">save_data</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                        <span class="n">output_dir</span><span class="o">=</span><span class="n">out_dir</span><span class="p">)</span>
+
+
+<span class="c1"># TODO: Visualize data using Nilearn</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Tardif et al (2016). Open Science CBS Neuroimaging Repository: Sharing
+ultra-high-field MR images of the brain.
+DOI: 10.1016/j.neuroimage.2015.08.042</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Bogovic, Prince and Bazin (2013). A multiple object geometric
+deformable model for image segmentation. DOI: 10.1016/j.cviu.2012.10.006.A</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>Waehnert et al (2014). Anatomically motivated modeling of cortical
+laminae. DOI: 10.1016/j.neuroimage.2013.03.078</td></tr>
+</tbody>
+</table>
+<p><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer docutils container">
+<div class="sphx-glr-download docutils container">
+<a class="reference download internal" href="../_downloads/example_sampling_t1_on_layers.py" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">example_sampling_t1_on_layers.py</span></code></a></div>
+<div class="sphx-glr-download docutils container">
+<a class="reference download internal" href="../_downloads/example_sampling_t1_on_layers.ipynb" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">example_sampling_t1_on_layers.ipynb</span></code></a></div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.readthedocs.io">Generated by Sphinx-Gallery</a></p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Nighres examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Julia Huntenburg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

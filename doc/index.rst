@@ -16,7 +16,6 @@ Nighres is a Python package for processing of high-resolution neuroimaging data.
 
 .. toctree::
   :maxdepth: 2
-  :glob:
   :caption: Modules and Functions
 
   io/index
@@ -24,4 +23,20 @@ Nighres is a Python package for processing of high-resolution neuroimaging data.
   laminar/index
   surface/index
 
-.. tip:: Check out the `example pipeline <https://github.com/nighres/nighres/blob/master/examples/example_pipeline.py>`_.
+.. toctree::
+  :maxdepth: 2
+  :caption: Good to know
+
+  data_formats
+  saving
+  levelsets
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Examples
+
+   auto_examples/index
+
+.. note:: Huntenburg et al. (2017), Laminar Python: Tools for cortical
+   depth-resolved analysis of high-resolution brain imaging data in
+   Python. `DOI: 10.3897/rio.3.e12346 <https://riojournal.com/article/12346/>`_
