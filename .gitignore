@@ -25,4 +25,4 @@ nighres.egg
 doc/_build
 doc/auto_examples
 doc/gen_modules
-doc/modules_generated
+doc/modules/generated
