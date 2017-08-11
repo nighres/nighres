@@ -1,22 +1,28 @@
-# Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
-*$py.class
+*.pyc
+*~
+*.zip
+*.nt.bz2
+*.tar.gz
+*.tgz
 
-# Distribution / packaging
-.Python
 env/
 build/
 develop-eggs/
 dist/
 downloads/
-eggs/
-.eggs/
 lib/
 lib64/
 parts/
 sdist/
 var/
-*.egg-info/
+eggs/
+.eggs/
+nighres.egg-info/
+nighres.egg
 .installed.cfg
-*.egg
+
+doc/_build
+doc/auto_examples
+doc/gen_modules
+doc/modules_generated
