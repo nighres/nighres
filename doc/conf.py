@@ -49,6 +49,10 @@ sphinx_gallery_conf = {
                     'examples_dirs': '../examples',
                     # path where to save gallery generated examples
                     'gallery_dirs': 'auto_examples',
+                    # if to download all examples in zip file
+                    'download_section_examples': False,
+                    # default display for example field if none created by code
+                    'default_thumb_file': '_static/qt1.png',
                     # directory where function granular galleries are stored
                     'backreferences_dir': 'gen_modules/backreferences',
                     # Modules for which function level galleries are created.
@@ -57,7 +61,6 @@ sphinx_gallery_conf = {
                     'reference_url': {'sphinx_gallery': None,
                                       'nilearn': 'http://nilearn.github.io/',
                                       'nibabel': 'http://nipy.org/nibabel/'},
-                    'download_section_examples': False
                       }
 
 
