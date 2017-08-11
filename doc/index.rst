@@ -24,12 +24,11 @@ Nighres is a Python package for processing of high-resolution neuroimaging data.
    io/index
 
 .. toctree::
-   :maxdepth: 1
-   :glob:
+   :maxdepth: 2
+   :includehidden:
    :caption: Examples
 
-   auto_examples/example*
-   auto_examples/plot*
+   auto_examples/index
 
 .. toctree::
    :maxdepth: 2
