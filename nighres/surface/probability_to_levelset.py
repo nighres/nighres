@@ -19,7 +19,7 @@ def probability_to_levelset(probability_image,
 
     Parameters
     ----------
-    probability_image: TODO:type
+    probability_image: niimg
         Tissue segmentation to be turned into levelset. Values should be in
         [0, 1], either a binary mask or defining the boundary at 0.5.
     save_data: bool

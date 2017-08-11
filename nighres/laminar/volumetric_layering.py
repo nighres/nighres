@@ -15,9 +15,9 @@ def volumetric_layering(inner_levelset, outer_levelset,
 
     Parameters
     ----------
-    inner_levelset: TODO:type
+    inner_levelset: niimg
         Levelset representation of the inner surface, typically GM/WM surface
-    outer_levelset : TODO:type
+    outer_levelset : niimg
         Levelset representation of the outer surface, typically GM/CSF surface
     n_layers : int, optional
         Number of layers to be created (default is 10)

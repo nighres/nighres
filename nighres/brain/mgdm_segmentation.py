@@ -72,24 +72,24 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     Parameters
     ----------
-    contrast_image1: TODO:type
+    contrast_image1: niimg
         First input image to perform segmentation on
     contrast_type1: str
         Contrast type of first input image, must be listed as a prior in used
         atlas(specified in atlas_file)
-    contrast_image2: TODO:type, optional
+    contrast_image2: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type2
     contrast_type2: str, optional
         Contrast type of second input image, must be listed as a prior in used
         atlas (specified in atlas_file)
-    contrast_image3: TODO:type, optional
+    contrast_image3: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type3
     contrast_type3: str, optional
         Contrast type of third input image, must be listed as a prior in used
         atlas (specified in atlas_file)
-    contrast_image4: TODO:type, optional
+    contrast_image4: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type4
     contrast_type4: str, optional

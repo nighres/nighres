@@ -9,7 +9,7 @@ def load_volume(volume):
 
     Parameters
     ----------
-    volume: TODO:type
+    volume: niimg
         Volumetric data to be loaded, can be a path to a file that nibabel can
         load, or a Nibabel SpatialImage
 

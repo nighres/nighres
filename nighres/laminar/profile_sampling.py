@@ -13,10 +13,10 @@ def profile_sampling(profile_surface_image, intensity_image,
 
     Parameters
     -----------
-    profile_surface_image: TODO:type
+    profile_surface_image: niimg
         4D image containing levelset representations of different intracortical
         surfaces on which data should be sampled
-    intensity_image: TODO:type
+    intensity_image: niimg
         Image from which data should be sampled
     save_data: bool
         Save output data to file (default is False)

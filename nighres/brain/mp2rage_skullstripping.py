@@ -19,13 +19,13 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     Parameters
     ----------
-    second_inversion: TODO:type
+    second_inversion: niimg
         Second inversion image derived from MP2RAGE sequence
-    t1_weighted: TODO:type
+    t1_weighted: niimg
         T1-weighted image derived from MP2RAGE sequence (also referred to as
         "uniform" image)
         At least one of t1_weighted and t1_map is required
-    t1_map: TODO:type
+    t1_map: niimg
         Quantitative T1 map image derived from MP2RAGE sequence
         At least one of t1_weighted and t1_map is required
     skip_zero_values: bool
