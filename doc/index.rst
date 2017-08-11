@@ -3,10 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Nighres' documentation
-=================================
+Welcome to Nighres' documentation!
+==================================
 
-Nighres is a Python package for processing of high-resolution neuroimaging data. It developed out of `CBS High-Res Brain Processing Tools <https://www.cbs.mpg.de/institute/software/cbs-tools>`_.
+Nighres is a Python package for processing of high-resolution neuroimaging data.
+It developed out of `CBS High-Res Brain Processing Tools
+<https://www.cbs.mpg.de/institute/software/cbs-tools>`_ and aims to make those
+tools easier to install, use and extend.
+
+.. danger:: Nighres is currently in beta stadium and not fully functional
 
 .. toctree::
    :maxdepth: 1
@@ -42,10 +47,11 @@ Nighres is a Python package for processing of high-resolution neuroimaging data.
 |
 .. admonition:: Reference
 
-   Bazin et al. (2014) A computational framework for ultra-high resolution
-   cortical segmentation at 7Tesla. `DOI: 10.1016/j.neuroimage.2013.03.077
-   <http://www.sciencedirect.com/science/article/pii/S1053811913003327?via%3Dihub>`_
+   Until a dedicated Nighres paper is out, please cite the following references:
 
-   Huntenburg et al. (2017) Laminar Python: Tools for cortical
-   depth-resolved analysis of high-resolution brain imaging data in
-   Python. `DOI: 10.3897/rio.3.e12346 <https://riojournal.com/article/12346/>`_
+   * Bazin et al. (2014) A computational framework for ultra-high resolution
+     cortical segmentation at 7Tesla. `DOI: 10.1016/j.neuroimage.2013.03.077
+     <http://www.sciencedirect.com/science/article/pii/S1053811913003327?via%3Dihub>`_
+   * Huntenburg et al. (2017) Laminar Python: Tools for cortical
+     depth-resolved analysis of high-resolution brain imaging data in
+     Python. `DOI: 10.3897/rio.3.e12346 <https://riojournal.com/article/12346/>`_
