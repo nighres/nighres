@@ -38,8 +38,8 @@
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="Nighres" href="../index.html"/>
-        <link rel="up" title="Nighres examples" href="index.html"/>
-        <link rel="prev" title="Nighres examples" href="index.html"/> 
+        <link rel="next" title="Data handling (niimg)" href="../data_formats.html"/>
+        <link rel="prev" title="io_mesh" href="../io/io_mesh.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -98,30 +98,27 @@
 </ul>
 <p class="caption"><span class="caption-text">Modules and Functions</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../io/index.html">IO</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../brain/index.html">Brain</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../laminar/index.html">Laminar</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../surface/index.html">Surface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../laminar/index.html">Laminar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../io/index.html">IO</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Examples</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Sampling T1 at different intracortical depths</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#import-and-download">Import and download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tissue-classification">Tissue classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-surfaces">Creating surfaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-layers-and-sampling">Creating layers and sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Good to know</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../data_formats.html">Data handling (niimg)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../saving.html">Saving outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../levelsets.html">Levelsets</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Examples</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">Nighres examples</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Sampling T1 at different intracortical depths</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#import-and-download">Import and download</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#tissue-classification">Tissue classification</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#creating-surfaces">Creating surfaces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#creating-layers-and-sampling">Creating layers and sampling</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#references">References</a></li>
-</ul>
-</li>
-</ul>
-</li>
 </ul>
 
             
@@ -165,8 +162,6 @@
   <ul class="wy-breadcrumbs">
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
-        
-          <li><a href="index.html">Nighres examples</a> &raquo;</li>
         
       <li>Sampling T1 at different intracortical depths</li>
     
@@ -241,8 +236,8 @@ the T1map and T1w image as well, they will be masked for us.</p>
                                                         <span class="n">output_dir</span><span class="o">=</span><span class="n">out_dir</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
 <p class="last">in Nighres, functions that have several outputs return a
 dictionary storing the different outputs. You can find the keys in the
 docstring or list them like this:</p>
@@ -268,8 +263,8 @@ image as well as the quantitative T1map.</p>
 <p>To create levelset representations of the pial and white matter surface,
 we first use the segmentation results to create binary masks representing
 those boundaries.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
 <p class="last">Since data is passed as Nibabel objects, we can manipulate it
 directly in Python, without ever saving or reloading the data</p>
 </div>
@@ -322,7 +317,7 @@ two surfaces. Here we choose only 3 layers to save time.</p>
 </div>
 <p>Finally, we use the intracortical layers, represented as levelsets,
 to sample T1 across the different cortical depth levels</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">profiles</span> <span class="o">=</span> <span class="n">nighres</span><span class="o">.</span><span class="n">laminarprofile_sampling</span><span class="p">(</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">profiles</span> <span class="o">=</span> <span class="n">nighres</span><span class="o">.</span><span class="n">laminar</span><span class="o">.</span><span class="n">profile_sampling</span><span class="p">(</span>
                         <span class="n">profile_surface_image</span><span class="o">=</span><span class="n">layering_results</span><span class="p">[</span><span class="s1">&#39;boundaries&#39;</span><span class="p">],</span>
                         <span class="n">intensity_image</span><span class="o">=</span><span class="n">t1map</span><span class="p">,</span>
                         <span class="n">save_data</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
@@ -378,8 +373,10 @@ laminae. DOI: 10.1016/j.neuroimage.2013.03.078</td></tr>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="../data_formats.html" class="btn btn-neutral float-right" title="Data handling (niimg)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="index.html" class="btn btn-neutral" title="Nighres examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="../io/io_mesh.html" class="btn btn-neutral" title="io_mesh" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

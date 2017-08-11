@@ -41,16 +41,25 @@ extensions = ['sphinx.ext.autodoc',  # for automatically reading docstrings
               # 'numpydoc'
               ]
 
+# napoleon_use_admonition_for_references = True
+
 # sphinx gallery configuration
 sphinx_gallery_conf = {
                     # path to your examples scripts
                     'examples_dirs': '../examples',
                     # path where to save gallery generated examples
                     'gallery_dirs': 'auto_examples',
-                    'reference_url': {'sphinx_gallery': None,  # local module
+                    # directory where function granular galleries are stored
+                    'backreferences_dir': 'gen_modules/backreferences',
+                    # Modules for which function level galleries are created.
+                    'doc_module': ('nighres'),
+                    # where to look for references (None: local module)
+                    'reference_url': {'sphinx_gallery': None,
                                       'nilearn': 'http://nilearn.github.io/',
                                       'nibabel': 'http://nipy.org/nibabel/'},
+                    'download_section_examples': False
                       }
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

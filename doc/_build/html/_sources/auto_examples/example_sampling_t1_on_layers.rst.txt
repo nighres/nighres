@@ -74,7 +74,7 @@ the T1map and T1w image as well, they will be masked for us.
                                                             output_dir=out_dir)
 
 
-.. note:: in Nighres, functions that have several outputs return a
+.. tip:: in Nighres, functions that have several outputs return a
    dictionary storing the different outputs. You can find the keys in the
    docstring or list them like this:
 
@@ -109,7 +109,7 @@ To create levelset representations of the pial and white matter surface,
 we first use the segmentation results to create binary masks representing
 those boundaries.
 
-.. note:: Since data is passed as Nibabel objects, we can manipulate it
+.. tip:: Since data is passed as Nibabel objects, we can manipulate it
    directly in Python, without ever saving or reloading the data
 
 
@@ -180,7 +180,7 @@ to sample T1 across the different cortical depth levels
 
 .. code-block:: python
 
-    profiles = nighres.laminarprofile_sampling(
+    profiles = nighres.laminar.profile_sampling(
                             profile_surface_image=layering_results['boundaries'],
                             intensity_image=t1map,
                             save_data=True,
