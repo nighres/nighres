@@ -1,0 +1,5 @@
+sphinx
+pillow
+matplotlib
+sphinx-gallery
+sphinx-rtd-theme
