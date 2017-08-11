@@ -116,6 +116,11 @@ todo_include_todos = True
 html_theme = 'sphinx_rtd_theme'
 # readthedocs theme, has to be installed:  pip install sphinx_rtd_theme
 
+
+# add options to default css
+def setup(app):
+    app.add_stylesheet('adapt_sphinx_rtd.css')
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
