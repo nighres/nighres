@@ -1,9 +1,8 @@
-language: java
-
-before_install:
-    - sudo apt-get update -y
-    - sudo apt-get dist-upgrade -y
-    - sudo apt-get install jcc -y
-
-script:
-    ./build.sh
+matrix:
+    include:
+        - language: java
+          before_install:
+              - sudo apt-get -qq update
+              - sudo apt-get -y install jcc
+          script:
+              ./build.sh
