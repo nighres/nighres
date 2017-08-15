@@ -207,13 +207,14 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     # set mgdm parameters
     mgdm.setAtlasFile(atlas_file)
     mgdm.setTopologyLUTdirectory(topology_lut_dir)
-    mgdm.setOutputImages('segmentation')
+    mgdm.setOutputImages('label_memberships')
     mgdm.setAdjustIntensityPriors(adjust_intensity_priors)
     mgdm.setComputePosterior(compute_posterior)
     mgdm.setDiffuseProbabilities(diffuse_probabilities)
     mgdm.setSteps(n_steps)
     mgdm.setTopology(topology)
-
+    mgdm.setNormalizeQuantitativeMaps(True) # set to False for "quantitative" brain prior atlases (version quant-3.0.5 and above)
+    
     # load contrast image 1 and use it to set dimensions and resolution
     img = load_volume(contrast_image1)
     data = img.get_data()
@@ -268,17 +269,24 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     # reshape output to what nibabel likes
     seg_data = np.reshape(np.array(mgdm.getSegmentedBrainImage(),
                                    dtype=np.int32), dimensions, 'F')
-    lbl_data = np.reshape(np.array(mgdm.getPosteriorMaximumLabels4D(),
-                                   dtype=np.int32), dimensions, 'F')
-    mems_data = np.reshape(np.array(mgdm.getPosteriorMaximumMemberships4D(),
-                                    dtype=np.float32), dimensions, 'F')
+    
     dist_data = np.reshape(np.array(mgdm.getLevelsetBoundaryImage(),
                                     dtype=np.float32), dimensions, 'F')
+    
+	# membership and labels output has a 4th dimension, set to 6
+    dimensions4d = [dimensions[0],dimensions[1],dimensions[2],6]
+    lbl_data = np.reshape(np.array(mgdm.getPosteriorMaximumLabels4D(),
+                                   dtype=np.int32), dimensions4d, 'F')
+    mems_data = np.reshape(np.array(mgdm.getPosteriorMaximumMemberships4D(),
+                                    dtype=np.float32), dimensions4d, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
     header['cal_max'] = np.nanmax(seg_data)
     seg = nb.Nifti1Image(seg_data, affine, header)
+    
+    header['cal_max'] = np.nanmax(dist_data)
+    dist = nb.Nifti1Image(dist_data, affine, header)
 
     header['cal_max'] = np.nanmax(lbl_data)
     lbls = nb.Nifti1Image(lbl_data, affine, header)
@@ -286,14 +294,11 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     header['cal_max'] = np.nanmax(mems_data)
     mems = nb.Nifti1Image(mems_data, affine, header)
 
-    header['cal_max'] = np.nanmax(dist_data)
-    dist = nb.Nifti1Image(dist_data, affine, header)
-
     if save_data:
         save_volume(os.path.join(output_dir, seg_file), seg)
+        save_volume(os.path.join(output_dir, dist_file), dist)
         save_volume(os.path.join(output_dir, lbl_file), lbls)
         save_volume(os.path.join(output_dir, mems_file), mems)
-        save_volume(os.path.join(output_dir, dist_file), dist)
 
     return {'segmentation': seg, 'labels': lbls,
             'memberships': mems, 'distance': dist}
