@@ -1,19 +1,13 @@
-language: java
-
-virtualenv:
-  system_site_packages: true
-
-addons:
-  apt:
-    packages:
-    - jcc
-
-before_install:
-  - pip install --upgrade wheel
-  - pip install --upgrade JCC
-
-script:
-  ./build.sh
+matrix:
+    include:
+        - language: java
+          before_install:
+              - sudo apt-get install -y jcc
+              - pip install --upgrade wheel
+              - pip install --upgrade JCC
+          script:
+              ./build.sh
 
 notifications:
   email: false
+

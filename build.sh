@@ -45,8 +45,7 @@ echo "After detection: $JAVA_HOME"
 # )
 
 # ~ Instead, let's use upstream JCC for now ~
-pip_modules=$(pip list --format columns | tr -s ' ' | cut -f 1 -d ' ')
-echo "${pip_modules}"
+
 # Check that JCC is installed
 echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.\nInstall with `apt-get install jcc` or equivalent'
 
@@ -167,3 +166,4 @@ cd ..
 rm -rf build
 rm -rf cbstools-public
 rm -rf nighres.egg-info
+

@@ -8,6 +8,7 @@ __pycache__/
 
 env/
 build/
+cbstools-public/
 develop-eggs/
 dist/
 downloads/
