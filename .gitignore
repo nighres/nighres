@@ -23,6 +23,8 @@ nighres.egg-info/
 nighres.egg
 .installed.cfg
 
+travis.log
+
 doc/_build
 doc/auto_examples
 doc/gen_modules
