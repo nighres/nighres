@@ -3,7 +3,8 @@ import numpy as np
 import nibabel as nb
 import cbstools
 from ..io import load_volume, save_volume
-from ..global_settings import TOPOLOGY_LUT_DIR
+from ..utils import _output_dir_4saving, _fname_4saving, \
+                    _check_topology_lut_dir
 
 
 def volumetric_layering(inner_levelset, outer_levelset,
@@ -57,18 +58,9 @@ def volumetric_layering(inner_levelset, outer_levelset,
        laminae. DOI: 10.1016/j.neuroimage.2013.03.078
     '''
 
-    # set default topology lut dir if not given
-    if topology_lut_dir is None:
-        topology_lut_dir = TOPOLOGY_LUT_DIR
-    else:
-        # check if dir exists
-        if not os.path.isdir(topology_lut_dir):
-            raise ValueError('The topology_lut_dir you have specified ({0}) '
-                             'does not exist'.format(topology_lut_dir))
-        # if we don't end in a path sep, we need to make sure that we add it
-        if not(topology_lut_dir[-1] == os.path.sep):
-            topology_lut_dir += os.path.sep
-
+    # check topology lut dir and set default if not given
+    topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
+   
     # make sure that saving related parameters are correct
     if save_data:
         output_dir = _output_dir_4saving(output_dir, inner_levelset)
