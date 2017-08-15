@@ -1,5 +1,8 @@
 language: java
 
+virtualenv:
+  system_site_packages: true
+
 addons:
   apt:
     packages:
@@ -10,3 +13,6 @@ before_install:
 
 script:
   ./build.sh
+
+notifications:
+  email: false
