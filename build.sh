@@ -46,7 +46,6 @@ echo "After detection: $JAVA_HOME"
 
 # ~ Instead, let's use upstream JCC for now ~
 
-
 # Check that JCC is installed
 echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.\nInstall with `apt-get install jcc` or equivalent'
 

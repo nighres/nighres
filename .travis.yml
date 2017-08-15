@@ -1,0 +1,12 @@
+matrix:
+    include:
+        - language: java
+          before_install:
+              - sudo apt-get install -y jcc
+              - pip install --upgrade wheel
+              - pip install --upgrade JCC
+          script:
+              ./build.sh
+
+notifications:
+  email: false
