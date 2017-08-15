@@ -10,6 +10,7 @@ addons:
 
 before_install:
   - pip install --upgrade wheel
+  - pip install --upgrade JCC
 
 script:
   ./build.sh
