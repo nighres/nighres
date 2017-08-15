@@ -27,7 +27,8 @@ determined using a volume-preserving approach :
 import nighres
 import os
 
-out_dir = os.path.join(os.getcwd(), 'nighres_cache/t1_sampling')
+#out_dir = os.path.join(os.getcwd(), 'nighres_cache/t1_sampling')
+out_dir ='/home/pilou/Projects/Nighres-testing-Julia/nighres_cache/t1_sampling'
 # t1map = os.path.join(out_dir, "T1map.nii.gz")
 # t1w = os.path.join(out_dir, "T1w.nii.gz")
 
@@ -36,9 +37,9 @@ out_dir = os.path.join(os.getcwd(), 'nighres_cache/t1_sampling')
 # CBS Open Science repository
 #
 # .. todo:: also download INV2, for now using local version
-inv2 = '/SCR/data/cbstools_testing/7t_trt/test_nii/INV2.nii.gz'
-t1map = '/SCR/data/cbstools_testing/7t_trt/test_nii/T1map.nii.gz'
-t1w = '/SCR/data/cbstools_testing/7t_trt/test_nii/T1w.nii.gz'
+inv2 = '/home/pilou/Projects/Nighres-testing-Julia/testdata/INV2.nii.gz'
+t1map = '/home/pilou/Projects/Nighres-testing-Julia/testdata/T1map.nii.gz'
+t1w = '/home/pilou/Projects/Nighres-testing-Julia/testdata/T1w.nii.gz'
 
 # nighres.download_from_url("http://openscience.cbs.mpg.de/bazin/7T_Quantitative/MP2RAGE-05mm/subject01_mp2rage_0p5iso_qT1.nii.gz",
 #                           t1map)
