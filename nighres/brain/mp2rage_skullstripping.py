@@ -65,7 +65,8 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     # check topology lut dir and set default if not given
     topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
-
+    #print("\nLUT dir: {0}").format(topology_lut_dir)
+       
     # make sure that saving related parameters are correct
     if save_data:
         output_dir = _output_dir_4saving(output_dir, second_inversion)
@@ -113,12 +114,14 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
     if t1_weighted is not None:
         t1w_img = load_volume(t1_weighted)
         t1w_data = t1w_img.get_data()
+        t1w_affine = t1w_img.get_affine()
         t1w_hdr = t1w_img.get_header()
         stripper.setT1weightedImage(cbstools.JArray('float')(
                                       (t1w_data.flatten('F')).astype(float)))
     if t1_map is not None:
         t1map_img = load_volume(t1_map)
         t1map_data = t1map_img.get_data()
+        t1map_affine = t1map_img.get_affine()
         t1map_hdr = t1map_img.get_header()
         stripper.setT1MapImage(cbstools.JArray('float')(
                                     (t1map_data.flatten('F')).astype(float)))
@@ -142,12 +145,12 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     # collect outputs and potentially save
     inv2_masked_data = np.reshape(np.array(
-                                mgdm.stripper.getMaskedSecondINversionImage(),
+                                stripper.getMaskedSecondInversionImage(), 
                                 dtype=np.float32), dimensions, 'F')
     inv2_hdr['cal_max'] = np.nanmax(inv2_masked_data)
     inv2_masked = nb.Nifti1Image(inv2_masked_data, inv2_affine, inv2_hdr)
 
-    mask_data = np.reshape(np.array(mgdm.stripper.getBrainMaskImage(),
+    mask_data = np.reshape(np.array(stripper.getBrainMaskImage(),
                                     dtype=np.uint32), dimensions, 'F')
     inv2_hdr['cal_max'] = np.nanmax(mask_data)
     mask = nb.Nifti1Image(mask_data, inv2_affine, inv2_hdr)
@@ -160,7 +163,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     if t1_weighted is not None:
         t1w_masked_data = np.reshape(np.array(
-                                mgdm.stripper.getMaskedT1weightedImage(),
+                                stripper.getMaskedT1weightedImage(),
                                 dtype=np.float32), dimensions, 'F')
         t1w_hdr['cal_max'] = np.nanmax(t1w_masked_data)
         t1w_masked = nb.Nifti1Image(t1w_masked_data, t1w_affine, t1w_hdr)
@@ -171,7 +174,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     if t1_map is not None:
         t1map_masked_data = np.reshape(np.array(
-                                        mgdm.stripper.getMaskedT1mapImage(),
+                                        stripper.getMaskedT1MapImage(),
                                         dtype=np.float32), dimensions, 'F')
         t1map_hdr['cal_max'] = np.nanmax(t1map_masked_data)
         t1map_masked = nb.Nifti1Image(t1map_masked_data, t1map_affine,
