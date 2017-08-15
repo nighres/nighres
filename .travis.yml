@@ -4,5 +4,6 @@ matrix:
           before_install:
               - sudo apt-get -qq update
               - sudo apt-get -y install jcc
+              - pip install --upgrade wheel
           script:
               ./build.sh
