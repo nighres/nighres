@@ -30,10 +30,11 @@ import os
 out_dir = os.path.join(os.getcwd(), 'nighres_cache/t1_sampling')
 # t1map = os.path.join(out_dir, "T1map.nii.gz")
 # t1w = os.path.join(out_dir, "T1w.nii.gz")
+
+############################################################################
+# Now we download an example MP2RAGE dataset from the
+# CBS Open Science repository
 #
-# ############################################################################
-# # Now we download an example MP2RAGE dataset from the
-# # CBS Open Science repository
 # .. todo:: also download INV2, for now using local version
 inv2 = '/SCR/data/cbstools_testing/7t_trt/test_nii/INV2.nii.gz'
 t1map = '/SCR/data/cbstools_testing/7t_trt/test_nii/T1map.nii.gz'
