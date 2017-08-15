@@ -19,7 +19,7 @@ determined using a volume-preserving approach :
 
 ############################################################################
 # Import and download
-# ~~~~~~~~~~~~~~~~~~~
+# -------------------
 # First we import nighres and the os module to set the output directory and
 # filenames for the files we will download. Make sure to run this file in a
 # directory you have write-access to, or change the out_dir variable below.
@@ -44,7 +44,7 @@ inv2 = '/SCR/data/cbstools_testing/7t_trt/test_nii/INV2.nii.gz'
 
 ############################################################################
 # Tissue classification
-# ~~~~~~~~~~~~~~~~~~~~~~
+# ---------------------
 # The first processing step is to skullstrip the images. Only the second
 # inversion image is required to calculate the brain mask. But if we input
 # the T1map and T1w image as well, they will be masked for us.
@@ -76,7 +76,7 @@ segmentation_results = nighres.brain.mgdm_segmentation(
 
 ############################################################################
 # Creating surfaces
-# ~~~~~~~~~~~~~~~~~
+# -----------------
 # To create levelset representations of the pial and white matter surface,
 # we first use the segmentation results to create binary masks representing
 # those boundaries.
@@ -118,7 +118,7 @@ gm_csf_levelset = nighres.surface.probability_to_levelset(
 
 ###########################################################################
 # Creating layers and sampling
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ----------------------------
 # Once we have the levelset representations of the pial and white matter
 # surface we can perform volume-preserving layering of the space between the
 # two surfaces. Here we choose only 3 layers to save time.
@@ -142,7 +142,7 @@ profiles = nighres.laminar.profile_sampling(
 # TODO: Visualize data using Nilearn
 #############################################################################
 # References
-# ~~~~~~~~~~~
+# -----------
 # .. [1] Tardif et al (2016). Open Science CBS Neuroimaging Repository: Sharing
 #    ultra-high-field MR images of the brain.
 #    DOI: 10.1016/j.neuroimage.2015.08.042
