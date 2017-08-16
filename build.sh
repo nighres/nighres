@@ -155,6 +155,9 @@ cp -rv build/cbstools/ ../
 find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' ../cbstools/_cbstools.so
 cd ..
 
+uname -a
+lscpu
+
 # Make the python wheel
 # TODO get platform and python version from system
 (
