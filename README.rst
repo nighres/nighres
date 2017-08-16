@@ -1,12 +1,19 @@
+.. -*- mode: rst -*-
+
+Nighres
+=======
+
 Nighres is a Python package for processing of high-resolution neuroimaging data.
 It developed out of `CBS High-Res Brain Processing Tools
 <https://www.cbs.mpg.de/institute/software/cbs-tools>`_ and aims to make those
 tools easier to install, use and extend.
 
-You can get Nighres from PyPI (very soon)::
+You can get Nighres from PyPI (soon!)::
+
     pip install nighres
 
-If necessary, pip will also Nighres' dependecies:
+If necessary, pip will also install Nighres' dependencies:
+
 * Numpy
 * Nibabel
 
