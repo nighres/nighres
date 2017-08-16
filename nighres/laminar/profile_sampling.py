@@ -3,6 +3,7 @@ import numpy as np
 import nibabel as nb
 import cbstools
 from ..io import load_volume, save_volume
+from ..utils import _output_dir_4saving, _fname_4saving
 
 
 def profile_sampling(profile_surface_image, intensity_image,
@@ -37,6 +38,8 @@ def profile_sampling(profile_surface_image, intensity_image,
     ----------
     Original Java module by Pierre-Louis Bazin and Juliane Dinse
     '''
+    print('\nProfile sampling')
+    
     # make sure that saving related parameters are correct
     if save_data:
         output_dir = _output_dir_4saving(output_dir, intensity_image)
@@ -62,7 +65,7 @@ def profile_sampling(profile_surface_image, intensity_image,
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = surface_data.shape
 
-    intensity_data = load_volume(intensity_img).get_data()
+    intensity_data = load_volume(intensity_image).get_data()
 
     # pass inputs
     sampler.setIntensityImage(cbstools.JArray('float')(
@@ -70,7 +73,7 @@ def profile_sampling(profile_surface_image, intensity_image,
     sampler.setProfileSurfaceImage(cbstools.JArray('float')(
                                    (surface_data.flatten('F')).astype(float)))
     sampler.setResolutions(resolution[0], resolution[1], resolution[2])
-    sampler.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+    sampler.setDimensions(dimensions[0], dimensions[1], dimensions[2], dimensions[3])
 
     # execute class
     try:

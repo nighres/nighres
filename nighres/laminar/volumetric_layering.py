@@ -3,11 +3,12 @@ import numpy as np
 import nibabel as nb
 import cbstools
 from ..io import load_volume, save_volume
-from ..global_settings import TOPOLOGY_LUT_DIR
+from ..utils import _output_dir_4saving, _fname_4saving, \
+                    _check_topology_lut_dir
 
 
 def volumetric_layering(inner_levelset, outer_levelset,
-                        n_layers=10, topology_lut_dir=None,
+                        n_layers=4, topology_lut_dir=None,
                         save_data=False, output_dir=None,
                         file_name=None, file_extension=None):
 
@@ -56,34 +57,26 @@ def volumetric_layering(inner_levelset, outer_levelset,
     .. [1] Waehnert et al (2014). Anatomically motivated modeling of cortical
        laminae. DOI: 10.1016/j.neuroimage.2013.03.078
     '''
-
-    # set default topology lut dir if not given
-    if topology_lut_dir is None:
-        topology_lut_dir = TOPOLOGY_LUT_DIR
-    else:
-        # check if dir exists
-        if not os.path.isdir(topology_lut_dir):
-            raise ValueError('The topology_lut_dir you have specified ({0}) '
-                             'does not exist'.format(topology_lut_dir))
-        # if we don't end in a path sep, we need to make sure that we add it
-        if not(topology_lut_dir[-1] == os.path.sep):
-            topology_lut_dir += os.path.sep
-
+    print('\nVolumetric Layering')
+    
+    # check topology lut dir and set default if not given
+    topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
+   
     # make sure that saving related parameters are correct
     if save_data:
         output_dir = _output_dir_4saving(output_dir, inner_levelset)
 
-        depth_file = _fname_4saving(rootfile=inner_image,
+        depth_file = _fname_4saving(rootfile=inner_levelset,
                                     suffix='layering_depth',
                                     base_name=file_name,
                                     extension=file_extension)
 
-        layer_file = _fname_4saving(rootfile=inner_image,
+        layer_file = _fname_4saving(rootfile=inner_levelset,
                                     suffix='layering_layers',
                                     base_name=file_name,
                                     extension=file_extension)
 
-        boundary_file = _fname_4saving(rootfile=inner_image,
+        boundary_file = _fname_4saving(rootfile=inner_levelset,
                                        suffix='layering_boundaries',
                                        base_name=file_name,
                                        extension=file_extension)
@@ -150,7 +143,7 @@ def volumetric_layering(inner_levelset, outer_levelset,
     boundaries = nb.Nifti1Image(boundary_data, aff, hdr)
 
     if save_data:
-        save_volume(os.path.join(output_dir, depth_file), depths)
+        save_volume(os.path.join(output_dir, depth_file), depth)
         save_volume(os.path.join(output_dir, layer_file), layers)
         save_volume(os.path.join(output_dir, boundary_file), boundaries)
 

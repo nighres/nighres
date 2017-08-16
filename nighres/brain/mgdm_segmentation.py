@@ -58,7 +58,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                       contrast_image2=None, contrast_type2=None,
                       contrast_image3=None, contrast_type3=None,
                       contrast_image4=None, contrast_type4=None,
-                      n_steps=5, topology='wcs',
+                      n_steps=5, max_iterations=800, topology='wcs',
                       atlas_file=None, topology_lut_dir=None,
                       adjust_intensity_priors=False,
                       compute_posterior=False,
@@ -98,6 +98,10 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     n_steps: int, optional
         Number of steps for MGDM (default is 5, set to 0 for quick testing of
         registration of priors, which does not perform true segmentation)
+    max_iterations: int, optional
+        Maximum number of iterations per step for MGDM (default is 800, set 
+        to 1 for quick testing of registration of priors, which does not perform 
+        true segmentation)
     topology: {'wcs', 'no'}, optional
         Topology setting, choose 'wcs' (well-composed surfaces) for strongest
         topology constraint, 'no' for no topology constraint (default is 'wcs')
@@ -150,7 +154,8 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     .. [2] Fan, Bazin and Prince (2008). A multi-compartment segmentation
        framework with homeomorphic level sets. DOI: 10.1109/CVPR.2008.4587475
     """
-
+    print('\nMGDM Segmentation')
+    
     # check atlas_file and set default if not given
     atlas_file = _check_atlas_file(atlas_file)
 
@@ -207,13 +212,15 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     # set mgdm parameters
     mgdm.setAtlasFile(atlas_file)
     mgdm.setTopologyLUTdirectory(topology_lut_dir)
-    mgdm.setOutputImages('segmentation')
+    mgdm.setOutputImages('label_memberships')
     mgdm.setAdjustIntensityPriors(adjust_intensity_priors)
     mgdm.setComputePosterior(compute_posterior)
     mgdm.setDiffuseProbabilities(diffuse_probabilities)
     mgdm.setSteps(n_steps)
+    mgdm.setMaxIterations(max_iterations)
     mgdm.setTopology(topology)
-
+    mgdm.setNormalizeQuantitativeMaps(True) # set to False for "quantitative" brain prior atlases (version quant-3.0.5 and above)
+    
     # load contrast image 1 and use it to set dimensions and resolution
     img = load_volume(contrast_image1)
     data = img.get_data()
@@ -268,17 +275,24 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     # reshape output to what nibabel likes
     seg_data = np.reshape(np.array(mgdm.getSegmentedBrainImage(),
                                    dtype=np.int32), dimensions, 'F')
-    lbl_data = np.reshape(np.array(mgdm.getPosteriorMaximumLabels4D(),
-                                   dtype=np.int32), dimensions, 'F')
-    mems_data = np.reshape(np.array(mgdm.getPosteriorMaximumMemberships4D(),
-                                    dtype=np.float32), dimensions, 'F')
+    
     dist_data = np.reshape(np.array(mgdm.getLevelsetBoundaryImage(),
                                     dtype=np.float32), dimensions, 'F')
+    
+	# membership and labels output has a 4th dimension, set to 6
+    dimensions4d = [dimensions[0],dimensions[1],dimensions[2],6]
+    lbl_data = np.reshape(np.array(mgdm.getPosteriorMaximumLabels4D(),
+                                   dtype=np.int32), dimensions4d, 'F')
+    mems_data = np.reshape(np.array(mgdm.getPosteriorMaximumMemberships4D(),
+                                    dtype=np.float32), dimensions4d, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
     header['cal_max'] = np.nanmax(seg_data)
     seg = nb.Nifti1Image(seg_data, affine, header)
+    
+    header['cal_max'] = np.nanmax(dist_data)
+    dist = nb.Nifti1Image(dist_data, affine, header)
 
     header['cal_max'] = np.nanmax(lbl_data)
     lbls = nb.Nifti1Image(lbl_data, affine, header)
@@ -286,14 +300,11 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     header['cal_max'] = np.nanmax(mems_data)
     mems = nb.Nifti1Image(mems_data, affine, header)
 
-    header['cal_max'] = np.nanmax(dist_data)
-    dist = nb.Nifti1Image(dist_data, affine, header)
-
     if save_data:
         save_volume(os.path.join(output_dir, seg_file), seg)
+        save_volume(os.path.join(output_dir, dist_file), dist)
         save_volume(os.path.join(output_dir, lbl_file), lbls)
         save_volume(os.path.join(output_dir, mems_file), mems)
-        save_volume(os.path.join(output_dir, dist_file), dist)
 
     return {'segmentation': seg, 'labels': lbls,
             'memberships': mems, 'distance': dist}
