@@ -157,7 +157,6 @@ cd ..
 
 # Make the python wheel
 # TODO get platform and python version from system
-# TODO add upload
 (
 	python setup.py bdist_wheel --dist-dir dist --plat-name manylinux1_x86_64 --python-tag py2
 )

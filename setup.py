@@ -10,7 +10,7 @@ setup(
     version='0.1.0',
     description='Processing tools for high-resolution neuroimaging',
     long_description=long_description,
-    url='https://nighres.github.io/',
+    url='https://nighres.readthedocs.io/',
     author='Julia M Huntenburg, Pierre-Louis Bazin, Chris Steele',
     author_email='ju.huntenburg@gmail.com',
     license='Apache License, 2.0',
