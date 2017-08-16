@@ -27,8 +27,7 @@ determined using a volume-preserving approach :
 import nighres
 import os
 
-#out_dir = os.path.join(os.getcwd(), 'nighres_cache/t1_sampling')
-out_dir ='/home/pilou/Projects/Nighres-testing-Julia/nighres_cache/t1_sampling'
+out_dir = os.path.join(os.getcwd(), 'nighres_cache/t1_sampling')
 # t1map = os.path.join(out_dir, "T1map.nii.gz")
 # t1w = os.path.join(out_dir, "T1w.nii.gz")
 
@@ -82,45 +81,64 @@ segmentation_results = nighres.brain.mgdm_segmentation(
 # -----------------
 # To create levelset representations of the pial and white matter surface,
 # we first use the segmentation results to create binary masks representing
-# those boundaries.
-# This small thresholding loop that bypasses the usual CRUISE step (not yet 
-# ported into python wrappers)
+# those boundaries. This small thresholding loop bypasses a step that would
+# usually be performed with CRUISE, an interface that has not yet been
+# included in Nighres
 #
-# .. tip:: Since data is passed as Nibabel objects, we can manipulate it
-#    directly in Python, without ever saving or reloading the data
+# In the atlas file we used for MGDM segmentation, we can find the labels
+# corresponding to subcortical and white matter (wm) structures and cortical
+# gray matter (gm). We used the default atlas file, its location is stored
+# in the DEFAULT_ATLAS variable. You can take a look at it yourself to see
+# where the numbers in the following lists come frome
 
-import numpy as np
-import nibabel as nb
+with open(nighres.DEFAULT_ATLAS, 'r') as f:
+    print(f.read())
 
-
-# these lists correspond to the label numbers for subcortical and WM structures 
-# and cortical GM respectively (left and right sides combined) 
 wm = [11, 12, 13, 17, 18, 30, 31, 32, 33, 34, 35, 36, 37,
       38, 39, 40, 41, 47, 48]
 gm = [26, 27]
 
+############################################################################
+# .. tip:: Since data is passed as Nibabel objects, we can manipulate it
+#    directly in Python using Numpy and Nibabel
+
+import numpy as np
+import nibabel as nb
+
 segmentation = segmentation_results['segmentation'].get_data()
+affine = segmentation_results['segmentation'].get_affine()
+header = segmentation_results['segmentation'].get_header()
+
 wm_mask = np.zeros(segmentation.shape)
 for x in wm:
     wm_mask[np.where(segmentation == x)] = 1
-wm_nii = nb.Nifti1Image(wm_mask,
-                        segmentation_results['segmentation'].get_affine())
 
 gm_mask = np.copy(wm_mask)
 for x in gm:
     gm_mask[np.where(segmentation == x)] = 1
-gm_nii = nb.Nifti1Image(gm_mask,
-                        segmentation_results['segmentation'].get_affine())
+
+# Make Nifti objects for further processing and saving
+# Adapting header max value for display
+header['cal_max'] = 1
+wm_nii = nb.Nifti1Image(wm_mask, affine, header)
+wm_nii.to_filename(os.path.join(out_dir, 'wm_mask.nii.gz'))
+gm_nii = nb.Nifti1Image(gm_mask, affine, header)
+gm_nii.to_filename(os.path.join(out_dir, 'pial_mask.nii.gz'))
+
 
 ############################################################################
 # Now we use Nighres again to create the levelsets from the binary masks
 gm_wm_levelset = nighres.surface.probability_to_levelset(
                                                     probability_image=wm_nii,
                                                     save_data=True,
+                                                    file_name='gm_wm',
+                                                    file_extension='nii.gz',
                                                     output_dir=out_dir)
 gm_csf_levelset = nighres.surface.probability_to_levelset(
                                                     probability_image=gm_nii,
                                                     save_data=True,
+                                                    file_name='gm_csf',
+                                                    file_extension='nii.gz',
                                                     output_dir=out_dir)
 
 ###########################################################################
@@ -145,8 +163,10 @@ profiles = nighres.laminar.profile_sampling(
                         save_data=True,
                         output_dir=out_dir)
 
+#############################################################################
+#
+# .. todo:: Visualize data using Nilearn
 
-# TODO: Visualize data using Nilearn
 #############################################################################
 # References
 # -----------

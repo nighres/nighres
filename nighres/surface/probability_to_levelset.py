@@ -49,6 +49,7 @@ def probability_to_levelset(probability_image,
 
         levelset_file = _fname_4saving(rootfile=probability_image,
                                        suffix='levelset',
+                                       base_name=file_name,
                                        extension=file_extension)
 
     # start virtual machine if not running
