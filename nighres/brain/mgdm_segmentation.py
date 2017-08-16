@@ -58,7 +58,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                       contrast_image2=None, contrast_type2=None,
                       contrast_image3=None, contrast_type3=None,
                       contrast_image4=None, contrast_type4=None,
-                      n_steps=5, topology='wcs',
+                      n_steps=5, max_iterations=800, topology='wcs',
                       atlas_file=None, topology_lut_dir=None,
                       adjust_intensity_priors=False,
                       compute_posterior=False,
@@ -98,6 +98,10 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     n_steps: int, optional
         Number of steps for MGDM (default is 5, set to 0 for quick testing of
         registration of priors, which does not perform true segmentation)
+    max_iterations: int, optional
+        Maximum number of iterations per step for MGDM (default is 800, set 
+        to 1 for quick testing of registration of priors, which does not perform 
+        true segmentation)
     topology: {'wcs', 'no'}, optional
         Topology setting, choose 'wcs' (well-composed surfaces) for strongest
         topology constraint, 'no' for no topology constraint (default is 'wcs')
@@ -150,7 +154,8 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     .. [2] Fan, Bazin and Prince (2008). A multi-compartment segmentation
        framework with homeomorphic level sets. DOI: 10.1109/CVPR.2008.4587475
     """
-
+    print('\nMGDM Segmentation')
+    
     # check atlas_file and set default if not given
     atlas_file = _check_atlas_file(atlas_file)
 
@@ -212,6 +217,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     mgdm.setComputePosterior(compute_posterior)
     mgdm.setDiffuseProbabilities(diffuse_probabilities)
     mgdm.setSteps(n_steps)
+    mgdm.setMaxIterations(max_iterations)
     mgdm.setTopology(topology)
     mgdm.setNormalizeQuantitativeMaps(True) # set to False for "quantitative" brain prior atlases (version quant-3.0.5 and above)
     

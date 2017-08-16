@@ -62,7 +62,8 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
        for improved segmentation and T1-mapping at high field.
        DOI: 10.1016/j.neuroimage.2009.10.002
     """
-
+    print('\nMP2RAGE Skull Stripping')
+    
     # check topology lut dir and set default if not given
     topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
     #print("\nLUT dir: {0}").format(topology_lut_dir)

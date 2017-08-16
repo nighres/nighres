@@ -83,6 +83,8 @@ segmentation_results = nighres.brain.mgdm_segmentation(
 # To create levelset representations of the pial and white matter surface,
 # we first use the segmentation results to create binary masks representing
 # those boundaries.
+# This small thresholding loop that bypasses the usual CRUISE step (not yet 
+# ported into python wrappers)
 #
 # .. tip:: Since data is passed as Nibabel objects, we can manipulate it
 #    directly in Python, without ever saving or reloading the data
@@ -90,7 +92,9 @@ segmentation_results = nighres.brain.mgdm_segmentation(
 import numpy as np
 import nibabel as nb
 
-# TODO: this needs explanation
+
+# these lists correspond to the label numbers for subcortical and WM structures 
+# and cortical GM respectively (left and right sides combined) 
 wm = [11, 12, 13, 17, 18, 30, 31, 32, 33, 34, 35, 36, 37,
       38, 39, 40, 41, 47, 48]
 gm = [26, 27]
