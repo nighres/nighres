@@ -1,6 +1,7 @@
 matrix:
   include:
   - language: java
+    sudo: required
     before_install:
     - sudo apt-get install -y jcc
     - pip install --upgrade wheel
