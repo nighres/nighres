@@ -10,10 +10,11 @@ matrix:
     script: "./build.sh"
     deploy:
       provider: pypi
-      server: https://testpypi.python.org/pypi
-      user: nighres
+      server: https://test.pypi.org/legacy/
+      user: "nighres"
       password:
           secure: "jd6RbSUFS0FCRACmEVJKQ0/Piow6/VJJXCTRdDcIGYA3KBVm78xGdJt+IGlqWv9mNyStzMJQVAM5EI3rC6UxSMqijQn8434pUK6vXtVZtE18aqzM5rdfznt6gunW0vmX6CUHj9/GlnT8p5ojd1yckXKKlgtymMEQ9Pi80ngwYZd8W3nx/pEzRzNY2kW4zOvmXyU9GwJmeMMDCnahuXDKXq7if9zPkmPD6URfcWw4TCAlt0DaSDW7XGVjMdKpSEpMKR35FRI/m0TZEPHEAqin/7P+IQYGAQVXU0vF9yoK7m0KUyy0vLiLhd70yeAHIrJwUzyVJ/uujpO/e93DuA6I9Wvu7eQGeKRpXsQvU1BmdzF6WeLT/onQO8QN5K9rZmpij+nR2S9ebP3QY7g6YcHLE7At3Wgmq/41isq8YMvJ8ouZ6Gh79TLb9TH4vE/RpIniWpIDgt1H16Ww9Uv55y7WAEOcmemnLTMzA0XWHM8gFGCwSpGzKvOoVE2vDHSTK5PYxZmkH6Eh6FTrkga26fIT/xJxICmdjOiFP7jn8ATQnWIOb/wuac+z0Hxo7Y9AbXfBZP0qWjJ0mIasoHQKUHx62W9SYkJT13K7zr2PQ5FWf8oAUr858lUFtJpZnuYR/FsexsMUmdIWTSBg7xygxTr5pW1f/9gUUWGJwqwYuap7URs="
+      skip_cleanup: true
       on:
         tags: false
         branch: master
