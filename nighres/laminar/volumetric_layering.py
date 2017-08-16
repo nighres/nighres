@@ -57,11 +57,12 @@ def volumetric_layering(inner_levelset, outer_levelset,
     .. [1] Waehnert et al (2014). Anatomically motivated modeling of cortical
        laminae. DOI: 10.1016/j.neuroimage.2013.03.078
     '''
+
     print('\nVolumetric Layering')
-    
+
     # check topology lut dir and set default if not given
     topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
-   
+
     # make sure that saving related parameters are correct
     if save_data:
         output_dir = _output_dir_4saving(output_dir, inner_levelset)

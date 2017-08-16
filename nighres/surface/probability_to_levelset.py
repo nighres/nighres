@@ -41,7 +41,7 @@ def probability_to_levelset(probability_image,
     Original Java module by Pierre-Louis Bazin
     """
 
-    print("Probability to Levelset")
+    print("\nProbability to Levelset")
 
     # make sure that saving related parameters are correct
     if save_data:

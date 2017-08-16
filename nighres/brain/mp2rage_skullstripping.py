@@ -62,12 +62,12 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
        for improved segmentation and T1-mapping at high field.
        DOI: 10.1016/j.neuroimage.2009.10.002
     """
+
     print('\nMP2RAGE Skull Stripping')
-    
+
     # check topology lut dir and set default if not given
     topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
-    #print("\nLUT dir: {0}").format(topology_lut_dir)
-       
+
     # make sure that saving related parameters are correct
     if save_data:
         output_dir = _output_dir_4saving(output_dir, second_inversion)
@@ -130,8 +130,6 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
     stripper.setSkipZeroValues(skip_zero_values)
     stripper.setTopologyLUTdirectory(topology_lut_dir)
 
-
-
     # execute skull stripping
     try:
         print("Executing MP2RAGE skull stripping")
@@ -146,7 +144,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     # collect outputs and potentially save
     inv2_masked_data = np.reshape(np.array(
-                                stripper.getMaskedSecondInversionImage(), 
+                                stripper.getMaskedSecondInversionImage(),
                                 dtype=np.float32), dimensions, 'F')
     inv2_hdr['cal_max'] = np.nanmax(inv2_masked_data)
     inv2_masked = nb.Nifti1Image(inv2_masked_data, inv2_affine, inv2_hdr)

@@ -7,6 +7,7 @@ from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_atlas_file
 
+
 def _get_mgdm_orientation(affine, mgdm):
     '''
     Transforms nibabel affine information into
@@ -99,9 +100,9 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         Number of steps for MGDM (default is 5, set to 0 for quick testing of
         registration of priors, which does not perform true segmentation)
     max_iterations: int, optional
-        Maximum number of iterations per step for MGDM (default is 800, set 
-        to 1 for quick testing of registration of priors, which does not perform 
-        true segmentation)
+        Maximum number of iterations per step for MGDM (default is 800, set
+        to 1 for quick testing of registration of priors, which does not
+        perform true segmentation)
     topology: {'wcs', 'no'}, optional
         Topology setting, choose 'wcs' (well-composed surfaces) for strongest
         topology constraint, 'no' for no topology constraint (default is 'wcs')
@@ -154,8 +155,9 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     .. [2] Fan, Bazin and Prince (2008). A multi-compartment segmentation
        framework with homeomorphic level sets. DOI: 10.1109/CVPR.2008.4587475
     """
+
     print('\nMGDM Segmentation')
-    
+
     # check atlas_file and set default if not given
     atlas_file = _check_atlas_file(atlas_file)
 
@@ -219,8 +221,10 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     mgdm.setSteps(n_steps)
     mgdm.setMaxIterations(max_iterations)
     mgdm.setTopology(topology)
-    mgdm.setNormalizeQuantitativeMaps(True) # set to False for "quantitative" brain prior atlases (version quant-3.0.5 and above)
-    
+    mgdm.setNormalizeQuantitativeMaps(True)
+    # set to False for "quantitative" brain prior atlases
+    # (version quant-3.0.5 and above)
+
     # load contrast image 1 and use it to set dimensions and resolution
     img = load_volume(contrast_image1)
     data = img.get_data()
@@ -275,12 +279,12 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     # reshape output to what nibabel likes
     seg_data = np.reshape(np.array(mgdm.getSegmentedBrainImage(),
                                    dtype=np.int32), dimensions, 'F')
-    
+
     dist_data = np.reshape(np.array(mgdm.getLevelsetBoundaryImage(),
                                     dtype=np.float32), dimensions, 'F')
-    
-	# membership and labels output has a 4th dimension, set to 6
-    dimensions4d = [dimensions[0],dimensions[1],dimensions[2],6]
+
+    # membership and labels output has a 4th dimension, set to 6
+    dimensions4d = [dimensions[0], dimensions[1], dimensions[2], 6]
     lbl_data = np.reshape(np.array(mgdm.getPosteriorMaximumLabels4D(),
                                    dtype=np.int32), dimensions4d, 'F')
     mems_data = np.reshape(np.array(mgdm.getPosteriorMaximumMemberships4D(),
@@ -290,7 +294,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     # and create nifiti objects
     header['cal_max'] = np.nanmax(seg_data)
     seg = nb.Nifti1Image(seg_data, affine, header)
-    
+
     header['cal_max'] = np.nanmax(dist_data)
     dist = nb.Nifti1Image(dist_data, affine, header)
 

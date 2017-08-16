@@ -38,8 +38,9 @@ def profile_sampling(profile_surface_image, intensity_image,
     ----------
     Original Java module by Pierre-Louis Bazin and Juliane Dinse
     '''
+
     print('\nProfile sampling')
-    
+
     # make sure that saving related parameters are correct
     if save_data:
         output_dir = _output_dir_4saving(output_dir, intensity_image)
@@ -73,7 +74,8 @@ def profile_sampling(profile_surface_image, intensity_image,
     sampler.setProfileSurfaceImage(cbstools.JArray('float')(
                                    (surface_data.flatten('F')).astype(float)))
     sampler.setResolutions(resolution[0], resolution[1], resolution[2])
-    sampler.setDimensions(dimensions[0], dimensions[1], dimensions[2], dimensions[3])
+    sampler.setDimensions(dimensions[0], dimensions[1],
+                          dimensions[2], dimensions[3])
 
     # execute class
     try:
