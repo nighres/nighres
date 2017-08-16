@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from os import path
 
 here = path.abspath(path.dirname(__file__))
-with open('README.md') as f:
+with open('README.rst') as f:
     long_description = f.read()
 
 setup(
