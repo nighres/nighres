@@ -7,6 +7,7 @@ function join_by { local IFS="$1"; shift; echo "$*"; }
 
 mipav_version="mipav-7.3"
 jist_version="JIST-CRUISE-2014Dec12-03-37PM.jar"
+cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
 
 
 #
@@ -29,8 +30,6 @@ export JAVA_HOME=${JAVA_HOME:-"$detected_home"}
 
 echo "After detection: $JAVA_HOME"
 
-set -x
-
 # ~ This doesn't work; I get a javadoc error ~
 
 # # Download a fork of JCC for python3 compatibility
@@ -47,7 +46,6 @@ set -x
 
 # ~ Instead, let's use upstream JCC for now ~
 
-
 # Check that JCC is installed
 echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.\nInstall with `apt-get install jcc` or equivalent'
 
@@ -55,6 +53,14 @@ echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.
 # Inspired by https://stackoverflow.com/a/4850603
 python_include_path=$(python -c "from distutils import sysconfig as s; print s.get_config_vars()['INCLUDEPY']")
 test -f "${python_include_path}/Python.h" || fatal 'This script requires python development headers.\nInstall with `apt-get install python-dev`, or \n             `apt-get install python3-dev`, or equivalent'
+
+# Get cbstools git clone
+test -d cbstools-public || (
+	git clone $cbstools_repo
+)
+
+# Go into cbstools repo
+cd cbstools-public
 
 # Download MIPAV
 test -f lib/${mipav_version}.tar.xz || (
@@ -142,14 +148,24 @@ python -m jcc ${jcc_args[@]}
 # Assemble PYPI package
 #
 
-echo "Copying files over to pypi package..."
+echo "Copying necessary files for nires pypi package..."
 
-cp -rv build/cbstools/ pypi/
-
+cp -rv build/cbstools/ ../
 # Find and copy the shared object file for the current architecture
-find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' pypi/cbstools/_cbstools.so
+find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' ../cbstools/_cbstools.so
+cd ..
 
-(
-	cd pypi
-	python setup.py bdist_wheel
-)
+# Make the python wheel
+CPU=$(lscpu | grep -oP 'Architecture:\s*\K.+')
+PY="$(python -V 2>&1)"
+if [[ $PY == *2\.*\.* ]]; then
+    python setup.py bdist_wheel --dist-dir dist --plat-name manylinux1_$CPU --python-tag py2
+elif [[ $PY == *3\.*\.* ]]; then
+	python setup.py bdist_wheel --dist-dir dist --plat-name manylinux1_$CPU --python-tag py3
+fi
+
+
+# remove unused folders
+# rm -rf build
+# rm -rf cbstools-public
+# rm -rf nighres.egg-info
