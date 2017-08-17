@@ -1,5 +1,9 @@
 .. -*- mode: rst -*-
 
+.. image:: https://travis-ci.org/nighres/nighres.svg?branch=master
+   :target: https://travis-ci.org/nighres
+   :alt: Travis CI build status (Linux Trusty)
+
 Nighres
 =======
 
