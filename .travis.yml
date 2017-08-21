@@ -4,8 +4,8 @@ matrix:
     before_install:
     - sudo apt-get update
     - sudo apt-get install -y jcc
-    - pip install wheel
-    - pip install JCC
+    - pip install --upgrade wheel
+    - pip install --upgrade JCC
     script: "./build.sh"
     deploy:
       provider: pypi
