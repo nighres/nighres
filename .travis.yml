@@ -3,7 +3,7 @@ matrix:
   - language: java
     before_install:
     - sudo apt-get update
-    - sudo apt-get install -y jcc
+    - sudo apt-get install -y default-jdk jcc
     - pip install --upgrade wheel
     - pip install --upgrade JCC
     script: "./build.sh"
