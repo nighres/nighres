@@ -1,9 +1,10 @@
 matrix:
   include:
   - language: java
+    jdk: openjdk8
     before_install:
     - sudo apt-get update
-    - sudo apt-get install -y default-jdk jcc
+    - sudo apt-get install -y jcc
     - pip install --upgrade wheel
     - pip install --upgrade JCC
     script: "./build.sh"
@@ -18,6 +19,7 @@ matrix:
       on:
         tags: false
         branch: master
-        # condition: $TRAVIS_PYTHON_VERSION = "2.7" once we run travis against multiple python versions, this ensures that the package will be deployed only once
+        # condition: $TRAVIS_PYTHON_VERSION = "2.7" once we run travis against
+        # multiple python versions, this ensures that the package will be deployed only once
 notifications:
   email: false
