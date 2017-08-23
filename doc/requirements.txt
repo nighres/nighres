@@ -3,3 +3,8 @@ pillow
 matplotlib
 sphinx-gallery
 sphinx-rtd-theme
+scipy
+sklearn
+ipython
+nibabel
+nilearn
