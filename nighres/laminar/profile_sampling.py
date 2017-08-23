@@ -79,7 +79,6 @@ def profile_sampling(profile_surface_image, intensity_image,
 
     # execute class
     try:
-        print("Executing profile sampling")
         sampler.execute()
 
     except:

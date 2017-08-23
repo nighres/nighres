@@ -74,17 +74,21 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
         inv2_file = _fname_4saving(rootfile=second_inversion,
                                    suffix='strip_inv2',
+                                   base_name=file_name,
                                    extension=file_extension)
         mask_file = _fname_4saving(rootfile=second_inversion,
                                    suffix='strip_mask',
+                                   base_name=file_name,
                                    extension=file_extension)
         if t1_weighted is not None:
             t1w_file = _fname_4saving(rootfile=t1_weighted,
                                       suffix='strip_t1w',
+                                      base_name=file_name,
                                       extension=file_extension)
 
         if t1_map is not None:
             t1map_file = _fname_4saving(rootfile=t1_map, suffix='strip_t1map',
+                                        base_name=file_name,
                                         extension=file_extension)
 
     # start virtual machine, if not already running
@@ -132,7 +136,6 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     # execute skull stripping
     try:
-        print("Executing MP2RAGE skull stripping")
         stripper.execute()
 
     except:

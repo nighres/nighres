@@ -68,7 +68,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                       file_name=None, file_extension=None):
     """ MGDM segmentation
 
-    Estimates brain structures from an atlas for MRI dataset using
+    Estimates brain structures from an atlas for MRI data using
     a Multiple Object Geometric Deformable Model (MGDM)
 
     Parameters
@@ -266,7 +266,6 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     # execute MGDM
     try:
-        print("Executing MGDM segmentation")
         mgdm.execute()
 
     except:
