@@ -32,61 +32,60 @@ def _output_dir_4saving(output_dir=None, rootfile=None):
     return output_dir
 
 
-def _fname_4saving(rootfile=None, suffix=None,
-                   base_name=None, extension=None):
-    # if both base_name and extension are given, jump right to inserting suffix
-    if (base_name is None or extension is None):
-        # else, if a rootfile is given, find base_name and extension
-        if isinstance(rootfile, basestring):
-            # avoid empty strings
-            if len(rootfile) <= 1:
-                raise ValueError("When trying to determine the file name for "
-                                 "saving from the input {0}, the input file "
-                                 "name seems empty. Check if your inputs "
-                                 "exist, or try to specify the base_name "
-                                 "parameter for saving.").format(rootfile)
-            split_root = os.path.basename(rootfile).split('.')
-            # if there was only one dot in the filename, it is good to go
-            if len(split_root) == 2:
-                base = split_root[0]
-                ext = split_root[1]
-            else:
-                # pop file extension
-                ext = split_root.pop(-1)
-                # file extension could have two parts if compressed
-                if ext == 'gz':
-                    ext = split_root.pop(-1)+'.gz'
-                # now that the extension has been popped out of the list
-                # what's left is the basename, put back together
-                base = split_root.pop(0)
-                while split_root:
-                    base += '.'+split_root.pop(0)
-            # use rootfile parts only for what's missing
-            if not base_name:
-                base_name = base
-            if not extension:
-                extension = ext
-        # if the input is not a filename but a data object both base_name
-        # and extension should be given, raise warning and make surrogate
-        else:
-            if base_name is None:
-                base_name = 'output'
-            if extension is None:
-                extension = 'nii.gz'
+def _fname_4saving(filename=None, rootfile=None, suffix=None):
 
-            warnings.warn(("If passing a data object as input, you should "
-                           "specify a base_name AND extension for saving. "
-                           "Saving to %s.%s (plus suffixes) for now")
-                          % (base_name, extension))
+    # if a filename is given, use that
+    if filename is None:
+        # if a rootfile is given (which is a filename and not a data object)
+        # use its filename
+        if isinstance(rootfile, basestring):
+            filename = os.path.basename(rootfile)
+            print(("You have not specified a filename. We will use the "
+                   "name of your input ({0}) as a base name for saving "
+                   "outputs.").format(filename))
+            # if there is no suffix set trivial one to avoid overriding input
+            if suffix is None:
+                suffix = 'out'
+
+        # if nothing is given, raise error
+        else:
+            raise ValueError("You have not specified a filename, and we "
+                             "cannot determine a name from your input, wich "
+                             "is a data object. Please specify a filename.")
+
+    # avoid empty strings
+    if len(filename) <= 1:
+        raise ValueError(("Empty string for filename. Check if your inputs "
+                          "exist, or try to specify the filename "
+                          "parameter for saving.").format(filename))
+
+    # split off extension
+    split_name = filename.split('.')
+    # if there was no dot in the filename set nii.gz as extension (not
+    # foolproof, if the name is e.g. 'hello.bello' without
+    # extension it will think bello is the extension)
+    if len(split_name) == 1:
+        base = split_name[0]
+        ext = 'nii.gz'
+    else:
+        # pop file extension
+        ext = split_name.pop(-1)
+        # file extension could have two parts if compressed
+        if ext == 'gz':
+            ext = split_name.pop(-1)+'.gz'
+        # now that the extension has been popped out of the list
+        # what's left is the basename, put back together
+        base = split_name.pop(0)
+        while split_name:
+            base += '.'+split_name.pop(0)
 
     # insert suffix if given
     if suffix is not None:
-        base_name += '_' + suffix
+        fullname = base + '_' + suffix + '.' + ext
+    else:
+        fullname = base + '.' + ext
 
-    # putting it all together
-    fname = base_name + '.' + extension
-
-    return fname
+    return fullname
 
 
 def _check_topology_lut_dir(topology_lut_dir):
