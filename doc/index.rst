@@ -32,6 +32,7 @@ tools easier to install, use and extend.
    brain/index
    surface/index
    laminar/index
+   data/index
    io/index
 
 .. toctree::
