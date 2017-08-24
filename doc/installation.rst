@@ -81,23 +81,29 @@ Dependencies
 
 .. todo:: Check and include version dependencies
 
-Nighres depends on
+Nighres depends on:
 
-* `numpy <http://www.numpy.org/>`_
-* `nibabel <http://nipy.org/nibabel/>`_
+* `Numpy <http://www.numpy.org/>`_
+* `Nibabel <http://nipy.org/nibabel/>`_
 
 These packages are automatically installed by pip when installing nighres.
 
-The following dependencies are not necessary for running the built packages, so most likely you won't need to worry about them.
+
+Additional dependencies (optional)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Plotting in the examples
+
+* `Nilearn <http://nilearn.github.io/>`_ and its dependencies, if Nilearn is not installed, plotting in the examples will be skipped and you can view the results in any other nifti viewer
+
+Building the Java extensions from source
+
+* `JCC <https://lucene.apache.org/pylucene/jcc/>`_
 
 Building the documentation
 
-* sphinx
-* sphinx-rtd-theme
-* sphinx-gallery
-* matplotlib
-* pillow
-
-Building the packages
-
-* JCC
+* `sphinx <http://www.sphinx-doc.org/en/stable/>`_
+* `sphinx-gallery <https://sphinx-gallery.github.io/>`_
+* `matplotlib <http://matplotlib.org/>`_
+* `sphinx-rtd-theme <http://docs.readthedocs.io/en/latest/theme.html>`_ (pip install sphinx-rtd-theme)
+* `pillow <https://python-pillow.org/>`_ (pip install pillow)
