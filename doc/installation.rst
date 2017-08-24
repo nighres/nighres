@@ -4,7 +4,7 @@ Installing Nighres
 From PyPI
 ----------
 
-You can (soon!) install the latest stable release of nighres from PyPI::
+You can install the latest stable release of nighres from PyPI::
 
     pip install nighres
 

@@ -12,7 +12,7 @@ It developed out of `CBS High-Res Brain Processing Tools
 <https://www.cbs.mpg.de/institute/software/cbs-tools>`_ and aims to make those
 tools easier to install, use and extend.
 
-You can get Nighres from PyPI (soon!)::
+You can get Nighres from PyPI::
 
     pip install nighres
 
