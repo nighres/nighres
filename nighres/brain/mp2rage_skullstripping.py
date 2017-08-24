@@ -11,7 +11,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
                            skip_zero_values=True, topology_lut_dir=None,
                            save_data=False, output_dir=None,
-                           file_name=None, file_extension=None):
+                           file_name=None):
     """ MP2RAGE skull stripping
 
     Estimates a brain mask from MRI data acquired with the MP2RAGE sequence.
@@ -37,8 +37,9 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         Save output data to file (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
-    file_extension: str, optional
-        Desired extension for output files (determines file type)
+    file_name: str, optional
+        Desired base name for output files with file extension
+        (suffixes will be added)
 
     Returns
     ----------
@@ -72,24 +73,21 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, second_inversion)
 
-        inv2_file = _fname_4saving(rootfile=second_inversion,
-                                   suffix='strip_inv2',
-                                   base_name=file_name,
-                                   extension=file_extension)
-        mask_file = _fname_4saving(rootfile=second_inversion,
-                                   suffix='strip_mask',
-                                   base_name=file_name,
-                                   extension=file_extension)
+        inv2_file = _fname_4saving(file_name=file_name,
+                                   rootfile=second_inversion,
+                                   suffix='strip_inv2')
+        mask_file = _fname_4saving(file_name=file_name,
+                                   rootfile=second_inversion,
+                                   suffix='strip_mask')
         if t1_weighted is not None:
-            t1w_file = _fname_4saving(rootfile=t1_weighted,
-                                      suffix='strip_t1w',
-                                      base_name=file_name,
-                                      extension=file_extension)
+            t1w_file = _fname_4saving(file_name=file_name,
+                                      rootfile=t1_weighted,
+                                      suffix='strip_t1w')
 
         if t1_map is not None:
-            t1map_file = _fname_4saving(rootfile=t1_map, suffix='strip_t1map',
-                                        base_name=file_name,
-                                        extension=file_extension)
+            t1map_file = _fname_4saving(file_name=file_name,
+                                        rootfile=t1_map,
+                                        suffix='strip_t1map')
 
     # start virtual machine, if not already running
     try:

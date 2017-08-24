@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving
 
 def probability_to_levelset(probability_image,
                             save_data=False, output_dir=None,
-                            file_name=None, file_extension=None):
+                            file_name=None):
 
     """Levelset from tissue classification
 
@@ -27,9 +27,8 @@ def probability_to_levelset(probability_image,
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
-        Desired base name for output files (suffixes will be added)
-    file_extension: str, optional
-        Desired extension for output files (determines file type)
+        Desired base name for output files with file extension
+        (suffixes will be added)
 
     Returns
     ----------
@@ -47,10 +46,9 @@ def probability_to_levelset(probability_image,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, probability_image)
 
-        levelset_file = _fname_4saving(rootfile=probability_image,
-                                       suffix='levelset',
-                                       base_name=file_name,
-                                       extension=file_extension)
+        levelset_file = _fname_4saving(file_name=file_name,
+                                       rootfile=probability_image,
+                                       suffix='levelset')
 
     # start virtual machine if not running
     try:

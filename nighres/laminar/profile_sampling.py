@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving
 
 def profile_sampling(profile_surface_image, intensity_image,
                      save_data=False, output_dir=None,
-                     file_name=None, file_extension=None):
+                     file_name=None):
 
     '''Sampling data on multiple intracortical layers
 
@@ -24,9 +24,8 @@ def profile_sampling(profile_surface_image, intensity_image,
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
-        Desired base name for output files (suffixes will be added)
-    file_extension: str, optional
-        Desired extension for output files (determines file type)
+        Desired base name for output files with file extension
+        (suffixes will be added)
 
     Returns
     -----------
@@ -45,9 +44,9 @@ def profile_sampling(profile_surface_image, intensity_image,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, intensity_image)
 
-        profile_file = _fname_4saving(rootfile=intensity_image,
-                                      suffix='profiles', base_name=file_name,
-                                      extension=file_extension)
+        profile_file = _fname_4saving(file_name=file_name,
+                                      rootfile=intensity_image,
+                                      suffix='profiles')
 
     # start VM if not already running
     try:

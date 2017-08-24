@@ -32,36 +32,36 @@ def _output_dir_4saving(output_dir=None, rootfile=None):
     return output_dir
 
 
-def _fname_4saving(filename=None, rootfile=None, suffix=None):
+def _fname_4saving(file_name=None, rootfile=None, suffix=None):
 
-    # if a filename is given, use that
-    if filename is None:
-        # if a rootfile is given (which is a filename and not a data object)
-        # use its filename
+    # if a file_name is given, use that
+    if file_name is None:
+        # if a rootfile is given (which is a file_name and not a data object)
+        # use its file_name
         if isinstance(rootfile, basestring):
-            filename = os.path.basename(rootfile)
-            print(("You have not specified a filename. We will use the "
+            file_name = os.path.basename(rootfile)
+            print(("You have not specified a file_name. We will use the "
                    "name of your input ({0}) as a base name for saving "
-                   "outputs.").format(filename))
+                   "outputs.").format(file_name))
             # if there is no suffix set trivial one to avoid overriding input
             if suffix is None:
                 suffix = 'out'
 
         # if nothing is given, raise error
         else:
-            raise ValueError("You have not specified a filename, and we "
+            raise ValueError("You have not specified a file_name, and we "
                              "cannot determine a name from your input, wich "
-                             "is a data object. Please specify a filename.")
+                             "is a data object. Please specify a file_name.")
 
     # avoid empty strings
-    if len(filename) <= 1:
-        raise ValueError(("Empty string for filename. Check if your inputs "
-                          "exist, or try to specify the filename "
-                          "parameter for saving.").format(filename))
+    if len(file_name) <= 1:
+        raise ValueError(("Empty string for file_name. Check if your inputs "
+                          "exist, or try to specify the file_name "
+                          "parameter for saving.").format(file_name))
 
     # split off extension
-    split_name = filename.split('.')
-    # if there was no dot in the filename set nii.gz as extension (not
+    split_name = file_name.split('.')
+    # if there was no dot in the file_name set nii.gz as extension (not
     # foolproof, if the name is e.g. 'hello.bello' without
     # extension it will think bello is the extension)
     if len(split_name) == 1:

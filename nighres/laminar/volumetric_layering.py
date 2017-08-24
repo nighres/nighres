@@ -10,7 +10,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def volumetric_layering(inner_levelset, outer_levelset,
                         n_layers=4, topology_lut_dir=None,
                         save_data=False, output_dir=None,
-                        file_name=None, file_extension=None):
+                        file_name=None):
 
     '''Equivolumetric layering of the cortical sheet.
 
@@ -30,9 +30,8 @@ def volumetric_layering(inner_levelset, outer_levelset,
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
-        Desired base name for output files (suffixes will be added)
-    file_extension: str, optional
-        Desired extension for output files (determines file type)
+        Desired base name for output files with file extension
+        (suffixes will be added)
 
     Returns
     ----------
@@ -67,20 +66,17 @@ def volumetric_layering(inner_levelset, outer_levelset,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, inner_levelset)
 
-        depth_file = _fname_4saving(rootfile=inner_levelset,
-                                    suffix='layering_depth',
-                                    base_name=file_name,
-                                    extension=file_extension)
+        depth_file = _fname_4saving(file_name=file_name,
+                                    rootfile=inner_levelset,
+                                    suffix='layering_depth')
 
-        layer_file = _fname_4saving(rootfile=inner_levelset,
-                                    suffix='layering_layers',
-                                    base_name=file_name,
-                                    extension=file_extension)
+        layer_file = _fname_4saving(file_name=file_name,
+                                    rootfile=inner_levelset,
+                                    suffix='layering_layers')
 
-        boundary_file = _fname_4saving(rootfile=inner_levelset,
-                                       suffix='layering_boundaries',
-                                       base_name=file_name,
-                                       extension=file_extension)
+        boundary_file = _fname_4saving(base_name=file_name,
+                                       rootfile=inner_levelset,
+                                       suffix='layering_boundaries')
 
     # start virutal machine if not already running
     try:

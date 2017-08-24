@@ -65,7 +65,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                       compute_posterior=False,
                       diffuse_probabilities=False,
                       save_data=False, output_dir=None,
-                      file_name=None, file_extension=None):
+                      file_name=None):
     """ MGDM segmentation
 
     Estimates brain structures from an atlas for MRI data using
@@ -125,9 +125,8 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
-        Desired base name for output files (suffixes will be added)
-    file_extension: str, optional
-        Desired extension for output files (determines file type)
+        Desired base name for output files with file extension
+        (suffixes will be added)
 
     Returns
     ----------
@@ -190,21 +189,21 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, contrast_image1)
 
-        seg_file = _fname_4saving(rootfile=contrast_image1,
-                                  suffix='mgdm_seg', base_name=file_name,
-                                  extension=file_extension)
+        seg_file = _fname_4saving(file_name=file_name,
+                                  rootfile=contrast_image1,
+                                  suffix='mgdm_seg', )
 
-        lbl_file = _fname_4saving(rootfile=contrast_image1,
-                                  suffix='mgdm_lbls', base_name=file_name,
-                                  extension=file_extension)
+        lbl_file = _fname_4saving(file_name=file_name,
+                                  rootfile=contrast_image1,
+                                  suffix='mgdm_lbls')
 
-        mems_file = _fname_4saving(rootfile=contrast_image1,
-                                   suffix='mgdm_mems', base_name=file_name,
-                                   extension=file_extension)
+        mems_file = _fname_4saving(file_name=file_name,
+                                   rootfile=contrast_image1,
+                                   suffix='mgdm_mems')
 
-        dist_file = _fname_4saving(rootfile=contrast_image1,
-                                   suffix='mgdm_dist', base_name=file_name,
-                                   extension=file_extension)
+        dist_file = _fname_4saving(file_name=file_name,
+                                   rootfile=contrast_image1,
+                                   suffix='mgdm_dist')
 
     # start virtual machine, if not already running
     try:
