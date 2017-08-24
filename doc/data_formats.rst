@@ -1,3 +1,5 @@
+.. _data-formats:
+
 Data handling and the niimg
 ============================
 
