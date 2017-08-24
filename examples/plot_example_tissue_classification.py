@@ -38,9 +38,6 @@ except ImportError:
 # Now we download an example MP2RAGE dataset. It is the structural scan of the
 # first subject, first session of the 7T Test-Retest dataset published by
 # Gorgolewski et al (2015) [2]_.
-# inv2 = '/SCR/data/cbstools_testing/7t_trt/test_nii/sub001_sess1_INV2.nii.gz'
-# t1map = '/SCR/data/cbstools_testing/7t_trt/test_nii/sub001_sess1_T1map.nii.gz'
-# t1w = '/SCR/data/cbstools_testing/7t_trt/test_nii//sub001_sess1_T1w.nii.gz'
 dataset = nighres.data.download_7T_TRT(out_dir)
 ############################################################################
 # Skull stripping
@@ -104,8 +101,8 @@ if not skip_plots:
 # its nearest border. It is useful to assess where partial volume effects
 # may occur
 if not skip_plots:
-    plotting.plot_anat(mgdm_results['distance'], annotate=False,
-                       draw_cross=False, colorbar=True)
+    plotting.plot_anat(mgdm_results['distance'], vmin=0, vmax=20,
+                       annotate=False, draw_cross=False, colorbar=True)
 
 #############################################################################
 # If the example is not run in a jupyter notebook, render the plots:
