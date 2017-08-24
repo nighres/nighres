@@ -138,7 +138,10 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         * segmentation (niimg): Hard brain segmentation with topological
           constraints (if chosen) (_mgdm_seg)
         * labels (niimg): Maximum tissue probability labels (_mgdm_lbls)
-        * memberships (niimg): Maximum tissue probability values (_mgdm_mems)
+        * memberships (niimg): Maximum tissue probability values, 4D image
+          where the first dimension shows each voxel's highest probability to
+          belong to a specific tissue, the second dimension shows the second
+          highest probability to belong to another tissue etc. (_mgdm_mems)
         * distance (niimg): Minimum distance to a segmentation boundary
           (_mgdm_dist)
 
