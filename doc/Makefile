@@ -8,6 +8,9 @@ SPHINXPROJ    = nighres
 SOURCEDIR     = .
 BUILDDIR      = _build
 
+# Internal variables
+ALLSPHINXOPTS = -d _build/doctrees $(SPHINXOPTS) .
+
 
 # Put it first so that "make" without argument is like "make help".
 help:
