@@ -5,9 +5,10 @@ Tissue classification from MP2RAGE data
 This example shows how to obtain a tissue classification from MP2RAGE data
 by performing the following steps:
 
-1. Remove the skull and create a brain mask using
+1. Downloading open MP2RAGE dataset using :func:`nighres.data.download_7T_TRT`
+2. Remove the skull and create a brain mask using
    :func:`nighres.brain.mp2rage_skullstripping`
-2. Atlas-guided tissue classification using MGDM
+3. Atlas-guided tissue classification using MGDM
    :func:`nighres.brain.mgdm_segmentation` [1]_
 """
 
@@ -15,16 +16,13 @@ by performing the following steps:
 # Import and download
 # -------------------
 # First we import ``nighres`` and the ``os`` module to set the output directory
-# and names for the files we will download. Make sure to run this file in a
-# directory you have write access to, or change the ``out_dir`` variable below.
+# Make sure to run this file in a  directory you have write access to, or
+# change the ``out_dir`` variable below.
 
 import nighres
 import os
 
-out_dir = os.path.join(os.getcwd(), 'nighres_cache/tissue_classification')
-t1map = os.path.join(out_dir, "T1map.nii.gz")
-t1w = os.path.join(out_dir, "T1w.nii.gz")
-inv2 = os.path.join(out_dir, "Inv2.nii.gz")
+out_dir = os.path.join(os.getcwd(), 'nighres_examples/tissue_classification')
 
 ############################################################################
 # We also try to import Nilearn plotting functions. If Nilearn is not
@@ -34,19 +32,16 @@ try:
     from nilearn import plotting
 except ImportError:
     skip_plots = True
+    print('Nilearn could not be imported, plotting will be skipped')
 
 ############################################################################
-# Now we download an example MP2RAGE dataset
-#
-# .. todo:: download
-inv2 = '/SCR/data/cbstools_testing/7t_trt/test_nii/INV2.nii.gz'
-t1map = '/SCR/data/cbstools_testing/7t_trt/test_nii/T1map.nii.gz'
-t1w = '/SCR/data/cbstools_testing/7t_trt/test_nii//T1w.nii.gz'
-
-# nighres.download_from_url("http://openscience.cbs.mpg.de/bazin/7T_Quantitative/MP2RAGE-05mm/subject01_mp2rage_0p5iso_qT1.nii.gz",
-#                           t1map)
-# nighres.download_from_url("http://openscience.cbs.mpg.de/bazin/7T_Quantitative/MP2RAGE-05mm/subject01_mp2rage_0p5iso_uni.nii.gz",
-#                           t1w)
+# Now we download an example MP2RAGE dataset. It is the structural scan of the
+# first subject, first session of the 7T Test-Retest dataset published by
+# Gorgolewski et al (2015) [2]_.
+# inv2 = '/SCR/data/cbstools_testing/7t_trt/test_nii/sub001_sess1_INV2.nii.gz'
+# t1map = '/SCR/data/cbstools_testing/7t_trt/test_nii/sub001_sess1_T1map.nii.gz'
+# t1w = '/SCR/data/cbstools_testing/7t_trt/test_nii//sub001_sess1_T1w.nii.gz'
+dataset = nighres.data.download_7T_TRT(out_dir)
 ############################################################################
 # Skull stripping
 # ----------------
@@ -55,12 +50,12 @@ t1w = '/SCR/data/cbstools_testing/7t_trt/test_nii//T1w.nii.gz'
 # they will be masked for us. We also save the outputs in the ``out_dir``
 # specified above and use a subject ID as the base file_name.
 skullstripping_results = nighres.brain.mp2rage_skullstripping(
-                                                        second_inversion=inv2,
-                                                        t1_weighted=t1w,
-                                                        t1_map=t1map,
-                                                        save_data=True,
-                                                        file_name='sub001',
-                                                        output_dir=out_dir)
+                                            second_inversion=dataset['inv2'],
+                                            t1_weighted=dataset['t1w'],
+                                            t1_map=dataset['t1map'],
+                                            save_data=True,
+                                            file_name='sub001_sess1',
+                                            output_dir=out_dir)
 
 ############################################################################
 # .. tip:: in Nighres functions that have several outputs return a
@@ -78,7 +73,7 @@ skullstripping_results = nighres.brain.mp2rage_skullstripping(
 # .
 
 if not skip_plots:
-    plotting.plot_roi(skullstripping_results['brain_mask'], t1w,
+    plotting.plot_roi(skullstripping_results['brain_mask'], dataset['t1w'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')
 
@@ -94,23 +89,23 @@ mgdm_results = nighres.brain.mgdm_segmentation(
                         contrast_type1="Mp2rage7T",
                         contrast_image2=skullstripping_results['t1map_masked'],
                         contrast_type2="T1map7T",
-                        save_data=True, file_name="sub001",
+                        save_data=True, file_name="sub001_sess1",
                         output_dir=out_dir)
 
 ############################################################################
-# Now we look at some of the outputs from MGDM. The first is the
-# topology-constrained segmentation
-
+# Now we look at the topology-constrained segmentation MGDM created
 if not skip_plots:
-    plotting.plot_img(mgdm_results['segmentation'], vmin=1, cmap='cubehelix',
+    plotting.plot_img(mgdm_results['segmentation'],
+                      vmin=1, vmax=50, cmap='cubehelix',  colorbar=True,
                       annotate=False,  draw_cross=False)
 
 ############################################################################
 # MGDM also creates an image which represents for each voxel the distance to
-# its nearest border. It is useful to visualize partial voluming effects
+# its nearest border. It is useful to assess where partial volume effects
+# may occur
 if not skip_plots:
     plotting.plot_anat(mgdm_results['distance'], annotate=False,
-                       draw_cross=False)
+                       draw_cross=False, colorbar=True)
 
 #############################################################################
 # If the example is not run in a jupyter notebook, render the plots:
@@ -122,5 +117,8 @@ if not skip_plots:
 # -----------
 # .. [1] Bogovic, Prince and Bazin (2013). A multiple object geometric
 #    deformable model for image segmentation. DOI: 10.1016/j.cviu.2012.10.006.A
+# .. [2] Gorgolewski et al (2015). A high resolution 7-Tesla resting-state fMRI
+#    test-retest dataset with cognitive and physiological measures.
+#    DOI: 10.1038/sdata.2014.54
 #
 # sphinx_gallery_thumbnail_number = 2
