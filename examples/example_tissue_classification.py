@@ -1,3 +1,5 @@
+# Plots are currently included as images, because example is too big to
+# run on readthedocs servers
 """
 Tissue classification from MP2RAGE data
 =======================================
@@ -73,8 +75,11 @@ if not skip_plots:
     plotting.plot_roi(skullstripping_results['brain_mask'], dataset['t1w'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')
-
 ############################################################################
+# .. image:: ../_static/tissue_classification1.png
+#############################################################################
+
+#############################################################################
 # MGDM classification
 # ---------------------
 # Next, we use the masked data as input for tissue classification with the MGDM
@@ -97,12 +102,20 @@ if not skip_plots:
                       annotate=False,  draw_cross=False)
 
 ############################################################################
+# .. image:: ../_static/tissue_classification2.png
+#############################################################################
+
+############################################################################
 # MGDM also creates an image which represents for each voxel the distance to
 # its nearest border. It is useful to assess where partial volume effects
 # may occur
 if not skip_plots:
     plotting.plot_anat(mgdm_results['distance'], vmin=0, vmax=20,
                        annotate=False, draw_cross=False, colorbar=True)
+
+############################################################################
+# .. image:: ../_static/tissue_classification3.png
+#############################################################################
 
 #############################################################################
 # If the example is not run in a jupyter notebook, render the plots:
@@ -117,5 +130,3 @@ if not skip_plots:
 # .. [2] Gorgolewski et al (2015). A high resolution 7-Tesla resting-state fMRI
 #    test-retest dataset with cognitive and physiological measures.
 #    DOI: 10.1038/sdata.2014.54
-#
-# sphinx_gallery_thumbnail_number = 2

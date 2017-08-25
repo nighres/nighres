@@ -33,6 +33,7 @@ You can often catch installation problems by simply import nighres in Python ::
 If that works, you can try running one of the examples. If you cloned the github repository, you can find them inside the subdirectory *examples*. Alternatively, you can also download the :ref:`examples <examples-index>` from the online documentation.
 
 |
+
 Troubleshooting
 ----------------
 
@@ -46,6 +47,8 @@ You might get the following error when trying to import nighres::
 This is because the original CBS Tools Java code in the **cbstools** module has been compiled against a Java installation that is different from yours.
 
 You can fix this by finding your libjvm.so location::
+
+    find / -type f -name libjvm.so
 
 And then adding it to the library path. Depending on you Java installation it will be something similar to one of these::
 
@@ -76,6 +79,7 @@ https://github.com/piloubazin/cbstools-public, downloads its dependencies
 JCC.
 
 |
+
 Dependencies
 ------------
 
@@ -98,7 +102,7 @@ Plotting in the examples
 
 Building the Java extensions from source
 
-* `JCC <https://lucene.apache.org/pylucene/jcc/>`_
+* `JCC <http://jcc.readthedocs.io/en/latest/>`_
 
 Building the documentation
 

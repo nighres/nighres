@@ -28,6 +28,8 @@ clean:
 
 	rm -rf auto_examples/
 
+	rm -rf gen_modules/
+
 
 html-noplot:
 	$(SPHINXBUILD) -D plot_gallery=0 -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html

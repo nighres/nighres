@@ -9,8 +9,9 @@
 .. image:: https://readthedocs.org/projects/nighres/badge/?version=latest
    :target: http://nighres.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
+
 |
-|
+
 
 Welcome to Nighres!
 ====================
@@ -54,7 +55,7 @@ tools easier to install, use and extend.
    levelsets
 
 |
-|
+
 .. admonition:: Reference
 
    Until a dedicated Nighres paper is out, please cite the following references:
