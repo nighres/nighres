@@ -160,9 +160,9 @@ PLT=$(uname | tr '[:upper:]' '[:lower:]')
 CPU=$(lscpu | grep -oP 'Architecture:\s*\K.+')
 PY="$(python -V 2>&1)"
 if [[ $PY == *2\.*\.* ]]; then
-    python setup.py bdist_wheel --dist-dir dist --plat-name $PLT_$CPU --python-tag py2
+    python setup.py bdist_wheel --dist-dir dist --plat-name ${PLT}_${CPU} --python-tag py2
 elif [[ $PY == *3\.*\.* ]]; then
-	python setup.py bdist_wheel --dist-dir dist --plat-name $PLT_$CPU --python-tag py3
+	python setup.py bdist_wheel --dist-dir dist --plat-name ${PLT}_${CPU} --python-tag py3
 fi
 
 
