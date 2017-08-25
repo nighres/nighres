@@ -1,8 +1,11 @@
 .. -*- mode: rst -*-
 
 .. image:: https://travis-ci.org/nighres/nighres.svg?branch=master
-   :target: https://travis-ci.org/nighres
-   :alt: Travis CI build status (Linux Trusty)
+    :target: https://travis-ci.org/nighres
+    :alt: Travis CI build status
+.. image:: https://readthedocs.org/projects/nighres/badge/?version=latest
+    :target: http://nighres.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 
 Nighres
 =======
