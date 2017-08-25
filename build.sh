@@ -156,7 +156,9 @@ find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' ../cbst
 cd ..
 
 # Make the python wheel
-PLT=$(uname | tr '[:upper:]' '[:lower:]')
+# PLT=$(uname | tr '[:upper:]' '[:lower:]')
+# for now use manylinux
+PLT="manylinux1"
 CPU=$(lscpu | grep -oP 'Architecture:\s*\K.+')
 PY="$(python -V 2>&1)"
 if [[ $PY == *2\.*\.* ]]; then
