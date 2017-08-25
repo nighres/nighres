@@ -52,8 +52,8 @@ You can fix this by finding your libjvm.so location::
 
 And then adding it to the library path. Depending on you Java installation it will be something similar to one of these::
 
-    export LD_LIBRARY_PATH=/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/
-    export LD_LIBRARY_PATH=/usr/lib/jvm/java-8-openjdk-amd64/lib/amd64/server/
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/jvm/java-8-openjdk-amd64/lib/amd64/server/
 
 If that doesn't do the trick, try running::
 
