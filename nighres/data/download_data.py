@@ -41,7 +41,7 @@ def download_7T_TRT(data_dir, overwrite=False):
         os.makedirs(data_dir)
 
     nitrc = 'https://www.nitrc.org/frs/download.php/'
-    file_sources = [nitrc + x for x in ['10221', '10222', '10223']]
+    file_sources = [nitrc + x for x in ['10234', '10235', '10236']]
     file_targets = [os.path.join(data_dir, filename) for filename in
                     ['sub001_sess1_INV2.nii.gz',
                      'sub001_sess1_T1map.nii.gz',
