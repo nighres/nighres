@@ -42,7 +42,7 @@ def bandpass_filtering(time_series, low_frequency=0.01, high_frequency=0.1,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * filtered (niimg): Binary brain mask (_bpf)
+        * filtered (niimg): Bandpass filtered time series (_bpf_img)
 
     Notes
     ----------
@@ -59,7 +59,7 @@ def bandpass_filtering(time_series, low_frequency=0.01, high_frequency=0.1,
 
         filtered_file = _fname_4saving(file_name=file_name,
                                    rootfile=time_series,
-                                   suffix='bpf')
+                                   suffix='bpf_img')
 
      # get dimensions and resolution from second inversion image
     img = load_volume(time_series)
