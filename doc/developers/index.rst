@@ -13,7 +13,7 @@ Every contribution helps -- whether it's fixing a typo in the documentation or a
 
 **Git/Github**
 
-To contribute you will need to know some basics about git and Github, which are not covered in this guide. Don't worry, git and Github are actually pretty easy and there are lots of tutorials online (e.g. https://www.atlassian.com/git/tutorials, especially "Getting started" and "Collaborating", or http://rogerdudler.github.io/git-guide/)
+To contribute you will need to know some basics about git and Github, which are not covered in this guide. Don't worry, git and Github are actually pretty easy and there are lots of tutorials online (e.g. https://www.atlassian.com/git/tutorials, especially "Getting started" and "Collaborating")
 
 **Questions?**
 
