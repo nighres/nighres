@@ -58,9 +58,11 @@ tools easier to install, use and extend.
    :maxdepth: 1
    :caption: Developer's guide
 
+   developers/index
    developers/setup
    developers/wrapping_cbstools
    developers/python_function
+   developers/tests
    developers/docs
    developers/pr
 
