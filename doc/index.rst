@@ -54,6 +54,18 @@ tools easier to install, use and extend.
    saving
    levelsets
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Developer's guide
+
+   developers/index
+   developers/setup
+   developers/wrapping_cbstools
+   developers/python_function
+   developers/tests
+   developers/docs
+   developers/pr
+
 |
 
 .. admonition:: Reference

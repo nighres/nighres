@@ -1,0 +1,4 @@
+.. _tests:
+
+Writing tests
+=============
