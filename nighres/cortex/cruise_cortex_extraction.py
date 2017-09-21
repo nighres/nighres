@@ -149,7 +149,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image, vd_image
     cruise.setNormalizeProbabilities(normalize_probabilities)
     cruise.setCorrectForWMGMpartialVoluming(correct_wm_pv)
     cruise.setWMdropoffDistance(wm_dropoff_dist)
-	cruise.setTopology(topology)
+    cruise.setTopology(topology)
     cruise.setTopologyLUTdirectory(topology_lut_dir)
  
     # load images
@@ -159,25 +159,25 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image, vd_image
     header = init.get_header()
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = init_data.shape
-	cruise.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+    cruise.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     cruise.setResolutions(resolution[0], resolution[1], resolution[2])
     cruise.setInitialWMSegmentationImage(cbstools.JArray('byte')(
                                             (init_data.flatten('F')).astype(int)))
     
-	wm_data = load_volume(wm_image).get_data()
-	cruise.setFilledWMProbabilityImage(cbstools.JArray('float')(
+    wm_data = load_volume(wm_image).get_data()
+    cruise.setFilledWMProbabilityImage(cbstools.JArray('float')(
                                             (wm_data.flatten('F')).astype(float)))
  
-	gm_data = load_volume(gm_image).get_data()
+    gm_data = load_volume(gm_image).get_data()
     cruise.setGMProbabilityImage(cbstools.JArray('float')(
                                             (gm_data.flatten('F')).astype(float)))
     
-	csf_data = load_volume(csf_image).get_data()
-	cruise.setCSFandBGProbabilityImage(cbstools.JArray('float')(
+    csf_data = load_volume(csf_image).get_data()
+    cruise.setCSFandBGProbabilityImage(cbstools.JArray('float')(
                                             (csf_data.flatten('F')).astype(float)))
     
-	if vd_image is not None:
-		vd_data = load_volume(vd_image).get_data()
+    if vd_image is not None:
+        vd_data = load_volume(vd_image).get_data()
         cruise.setVeinsAndDuraProbabilityImage(cbstools.JArray('float')(
                                             (vd_data.flatten('F')).astype(float)))
     
@@ -191,7 +191,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image, vd_image
         print sys.exc_info()[0]
         raise
         return
-
+    
     # reshape output to what nibabel likes
     cortex_data = np.reshape(np.array(cruise.getCortexMask(),
                                    dtype=np.int32), dimensions, 'F')
@@ -209,41 +209,41 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image, vd_image
                                     dtype=np.float32), dimensions, 'F')
     pcsf_data = np.reshape(np.array(cruise.getSulcalCSFprobability(),
                                     dtype=np.float32), dimensions, 'F')
-
+    
     # adapt header min, max for each image so that correct max is displayed
     # and create nifiti objects
     header['cal_min'] = np.nanmax(cortex_data)
     header['cal_max'] = np.nanmax(cortex_data)
     cortex = nb.Nifti1Image(cortex_data, affine, header)
-
+    
     header['cal_min'] = np.nanmax(gwb_data)
     header['cal_max'] = np.nanmax(gwb_data)
     gwb = nb.Nifti1Image(gwb_data, affine, header)
-
+    
     header['cal_min'] = np.nanmax(cgb_data) 
     header['cal_max'] = np.nanmax(cgb_data)
     cgb = nb.Nifti1Image(cgb_data, affine, header)
-
+    
     header['cal_min'] = np.nanmax(avg_data)
     header['cal_max'] = np.nanmax(avg_data)
     avg = nb.Nifti1Image(avg_data, affine, header)
-
+    
     header['cal_min'] = np.nanmax(thick_data)
     header['cal_max'] = np.nanmax(thick_data)
     thickness = nb.Nifti1Image(thick_data, affine, header)
-
+    
     header['cal_min'] = np.nanmax(pwm_data)
     header['cal_max'] = np.nanmax(pwm_data)
     pwm = nb.Nifti1Image(pwm_data, affine, header)
-
+    
     header['cal_min'] = np.nanmax(pgm_data)
     header['cal_max'] = np.nanmax(pgm_data)
     pgm = nb.Nifti1Image(pgm_data, affine, header)
-
+    
     header['cal_min'] = np.nanmax(pcsf_data)
     header['cal_max'] = np.nanmax(pcsf_data)
     pcsf = nb.Nifti1Image(pcsf_data, affine, header)
-
+    
     if save_data:
         save_volume(os.path.join(output_dir, cortex_file), cortex)
         save_volume(os.path.join(output_dir, gwb_file), gwb)
@@ -253,6 +253,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image, vd_image
         save_volume(os.path.join(output_dir, pwm_file), pwm)
         save_volume(os.path.join(output_dir, pgm_file), pgm)
         save_volume(os.path.join(output_dir, pcsf_file), pcsf)
-
+    
     return {'cortex': cortex, 'gwb': gwb, 'cgb': cgb, 'avg': avg,
             'thickness': thickness, 'pwm': pwm, 'pgm': pgm, 'pcsf': pcsf}
+    
