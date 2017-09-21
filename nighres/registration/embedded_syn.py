@@ -8,8 +8,10 @@ import nibabel as nb
 
 # for external tools: nipype
 from nipype.interfaces.ants import ANTS
-from nipype.interfaces.ants import WarpImageMultiTransform
-from nipype.interfaces.ants import WarpTimeSeriesImageMultiTransform
+# using the global interface rather than specific ones
+#from nipype.interfaces.ants import WarpImageMultiTransform
+#from nipype.interfaces.ants import WarpTimeSeriesImageMultiTransform
+from nipype.interfaces.ants import ApplyTransforms
 
 # cbstools and nighres functions
 import cbstools
@@ -24,7 +26,7 @@ Z=2
 T=3
 
 def embedded_syn(source_image, target_image, coarse_iterations=40, medium_iterations=50, fine_iterations=40,
-					run_affine_first=False, cost_function='Mutual Information', interpolation='Nearest Neighbor',
+					run_affine_first=False, cost_function='MutualInformation', interpolation='NearestNeighbor',
                     save_data=False, output_dir=None,
                     file_name=None):
     """ Embedded SyN
@@ -46,10 +48,10 @@ def embedded_syn(source_image, target_image, coarse_iterations=40, medium_iterat
         Number of iterations at the fine level (default is 40)
     run_affine_first: bool
         Runs a step of affine registration before the non-linear step (default is False)
-    cost_function: {'Cross Correlation', 'Mutual Information'}
-        Cost function for the registration (default is 'Mutual Information')
-    interpolation: {'Nearest Neighbor', 'Linear'}
-        Cost function for the registration (default is 'Nearest Neighbor')
+    cost_function: {'CrossCorrelation', 'MutualInformation'}
+        Cost function for the registration (default is 'MutualInformation')
+    interpolation: {'NearestNeighbor', 'Linear'}
+        Cost function for the registration (default is 'NearestNeighbor')
     save_data: bool
         Save output data to file (default is False)
     output_dir: str, optional
@@ -84,7 +86,7 @@ def embedded_syn(source_image, target_image, coarse_iterations=40, medium_iterat
 
     # make sure that saving related parameters are correct
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, second_inversion)
+        output_dir = _output_dir_4saving(output_dir, source_image)
 
         deformed_source_file = _fname_4saving(file_name=file_name,
                                    rootfile=source_image,
@@ -100,53 +102,70 @@ def embedded_syn(source_image, target_image, coarse_iterations=40, medium_iterat
 
      # load and get dimensions and resolution from input images
     source = load_volume(source_image)
-	src_affine = source.affine
-	src_header = source.header
-	nsx = source.header.getShape()[X]
-	nsy = source.header.getShape()[Y]
-	nsz = source.header.getShape()[Z]
-	rsx = source.header.getResolutions()[X]
-	rsy = source.header.getResolutions()[Y]
-	rsz = source.header.getResolutions()[Z]
+    src_affine = source.affine
+    src_header = source.header
+    nsx = source.header.get_data_shape()[X]
+    nsy = source.header.get_data_shape()[Y]
+    nsz = source.header.get_data_shape()[Z]
+    rsx = source.header.get_zooms()[X]
+    rsy = source.header.get_zooms()[Y]
+    rsz = source.header.get_zooms()[Z]
 
     target = load_volume(target_image)
-	trg_affine = target.affine
-	trg_header = target.header
-	ntx = target.header.getShape()[X]
-	nty = target.header.getShape()[Y]
-	ntz = target.header.getShape()[Z]
-	rtx = target.header.getResolutions()[X]
-	rty = target.header.getResolutions()[Y]
-	rtz = target.header.getResolutions()[Z]
+    trg_affine = target.affine
+    trg_header = target.header
+    ntx = target.header.get_data_shape()[X]
+    nty = target.header.get_data_shape()[Y]
+    ntz = target.header.get_data_shape()[Z]
+    rtx = target.header.get_zooms()[X]
+    rty = target.header.get_zooms()[Y]
+    rtz = target.header.get_zooms()[Z]
 
-	# build coordinate mapping matrices
-	src_coord = np.zeros((nsx,nsy,nsz,3))
-	trg_coord = np.zeros((ntx,nty,ntz,3))
-	for x in xrange(nsx):
-		for y in xrange(nsy):
-			for z in xrange(nsz):
-				src_coord[x,y,z,X] = x
-				src_coord[x,y,z,Y] = y
-				src_coord[x,y,z,Z] = z
-	for x in xrange(ntx):
-		for y in xrange(nty):
-			for z in xrange(ntz):
-				trg_coord[x,y,z,X] = x
-				trg_coord[x,y,z,Y] = y
-				trg_coord[x,y,z,Z] = z
-
-	# run the main ANTS software
-   	ants = ANTS()
+    # build coordinate mapping matrices and save them to disk
+    src_coord = np.zeros((nsx,nsy,nsz,3))
+    trg_coord = np.zeros((ntx,nty,ntz,3))
+    for x in xrange(nsx):
+        for y in xrange(nsy):
+            for z in xrange(nsz):
+                src_coord[x,y,z,X] = x
+                src_coord[x,y,z,Y] = y
+                src_coord[x,y,z,Z] = z
+    src_map = nb.Nifti1Image(src_coord, source.affine, source.header)
+    src_map_file = _fname_4saving(file_name=file_name,
+                            rootfile=source_image,
+                            suffix='tmp_srccoord')
+    save_volume(os.path.join(output_dir, src_map_file), src_map)
+    for x in xrange(ntx):
+        for y in xrange(nty):
+            for z in xrange(ntz):
+                trg_coord[x,y,z,X] = x
+                trg_coord[x,y,z,Y] = y
+                trg_coord[x,y,z,Z] = z
+    trg_map = nb.Nifti1Image(trg_coord, target.affine, target.header)
+    trg_map_file = _fname_4saving(file_name=file_name,
+                            rootfile=source_image,
+                            suffix='tmp_trgcoord')
+    save_volume(os.path.join(output_dir, trg_map_file), trg_map)
+    
+    # run the main ANTS software
+    ants = ANTS()
     ants.inputs.dimension = 3
-    #ants.inputs.output_transform_prefix = 'MY'
-    if (cost_function=='Cross Correlation'): 
-    	ants.inputs.metric = ['CC']
-    	ants.inputs.metric_weight = [1.0]
-    	ants.inputs.radius = [5]
+    
+     # add a prefix to avoid multiple names?
+    prefix = _fname_4saving(file_name=file_name,
+                            rootfile=source_image,
+                            suffix='tmp_syn')
+    prefix = os.path.basename(prefix)
+    prefix = prefix.split(".")[0]
+    ants.inputs.output_transform_prefix = prefix
+    if (cost_function=='CrossCorrelation'): 
+        ants.inputs.metric = ['CC']
+        ants.inputs.metric_weight = [1.0]
+        ants.inputs.radius = [5]
     else :
-    	ants.inputs.metric = ['MI']
-    	ants.inputs.metric_weight = [1.0]
-    	ants.inputs.radius = [64]
+        ants.inputs.metric = ['MI']
+        ants.inputs.metric_weight = [1.0]
+        ants.inputs.radius = [64]
     ants.inputs.fixed_image = [target_image]
     ants.inputs.moving_image = [source_image]
     ants.inputs.transformation_model = 'SyN'
@@ -158,37 +177,55 @@ def embedded_syn(source_image, target_image, coarse_iterations=40, medium_iterat
     ants.inputs.regularization_gradient_field_sigma = 3
     ants.inputs.regularization_deformation_field_sigma = 1
     ants.inputs.number_of_affine_iterations = [10000,10000,10000,10000,10000]
-    ants.cmdline # doctest: +ALLOW_UNICODE
-    # main command? ants.run()
+    result = ants.run()
 
-	# Transforms the moving image
-	wimt = WarpImageMultiTransform()
-    wimt.inputs.input_image = source_image
-    wimt.inputs.reference_image = target_image
-    if (interpolation=='Nearest Neighbor') : wimt.inputs.interpolation = 'NN'
-    else : wimt.inputs.interpolation = 'Linear'
-    wimt.inputs.transformation_series = ['synWarp.nii','synAffine.txt']
-    wtsimt.cmdline # doctest: +ALLOW_UNICODE
+    # Transforms the moving image
+    at = ApplyTransforms()
+    at.inputs.dimension = 3
+    at.inputs.input_image = source_image
+    at.inputs.reference_image = target_image
+    at.inputs.interpolation = interpolation
+    at.inputs.transforms = [result.outputs.warp_transform,result.outputs.affine_transform]
+    at.inputs.invert_transform_flags = [False, False]
+    deformed = at.run()
 
-	src_wimt = WarpTimeSeriesImageMultiTransform()
-    src_wimt.inputs.input_image = src_coord
-    src_wimt.inputs.reference_image = target_image
-    src_wimt.inputs.transformation_series = ['synWarp.nii','synAffine.txt']
-    src_wimt.cmdline # doctest: +ALLOW_UNICODE
+    # Create coordinate mappings
+    src_at = ApplyTransforms()
+    src_at.inputs.dimension = 3
+    src_at.inputs.input_image_type = 3
+    src_at.inputs.input_image = src_map_file
+    src_at.inputs.reference_image = target_image
+    src_at.inputs.interpolation = 'Linear'
+    src_at.inputs.transforms = [result.outputs.warp_transform,result.outputs.affine_transform]
+    src_at.inputs.invert_transform_flags = [False, False]
+    mapping = src_at.run()
 
-	trg_wimt = WarpTimeSeriesImageMultiTransform()
-    trg_wimt.inputs.input_image = trg_coord
-    trg_wimt.inputs.reference_image = source_image
-    trg_wimt.inputs.transformation_series = ['synAffine.txt','synInverseWarp.nii']
-    trg_wimt.inputs.invert_affine = True
-    trg_wimt.cmdline # doctest: +ALLOW_UNICODE
+    trg_at = ApplyTransforms()
+    trg_at.inputs.dimension = 3
+    trg_at.inputs.input_image_type = 3
+    trg_at.inputs.input_image = trg_map_file
+    trg_at.inputs.reference_image = source_image
+    trg_at.inputs.interpolation = 'Linear'
+    trg_at.inputs.transforms = [result.outputs.affine_transform,result.outputs.inverse_warp_transform]
+    trg_at.inputs.invert_transform_flags = [True, False]
+    inverse = trg_at.run()
 
     # collect outputs and potentially save
-	deformed_img = wimt.getWarpedImage()
-	mapping_img = src_wimt.getWarpedImage()
-	inverse_img = trg_wimt.getWarpedImage()
+    deformed_img = nb.Nifti1Image(nb.load(deformed.outputs.output_image).get_data(), target.affine, target.header)
+    mapping_img = nb.Nifti1Image(nb.load(mapping.outputs.output_image).get_data(), target.affine, target.header)
+    inverse_img = nb.Nifti1Image(nb.load(inverse.outputs.output_image).get_data(), source.affine, source.header)
 
     outputs = {'deformed_source': deformed_img, 'mapping': mapping_img, 'inverse': inverse_img}
+
+    # clean-up intermediate files
+    os.remove(src_map_file)
+    os.remove(trg_map_file)
+    os.remove(result.outputs.affine_transform)
+    os.remove(result.outputs.warp_transform)
+    os.remove(result.outputs.inverse_warp_transform)
+    os.remove(deformed.outputs.output_image)
+    os.remove(mapping.outputs.output_image)
+    os.remove(inverse.outputs.output_image)
 
     if save_data:
         save_volume(os.path.join(output_dir, deformed_source_file), deformed_img)
