@@ -96,7 +96,7 @@ deps=(
 deps_list=$(join_by ":" "${deps[@]}")
 
 # List of library files needed to run the cbstools core functions
-source ../cbstoolslib-files.sh
+source ../cbstools-lib-files.sh
 echo $cbstools_files # result is in $cbstools_files
 
 cbstools_list=$(join_by " " "${cbstools_files[@]}")

@@ -45,6 +45,5 @@ cbstools_files=(
   "de/mpg/cbs/utilities/ImageCropping.java"
   "de/mpg/cbs/utilities/Matrix3D.java"
   "de/mpg/cbs/utilities/Ngb.java"
-  "de/mpg/cbs/utilities/NiftiInterface.java"
   "de/mpg/cbs/utilities/Numerics.java"
 )
