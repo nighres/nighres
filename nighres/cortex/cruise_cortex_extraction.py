@@ -97,10 +97,12 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image, vd_image
 
     # check topology_lut_dir and set default if not given
     topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
+    print('topology: ',topology_lut_dir)
 
+    return
     # make sure that saving related parameters are correct
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, contrast_image1)
+        output_dir = _output_dir_4saving(output_dir, gm_image)
 
         cortex_file = _fname_4saving(file_name=file_name,
                                   rootfile=gm_image,
@@ -161,7 +163,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image, vd_image
     dimensions = init_data.shape
     cruise.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     cruise.setResolutions(resolution[0], resolution[1], resolution[2])
-    cruise.setInitialWMSegmentationImage(cbstools.JArray('byte')(
+    cruise.importInitialWMSegmentationImage(cbstools.JArray('int')(
                                             (init_data.flatten('F')).astype(int)))
     
     wm_data = load_volume(wm_image).get_data()
@@ -180,7 +182,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image, vd_image
         vd_data = load_volume(vd_image).get_data()
         cruise.setVeinsAndDuraProbabilityImage(cbstools.JArray('float')(
                                             (vd_data.flatten('F')).astype(float)))
-    
+
     # execute MGDM
     try:
         cruise.execute()
