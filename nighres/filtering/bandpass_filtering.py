@@ -1,3 +1,4 @@
+from __future__ import division
 import numpy as np
 import nibabel as nb
 import os
@@ -23,11 +24,11 @@ def bandpass_filtering(time_series, repetition_time,
     time_series: niimg
         Time series image (4D data)
     repetition_time: float
-        Time interval between samples, aka repetition time or TR
+        Time interval between samples in seconds, aka repetition time or TR
     low_frequency: float
-        Low frequency cutoff (default is 0.01 Hz)
+        Low frequency cutoff in Hz (default is 0.01)
     high_frequency: float
-        High frequency cutoff (default is 0.1 Hz)
+        High frequency cutoff in Hz (default is 0.1)
     save_data: bool
         Save output data to file (default is False)
     output_dir: str, optional
@@ -53,13 +54,13 @@ def bandpass_filtering(time_series, repetition_time,
 
     # make sure that saving related parameters are correct
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, second_inversion)
+        output_dir = _output_dir_4saving(output_dir, time_series)
 
         filtered_file = _fname_4saving(file_name=file_name,
                                        rootfile=time_series,
                                        suffix='bpf')
 
-    # get dimensions and resolution from second inversion image
+    # get dimensions and resolution
     img = load_volume(time_series)
     data = img.get_data()
     affine = img.get_affine()
@@ -71,22 +72,20 @@ def bandpass_filtering(time_series, repetition_time,
     nextpowerof2 = np.ceil(np.log2(length))
     padded = int(np.power(2, nextpowerof2))
 
-    # print("freq:",freq,"lf:",low,"hf:",high,"length:",padded)
-    if (low >= freq / 2):
+    freq = 1 / repetition_time
+    if (low_frequency >= freq / 2):
         lowid = int(padded / 2)
     else:
-        lowid = int(np.ceil(low * padded * tr))
+        lowid = int(np.ceil(low_frequency * padded * repetition_time))
 
-    if (high >= freq / 2):
+    if (high_frequency >= freq / 2):
         highid = int(padded / 2)
     else:
-        highid = int(np.floor(high * padded * tr))
+        highid = int(np.floor(high_frequency * padded * repetition_time))
 
     frequencymask = np.zeros(padded)
     frequencymask[lowid + 1:highid + 1] = 1
     frequencymask[padded - highid:padded - lowid] = 1
-    # print(lowid,highid)
-    # print(frequencymask)
 
     print("removing the mean")
     datamean = data.mean(3, keepdims=True)
@@ -95,11 +94,9 @@ def bandpass_filtering(time_series, repetition_time,
     data = np.pad(data - datamean,
                   ((0, 0), (0, 0), (0, 0), (0, padded - length)),
                   'constant')
-    # print("shape: ",np.shape(data))
 
     print("filtering")
     data = np.fft.fft(data, axis=3)
-    # print("shape: ",np.shape(data))
     data[:, :, :, np.nonzero(frequencymask == 0)] = 0
     data = np.real(np.fft.ifft(data, axis=3))
 
