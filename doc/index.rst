@@ -21,13 +21,14 @@ It developed out of `CBS High-Res Brain Processing Tools
 <https://www.cbs.mpg.de/institute/software/cbs-tools>`_ and aims to make those
 tools easier to install, use and extend.
 
-.. danger:: Nighres is currently in beta stadium and not fully functional
+.. danger:: Nighres is currently still in beta stage
 
 .. toctree::
    :maxdepth: 1
    :caption: Getting started
 
    installation
+   auto_examples/index
 
 .. toctree::
    :maxdepth: 2
@@ -41,18 +42,23 @@ tools easier to install, use and extend.
 
 .. toctree::
    :maxdepth: 2
-   :includehidden:
-   :caption: Examples
-
-   auto_examples/index
-
-.. toctree::
-   :maxdepth: 2
    :caption: Good to know
 
    data_formats
    saving
    levelsets
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Developer's guide
+
+   developers/index
+   developers/setup
+   developers/wrapping_cbstools
+   developers/python_function
+   developers/tests
+   developers/docs
+   developers/pr
 
 |
 
