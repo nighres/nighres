@@ -97,9 +97,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image, vd_image
 
     # check topology_lut_dir and set default if not given
     topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
-    print('topology: ',topology_lut_dir)
 
-    return
     # make sure that saving related parameters are correct
     if save_data:
         output_dir = _output_dir_4saving(output_dir, gm_image)
@@ -146,7 +144,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image, vd_image
 
     # set mgdm parameters
     cruise.setDataWeight(data_weight)
-    cruise.setDataWeight(regularization_weight)
+    cruise.setRegularizationWeight(regularization_weight)
     cruise.setMaxIterations(max_iterations)
     cruise.setNormalizeProbabilities(normalize_probabilities)
     cruise.setCorrectForWMGMpartialVoluming(correct_wm_pv)
