@@ -42,9 +42,9 @@ def _fname_4saving(file_name=None, rootfile=None, suffix=None):
         # use its file_name
         if isinstance(rootfile, basestring):
             file_name = os.path.basename(rootfile)
-            print(("You have not specified a file_name. We will use the "
-                   "name of your input ({0}) as a base name for saving "
-                   "outputs.").format(file_name))
+            #print(("You have not specified a file_name. We will use the "
+            #       "name of your input ({0}) as a base name for saving "
+            #       "outputs.").format(file_name))
             # if there is no suffix set trivial one to avoid overriding input
             if suffix is None:
                 suffix = 'out'
