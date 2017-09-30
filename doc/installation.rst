@@ -93,6 +93,8 @@ Nighres depends on:
 These packages are automatically installed by pip when installing nighres.
 
 
+.. _add-deps:
+
 Additional dependencies (optional)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
