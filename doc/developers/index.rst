@@ -13,7 +13,7 @@ Every contribution helps -- whether it's fixing a typo in the documentation or a
 
 **Git/Github**
 
-To contribute you will need to know some basics about git and Github, which are not covered in this guide. Don't worry, git and Github are actually pretty easy and there are lots of tutorials online (e.g. https://www.atlassian.com/git/tutorials, especially "Getting started" and "Collaborating")
+To contribute you will need to know some basics about git and Github, which are not covered in this guide. There are lots of tutorials online (e.g. https://www.atlassian.com/git/tutorials, especially "Getting started" and "Collaborating")
 
 **Questions?**
 
@@ -23,4 +23,4 @@ For specifics about code you want to contribute :ref:`make-pr` is a great way to
 
 The next pages will take you through the steps you need from cloning the Nighres repository, to making a pull request.
 
-.. note:: We'd love for you to help us improve this developer's guide. So if you find anything unclear or not covered, open an `issue on github <https://github.com/nighres/nighres/issues>`_ or just go ahead and add what you were missing (see :ref:`adapt-docs`)
+.. note:: Help us improve this developer's guide! If you find anything unclear or not covered, open an `issue on github <https://github.com/nighres/nighres/issues>`_ or add what you were missing (see :ref:`adapt-docs`)
