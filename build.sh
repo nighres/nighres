@@ -5,8 +5,8 @@ unset CDPATH; cd "$( dirname "${BASH_SOURCE[0]}" )"; cd "$(pwd -P)"
 fatal() { echo -e "$1"; exit 1; }
 function join_by { local IFS="$1"; shift; echo "$*"; }
 
-mipav_version="mipav-7.3"
-jist_version="JIST-CRUISE-2014Dec12-03-37PM.jar"
+#mipav_version="mipav-7.3"
+#jist_version="JIST-CRUISE-2014Dec12-03-37PM.jar"
 cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
 
 
@@ -63,19 +63,19 @@ test -d cbstools-public || (
 cd cbstools-public
 
 # Download MIPAV
-test -f lib/${mipav_version}.tar.xz || (
-	wget http://travis:3e7355460ad814aa9352ba87345c9202911892f5@akne.unxz.net/~rudi/travis/mipav-7.3.tar.xz -O lib/mipav-7.3.tar.xz
-)
+#test -f lib/${mipav_version}.tar.xz || (
+#	wget http://travis:3e7355460ad814aa9352ba87345c9202911892f5@akne.unxz.net/~rudi/travis/mipav-7.3.tar.xz -O lib/mipav-7.3.tar.xz
+#)
 
 # Expand MIPAV
-test -d lib/${mipav_version} || (
-	tar -xf lib/${mipav_version}.tar.xz -C lib
-)
+#test -d lib/${mipav_version} || (
+#	tar -xf lib/${mipav_version}.tar.xz -C lib
+#)
 
 # Download JIST-CRUISE
-test -f lib/${jist_version} || (
-	wget https://www.nitrc.org/frs/download.php/7246/${jist_version} -P lib
-)
+#test -f lib/${jist_version} || (
+#	wget https://www.nitrc.org/frs/download.php/7246/${jist_version} -P lib
+#)
 
 
 #
@@ -87,13 +87,19 @@ deps=(
 	"."
 	"lib/Jama-mipav.jar"
 	"lib/commons-math3-3.5.jar"
-	"lib/${jist_version}"
-
-	"lib/mipav-7.3/"
-	"lib/mipav-7.3/jre/lib/*"
-	"lib/mipav-7.3/jre/lib/ext/*"
+#	"lib/${jist_version}"
+#
+#	"lib/mipav-7.3/"
+#	"lib/mipav-7.3/jre/lib/*"
+#	"lib/mipav-7.3/jre/lib/ext/*"
 )
 deps_list=$(join_by ":" "${deps[@]}")
+
+# List of library files needed to run the cbstools core functions
+source ../cbstools-lib-files.sh
+echo $cbstools_files # result is in $cbstools_files
+
+cbstools_list=$(join_by " " "${cbstools_files[@]}")
 
 # Compilation options
 javac_opts=(
@@ -108,7 +114,7 @@ javac_opts=(
 
 echo "Compiling..."
 mkdir -p build
-javac -cp ${deps_list} ${javac_opts[@]} de/mpg/cbs/core/*/*.java de/mpg/cbs/*/*.java
+javac -cp ${deps_list} ${javac_opts[@]} de/mpg/cbs/core/*/*.java $cbstools_list
 
 # Some other examples I found elsewhere, that we're not currently using
 # $CODE/de/mpg/cbs/*/*.java $CODE/de/mpg/cbs/core/*/*.java $CODE/de/mpg/cbs/jist/*/*.java $CODE/edu/jhu/ece/iacl/jist/*/*.java
@@ -169,6 +175,6 @@ fi
 
 
 # remove unused folders
-# rm -rf build
-# rm -rf cbstools-public
-# rm -rf nighres.egg-info
+rm -rf build
+rm -rf cbstools-public
+rm -rf nighres.egg-info
