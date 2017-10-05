@@ -12,6 +12,8 @@ def _output_dir_4saving(output_dir=None, rootfile=None):
             # if rootfile is specified, use it's directory
             output_dir = os.path.dirname(rootfile)
 
+    if output_dir=='' : output_dir = './'
+
     # create directory recursively if it doesn't exist
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -40,9 +42,9 @@ def _fname_4saving(file_name=None, rootfile=None, suffix=None):
         # use its file_name
         if isinstance(rootfile, basestring):
             file_name = os.path.basename(rootfile)
-            print(("You have not specified a file_name. We will use the "
-                   "name of your input ({0}) as a base name for saving "
-                   "outputs.").format(file_name))
+            #print(("You have not specified a file_name. We will use the "
+            #       "name of your input ({0}) as a base name for saving "
+            #       "outputs.").format(file_name))
             # if there is no suffix set trivial one to avoid overriding input
             if suffix is None:
                 suffix = 'out'
