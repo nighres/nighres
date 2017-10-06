@@ -1,9 +1,29 @@
-from setuptools import setup, find_packages
 from os import path
+from setuptools import setup, find_packages
+from setuptools.command.develop import develop
+from setuptools.command.install import install
+from subprocess import check_call
 
 here = path.abspath(path.dirname(__file__))
+build_script = path.join(here, "build.sh")
 with open('README.rst') as f:
     long_description = f.read()
+
+# These commands run the build.sh script during pip installation
+class PostDevelopCommand(develop):
+    """Post-installation for development mode."""
+    def run(self):
+        check_call(build_script)
+        develop.run(self)
+
+
+class PostInstallCommand(install):
+    """Post-installation for installation mode."""
+    def run(self):
+        print('test')
+        check_call(build_script)
+        install.run(self)
+
 
 setup(
     name='nighres',
@@ -21,6 +41,10 @@ setup(
                  'License :: OSI Approved :: Apache Software License',
                  'Programming Language :: Python :: 2.7',
                  ],
+    cmdclass={
+              'develop': PostDevelopCommand,
+              'install': PostInstallCommand,
+              },
     keywords='MRI high-resolution laminar',
     packages=find_packages(),
     include_package_data=True,
