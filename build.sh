@@ -5,14 +5,12 @@ unset CDPATH; cd "$( dirname "${BASH_SOURCE[0]}" )"; cd "$(pwd -P)"
 fatal() { echo -e "$1"; exit 1; }
 function join_by { local IFS="$1"; shift; echo "$*"; }
 
+<<<<<<< 61243794b8022c9898c466a0c02a602587979585
 #mipav_version="mipav-7.3"
 #jist_version="JIST-CRUISE-2014Dec12-03-37PM.jar"
+=======
+>>>>>>> testing running build.sh locally
 cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
-
-
-#
-## SETUP
-#
 
 # Check the system has the necessary commands
 hash wget tar javac jar python pip 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python pip"
@@ -27,27 +25,10 @@ echo "${pip_modules}" | grep wheel > /dev/null || fatal 'This script requires wh
 # Set the JAVA_HOME variable if it is not set
 detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=')
 export JAVA_HOME=${JAVA_HOME:-"$detected_home"}
-
-echo "After detection: $JAVA_HOME"
-
-# ~ This doesn't work; I get a javadoc error ~
-
-# # Download a fork of JCC for python3 compatibility
-# test -d lib/jcc || (
-# 	git clone https://github.com/rudimeier/jcc lib/jcc
-# )
-
-# # Install JCC if it is not installed
-# echo "${pip_modules}" | grep jcc > /dev/null || (
-# 	echo "Installing JCC..."
-# 	cd lib/jcc
-# 	JCC_JDK="$JAVA_HOME" python setup.py install || return
-# )
-
-# ~ Instead, let's use upstream JCC for now ~
+# echo "After detection: $JAVA_HOME"
 
 # Check that JCC is installed
-echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.\nInstall with `apt-get install jcc` or equivalent'
+echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.\nInstall with `apt-get install jcc` or equivalent and `pip install jcc`'
 
 # Attempt to check for python development headers
 # Inspired by https://stackoverflow.com/a/4850603
@@ -59,6 +40,7 @@ test -d cbstools-public || (
 	git clone $cbstools_repo
 )
 
+<<<<<<< 61243794b8022c9898c466a0c02a602587979585
 # Go into cbstools repo
 cd cbstools-public
 
@@ -78,6 +60,8 @@ cd cbstools-public
 #)
 
 
+=======
+>>>>>>> testing running build.sh locally
 #
 ## COMPILE
 #
@@ -87,11 +71,14 @@ deps=(
 	"."
 	"lib/Jama-mipav.jar"
 	"lib/commons-math3-3.5.jar"
+<<<<<<< 61243794b8022c9898c466a0c02a602587979585
 #	"lib/${jist_version}"
 #
 #	"lib/mipav-7.3/"
 #	"lib/mipav-7.3/jre/lib/*"
 #	"lib/mipav-7.3/jre/lib/ext/*"
+=======
+>>>>>>> testing running build.sh locally
 )
 deps_list=$(join_by ":" "${deps[@]}")
 
@@ -113,6 +100,7 @@ javac_opts=(
 )
 
 echo "Compiling..."
+cd cbstools-public
 mkdir -p build
 javac -cp ${deps_list} ${javac_opts[@]} de/mpg/cbs/core/*/*.java $cbstools_list
 
@@ -164,14 +152,14 @@ cd ..
 # Make the python wheel
 # PLT=$(uname | tr '[:upper:]' '[:lower:]')
 # for now use manylinux
-PLT="manylinux1"
-CPU=$(lscpu | grep -oP 'Architecture:\s*\K.+')
-PY="$(python -V 2>&1)"
-if [[ $PY == *2\.*\.* ]]; then
-    python setup.py bdist_wheel --dist-dir dist --plat-name ${PLT}_${CPU} --python-tag py2
-elif [[ $PY == *3\.*\.* ]]; then
-	python setup.py bdist_wheel --dist-dir dist --plat-name ${PLT}_${CPU} --python-tag py3
-fi
+# PLT="manylinux1"
+# CPU=$(lscpu | grep -oP 'Architecture:\s*\K.+')
+# PY="$(python -V 2>&1)"
+# if [[ $PY == *2\.*\.* ]]; then
+#     python setup.py bdist_wheel --dist-dir dist --plat-name ${PLT}_${CPU} --python-tag py2
+# elif [[ $PY == *3\.*\.* ]]; then
+# 	python setup.py bdist_wheel --dist-dir dist --plat-name ${PLT}_${CPU} --python-tag py3
+# fi
 
 
 # remove unused folders
