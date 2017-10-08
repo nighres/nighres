@@ -8,10 +8,11 @@ matrix:
     - pip install --upgrade --user wheel
     - pip install --upgrade --user JCC
     script: "travis/make_dist.sh"
-    before_deploy: pip install --user twine
+    before_deploy:
+    - pip install --user twine
+    - pip install --user urllib3
     deploy:
       provider: pypi
-      edge: true
       server: https://test.pypi.org/legacy/
       user: "nighres"
       # using plain text password for testpypi, when switching to real pypi use encrypted (below)
