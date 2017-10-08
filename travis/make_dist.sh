@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e -x
 
-pwd
 # create the source distribution
 python setup.py sdist
 
@@ -16,4 +15,4 @@ cd "$HOME"
 ls virtualenv
 
 # Run test
-python "$NIGHRES_DIR"/examples/example_tissue_classification.py
+python "$HOME"/build/nighres/nighres/examples/example_tissue_classification.py
