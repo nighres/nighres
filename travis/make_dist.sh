@@ -13,4 +13,4 @@ pip install --user .
 cd "$HOME"
 
 # Run test
-python test_install/nighres*/examples/example_tissue_classification.py
+python nighres/examples/example_tissue_classification.py
