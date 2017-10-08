@@ -8,6 +8,7 @@ matrix:
     - pip install --upgrade --user wheel
     - pip install --upgrade --user JCC
     script: "travis/make_dist.sh"
+    before_deploy: pip install --user twine
     deploy:
       provider: pypi
       server: https://test.pypi.org/legacy/
