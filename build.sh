@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# set -e -x
+
+#
+## SETUP
+#
+
 set -euo pipefail
 unset CDPATH; cd "$( dirname "${BASH_SOURCE[0]}" )"; cd "$(pwd -P)"
 
@@ -128,6 +134,4 @@ cd ..
 
 
 # remove unused folders
-rm -rf build
 rm -rf cbstools-public
-rm -rf nighres.egg-info
