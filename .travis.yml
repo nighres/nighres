@@ -11,6 +11,7 @@ matrix:
     before_deploy: pip install --user twine
     deploy:
       provider: pypi
+      edge: true
       server: https://test.pypi.org/legacy/
       user: "nighres"
       # using plain text password for testpypi, when switching to real pypi use encrypted (below)
