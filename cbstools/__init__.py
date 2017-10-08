@@ -9,7 +9,7 @@ class JavaError(Exception):
   def __str__(self):
     writer = StringWriter()
     self.getJavaException().printStackTrace(PrintWriter(writer))
-    return u"\n".join((unicode(super(JavaError, self)), u"    Java stacktrace:", unicode(writer)))
+    return "\n".join((super(JavaError, self).__str__(), "    Java stacktrace:", str(writer)))
 
 class InvalidArgsError(Exception):
   pass
