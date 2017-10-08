@@ -20,7 +20,6 @@ class PostDevelopCommand(develop):
 class PostInstallCommand(install):
     """Post-installation for installation mode."""
     def run(self):
-        print('test')
         check_call(build_script)
         install.run(self)
 

@@ -5,11 +5,6 @@ unset CDPATH; cd "$( dirname "${BASH_SOURCE[0]}" )"; cd "$(pwd -P)"
 fatal() { echo -e "$1"; exit 1; }
 function join_by { local IFS="$1"; shift; echo "$*"; }
 
-<<<<<<< 61243794b8022c9898c466a0c02a602587979585
-#mipav_version="mipav-7.3"
-#jist_version="JIST-CRUISE-2014Dec12-03-37PM.jar"
-=======
->>>>>>> testing running build.sh locally
 cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
 
 # Check the system has the necessary commands
@@ -40,28 +35,6 @@ test -d cbstools-public || (
 	git clone $cbstools_repo
 )
 
-<<<<<<< 61243794b8022c9898c466a0c02a602587979585
-# Go into cbstools repo
-cd cbstools-public
-
-# Download MIPAV
-#test -f lib/${mipav_version}.tar.xz || (
-#	wget http://travis:3e7355460ad814aa9352ba87345c9202911892f5@akne.unxz.net/~rudi/travis/mipav-7.3.tar.xz -O lib/mipav-7.3.tar.xz
-#)
-
-# Expand MIPAV
-#test -d lib/${mipav_version} || (
-#	tar -xf lib/${mipav_version}.tar.xz -C lib
-#)
-
-# Download JIST-CRUISE
-#test -f lib/${jist_version} || (
-#	wget https://www.nitrc.org/frs/download.php/7246/${jist_version} -P lib
-#)
-
-
-=======
->>>>>>> testing running build.sh locally
 #
 ## COMPILE
 #
@@ -71,14 +44,6 @@ deps=(
 	"."
 	"lib/Jama-mipav.jar"
 	"lib/commons-math3-3.5.jar"
-<<<<<<< 61243794b8022c9898c466a0c02a602587979585
-#	"lib/${jist_version}"
-#
-#	"lib/mipav-7.3/"
-#	"lib/mipav-7.3/jre/lib/*"
-#	"lib/mipav-7.3/jre/lib/ext/*"
-=======
->>>>>>> testing running build.sh locally
 )
 deps_list=$(join_by ":" "${deps[@]}")
 
