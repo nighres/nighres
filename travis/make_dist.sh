@@ -1,8 +1,7 @@
 #!/bin/bash
 set -e -x
 
-export NIGHRES_DIR=pwd
-
+pwd
 # create the source distribution
 python setup.py sdist
 
@@ -14,8 +13,7 @@ cd "$HOME"/test_install/nighres*
 pip install --user .
 cd "$HOME"
 
-echo $NIGHRES_DIR
-ls
+ls virtualenv
 
 # Run test
 python "$NIGHRES_DIR"/examples/example_tissue_classification.py
