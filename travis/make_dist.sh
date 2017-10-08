@@ -2,7 +2,6 @@
 set -e -x
 
 # create the source distribution
-cd ..
 python setup.py sdist
 
 # make a new folder to test the installation
