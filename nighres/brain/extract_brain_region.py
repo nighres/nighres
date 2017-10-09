@@ -9,7 +9,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def extract_brain_region(segmentation, levelset_boundary,
                          maximum_membership, maximum_label,
-                         atlas_file=None, extracted_region,
+                         extracted_region, atlas_file=None,
                          normalize_probabilities=False,
                          estimate_tissue_densities=False,
                          partial_volume_distance=1.0,
@@ -90,42 +90,42 @@ def extract_brain_region(segmentation, levelset_boundary,
 
     # make sure that saving related parameters are correct
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, contrast_image1)
+        output_dir = _output_dir_4saving(output_dir, segmentation)
 
         reg_mask_file = _fname_4saving(file_name=file_name,
-                                          rootfile=region_mask,
+                                          rootfile=segmentation,
                                           suffix='xbr_mreg', )
 
         ins_mask_file = _fname_4saving(file_name=file_name,
-                                          rootfile=inside_mask,
+                                          rootfile=segmentation,
                                           suffix='xbr_mins', )
 
         bg_mask_file = _fname_4saving(file_name=file_name,
-                                          rootfile=background_mask,
+                                          rootfile=segmentation,
                                           suffix='xbr_mbg', )
 
         reg_proba_file = _fname_4saving(file_name=file_name,
-                                          rootfile=region_proba,
+                                          rootfile=segmentation,
                                           suffix='xbr_preg', )
 
         ins_proba_file = _fname_4saving(file_name=file_name,
-                                          rootfile=inside_proba,
+                                          rootfile=segmentation,
                                           suffix='xbr_pins', )
 
         bg_proba_file = _fname_4saving(file_name=file_name,
-                                          rootfile=background_proba,
+                                          rootfile=segmentation,
                                           suffix='xbr_pbg', )
 
         reg_lvl_file = _fname_4saving(file_name=file_name,
-                                          rootfile=region_lvl,
+                                          rootfile=segmentation,
                                           suffix='xbr_lreg', )
 
         ins_lvl_file = _fname_4saving(file_name=file_name,
-                                          rootfile=inside_lvl,
+                                          rootfile=segmentation,
                                           suffix='xbr_lins', )
 
         bg_lvl_file = _fname_4saving(file_name=file_name,
-                                          rootfile=background_lvl,
+                                          rootfile=segmentation,
                                           suffix='xbr_lbg', )
 
     # start virtual machine, if not already running
@@ -134,7 +134,7 @@ def extract_brain_region(segmentation, levelset_boundary,
     except ValueError:
         pass
     # create algorithm instance
-    xbr = cbstools.ExtractBrainRegion()
+    xbr = cbstools.BrainExtractBrainRegion()
 
     # set parameters
     xbr.setAtlasFile(atlas_file)
@@ -185,10 +185,10 @@ def extract_brain_region(segmentation, levelset_boundary,
     mask_data = np.reshape(np.array(xbr.getInsideWMmask(),
                                    dtype=np.int32), dimensions, 'F')
 
-    proba_data = np.reshape(np.array(mgdm.getInsideWMprobability(),
+    proba_data = np.reshape(np.array(xbr.getInsideWMprobability(),
                                     dtype=np.float32), dimensions, 'F')
 
-    lvl_data = np.reshape(np.array(mgdm.getInsideWMlevelset(),
+    lvl_data = np.reshape(np.array(xbr.getInsideWMlevelset(),
                                     dtype=np.float32), dimensions, 'F')
 
     # adapt header max for each image so that correct max is displayed
@@ -210,10 +210,10 @@ def extract_brain_region(segmentation, levelset_boundary,
     mask_data = np.reshape(np.array(xbr.getStructureGMmask(),
                                    dtype=np.int32), dimensions, 'F')
 
-    proba_data = np.reshape(np.array(mgdm.getStructureGMprobability(),
+    proba_data = np.reshape(np.array(xbr.getStructureGMprobability(),
                                     dtype=np.float32), dimensions, 'F')
 
-    lvl_data = np.reshape(np.array(mgdm.getStructureGMlevelset(),
+    lvl_data = np.reshape(np.array(xbr.getStructureGMlevelset(),
                                     dtype=np.float32), dimensions, 'F')
 
     # adapt header max for each image so that correct max is displayed
@@ -235,10 +235,10 @@ def extract_brain_region(segmentation, levelset_boundary,
     mask_data = np.reshape(np.array(xbr.getBackgroundCSFmask(),
                                    dtype=np.int32), dimensions, 'F')
 
-    proba_data = np.reshape(np.array(mgdm.getBackgroundCSFprobability(),
+    proba_data = np.reshape(np.array(xbr.getBackgroundCSFprobability(),
                                     dtype=np.float32), dimensions, 'F')
 
-    lvl_data = np.reshape(np.array(mgdm.getBackgroundCSFlevelset(),
+    lvl_data = np.reshape(np.array(xbr.getBackgroundCSFlevelset(),
                                     dtype=np.float32), dimensions, 'F')
 
     # adapt header max for each image so that correct max is displayed
@@ -257,7 +257,7 @@ def extract_brain_region(segmentation, levelset_boundary,
 
 
     if save_data:
-        save_volume(os.path.join(output_dir, ins_mask_file), inside)
+        save_volume(os.path.join(output_dir, ins_mask_file), inside_mask)
         save_volume(os.path.join(output_dir, ins_proba_file), inside_proba)
         save_volume(os.path.join(output_dir, ins_lvl_file), inside_lvl)
         save_volume(os.path.join(output_dir, reg_mask_file), region_mask)

@@ -81,7 +81,7 @@ def volumetric_layering(inner_levelset, outer_levelset,
 
     # start virutal machine if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        cbstools.initVM(initialheap='12000m', maxheap='12000m')
     except ValueError:
         pass
 
@@ -120,8 +120,7 @@ def volumetric_layering(inner_levelset, outer_levelset,
         return
 
     # collect data
-    depth_data = np.reshape(np.array(
-                                    lamination.getContinuousDepthMeasurement(),
+    depth_data = np.reshape(np.array(lamination.getContinuousDepthMeasurement(),
                                     dtype=np.float32), dimensions, 'F')
     hdr['cal_max'] = np.nanmax(depth_data)
     depth = nb.Nifti1Image(depth_data, aff, hdr)
@@ -136,6 +135,7 @@ def volumetric_layering(inner_levelset, outer_levelset,
                                dtype=np.float32), (dimensions[0],
                                dimensions[1], dimensions[2], boundary_len),
                                'F')
+    hdr['cal_min'] = np.nanmin(boundary_data)
     hdr['cal_max'] = np.nanmax(boundary_data)
     boundaries = nb.Nifti1Image(boundary_data, aff, hdr)
 
