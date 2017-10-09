@@ -51,7 +51,7 @@ def embedded_syn(source_image, target_image, coarse_iterations=40, medium_iterat
     cost_function: {'CrossCorrelation', 'MutualInformation'}
         Cost function for the registration (default is 'MutualInformation')
     interpolation: {'NearestNeighbor', 'Linear'}
-        Cost function for the registration (default is 'NearestNeighbor')
+        Interpolation for the registration (default is 'NearestNeighbor')
     save_data: bool
         Save output data to file (default is False)
     output_dir: str, optional
@@ -66,20 +66,24 @@ def embedded_syn(source_image, target_image, coarse_iterations=40, medium_iterat
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * deformed_source (niimg): Deformed source image (_esyn_def)
-        * mapping (niimg): Coordinate mapping from source to target (_esyn_map)
-        * inverse (niimg): Inverse coordinate mapping from target to source (_esyn_invmap) 
+        * deformed_source (niimg): Deformed source image (_syn_def)
+        * mapping (niimg): Coordinate mapping from source to target (_syn_map)
+        * inverse (niimg): Inverse coordinate mapping from target to source (_syn_invmap) 
 
     Notes
     ----------
     Port of the CBSTools Java module by Pierre-Louis Bazin. The main algorithm
-    is part of the ANTs software by Brian Avants and colleagues [1]_
+    is part of the ANTs software by Brian Avants and colleagues [1]_. The interfacing
+    with ANTs is performed through Nipype [2]_.
 
     References
     ----------
-    .. [1] Avants BB, Epstein CL, Grossman M, Gee JC, Symmetric diffeomorphic 
+    .. [1] Avants et al (2008), Symmetric diffeomorphic 
        image registration with cross-correlation: evaluating automated labeling 
-       of elderly and neurodegenerative brain, Med Image Anal. 2008 Feb;12(1):26-41
+       of elderly and neurodegenerative brain, Med Image Anal. 12(1):26-41
+    .. [2] Gorgolewski et al (2011) Nipype: a flexible, lightweight and extensible 
+       neuroimaging data processing framework in python. Front Neuroinform 5. 
+       doi:10.3389/fninf.2011.00013
     """
 
     print('\nEmbedded SyN')
@@ -90,15 +94,15 @@ def embedded_syn(source_image, target_image, coarse_iterations=40, medium_iterat
 
         deformed_source_file = _fname_4saving(file_name=file_name,
                                    rootfile=source_image,
-                                   suffix='esyn_def')
+                                   suffix='syn_def')
 
         mapping_file = _fname_4saving(file_name=file_name,
                                    rootfile=source_image,
-                                   suffix='esyn_map')
+                                   suffix='syn_map')
 
         inverse_mapping_file = _fname_4saving(file_name=file_name,
                                    rootfile=source_image,
-                                   suffix='esyn_invmap')
+                                   suffix='syn_invmap')
 
      # load and get dimensions and resolution from input images
     source = load_volume(source_image)
