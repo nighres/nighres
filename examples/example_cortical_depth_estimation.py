@@ -227,5 +227,7 @@ if not skip_plots:
 #############################################################################
 # References
 # -----------
-# .. [1] Han et al (2004) CRUISE ...
-# .. [2] Waehnert et al (2014) 
+# .. [1] Han et al (2004) CRUISE: Cortical Reconstruction Using Implicit 
+#       Surface Evolution, NeuroImage, vol. 23, pp. 997--1012.
+# .. [2] Waehnert et al (2014) Anatomically motivated modeling of cortical
+#       laminae. DOI: 10.1016/j.neuroimage.2013.03.078

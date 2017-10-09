@@ -54,7 +54,7 @@ def volumetric_layering(inner_levelset, outer_levelset,
 
     References
     ----------
-    .. [1] Waehnert et al (2014). Anatomically motivated modeling of cortical
+    .. [1] Waehnert et al (2014) Anatomically motivated modeling of cortical
        laminae. DOI: 10.1016/j.neuroimage.2013.03.078
     '''
 
