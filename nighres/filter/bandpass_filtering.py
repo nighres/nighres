@@ -38,11 +38,7 @@ def bandpass_filtering(time_series, low_frequency=0.01, high_frequency=0.1,
 
     Returns
     ----------
-    dict
-        Dictionary collecting outputs under the following keys
-        (suffix of output files in brackets)
-
-        * filtered (niimg): Bandpass filtered time series (_bpf_img)
+    filtered (niimg): Bandpass filtered time series (_bpf)
 
     Notes
     ----------
@@ -59,7 +55,7 @@ def bandpass_filtering(time_series, low_frequency=0.01, high_frequency=0.1,
 
         filtered_file = _fname_4saving(file_name=file_name,
                                    rootfile=time_series,
-                                   suffix='bpf_img')
+                                   suffix='bpf')
 
      # get dimensions and resolution from second inversion image
     img = load_volume(time_series)
@@ -106,13 +102,11 @@ def bandpass_filtering(time_series, low_frequency=0.01, high_frequency=0.1,
 	data = data[:,:,:,0:length]+datamean
 
     # collect outputs and potentially save
-	filtered_img = nb.Nifti1Image(data, affine, header)
-	filtered_img.header['cal_min'] = np.min(data)
-	filtered_img.header['cal_max'] = np.max(data)
-
-    outputs = {'filtered': filtered_img}
+	filtered = nb.Nifti1Image(data, affine, header)
+	filtered.header['cal_min'] = np.min(data)
+	filtered.header['cal_max'] = np.max(data)
 
     if save_data:
         save_volume(os.path.join(output_dir, filtered_file), filtered)
 
-    return outputs
+    return filtered
