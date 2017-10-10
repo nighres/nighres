@@ -1,3 +1,4 @@
+import sys
 import os
 import numpy as np
 import nibabel as nb
@@ -74,7 +75,7 @@ def volumetric_layering(inner_levelset, outer_levelset,
                                     rootfile=inner_levelset,
                                     suffix='layering_layers')
 
-        boundary_file = _fname_4saving(base_name=file_name,
+        boundary_file = _fname_4saving(file_name=file_name,
                                        rootfile=inner_levelset,
                                        suffix='layering_boundaries')
 
