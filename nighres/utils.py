@@ -4,15 +4,13 @@ from global_settings import TOPOLOGY_LUT_DIR, ATLAS_DIR, DEFAULT_ATLAS
 
 
 def _output_dir_4saving(output_dir=None, rootfile=None):
-    if output_dir is None:
+    if (output_dir is None or output_dir==''):
         if rootfile is None:
             # if nothing is specified, use current working dir
             output_dir = os.getcwd()
         else:
             # if rootfile is specified, use it's directory
             output_dir = os.path.dirname(rootfile)
-
-    if output_dir=='' : output_dir = './'
 
     # create directory recursively if it doesn't exist
     if not os.path.exists(output_dir):
