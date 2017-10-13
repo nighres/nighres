@@ -4,7 +4,7 @@ from global_settings import TOPOLOGY_LUT_DIR, ATLAS_DIR, DEFAULT_ATLAS
 
 
 def _output_dir_4saving(output_dir=None, rootfile=None):
-    if output_dir is None:
+    if (output_dir is None or output_dir==''):
         if rootfile is None:
             # if nothing is specified, use current working dir
             output_dir = os.getcwd()
@@ -40,9 +40,9 @@ def _fname_4saving(file_name=None, rootfile=None, suffix=None):
         # use its file_name
         if isinstance(rootfile, basestring):
             file_name = os.path.basename(rootfile)
-            print(("You have not specified a file_name. We will use the "
-                   "name of your input ({0}) as a base name for saving "
-                   "outputs.").format(file_name))
+            #print(("You have not specified a file_name. We will use the "
+            #       "name of your input ({0}) as a base name for saving "
+            #       "outputs.").format(file_name))
             # if there is no suffix set trivial one to avoid overriding input
             if suffix is None:
                 suffix = 'out'
