@@ -12,7 +12,5 @@ cd "$HOME"/test_install/nighres*
 pip install --user .
 cd "$HOME"
 
-ls virtualenv
-
 # Run test
 #python "$HOME"/build/nighres/nighres/examples/example_tissue_classification.py
