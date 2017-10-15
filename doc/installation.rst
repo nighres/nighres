@@ -55,7 +55,7 @@ And then adding it to the library path. Depending on you Java installation it wi
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/jvm/java-8-openjdk-amd64/lib/amd64/server/
 
-If that doesn't do the trick, try running::
+This can be run within the current terminal for a single session, or made permanent by adding the export statement to your terminal execution script (i.e., .bashrc on most linux systems). If that doesn't do the trick, try running::
 
     sudo R CMD javareconf
 
