@@ -5,7 +5,8 @@ import sys
 import cbstools
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
-                    _check_topology_lut_dir, _check_atlas_file
+    _check_topology_lut_dir, _check_atlas_file
+
 
 def extract_brain_region(segmentation, levelset_boundary,
                          maximum_membership, maximum_label,
@@ -17,9 +18,9 @@ def extract_brain_region(segmentation, levelset_boundary,
                          file_name=None):
     """ Extract Brain Region
 
-    Extracts masks, probability maps and levelset surfaces for specific brain 
-    regions and regions from a Multiple Object Geometric Deformable Model (MGDM)
-    segmentation result.
+    Extracts masks, probability maps and levelset surfaces for specific brain
+    regions and regions from a Multiple Object Geometric Deformable Model
+    (MGDM) segmentation result.
 
     Parameters
     ----------
@@ -34,14 +35,16 @@ def extract_brain_region(segmentation, levelset_boundary,
     atlas_file: str, optional
         Path to plain text atlas file (default is stored in DEFAULT_ATLAS).
         or atlas name to be searched in ATLAS_DIR
-    extracted_region: {'left_cerebrum', 'right_cerebrum', 'cerebrum', 'cerebellum', 
-        'cerebellum_brainstem', 'subcortex', 'tissues(anat)', 'tissues(func)', 'brain_mask'}
+    extracted_region: {'left_cerebrum', 'right_cerebrum', 'cerebrum',
+                       'cerebellum', 'cerebellum_brainstem', 'subcortex',
+                       'tissues(anat)', 'tissues(func)', 'brain_mask'}
         Region to be extracted from the MGDM segmentation.
     normalize_probabilities: bool
-        Whether to normalize the output probabilities to sum to 1 (default is False).
+        Whether to normalize the output probabilities to sum to 1
+        (default is False).
     estimate_tissue_densities: bool
-        Wheter to recompute partial volume densities from the probabilites (slow,
-        default is False).
+        Wheter to recompute partial volume densities from the probabilites
+        (slow, default is False).
     partial_volume_distance: float
         Distance in mm to use for tissues densities, if recomputed
         (default is 1mm).
@@ -59,28 +62,28 @@ def extract_brain_region(segmentation, levelset_boundary,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * region_mask (niimg): Hard segmentation mask of the (GM) region 
+        * region_mask (niimg): Hard segmentation mask of the (GM) region
           of interest (_xbr_mreg)
-        * inside_mask (niimg): Hard segmentation mask of the (WM) inside of 
+        * inside_mask (niimg): Hard segmentation mask of the (WM) inside of
           the region of interest (_xbr_mins)
-        * background_mask (niimg): Hard segmentation mask of the (CSF) region 
+        * background_mask (niimg): Hard segmentation mask of the (CSF) region
           background (_xbr_mbg)
-        * region_proba (niimg): Probability map of the (GM) region 
+        * region_proba (niimg): Probability map of the (GM) region
           of interest (_xbr_preg)
-        * inside_proba (niimg): Probability map of the (WM) inside of 
+        * inside_proba (niimg): Probability map of the (WM) inside of
           the region of interest (_xbr_pins)
-        * background_proba (niimg): Probability map of the (CSF) region 
+        * background_proba (niimg): Probability map of the (CSF) region
           background (_xbr_pbg)
-        * region_lvl (niimg): Levelset surface of the (GM) region 
+        * region_lvl (niimg): Levelset surface of the (GM) region
           of interest (_xbr_lreg)
-        * inside_lvl (niimg): Levelset surface of the (WM) inside of 
+        * inside_lvl (niimg): Levelset surface of the (WM) inside of
           the region of interest (_xbr_lins)
-        * background_lvl (niimg): Levelset surface of the (CSF) region 
+        * background_lvl (niimg): Levelset surface of the (CSF) region
           background (_xbr_lbg)
 
     Notes
     ----------
-    Original Java module by Pierre-Louis Bazin. 
+    Original Java module by Pierre-Louis Bazin.
     """
 
     print('\nExtract Brain Region')
@@ -93,40 +96,40 @@ def extract_brain_region(segmentation, levelset_boundary,
         output_dir = _output_dir_4saving(output_dir, segmentation)
 
         reg_mask_file = _fname_4saving(file_name=file_name,
-                                          rootfile=segmentation,
-                                          suffix='xbr_mreg', )
+                                       rootfile=segmentation,
+                                       suffix='xbr_mreg', )
 
         ins_mask_file = _fname_4saving(file_name=file_name,
-                                          rootfile=segmentation,
-                                          suffix='xbr_mins', )
+                                       rootfile=segmentation,
+                                       suffix='xbr_mins', )
 
         bg_mask_file = _fname_4saving(file_name=file_name,
-                                          rootfile=segmentation,
-                                          suffix='xbr_mbg', )
+                                      rootfile=segmentation,
+                                      suffix='xbr_mbg', )
 
         reg_proba_file = _fname_4saving(file_name=file_name,
-                                          rootfile=segmentation,
-                                          suffix='xbr_preg', )
+                                        rootfile=segmentation,
+                                        suffix='xbr_preg', )
 
         ins_proba_file = _fname_4saving(file_name=file_name,
-                                          rootfile=segmentation,
-                                          suffix='xbr_pins', )
+                                        rootfile=segmentation,
+                                        suffix='xbr_pins', )
 
         bg_proba_file = _fname_4saving(file_name=file_name,
-                                          rootfile=segmentation,
-                                          suffix='xbr_pbg', )
+                                       rootfile=segmentation,
+                                       suffix='xbr_pbg', )
 
         reg_lvl_file = _fname_4saving(file_name=file_name,
-                                          rootfile=segmentation,
-                                          suffix='xbr_lreg', )
+                                      rootfile=segmentation,
+                                      suffix='xbr_lreg', )
 
         ins_lvl_file = _fname_4saving(file_name=file_name,
-                                          rootfile=segmentation,
-                                          suffix='xbr_lins', )
+                                      rootfile=segmentation,
+                                      suffix='xbr_lins', )
 
         bg_lvl_file = _fname_4saving(file_name=file_name,
-                                          rootfile=segmentation,
-                                          suffix='xbr_lbg', )
+                                     rootfile=segmentation,
+                                     suffix='xbr_lbg', )
 
     # start virtual machine, if not already running
     try:
@@ -155,19 +158,19 @@ def extract_brain_region(segmentation, levelset_boundary,
     xbr.setResolutions(resolution[0], resolution[1], resolution[2])
 
     xbr.setSegmentationImage(cbstools.JArray('int')(
-                                        (data.flatten('F')).astype(int)))
+        (data.flatten('F')).astype(int)))
 
     data = load_volume(levelset_boundary).get_data()
     xbr.setLevelsetBoundaryImage(cbstools.JArray('float')(
-                                        (data.flatten('F')).astype(float)))
+        (data.flatten('F')).astype(float)))
 
     data = load_volume(maximum_membership).get_data()
     xbr.setMaximumMembershipImage(cbstools.JArray('float')(
-                                        (data.flatten('F')).astype(float)))
+        (data.flatten('F')).astype(float)))
 
     data = load_volume(maximum_label).get_data()
     xbr.setMaximumLabelImage(cbstools.JArray('int')(
-                                        (data.flatten('F')).astype(int)))
+        (data.flatten('F')).astype(int)))
 
     # execute
     try:
@@ -183,13 +186,13 @@ def extract_brain_region(segmentation, levelset_boundary,
     # inside region
     # reshape output to what nibabel likes
     mask_data = np.reshape(np.array(xbr.getInsideWMmask(),
-                                   dtype=np.int32), dimensions, 'F')
+                                    dtype=np.int32), dimensions, 'F')
 
     proba_data = np.reshape(np.array(xbr.getInsideWMprobability(),
-                                    dtype=np.float32), dimensions, 'F')
+                                     dtype=np.float32), dimensions, 'F')
 
     lvl_data = np.reshape(np.array(xbr.getInsideWMlevelset(),
-                                    dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), dimensions, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -208,13 +211,13 @@ def extract_brain_region(segmentation, levelset_boundary,
     # main region
     # reshape output to what nibabel likes
     mask_data = np.reshape(np.array(xbr.getStructureGMmask(),
-                                   dtype=np.int32), dimensions, 'F')
+                                    dtype=np.int32), dimensions, 'F')
 
     proba_data = np.reshape(np.array(xbr.getStructureGMprobability(),
-                                    dtype=np.float32), dimensions, 'F')
+                                     dtype=np.float32), dimensions, 'F')
 
     lvl_data = np.reshape(np.array(xbr.getStructureGMlevelset(),
-                                    dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), dimensions, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -233,13 +236,13 @@ def extract_brain_region(segmentation, levelset_boundary,
     # background region
     # reshape output to what nibabel likes
     mask_data = np.reshape(np.array(xbr.getBackgroundCSFmask(),
-                                   dtype=np.int32), dimensions, 'F')
+                                    dtype=np.int32), dimensions, 'F')
 
     proba_data = np.reshape(np.array(xbr.getBackgroundCSFprobability(),
-                                    dtype=np.float32), dimensions, 'F')
+                                     dtype=np.float32), dimensions, 'F')
 
     lvl_data = np.reshape(np.array(xbr.getBackgroundCSFlevelset(),
-                                    dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), dimensions, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -255,7 +258,6 @@ def extract_brain_region(segmentation, levelset_boundary,
     header['cal_max'] = np.nanmax(lvl_data)
     background_lvl = nb.Nifti1Image(lvl_data, affine, header)
 
-
     if save_data:
         save_volume(os.path.join(output_dir, ins_mask_file), inside_mask)
         save_volume(os.path.join(output_dir, ins_proba_file), inside_proba)
@@ -267,6 +269,9 @@ def extract_brain_region(segmentation, levelset_boundary,
         save_volume(os.path.join(output_dir, bg_proba_file), background_proba)
         save_volume(os.path.join(output_dir, bg_lvl_file), background_lvl)
 
-    return {'inside_mask': inside_mask, 'inside_proba': inside_proba, 'inside_lvl': inside_lvl,
-            'region_mask': region_mask, 'region_proba': region_proba, 'inside_lvl': region_lvl,
-            'background_mask': background_mask, 'background_proba': background_proba, 'background_lvl': background_lvl}
+    return {'inside_mask': inside_mask, 'inside_proba': inside_proba,
+            'inside_lvl': inside_lvl, 'region_mask': region_mask,
+            'region_proba': region_proba, 'inside_lvl': region_lvl,
+            'background_mask': background_mask,
+            'background_proba': background_proba,
+            'background_lvl': background_lvl}
