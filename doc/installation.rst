@@ -105,7 +105,7 @@ Dependencies
 To build Nighres you need:
 
 * `JCC <http://jcc.readthedocs.io/en/latest/>`_
-* A Java version higher than 7
+* Java, a version that is 1.7 or higher
 
 To run Nighres depends on:
 

@@ -39,7 +39,7 @@ Let's get into it
 
 |
 
-4. :ref:`Write an example <tests>` showcasing your new function
+4. :ref:`Write an example <examples>` showcasing your new function
 
 |
 

@@ -35,5 +35,5 @@ Setting up
 
    If you want to add new functions be sure to check out our intructions on :ref:`wrap-cbstools` or :ref:`python-function`
 
-.. important:: Please adhere to `pep8 style conventions
+.. important:: Please adhere to `PEP8 style conventions
    <https://www.python.org/dev/peps/pep-0008/>`_. This is easiest by using a Python linter which is available in most editors.
