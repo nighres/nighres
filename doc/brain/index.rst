@@ -6,3 +6,4 @@ Brain
 
    mgdm_segmentation
    mp2rage_skullstripping
+   extract_brain_region
