@@ -6,3 +6,4 @@ include cbstools-lib-files.sh
 include cbstools/*.jar
 include cbstools/_cbstools.so
 recursive-include nighres/atlases *
+recursive-include nighres/examples *
