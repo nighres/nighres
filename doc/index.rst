@@ -35,6 +35,7 @@ tools easier to install, use and extend.
    :caption: Modules and Functions
 
    brain/index
+   cortex/index
    surface/index
    laminar/index
    data/index
