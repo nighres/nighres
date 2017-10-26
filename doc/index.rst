@@ -57,7 +57,7 @@ tools easier to install, use and extend.
    developers/setup
    developers/wrapping_cbstools
    developers/python_function
-   developers/tests
+   developers/examples
    developers/docs
    developers/pr
 
