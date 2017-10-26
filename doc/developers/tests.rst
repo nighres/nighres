@@ -1,4 +1,4 @@
-.. _tests:
+.. _examples:
 
-Writing tests
-=============
+Writing examples
+================
