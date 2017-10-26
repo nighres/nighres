@@ -80,23 +80,23 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
         (suffix of output files in brackets)
 
         * cortex (niimg): Hard segmentation of the cortex with labels
-                          background=0, gm=1, and wm=2 (_cruise_cortex)
+          background=0, gm=1, and wm=2 (_cruise_cortex)
         * gwb (niimg): Gray-White matter Boundary (GWB) level set function
-                       (_cruise_gwb)
+          (_cruise_gwb)
         * cgb (niimg): CSF-Gray matter Boundary (CGB) level set function
-                       (_cruise_cgb)
+          (_cruise_cgb)
         * avg (niimg): Central level set function, obtained as geometric
-                       average of GWB and CGB (*not* the middle depth of the
-                       cortex, use volumetric_layering if you want accurate
-                       depth measures) (_cruise_avg)
+          average of GWB and CGB (*not* the middle depth of the
+          cortex, use volumetric_layering if you want accurate
+          depth measures) (_cruise_avg)
         * thickness (niimg): Simple cortical thickness estimate: distance to
-                             the GWB and CGB surfaces, in mm (_cruise_thick)
+          the GWB and CGB surfaces, in mm (_cruise_thick)
         * pwm (niimg): Optimized WM probability, including partial volume and
-                       distant values correction (_cruise_pwm)
+          distant values correction (_cruise_pwm)
         * pgm (niimg): Optimized GM probability, including CSF sulcal ridges
-                       correction (_cruise_pgm)
+          correction (_cruise_pgm)
         * pcsf (niimg): Optimized CSF probability, including sulcal ridges and
-                        vessel/dura correction (_cruise_pwm)
+          vessel/dura correction (_cruise_pwm)
 
     Notes
     ----------

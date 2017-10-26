@@ -35,9 +35,7 @@ def extract_brain_region(segmentation, levelset_boundary,
     atlas_file: str, optional
         Path to plain text atlas file (default is stored in DEFAULT_ATLAS).
         or atlas name to be searched in ATLAS_DIR
-    extracted_region: {'left_cerebrum', 'right_cerebrum', 'cerebrum',
-                       'cerebellum', 'cerebellum_brainstem', 'subcortex',
-                       'tissues(anat)', 'tissues(func)', 'brain_mask'}
+    extracted_region: {'left_cerebrum', 'right_cerebrum', 'cerebrum', 'cerebellum', 'cerebellum_brainstem', 'subcortex', 'tissues(anat)', 'tissues(func)', 'brain_mask'}
         Region to be extracted from the MGDM segmentation.
     normalize_probabilities: bool
         Whether to normalize the output probabilities to sum to 1
