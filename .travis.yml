@@ -13,7 +13,7 @@ matrix:
     - pip install --user urllib3
     deploy:
       provider: pypi
-      server: https://test.pypi.org/legacy/
+      #server: https://test.pypi.org/legacy/
       user: "nighres"
       # using plain text password for testpypi, when switching to real pypi use encrypted (below)
       password:
