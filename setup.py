@@ -1,8 +1,8 @@
 from os import path
 from setuptools import setup, find_packages
-from setuptools.command.develop import develop
-from setuptools.command.install import install
-from subprocess import check_call
+# from setuptools.command.develop import develop
+# from setuptools.command.install import install
+# from subprocess import check_call
 
 here = path.abspath(path.dirname(__file__))
 build_script = path.join(here, "build.sh")
