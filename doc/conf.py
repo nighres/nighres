@@ -118,7 +118,7 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
             return MagicMock()
 
-MOCK_MODULES = ['libjvm.so', '_cbstools.so']
+MOCK_MODULES = ['_cbstools', 'cbstools']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
