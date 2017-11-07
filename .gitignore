@@ -23,6 +23,9 @@ nighres.egg-info/
 nighres.egg
 .installed.cfg
 
+.so
+.jar
+
 travis.log
 
 doc/_build
