@@ -136,5 +136,6 @@ cd ..
 # remove unused folders
 rm -rf cbstools-public
 
-# update python path to include cbstools libraries
+# update python path to include cbstools and nighres libraries
 export PYTHONPATH=$PYTHONPATH:./cbstools/
+export PYTHONPATH=$PYTHONPATH:./nighres/
