@@ -135,3 +135,6 @@ cd ..
 
 # remove unused folders
 rm -rf cbstools-public
+
+# update python path to include cbstools and nighres libraries? run pip install?
+pip install nighres
