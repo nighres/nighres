@@ -8,3 +8,4 @@ sklearn
 ipython
 nibabel
 nilearn
+numpy

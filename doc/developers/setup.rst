@@ -31,6 +31,9 @@ Setting up
 
 **4. Let the coding begin!**
 
-   If you want to work on an existing function, you can most likely just make your changes and then move on to :ref:`tests`, :ref:`adapt-docs` and :ref:`make-pr`.
+   If you want to work on an existing function, you can most likely just make your changes, check if the :ref:`Examples <examples>` still run and the move on to :ref:`adapt-docs` and :ref:`make-pr`.
 
    If you want to add new functions be sure to check out our intructions on :ref:`wrap-cbstools` or :ref:`python-function`
+
+.. important:: Please adhere to `PEP8 style conventions
+   <https://www.python.org/dev/peps/pep-0008/>`_. This is easiest by using a Python linter which is available in most editors.

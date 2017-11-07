@@ -4,9 +4,9 @@ Installing Nighres
 From PyPI
 ----------
 
-You can install the latest stable release of nighres from PyPI::
+You can download the latest stable release of Nighres from `PyPI <https://pypi.python.org/pypi/nighres>`_.
 
-    pip install nighres
+Because parts of the package have to be built locally it is currently not possible to use ``pip install`` directly from PyPI. Instead, please download and unpack the tarball to :ref:`build-nighres`.
 
 From Github
 ------------
@@ -18,79 +18,103 @@ You can also get the latest version from Github ::
 Or download and unpack the zip file from Github under **Clone and download** ->
 **Download ZIP**
 
-Once you have cloned or unpacked the nighres directory, you can use pip to set up the intallation ::
+.. _build-nighres:
 
-   cd nighres
-   pip install .
-
-Testing the installation
-------------------------
-
-You can often catch installation problems by simply import nighres in Python ::
-
-    python -c "import nighres"
-
-If that works, you can try running one of the examples. If you cloned the github repository, you can find them inside the subdirectory *examples*. Alternatively, you can also download the :ref:`examples <examples-index>` from the online documentation.
-
-|
-
-Troubleshooting
-----------------
-
-libjvm.so error
-~~~~~~~~~~~~~~~~
-
-You might get the following error when trying to import nighres::
-
-    ImportError: libjvm.so: cannot open shared object file: No such file or directory
-
-This is because the original CBS Tools Java code in the **cbstools** module has been compiled against a Java installation that is different from yours.
-
-You can fix this by finding your libjvm.so location::
-
-    find / -type f -name libjvm.so
-
-And then adding it to the library path. Depending on you Java installation it will be something similar to one of these::
-
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/jvm/java-8-openjdk-amd64/lib/amd64/server/
-
-If that doesn't do the trick, try running::
-
-    sudo R CMD javareconf
-
-Rebuilding
-~~~~~~~~~~~
-
-If you the above does not work for you, you might have to
-rebuild the package locally.
-
-1. Make sure you have `JCC <http://jcc.readthedocs.io/en/latest/>`_ installed::
+Build Nighres
+--------------
+1. Make sure you have `JCC <http://jcc.readthedocs.io/en/latest/>`_ installed. You need to both get the package via your package manager and install using pip to make it accessible to the Python interpreter, e.g::
 
     sudo apt-get install jcc
+    pip install jcc
 
-2. Navigate to the nighres directory and run the build script::
+2. Navigate to the Nighres directory you downloaded (and unpacked) and run the build script::
 
     ./build.sh
 
 The build might take a while because it pulls the original Java code from
-https://github.com/piloubazin/cbstools-public, downloads its dependencies
-*JIST* and *MIPAV*, compiles the Java classes and builds the wrappers using
+https://github.com/piloubazin/cbstools-public and builds the wrappers using
 JCC.
 
-|
+3. Install the Python package::
+
+    pip install .
+
+
+
+Testing the installation
+------------------------
+
+You can often catch installation problems by simply import Nighres in Python. Make sure to navigate out of the directory from which you installed to make sure Nighres has actually been installed correctly and can be accessed from any location ::
+
+    python -c "import nighres"
+
+If that works, you can try running one of the examples. You can find them inside the unpacked Nighres directory, in the subdirectory *examples*. Alternatively, you can also download the :ref:`examples <examples-index>` from the online documentation.
+
+.. |
+..
+.. Troubleshooting
+.. ----------------
+..
+.. libjvm.so error
+.. ~~~~~~~~~~~~~~~~
+..
+.. You might get the following error when trying to import nighres::
+..
+..     ImportError: libjvm.so: cannot open shared object file: No such file or directory
+..
+.. This is because the original CBS Tools Java code in the **cbstools** module has been compiled against a Java installation that is different from yours.
+..
+.. You can fix this by finding your libjvm.so location::
+..
+..     find / -type f -name libjvm.so
+..
+.. And then adding it to the library path. Depending on you Java installation it will be something similar to one of these::
+..
+..     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/
+..     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/jvm/java-8-openjdk-amd64/lib/amd64/server/
+..
+.. This can be run within the current terminal for a single session, or made permanent by adding the export statement to your terminal execution script (i.e., .bashrc on most linux systems).
+..
+.. If that doesn't do the trick, try running::
+..
+..     sudo R CMD javareconf
+..
+.. Rebuilding
+.. ~~~~~~~~~~~
+..
+.. If you the above does not work for you, you might have to
+.. rebuild the package locally.
+..
+.. 1. Make sure you have `JCC <http://jcc.readthedocs.io/en/latest/>`_ installed::
+..
+..     sudo apt-get install jcc
+..
+.. 2. Navigate to the nighres directory and run the build script::
+..
+..     ./build.sh
+..
+.. The build might take a while because it pulls the original Java code from
+.. https://github.com/piloubazin/cbstools-public, downloads its dependencies
+.. *JIST* and *MIPAV*, compiles the Java classes and builds the wrappers using
+.. JCC.
+..
+.. |
 
 Dependencies
 ------------
+To build Nighres you need:
 
-.. todo:: Check and include version dependencies
+* `JCC <http://jcc.readthedocs.io/en/latest/>`_
+* Java, a version that is 1.7 or higher
 
-Nighres depends on:
+To run Nighres depends on:
 
 * `Numpy <http://www.numpy.org/>`_
 * `Nibabel <http://nipy.org/nibabel/>`_
 
-These packages are automatically installed by pip when installing nighres.
+If not already available, these packages are automatically installed when you run pip install.
+
+.. todo:: Check and include version dependencies
 
 
 .. _add-deps:
@@ -101,10 +125,6 @@ Additional dependencies (optional)
 Plotting in the examples
 
 * `Nilearn <http://nilearn.github.io/>`_ and its dependencies, if Nilearn is not installed, plotting in the examples will be skipped and you can view the results in any other nifti viewer
-
-Building the Java extensions from source
-
-* `JCC <http://jcc.readthedocs.io/en/latest/>`_
 
 Building the documentation
 
