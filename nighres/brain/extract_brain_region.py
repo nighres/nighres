@@ -131,7 +131,7 @@ def extract_brain_region(segmentation, levelset_boundary,
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        cbstools.initVM(initialheap='8000m', maxheap='8000m')
     except ValueError:
         pass
     # create algorithm instance
@@ -154,6 +154,7 @@ def extract_brain_region(segmentation, levelset_boundary,
 
     xbr.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     xbr.setResolutions(resolution[0], resolution[1], resolution[2])
+    xbr.setComponents(load_volume(maximum_membership).get_header().get_data_shape()[3])
 
     xbr.setSegmentationImage(cbstools.JArray('int')(
         (data.flatten('F')).astype(int)))
@@ -163,6 +164,8 @@ def extract_brain_region(segmentation, levelset_boundary,
         (data.flatten('F')).astype(float)))
 
     data = load_volume(maximum_membership).get_data()
+    print("membership shape: "+str(data.shape))
+    print("membership maximum: "+str(data.max()))
     xbr.setMaximumMembershipImage(cbstools.JArray('float')(
         (data.flatten('F')).astype(float)))
 
@@ -188,9 +191,13 @@ def extract_brain_region(segmentation, levelset_boundary,
 
     proba_data = np.reshape(np.array(xbr.getInsideWMprobability(),
                                      dtype=np.float32), dimensions, 'F')
+    print("proba shape: "+str(proba_data.shape))
+    print("proba maximum: "+str(proba_data.max()))
 
     lvl_data = np.reshape(np.array(xbr.getInsideWMlevelset(),
                                    dtype=np.float32), dimensions, 'F')
+    print("level shape: "+str(lvl_data.shape))
+    print("level maximum: "+str(lvl_data.max()))
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
