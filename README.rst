@@ -15,16 +15,7 @@ It developed out of `CBS High-Res Brain Processing Tools
 <https://www.cbs.mpg.de/institute/software/cbs-tools>`_ and aims to make those
 tools easier to install, use and extend.
 
-You can get Nighres from PyPI::
-
-    pip install nighres
-
-If necessary, pip will also install Nighres' dependencies:
-
-* Numpy
-* Nibabel
-
-For a detailed documentation and installation instructions visit http://nighres.readthedocs.io/en/latest/
+Because parts of the package have to be built locally it is currently not possible to use ``pip install`` directly from PyPI. Instead, please follow the installation instructions provided at http://nighres.readthedocs.io/en/latest/
 
 Currently, Nighres is developed and tested on Linux Ubuntu Trusty and Python 2.7. We hope to support all common Unix platforms and Python 3 soon.
 
@@ -33,8 +24,8 @@ Docker
 ======
 
 To quickly try out nighres in a preset, batteries-included environment, you can use the
-included Dockerfile, which includes Ubuntu 14 Trusty, openJDK-8, nighres, and Jupyter 
-Notebook. The only thing you need to install is `Docker <https://www.docker.com/>`_, a 
+included Dockerfile, which includes Ubuntu 14 Trusty, openJDK-8, nighres, and Jupyter
+Notebook. The only thing you need to install is `Docker <https://www.docker.com/>`_, a
 lightweight container platform that runs on Linux, Windows and Mac OS X.
 
 To build the Docker image, do the following::
@@ -45,7 +36,7 @@ To build the Docker image, do the following::
 
 To run the Docker container::
 
-    docker run --rm nighres -p 8888:8888 
+    docker run --rm nighres -p 8888:8888
 
 Now go with your browser to https://localhost:8888 to start a notebook. You should be able
 to import nighres by entering::
