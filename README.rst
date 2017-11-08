@@ -15,7 +15,7 @@ It developed out of `CBS High-Res Brain Processing Tools
 <https://www.cbs.mpg.de/institute/software/cbs-tools>`_ and aims to make those
 tools easier to install, use and extend.
 
-Because parts of the package have to be built locally it is currently not possible to use ``pip install`` directly from PyPI. Instead, please follow the installation instructions provided at http://nighres.readthedocs.io/en/latest/
+Because parts of the package have to be built locally it is currently not possible to use ``pip install`` directly from PyPI. Instead, please follow the installation instructions provided at http://nighres.readthedocs.io/en/latest/installation.html
 
 Currently, Nighres is developed and tested on Linux Ubuntu Trusty and Python 2.7. We hope to support all common Unix platforms and Python 3 soon.
 
