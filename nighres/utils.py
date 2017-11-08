@@ -12,6 +12,8 @@ def _output_dir_4saving(output_dir=None, rootfile=None):
             # if rootfile is specified, use it's directory
             output_dir = os.path.dirname(rootfile)
 
+    if output_dir=='' : output_dir = './'
+
     # create directory recursively if it doesn't exist
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
