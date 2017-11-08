@@ -3,7 +3,7 @@ matrix:
   - language: java
     jdk: openjdk8
     env:
-    - PYTHONWARNINGS="ignore:Unverified HTTPS request"
+    - PYTHONWARNINGS="ignore:Unverified HTTPS request, ignore:InsecurePlatformWarning, ignore:SNIMissingWarning"
     before_install:
     - sudo apt-get update
     - sudo apt-get install -y jcc
