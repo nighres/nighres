@@ -36,7 +36,7 @@ To build the Docker image, do the following::
 
 To run the Docker container::
 
-    docker run --rm nighres -p 8888:8888
+    docker run --rm -p 8888:8888 nighres
 
 Now go with your browser to https://localhost:8888 to start a notebook. You should be able
 to import nighres by entering::
@@ -48,6 +48,6 @@ into the first cell of your notebook.
 Usually you also want to have access to some data when you run nighres. You can grant the Docker container
 access to a data folder on your host OS by using the `-v` tag when you start the container::
 
-    docker run --rm nighres -v /home/me/my_data:/data -p 8888:8888
+    docker run --rm -v /home/me/my_data:/data -p 8888:8888 nighres
 
 Now, in your notebook you will be able to access your data on the path `/data`
