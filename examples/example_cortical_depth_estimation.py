@@ -14,6 +14,9 @@ an MGDM segmentation result with the following steps:
    :func:`nighres.cortex.cruise_cortex_extraction` [1]_
 4. Anatomical depth estimation trough
    :func:`nighres.laminar.volumetric_layering` [2]_
+
+Important note: this example assumes you have run the tissue classification
+example first (example_tissue_classification.py)
 """
 
 ############################################################################

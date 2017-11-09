@@ -10,7 +10,7 @@ matrix:
     script: "travis/make_dist.sh"
     before_deploy:
     - pip install --user twine
-    - pip install --user urllib3
+    - pip install --user urllib3[secure]
     deploy:
       provider: pypi
       #server: https://test.pypi.org/legacy/
