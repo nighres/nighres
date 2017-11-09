@@ -25,14 +25,17 @@ Y=1
 Z=2
 T=3
 
-def embedded_syn(source_image, target_image, coarse_iterations=40, medium_iterations=50, fine_iterations=40,
-					run_affine_first=False, cost_function='MutualInformation', interpolation='NearestNeighbor',
+def embedded_syn(source_image, target_image, coarse_iterations=40, 
+                    medium_iterations=50, fine_iterations=40,
+					run_affine_first=False, cost_function='MutualInformation', 
+					interpolation='NearestNeighbor',
                     save_data=False, output_dir=None,
                     file_name=None):
     """ Embedded SyN
 
-    Runs the Symmetric Normalization (SyN) algorithm of ANTs and formats the output deformations
-    into voxel coordinate mappings as used in CBSTools registration and transformation routines.
+    Runs the Symmetric Normalization (SyN) algorithm of ANTs and formats the 
+    output deformations into voxel coordinate mappings as used in CBSTools 
+    registration and transformation routines.
 
     Parameters
     ----------
@@ -170,7 +173,8 @@ def embedded_syn(source_image, target_image, coarse_iterations=40, medium_iterat
     ants.inputs.moving_image = [source_image]
     ants.inputs.transformation_model = 'SyN'
     ants.inputs.gradient_step_length = 0.25
-    ants.inputs.number_of_iterations = [coarse_iterations, medium_iterations, fine_iterations]
+    ants.inputs.number_of_iterations = [coarse_iterations, medium_iterations, 
+                                            fine_iterations]
     #ants.inputs.use_histogram_matching = True
     ants.inputs.mi_option = [32, 16000]
     ants.inputs.regularization = 'Gauss'
@@ -185,7 +189,8 @@ def embedded_syn(source_image, target_image, coarse_iterations=40, medium_iterat
     at.inputs.input_image = source_image
     at.inputs.reference_image = target_image
     at.inputs.interpolation = interpolation
-    at.inputs.transforms = [result.outputs.warp_transform,result.outputs.affine_transform]
+    at.inputs.transforms = [result.outputs.warp_transform,
+                            result.outputs.affine_transform]
     at.inputs.invert_transform_flags = [False, False]
     deformed = at.run()
 
@@ -196,7 +201,8 @@ def embedded_syn(source_image, target_image, coarse_iterations=40, medium_iterat
     src_at.inputs.input_image = src_map_file
     src_at.inputs.reference_image = target_image
     src_at.inputs.interpolation = 'Linear'
-    src_at.inputs.transforms = [result.outputs.warp_transform,result.outputs.affine_transform]
+    src_at.inputs.transforms = [result.outputs.warp_transform,
+                                result.outputs.affine_transform]
     src_at.inputs.invert_transform_flags = [False, False]
     mapping = src_at.run()
 
@@ -206,16 +212,23 @@ def embedded_syn(source_image, target_image, coarse_iterations=40, medium_iterat
     trg_at.inputs.input_image = trg_map_file
     trg_at.inputs.reference_image = source_image
     trg_at.inputs.interpolation = 'Linear'
-    trg_at.inputs.transforms = [result.outputs.affine_transform,result.outputs.inverse_warp_transform]
+    trg_at.inputs.transforms = [result.outputs.affine_transform,
+                                result.outputs.inverse_warp_transform]
     trg_at.inputs.invert_transform_flags = [True, False]
     inverse = trg_at.run()
 
-    # collect outputs and potentially save
-    deformed_img = nb.Nifti1Image(nb.load(deformed.outputs.output_image).get_data(), target.affine, target.header)
-    mapping_img = nb.Nifti1Image(nb.load(mapping.outputs.output_image).get_data(), target.affine, target.header)
-    inverse_img = nb.Nifti1Image(nb.load(inverse.outputs.output_image).get_data(), source.affine, source.header)
+    # pad coordinate mapping outside the image? hopefully not needed...
 
-    outputs = {'deformed_source': deformed_img, 'mapping': mapping_img, 'inverse': inverse_img}
+    # collect outputs and potentially save
+    deformed_img = nb.Nifti1Image(nb.load(deformed.outputs.output_image).get_data(), 
+                                    target.affine, target.header)
+    mapping_img = nb.Nifti1Image(nb.load(mapping.outputs.output_image).get_data(), 
+                                    target.affine, target.header)
+    inverse_img = nb.Nifti1Image(nb.load(inverse.outputs.output_image).get_data(), 
+                                    source.affine, source.header)
+
+    outputs = {'deformed_source': deformed_img, 'mapping': mapping_img,
+                'inverse': inverse_img}
 
     # clean-up intermediate files
     os.remove(src_map_file)
