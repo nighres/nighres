@@ -58,26 +58,28 @@ def extract_brain_region(segmentation, levelset_boundary,
     ----------
     dict
         Dictionary collecting outputs under the following keys
-        (suffix of output files in brackets)
+        (suffix of output files in brackets, # stands for shorthand names of 
+        the different extracted regions, respectively:
+        rcr, lcr, cr, cb, cbs, sub, an, fn)
 
         * region_mask (niimg): Hard segmentation mask of the (GM) region
-          of interest (_xbr_mreg)
+          of interest (_xmask_#gm)
         * inside_mask (niimg): Hard segmentation mask of the (WM) inside of
-          the region of interest (_xbr_mins)
+          the region of interest (_xmask_#wm)
         * background_mask (niimg): Hard segmentation mask of the (CSF) region
-          background (_xbr_mbg)
+          background (_xmask_#bg)
         * region_proba (niimg): Probability map of the (GM) region
-          of interest (_xbr_preg)
+          of interest (_xproba_#gm)
         * inside_proba (niimg): Probability map of the (WM) inside of
-          the region of interest (_xbr_pins)
+          the region of interest (_xproba_#wm)
         * background_proba (niimg): Probability map of the (CSF) region
-          background (_xbr_pbg)
+          background (_xproba_#bg)
         * region_lvl (niimg): Levelset surface of the (GM) region
-          of interest (_xbr_lreg)
+          of interest (_xlvl_#gm)
         * inside_lvl (niimg): Levelset surface of the (WM) inside of
-          the region of interest (_xbr_lins)
+          the region of interest (_xlvl_#wm)
         * background_lvl (niimg): Levelset surface of the (CSF) region
-          background (_xbr_lbg)
+          background (_xlvl_#bg)
 
     Notes
     ----------
@@ -93,45 +95,9 @@ def extract_brain_region(segmentation, levelset_boundary,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, segmentation)
 
-        reg_mask_file = _fname_4saving(file_name=file_name,
-                                       rootfile=segmentation,
-                                       suffix='xbr_mreg', )
-
-        ins_mask_file = _fname_4saving(file_name=file_name,
-                                       rootfile=segmentation,
-                                       suffix='xbr_mins', )
-
-        bg_mask_file = _fname_4saving(file_name=file_name,
-                                      rootfile=segmentation,
-                                      suffix='xbr_mbg', )
-
-        reg_proba_file = _fname_4saving(file_name=file_name,
-                                        rootfile=segmentation,
-                                        suffix='xbr_preg', )
-
-        ins_proba_file = _fname_4saving(file_name=file_name,
-                                        rootfile=segmentation,
-                                        suffix='xbr_pins', )
-
-        bg_proba_file = _fname_4saving(file_name=file_name,
-                                       rootfile=segmentation,
-                                       suffix='xbr_pbg', )
-
-        reg_lvl_file = _fname_4saving(file_name=file_name,
-                                      rootfile=segmentation,
-                                      suffix='xbr_lreg', )
-
-        ins_lvl_file = _fname_4saving(file_name=file_name,
-                                      rootfile=segmentation,
-                                      suffix='xbr_lins', )
-
-        bg_lvl_file = _fname_4saving(file_name=file_name,
-                                     rootfile=segmentation,
-                                     suffix='xbr_lbg', )
-
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        cbstools.initVM(initialheap='8000m', maxheap='8000m')
     except ValueError:
         pass
     # create algorithm instance
@@ -154,6 +120,7 @@ def extract_brain_region(segmentation, levelset_boundary,
 
     xbr.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     xbr.setResolutions(resolution[0], resolution[1], resolution[2])
+    xbr.setComponents(load_volume(maximum_membership).get_header().get_data_shape()[3])
 
     xbr.setSegmentationImage(cbstools.JArray('int')(
         (data.flatten('F')).astype(int)))
@@ -180,6 +147,45 @@ def extract_brain_region(segmentation, levelset_boundary,
         print sys.exc_info()[0]
         raise
         return
+
+	# build names for saving after the computations to get the proper names
+    if save_data:
+        reg_mask_file = _fname_4saving(file_name=file_name,
+                                       rootfile=segmentation,
+                                       suffix='xmask'+xbr.getStructureName(), )
+
+        ins_mask_file = _fname_4saving(file_name=file_name,
+                                       rootfile=segmentation,
+                                       suffix='xmask'+xbr.getInsideName(), )
+
+        bg_mask_file = _fname_4saving(file_name=file_name,
+                                      rootfile=segmentation,
+                                      suffix='xmask'+xbr.getBackgroundName(), )
+
+        reg_proba_file = _fname_4saving(file_name=file_name,
+                                        rootfile=segmentation,
+                                        suffix='xproba'+xbr.getStructureName(), )
+
+        ins_proba_file = _fname_4saving(file_name=file_name,
+                                        rootfile=segmentation,
+                                        suffix='xproba'+xbr.getInsideName(), )
+
+        bg_proba_file = _fname_4saving(file_name=file_name,
+                                       rootfile=segmentation,
+                                       suffix='xproba'+xbr.getBackgroundName(), )
+
+        reg_lvl_file = _fname_4saving(file_name=file_name,
+                                      rootfile=segmentation,
+                                      suffix='xlvl'+xbr.getStructureName(), )
+
+        ins_lvl_file = _fname_4saving(file_name=file_name,
+                                      rootfile=segmentation,
+                                      suffix='xlvl'+xbr.getInsideName(), )
+
+        bg_lvl_file = _fname_4saving(file_name=file_name,
+                                     rootfile=segmentation,
+                                     suffix='xlvl'+xbr.getBackgroundName(), )
+
 
     # inside region
     # reshape output to what nibabel likes
