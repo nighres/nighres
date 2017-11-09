@@ -14,7 +14,7 @@ RUN useradd -g root --create-home --shell /bin/bash neuro \
 RUN pip install --upgrade wheel JCC twine urllib3 pip
 RUN cd /home/neuro && git clone https://github.com/nighres/nighres && cd nighres && ./build.sh && pip install .
 
-RUN pip install jupyter
+RUN pip install jupyter nilearn nipype sklearn nose matplotlib
 COPY jupyter_notebook_config.py /etc/jupyter/
 
 RUN mkdir /home/neuro/notebooks
