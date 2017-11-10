@@ -12,10 +12,14 @@ RUN useradd -g root --create-home --shell /bin/bash neuro \
     && usermod -aG users neuro
 
 RUN pip install --upgrade wheel JCC twine urllib3 pip
-RUN cd /home/neuro && git clone https://github.com/nighres/nighres && cd nighres && ./build.sh && pip install .
+
+COPY . /home/neuro/nighres
+RUN ls /home/neuro/nighres
+
+RUN cd /home/neuro/nighres && ./build.sh && pip install .
 
 RUN pip install jupyter nilearn nipype sklearn nose matplotlib
-COPY jupyter_notebook_config.py /etc/jupyter/
+COPY docker/jupyter_notebook_config.py /etc/jupyter/
 
 RUN mkdir /home/neuro/notebooks
 RUN chown -R neuro /home/neuro
