@@ -31,7 +31,7 @@ lightweight container platform that runs on Linux, Windows and Mac OS X.
 To build the Docker image, do the following::
 
     git clone https://github.com/nighres/nighres
-    cd nighres/docker
+    cd nighres
     docker build . -t nighres
 
 To run the Docker container::
