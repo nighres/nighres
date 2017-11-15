@@ -125,7 +125,7 @@ To quickly try out nighres in a preset, batteries-included environment, you can 
 To build the Docker image, do the following::
 
     git clone https://github.com/nighres/nighres
-    cd nighres/docker
+    cd nighres
     docker build . -t nighres
 
 To run the Docker container::
