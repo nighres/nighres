@@ -7,5 +7,4 @@ import surface
 import filtering
 from global_settings import ATLAS_DIR, TOPOLOGY_LUT_DIR, DEFAULT_ATLAS
 
-__all__ = ['io', 'brain', 'laminar', 'surface',
-           'data', 'filtering', '__version__']
+__all__ = ['io', 'brain', 'laminar', 'surface', 'data', '__version__']

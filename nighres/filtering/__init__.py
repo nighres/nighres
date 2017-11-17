@@ -1,1 +1,1 @@
-from bandpass_filtering import bandpass_filtering
+from filters import filter_ridge_structures
