@@ -29,9 +29,9 @@ def filter_ridge_structures(input_image,
     output_type: str
         Whether the image should be normalized to reflect probabilities ('probability'
         or 'intensity'
-    use_strict_min_max_filter: str
-        ????????
-    save_data: bool
+    use_strict_min_max_filter: bool, optional (defaulti s True)
+        Choose between the more specific recursive ridge filter or a more sensitive bidirectional filter
+    save_data: bool, optional
         Save output data to file (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
