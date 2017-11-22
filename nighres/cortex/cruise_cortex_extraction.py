@@ -59,7 +59,6 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
     wm_dropoff_dist: float
         Distance parameter to lower WM probabilities away from current
         segmentation (default is 1.0 voxel)
->>>>>>> 7bd7a8b3902e1b4a00dde4dbf982f1a8e3d88dfc
     topology: {'wcs', 'no'}
         Topology setting, choose 'wcs' (well-composed surfaces) for strongest
         topology constraint, 'no' for no topology constraint (default is 'wcs')
@@ -107,8 +106,8 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
     References
     ----------
     .. [1] X. Han, D.L. Pham, D. Tosun, M.E. Rettmann, C. Xu, and J. L. Prince,
-		CRUISE: Cortical Reconstruction Using Implicit Surface Evolution,
-		NeuroImage, vol. 23, pp. 997--1012, 2004
+       CRUISE: Cortical Reconstruction Using Implicit Surface Evolution,
+       NeuroImage, vol. 23, pp. 997--1012, 2004
     """
 
     print('\nCRUISE Cortical Extraction')
@@ -121,8 +120,8 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
         output_dir = _output_dir_4saving(output_dir, gm_image)
 
         cortex_file = _fname_4saving(file_name=file_name,
-                                  rootfile=gm_image,
-                                  suffix='cruise_cortex', )
+                                     rootfile=gm_image,
+                                     suffix='cruise_cortex', )
 
         gwb_file = _fname_4saving(file_name=file_name,
                                   rootfile=gm_image,
@@ -137,9 +136,9 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
                                   suffix='cruise_avg', )
 
         thick_file = _fname_4saving(file_name=file_name,
-                                  rootfile=gm_image,
-                                  suffix='cruise_thick', )
-        
+                                    rootfile=gm_image,
+                                    suffix='cruise_thick', )
+
         pwm_file = _fname_4saving(file_name=file_name,
                                   rootfile=gm_image,
                                   suffix='cruise_pwm', )
@@ -149,18 +148,18 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
                                   suffix='cruise_pgm', )
 
         pcsf_file = _fname_4saving(file_name=file_name,
-                                  rootfile=gm_image,
-                                  suffix='cruise_pcsf', )
+                                   rootfile=gm_image,
+                                   suffix='cruise_pcsf', )
 
     # start virtual machine, if not already running
     try:
         cbstools.initVM(initialheap='6000m', maxheap='6000m')
     except ValueError:
         pass
-    # create mgdm instance
+    # create instance
     cruise = cbstools.CortexOptimCRUISE()
 
-    # set mgdm parameters
+    # set parameters
     cruise.setDataWeight(data_weight)
     cruise.setRegularizationWeight(regularization_weight)
     cruise.setMaxIterations(max_iterations)
@@ -169,7 +168,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
     cruise.setWMdropoffDistance(wm_dropoff_dist)
     cruise.setTopology(topology)
     cruise.setTopologyLUTdirectory(topology_lut_dir)
- 
+
     # load images
     init = load_volume(init_image)
     init_data = init.get_data()
@@ -180,26 +179,26 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
     cruise.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     cruise.setResolutions(resolution[0], resolution[1], resolution[2])
     cruise.importInitialWMSegmentationImage(cbstools.JArray('int')(
-                                            (init_data.flatten('F')).astype(int)))
-    
+                                        (init_data.flatten('F')).astype(int)))
+
     wm_data = load_volume(wm_image).get_data()
     cruise.setFilledWMProbabilityImage(cbstools.JArray('float')(
-                                            (wm_data.flatten('F')).astype(float)))
- 
+                                        (wm_data.flatten('F')).astype(float)))
+
     gm_data = load_volume(gm_image).get_data()
     cruise.setGMProbabilityImage(cbstools.JArray('float')(
-                                            (gm_data.flatten('F')).astype(float)))
-    
+                                        (gm_data.flatten('F')).astype(float)))
+
     csf_data = load_volume(csf_image).get_data()
     cruise.setCSFandBGProbabilityImage(cbstools.JArray('float')(
-                                            (csf_data.flatten('F')).astype(float)))
-    
+                                        (csf_data.flatten('F')).astype(float)))
+
     if vd_image is not None:
         vd_data = load_volume(vd_image).get_data()
         cruise.setVeinsAndDuraProbabilityImage(cbstools.JArray('float')(
-                                            (vd_data.flatten('F')).astype(float)))
+                                        (vd_data.flatten('F')).astype(float)))
 
-    # execute MGDM
+    # execute
     try:
         cruise.execute()
 
@@ -209,59 +208,59 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
         print sys.exc_info()[0]
         raise
         return
-    
+
     # reshape output to what nibabel likes
     cortex_data = np.reshape(np.array(cruise.getCortexMask(),
-                                   dtype=np.int32), dimensions, 'F')
+                                      dtype=np.int32), dimensions, 'F')
     gwb_data = np.reshape(np.array(cruise.getWMGMLevelset(),
-                                    dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), dimensions, 'F')
     cgb_data = np.reshape(np.array(cruise.getGMCSFLevelset(),
-                                    dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), dimensions, 'F')
     avg_data = np.reshape(np.array(cruise.getCentralLevelset(),
-                                    dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), dimensions, 'F')
     thick_data = np.reshape(np.array(cruise.getCorticalThickness(),
-                                    dtype=np.float32), dimensions, 'F')
+                                     dtype=np.float32), dimensions, 'F')
     pwm_data = np.reshape(np.array(cruise.getCerebralWMprobability(),
-                                    dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), dimensions, 'F')
     pgm_data = np.reshape(np.array(cruise.getCorticalGMprobability(),
-                                    dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), dimensions, 'F')
     pcsf_data = np.reshape(np.array(cruise.getSulcalCSFprobability(),
                                     dtype=np.float32), dimensions, 'F')
-    
+
     # adapt header min, max for each image so that correct max is displayed
     # and create nifiti objects
     header['cal_min'] = np.nanmax(cortex_data)
     header['cal_max'] = np.nanmax(cortex_data)
     cortex = nb.Nifti1Image(cortex_data, affine, header)
-    
+
     header['cal_min'] = np.nanmax(gwb_data)
     header['cal_max'] = np.nanmax(gwb_data)
     gwb = nb.Nifti1Image(gwb_data, affine, header)
-    
-    header['cal_min'] = np.nanmax(cgb_data) 
+
+    header['cal_min'] = np.nanmax(cgb_data)
     header['cal_max'] = np.nanmax(cgb_data)
     cgb = nb.Nifti1Image(cgb_data, affine, header)
-    
+
     header['cal_min'] = np.nanmax(avg_data)
     header['cal_max'] = np.nanmax(avg_data)
     avg = nb.Nifti1Image(avg_data, affine, header)
-    
+
     header['cal_min'] = np.nanmax(thick_data)
     header['cal_max'] = np.nanmax(thick_data)
     thickness = nb.Nifti1Image(thick_data, affine, header)
-    
+
     header['cal_min'] = np.nanmax(pwm_data)
     header['cal_max'] = np.nanmax(pwm_data)
     pwm = nb.Nifti1Image(pwm_data, affine, header)
-    
+
     header['cal_min'] = np.nanmax(pgm_data)
     header['cal_max'] = np.nanmax(pgm_data)
     pgm = nb.Nifti1Image(pgm_data, affine, header)
-    
+
     header['cal_min'] = np.nanmax(pcsf_data)
     header['cal_max'] = np.nanmax(pcsf_data)
     pcsf = nb.Nifti1Image(pcsf_data, affine, header)
-    
+
     if save_data:
         save_volume(os.path.join(output_dir, cortex_file), cortex)
         save_volume(os.path.join(output_dir, gwb_file), gwb)
@@ -271,7 +270,6 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
         save_volume(os.path.join(output_dir, pwm_file), pwm)
         save_volume(os.path.join(output_dir, pgm_file), pgm)
         save_volume(os.path.join(output_dir, pcsf_file), pcsf)
-    
+
     return {'cortex': cortex, 'gwb': gwb, 'cgb': cgb, 'avg': avg,
             'thickness': thickness, 'pwm': pwm, 'pgm': pgm, 'pcsf': pcsf}
-    
