@@ -35,6 +35,7 @@ tools easier to install, use and extend.
    :caption: Modules and Functions
 
    brain/index
+   cortex/index
    surface/index
    laminar/index
    data/index
@@ -56,7 +57,7 @@ tools easier to install, use and extend.
    developers/setup
    developers/wrapping_cbstools
    developers/python_function
-   developers/tests
+   developers/examples
    developers/docs
    developers/pr
 

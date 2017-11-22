@@ -9,6 +9,8 @@ If you changed an existing function
 -----------------------------------
 Make sure to check if your changes also require changes in the docstring. Adapting an existing docstring is usually straightforward. If you are curious how your changes will look in the online docs, you can try out :ref:`build-docs`.
 
+.. _newfunc-docs:
+
 If you added a new function
 -----------------------------
 Make sure to write a comprehensive docstring. We use `NumPy/SciPy docstring <https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt#docstring-standard>`_ conventions. But the easiest is to just copy another function's docstring and adapt. Then you need to add a few things to the ``nighres/doc`` directory:
@@ -21,6 +23,16 @@ Make sure to write a comprehensive docstring. We use `NumPy/SciPy docstring <htt
 6. Submit the changes to the docs along with your PR
 
 Again, you can check how the changes you made will look in the online documentation by :ref:`build-docs`.
+
+If you added a new submodule
+-----------------------------
+This is going to be a rare case. But if indeed added a new submodule in your PR, say its called *nighres.fancypants*:
+
+1. In the doc directory, add a new subdirectory for your new module, e.g. ``nighres/doc/fancypants``
+2. In that subdirectory make a file called *index.rst*. Best to just copy the index.rst from another submodule. Then adapt the title in the file to the name of your new submodule, and remove all function names in the toctree.
+3. Follow steps 3 to 5 from :ref:`newfunc-docs` to add all functions of your new submodule
+4. Add your submodule in the *index.rst* file in the ``nighres/doc`` main directory under the "Modules and Functions" toctree. In our case we would add the line *fancypants/index*
+5. Submit the changes to the docs along with your PR
 
 More than docstrings
 --------------------

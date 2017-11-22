@@ -11,7 +11,9 @@ unset CDPATH; cd "$( dirname "${BASH_SOURCE[0]}" )"; cd "$(pwd -P)"
 fatal() { echo -e "$1"; exit 1; }
 function join_by { local IFS="$1"; shift; echo "$*"; }
 
-cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
+# define here the local folders for your installation of CBSTools and Nighres
+cbstools_local="/home/pilou/Code/github/cbstools-public"
+nighres_local="/home/pilou/Code/github/nighres"
 
 # Check the system has the necessary commands
 hash wget tar javac jar python pip 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python pip"
@@ -35,11 +37,6 @@ echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.
 # Inspired by https://stackoverflow.com/a/4850603
 python_include_path=$(python -c "from distutils import sysconfig as s; print s.get_config_vars()['INCLUDEPY']")
 test -f "${python_include_path}/Python.h" || fatal 'This script requires python development headers.\nInstall with `apt-get install python-dev`, or \n             `apt-get install python3-dev`, or equivalent'
-
-# Get cbstools git clone
-test -d cbstools-public || (
-	git clone $cbstools_repo
-)
 
 #
 ## COMPILE
@@ -71,12 +68,10 @@ javac_opts=(
 )
 
 echo "Compiling..."
-cd cbstools-public
+#cd cbstools-public
+cd $cbstools_local
 mkdir -p build
 javac -cp ${deps_list} ${javac_opts[@]} de/mpg/cbs/core/*/*.java $cbstools_list
-
-# Some other examples I found elsewhere, that we're not currently using
-# $CODE/de/mpg/cbs/*/*.java $CODE/de/mpg/cbs/core/*/*.java $CODE/de/mpg/cbs/jist/*/*.java $CODE/edu/jhu/ece/iacl/jist/*/*.java
 
 echo "Assembling..."
 jar cf cbstools.jar     de/mpg/cbs/core/*/*.class
@@ -115,23 +110,7 @@ python -m jcc ${jcc_args[@]}
 
 echo "Copying necessary files for nires pypi package..."
 
-cp -rv build/cbstools/ ../
+cp -rv build/cbstools/ $nighres_local/
 # Find and copy the shared object file for the current architecture
-find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' ../cbstools/_cbstools.so
-cd ..
-
-# Make the python wheel
-# PLT=$(uname | tr '[:upper:]' '[:lower:]')
-# for now use manylinux
-# PLT="manylinux1"
-# CPU=$(lscpu | grep -oP 'Architecture:\s*\K.+')
-# PY="$(python -V 2>&1)"
-# if [[ $PY == *2\.*\.* ]]; then
-#     python setup.py bdist_wheel --dist-dir dist --plat-name ${PLT}_${CPU} --python-tag py2
-# elif [[ $PY == *3\.*\.* ]]; then
-# 	python setup.py bdist_wheel --dist-dir dist --plat-name ${PLT}_${CPU} --python-tag py3
-# fi
-
-
-# remove unused folders
-rm -rf cbstools-public
+find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' $nighres_local/cbstools/_cbstools.so
+cd $nighres_local

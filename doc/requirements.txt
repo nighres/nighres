@@ -6,5 +6,4 @@ sphinx-rtd-theme
 scipy
 sklearn
 ipython
-nibabel
-nilearn
+mock
