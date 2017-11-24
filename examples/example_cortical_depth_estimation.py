@@ -113,7 +113,7 @@ cruise = nighres.cortex.cruise_cortex_extraction(
 # Now we look at the topology-constrained segmentation CRUISE created
 if not skip_plots:
     plotting.plot_img(cruise['cortex'],
-                      vmin=1, vmax=50, cmap='cubehelix',  colorbar=True,
+                      vmin=0, vmax=2, cmap='cubehelix',  colorbar=True,
                       annotate=False,  draw_cross=False)
 
 ###########################################################################
