@@ -7,11 +7,14 @@ import numpy as np
 import nibabel as nb
 
 # for external tools: nipype
-from nipype.interfaces.ants import ANTS
-# using the global interface rather than specific ones
-#from nipype.interfaces.ants import WarpImageMultiTransform
-#from nipype.interfaces.ants import WarpTimeSeriesImageMultiTransform
-from nipype.interfaces.ants import ApplyTransforms
+
+try:
+    from nipype.interfaces.ants import ANTS
+    from nipype.interfaces.ants import ApplyTransforms
+except ImportError:
+    print('Error: Nipype and/or ANTS could not be imported, they are required' 
+            +'in order to run this module. \n (aborting)')
+    sys.exit()
 
 # cbstools and nighres functions
 import cbstools
