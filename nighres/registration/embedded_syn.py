@@ -94,9 +94,8 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
         return None
 
     # make sure that saving related parameters are correct
+    output_dir = _output_dir_4saving(output_dir, source_image) # needed for intermediate results
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, source_image)
-
         deformed_source_file = _fname_4saving(file_name=file_name,
                                    rootfile=source_image,
                                    suffix='syn_def')
@@ -109,7 +108,7 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
                                    rootfile=source_image,
                                    suffix='syn_invmap')
 
-     # load and get dimensions and resolution from input images
+    # load and get dimensions and resolution from input images
     source = load_volume(source_image)
     src_affine = source.affine
     src_header = source.header
