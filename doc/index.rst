@@ -21,7 +21,7 @@ It developed out of `CBS High-Res Brain Processing Tools
 <https://www.cbs.mpg.de/institute/software/cbs-tools>`_ and aims to make those
 tools easier to install, use and extend.
 
-.. danger:: Nighres is currently still in beta stage
+.. warning:: Nighres is currently still in beta stage
 
 .. toctree::
    :maxdepth: 1
@@ -63,9 +63,13 @@ tools easier to install, use and extend.
 
 |
 
-.. admonition:: Reference
+.. admonition:: Credit
 
-   Until a dedicated Nighres paper is out, please cite the following references:
+   Nighres is a community-developed project made possible by these `contributors <https://github.com/nighres/nighres/graphs/contributors>`_. The project was born and continues to evolve at `brainhack <http://www.brainhack.org/>`_.
+
+   We thank the `Google Summer of Code 2017 <https://summerofcode.withgoogle.com/archive/>`_ and `INCF <https://www.incf.org/>`_ as a mentoring organization, for supporting the initial development phase of Nighres. See also the `development blog <https://juhuntenburg.github.io/gsoc2017/>`_.
+
+   When using Nighres in your research, please make sure to cite the references mentioned in the documentation of the particular functions you use. We are also preparing a dedicated Nighres paper. For now, we suggest you cite:
 
    * Bazin et al. (2014) A computational framework for ultra-high resolution
      cortical segmentation at 7Tesla. `DOI: 10.1016/j.neuroimage.2013.03.077
