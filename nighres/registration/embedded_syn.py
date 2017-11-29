@@ -6,16 +6,6 @@ import sys
 import numpy as np
 import nibabel as nb
 
-# for external tools: nipype
-
-try:
-    from nipype.interfaces.ants import ANTS
-    from nipype.interfaces.ants import ApplyTransforms
-except ImportError:
-    print('Error: Nipype and/or ANTS could not be imported, they are required' 
-            +'in order to run this module. \n (aborting)')
-    sys.exit()
-
 # cbstools and nighres functions
 import cbstools
 from ..io import load_volume, save_volume
@@ -93,6 +83,15 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
     """
 
     print('\nEmbedded SyN')
+
+    # for external tools: nipype
+    try:
+        from nipype.interfaces.ants import ANTS
+        from nipype.interfaces.ants import ApplyTransforms
+    except ImportError:
+        print('Error: Nipype and/or ANTS could not be imported, they are required' 
+                +'in order to run this module. \n (aborting)')
+        return None
 
     # make sure that saving related parameters are correct
     if save_data:
