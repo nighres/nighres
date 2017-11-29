@@ -89,7 +89,11 @@ if not skip_plots:
                       vmin=0, vmax=1, cmap='autumn',  colorbar=True,
                       annotate=False,  draw_cross=False)
 ############################################################################
-# .. image:: ../_static/cortical_depth_estimation1.png
+# .. image:: ../_static/cortical_extraction1.png
+############################################################################
+
+############################################################################
+# .. image:: ../_static/cortical_extraction2.png
 #############################################################################
 
 #############################################################################
@@ -113,11 +117,11 @@ cruise = nighres.cortex.cruise_cortex_extraction(
 # Now we look at the topology-constrained segmentation CRUISE created
 if not skip_plots:
     plotting.plot_img(cruise['cortex'],
-                      vmin=1, vmax=50, cmap='cubehelix',  colorbar=True,
+                      vmin=0, vmax=2, cmap='cubehelix',  colorbar=True,
                       annotate=False,  draw_cross=False)
 
 ###########################################################################
-# .. image:: ../_static/cortical_depth_estimation2.png
+# .. image:: ../_static/cortical_extraction3.png
 ###########################################################################
 
 ###########################################################################
@@ -141,7 +145,7 @@ if not skip_plots:
                       annotate=False,  draw_cross=False)
 
 ############################################################################
-# .. image:: ../_static/cortical_depth_estimation3.png
+# .. image:: ../_static/cortical_extraction4.png
 #############################################################################
 
 #############################################################################
