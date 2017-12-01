@@ -9,9 +9,12 @@ def _output_dir_4saving(output_dir=None, rootfile=None):
             # if nothing is specified, use current working dir
             output_dir = os.getcwd()
         else:
-            # if rootfile is specified, use it's directory
+            # if rootfile is specified, use its directory
             output_dir = os.path.dirname(rootfile)
-
+            # if rootfile is in current directory, dirname returns ''
+            if (output_dir is None or output_dir==''):
+               output_dir = os.getcwd()
+                
     # create directory recursively if it doesn't exist
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
