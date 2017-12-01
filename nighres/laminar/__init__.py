@@ -1,3 +1,2 @@
 from volumetric_layering import volumetric_layering
 from profile_sampling import profile_sampling
-from laminar_iterative_smoothing import laminar_iterative_smoothing
