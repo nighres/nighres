@@ -11,7 +11,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
                            skip_zero_values=True, topology_lut_dir=None,
                            save_data=False, output_dir=None,
-                           file_name=None):
+                           file_name=None, java_maxheap='6000m'):
     """ MP2RAGE skull stripping
 
     Estimates a brain mask from MRI data acquired with the MP2RAGE sequence.
@@ -40,6 +40,9 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
     file_name: str, optional
         Desired base name for output files with file extension
         (suffixes will be added)
+    java_maxheap: str, optional
+	Max java heap size, should be large enough to process the image but 
+	<0.5 of available memory
 
     Returns
     ----------
@@ -91,7 +94,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        cbstools.initVM(initialheap='6000m', maxheap=java_maxheap)
     except ValueError:
         pass
 

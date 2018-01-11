@@ -15,7 +15,7 @@ def extract_brain_region(segmentation, levelset_boundary,
                          estimate_tissue_densities=False,
                          partial_volume_distance=1.0,
                          save_data=False, output_dir=None,
-                         file_name=None):
+                         file_name=None, java_maxheap='8000m'):
     """ Extract Brain Region
 
     Extracts masks, probability maps and levelset surfaces for specific brain
@@ -53,6 +53,9 @@ def extract_brain_region(segmentation, levelset_boundary,
     file_name: str, optional
         Desired base name for output files with file extension
         (suffixes will be added)
+    java_maxheap: str, optional
+	Max java heap size, should be large enough to process the image but 
+	<0.5 of available memory
 
     Returns
     ----------
@@ -97,7 +100,7 @@ def extract_brain_region(segmentation, levelset_boundary,
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='8000m', maxheap='8000m')
+        cbstools.initVM(initialheap='8000m', maxheap=java_maxheap)
     except ValueError:
         pass
     # create algorithm instance

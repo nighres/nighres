@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving
 
 def probability_to_levelset(probability_image,
                             save_data=False, output_dir=None,
-                            file_name=None):
+                            file_name=None, java_maxheap='6000m'):
 
     """Levelset from tissue classification
 
@@ -29,6 +29,9 @@ def probability_to_levelset(probability_image,
     file_name: str, optional
         Desired base name for output files with file extension
         (suffixes will be added)
+    java_maxheap: str, optional
+	Max java heap size, should be large enough to process the image but 
+	<0.5 of available memory
 
     Returns
     ----------
@@ -52,7 +55,7 @@ def probability_to_levelset(probability_image,
 
     # start virtual machine if not running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        cbstools.initVM(initialheap='6000m', maxheap=java_maxheap)
     except ValueError:
         pass
 
