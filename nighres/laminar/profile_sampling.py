@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving
 
 def profile_sampling(profile_surface_image, intensity_image,
                      save_data=False, output_dir=None,
-                     file_name=None):
+                     file_name=None,java_maxheap='12000m'):
 
     '''Sampling data on multiple intracortical layers
 
@@ -26,6 +26,9 @@ def profile_sampling(profile_surface_image, intensity_image,
     file_name: str, optional
         Desired base name for output files with file extension
         (suffixes will be added)
+    java_maxheap: str, optional
+	Max java heap size, should be large enough to process the image but 
+	<0.5 of available memory
 
     Returns
     -----------
@@ -50,7 +53,7 @@ def profile_sampling(profile_surface_image, intensity_image,
 
     # start VM if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        cbstools.initVM(initialheap='6000m', maxheap=java_maxheap)
     except ValueError:
         pass
 

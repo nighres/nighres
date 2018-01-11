@@ -65,7 +65,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                       compute_posterior=False,
                       diffuse_probabilities=False,
                       save_data=False, output_dir=None,
-                      file_name=None):
+                      file_name=None, java_maxheap='6000m'):
     """ MGDM segmentation
 
     Estimates brain structures from an atlas for MRI data using
@@ -127,6 +127,9 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     file_name: str, optional
         Desired base name for output files with file extension
         (suffixes will be added)
+    java_maxheap: str, optional
+	Max java heap size, should be large enough to process the image but 
+	<0.5 of available memory
 
     Returns
     ----------
@@ -207,7 +210,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        cbstools.initVM(initialheap='6000m', maxheap=java_maxheap)
     except ValueError:
         pass
     # create mgdm instance
