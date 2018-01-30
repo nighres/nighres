@@ -26,20 +26,20 @@ def mgdm_cells(contrast_image1, contrast_type1,
     contrast_image1: niimg
         First input image to perform segmentation on
     contrast_type1: str
-        Contrast type of first input image, must be listed as a prior in used
-        atlas(specified in atlas_file)
+        Contrast type of first input image, must be in {"centroid-proba", 
+        "foreground-proba","image-intensities"}
     contrast_image2: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type2
     contrast_type2: str, optional
-        Contrast type of second input image, must be listed as a prior in used
-        atlas (specified in atlas_file)
+        Contrast type of second input image, must be in {"centroid-proba", 
+        "foreground-proba","image-intensities"}
     contrast_image3: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type3
     contrast_type3: str, optional
-        Contrast type of third input image, must be listed as a prior in used
-        atlas (specified in atlas_file)
+        Contrast type of third input image, must be in {"centroid-proba", 
+        "foreground-proba","image-intensities"}
     max_iterations: int, optional
         Maximum number of iterations per step for MGDM (default is 800, set
         to 1 for quick testing of registration of priors, which does not
