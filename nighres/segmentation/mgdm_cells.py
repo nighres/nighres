@@ -11,8 +11,9 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def mgdm_cells(contrast_image1, contrast_type1,
                       contrast_image2=None, contrast_type2=None,
                       contrast_image3=None, contrast_type3=None,
-                      force_weight=0.5, curvature_weight=0.2,
-                      max_iterations=800, min_change=0.0001,
+                      force_weight=0.6, curvature_weight=0.3,
+                      cell_threshold=0.1,
+                      max_iterations=200, min_change=0.0001,
                       topology='wcs', topology_lut_dir=None,
                       save_data=False, output_dir=None,
                       file_name=None):
@@ -53,6 +54,9 @@ def mgdm_cells(contrast_image1, contrast_type1,
     curvature_weight: float, optional
         Curvature regularization forces
         (default is 0.1)
+    cell_threshold: float, optional
+        Ratio of lower intensities from the local maximum to be included in
+        a given cell (default is 0.1)
     topology: {'wcs', 'no'}, optional
         Topology setting, choose 'wcs' (well-composed surfaces) for strongest
         topology constraint, 'no' for no topology constraint (default is 'wcs')
@@ -131,6 +135,7 @@ def mgdm_cells(contrast_image1, contrast_type1,
     mgdm.setMinChange(min_change)
     mgdm.setDataWeight(force_weight)
     mgdm.setCurvatureWeight(curvature_weight)
+    mgdm.setCellThreshold(cell_threshold)
     
     mgdm.setTopology(topology)
 
