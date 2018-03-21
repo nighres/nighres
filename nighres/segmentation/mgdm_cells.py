@@ -11,6 +11,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def mgdm_cells(contrast_image1, contrast_type1,
                       contrast_image2=None, contrast_type2=None,
                       contrast_image3=None, contrast_type3=None,
+                      stack_dimension='2D',
                       force_weight=0.6, curvature_weight=0.3,
                       cell_threshold=0.1,
                       max_iterations=200, min_change=0.0001,
@@ -41,6 +42,9 @@ def mgdm_cells(contrast_image1, contrast_type1,
     contrast_type3: str, optional
         Contrast type of third input image, must be in {"centroid-proba", 
         "local-maxima","foreground-proba","image-intensities"}
+    stack_dimension: {'2D','3D'}, optional
+        Dimension of the data for processing, either a stack of independent
+        2D slices or a fully 3D stack
     max_iterations: int, optional
         Maximum number of iterations per step for MGDM (default is 800, set
         to 1 for quick testing of registration of priors, which does not
@@ -130,6 +134,7 @@ def mgdm_cells(contrast_image1, contrast_type1,
     mgdm = cbstools.SegmentationCellMgdm()
 
     # set mgdm parameters
+    mgdm.setDataStackDimension(stack_dimension)
     mgdm.setTopologyLUTdirectory(topology_lut_dir)
     mgdm.setMaxIterations(max_iterations)
     mgdm.setMinChange(min_change)
