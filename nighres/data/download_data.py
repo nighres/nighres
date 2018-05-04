@@ -3,7 +3,7 @@ import urllib
 
 
 # TODO: maybe add option to download different parts of the dataset
-def download_7T_TRT(data_dir, overwrite=False):
+def download_7T_TRT(data_dir, overwrite=False, subject_id='sub001_sess1'):
     """
     Downloads the MP2RAGE data of subject 001, session 1 of the 7T Test-Retest
     dataset published by Gorgolewski et al (2015) [1]_
@@ -43,9 +43,9 @@ def download_7T_TRT(data_dir, overwrite=False):
     nitrc = 'https://www.nitrc.org/frs/download.php/'
     file_sources = [nitrc + x for x in ['10234', '10235', '10236']]
     file_targets = [os.path.join(data_dir, filename) for filename in
-                    ['sub001_sess1_INV2.nii.gz',
-                     'sub001_sess1_T1map.nii.gz',
-                     'sub001_sess1_T1w.nii.gz']]
+                    [subject_id+'_INV2.nii.gz',
+                     subject_id+'_T1map.nii.gz',
+                     subject_id+'_T1w.nii.gz']]
 
     for source, target in zip(file_sources, file_targets):
 

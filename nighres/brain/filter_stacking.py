@@ -6,7 +6,7 @@ from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving
 
 
-def fliter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None, 
+def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None, 
                            save_data=False, output_dir=None,
                            file_name=None):
     """ Filter stacking
@@ -63,8 +63,8 @@ def fliter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
     # find the first existing input for dimensions, resolutions, name
     img = None
     if (dura_img != None): img = dura_img
-    else if (pvcsf_img != None): img = pvcsf_img
-    else if (arteries_img != None): img = artereis_img
+    elif (pvcsf_img != None): img = pvcsf_img
+    elif (arteries_img != None): img = artereis_img
 
     affine = load_volume(img).get_affine()
     header = load_volume(img).get_header()
