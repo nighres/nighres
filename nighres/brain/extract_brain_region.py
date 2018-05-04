@@ -35,14 +35,14 @@ def extract_brain_region(segmentation, levelset_boundary,
     atlas_file: str, optional
         Path to plain text atlas file (default is stored in DEFAULT_ATLAS).
         or atlas name to be searched in ATLAS_DIR
-    extracted_region: {'left_cerebrum', 'right_cerebrum', 'cerebrum', 'cerebellum', 'cerebellum_brainstem', 'subcortex', 'tissues(anat)', 'tissues(func)', 'brain_mask'}
+   extracted_region: {'left_cerebrum', 'right_cerebrum', 'cerebrum', 'cerebellum', 
+        'cerebellum_brainstem', 'subcortex', 'tissues(anat)', 'tissues(func)', 'brain_mask'}
         Region to be extracted from the MGDM segmentation.
     normalize_probabilities: bool
-        Whether to normalize the output probabilities to sum to 1
-        (default is False).
+        Whether to normalize the output probabilities to sum to 1 (default is False).
     estimate_tissue_densities: bool
-        Wheter to recompute partial volume densities from the probabilites
-        (slow, default is False).
+        Wheter to recompute partial volume densities from the probabilites (slow,
+        default is False).
     partial_volume_distance: float
         Distance in mm to use for tissues densities, if recomputed
         (default is 1mm).
@@ -97,7 +97,7 @@ def extract_brain_region(segmentation, levelset_boundary,
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='8000m', maxheap='8000m')
+        cbstools.initVM(initialheap='6000m', maxheap='6000m')
     except ValueError:
         pass
     # create algorithm instance
