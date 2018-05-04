@@ -59,7 +59,7 @@ def lpca_denoising(image_list,
 
     References
     ----------
-    .. [1] Manjón, Coupé, Concha, Buades, Collins, Robles (2013). Diffusion 
+    .. [1] Manjon, Coupe, Concha, Buades, Collins, Robles (2013). Diffusion 
         Weighted Image Denoising Using Overcomplete Local PCA
         doi:10.1371/journal.pone.0073021
     """
@@ -71,7 +71,7 @@ def lpca_denoising(image_list,
         output_dir = _output_dir_4saving(output_dir, image_list[0])
 
         den_files = []
-        for idx, image in enumerate(image_list)
+        for idx,image in enumerate(image_list):
             den_file = _fname_4saving(file_name=file_name,
                                       rootfile=image,
                                       suffix='lpca_den')
@@ -109,7 +109,7 @@ def lpca_denoising(image_list,
 
     # input images
     # important: set image number before adding images
-    for idx, image in enumerate(image_list)
+    for idx, image in enumerate(image_list):
         data = load_volume(image).get_data()
         lpca.addImageAt(idx, cbstools.JArray('float')(
                                 (data.flatten('F')).astype(float)))
@@ -134,7 +134,7 @@ def lpca_denoising(image_list,
 
     # reshape output to what nibabel likes
     denoised_list = []
-    for idx, image in enumerate(image_list)
+    for idx, image in enumerate(image_list):
         den_data = np.reshape(np.array(lpca.getDenoisedImageAt(idx),
                                    dtype=np.int32), dimensions, 'F')
         header['cal_max'] = np.nanmax(den_data)
