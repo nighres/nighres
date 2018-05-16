@@ -2,7 +2,6 @@ FROM neurodebian:stretch-non-free
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update -qq && apt-get install -y python python-pip python-dev build-essential software-properties-common openjdk-8-jdk
-RUN apt-get install -y openjdk-8-jdk
 RUN ln -svT "/usr/lib/jvm/java-8-openjdk-$(dpkg --print-architecture)" /docker-java-home
 ENV JAVA_HOME /docker-java-home
 ENV JCC_JDK /docker-java-home
