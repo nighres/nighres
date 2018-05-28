@@ -9,8 +9,8 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 
 def lpca_denoising(image_list, 
-                    ngb_size=4, stdev_cutoff=2.3,
-                      min_dimension=2, max_dimension=-1,
+                    ngb_size=4, stdev_cutoff=1.05,
+                      min_dimension=0, max_dimension=-1,
                       save_data=False, output_dir=None,
                       file_name=None):
     """ LPCA denoising
@@ -25,11 +25,11 @@ def lpca_denoising(image_list,
         Size of the local PCA neighborhood, to be increased with number of 
         inputs (default is 4)
     stdev_cutoff: float, optional 
-        Factor of local standard deviation to remove PCA components. Higher
-        values remove more components (default is 2.3, depends on image contrasts)
+        Factor of local noise level to remove PCA components. Higher
+        values remove more components (default is 1.05)
     min_dimension: int, optional
         Minimum number of kept PCA components
-        (default is 2)
+        (default is 0)
     max_dimension: int, optional
         Maximum number of kept PCA components
         (default is -1 for all components)
@@ -55,7 +55,7 @@ def lpca_denoising(image_list,
     Notes
     ----------
     Original Java module by Pierre-Louis Bazin. Algorithm adapted from [1]_
-    with minor differences (adding min, max dimension thresholds)
+    with a different approach to set the adaptive noise threshold.
 
     References
     ----------
