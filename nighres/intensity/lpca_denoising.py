@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir
 
 
-def lpca_denoising(image_list, 
+def lpca_denoising(image_list, phase_list=None, 
                     ngb_size=4, stdev_cutoff=1.05,
                       min_dimension=0, max_dimension=-1,
                       save_data=False, output_dir=None,
@@ -21,6 +21,8 @@ def lpca_denoising(image_list,
     ----------
     image_list: [niimg]
         List of input images to denoise
+    phase_list: [niimg], optional
+        List of input phase to denoise (order must match that of image_list)
     ngb_size: int, optional
         Size of the local PCA neighborhood, to be increased with number of 
         inputs (default is 4)
@@ -55,7 +57,8 @@ def lpca_denoising(image_list,
     Notes
     ----------
     Original Java module by Pierre-Louis Bazin. Algorithm adapted from [1]_
-    with a different approach to set the adaptive noise threshold.
+    with a different approach to set the adaptive noise threshold and additional
+    processing to handle the phase data.
 
     References
     ----------
@@ -77,6 +80,13 @@ def lpca_denoising(image_list,
                                       suffix='lpca_den')
             den_files.append(den_file)
 
+        if (phase_list!=None):
+            for idx,image in enumerate(phase_list):
+                den_file = _fname_4saving(file_name=file_name,
+                                          rootfile=image,
+                                          suffix='lpca_den')
+                den_files.append(den_file)
+
         dim_file = _fname_4saving(file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='lpca_dim')
@@ -91,14 +101,19 @@ def lpca_denoising(image_list,
     except ValueError:
         pass
     # create lpca instance
-    lpca = cbstools.IntensityGenericPCADenoising()
+    lpca = cbstools.IntensityComplexPCADenoising()
 
     # set lpca parameters
     lpca.setImageNumber(len(image_list))
+    if (phase_list!=None): 
+        if (len(phase_list)!=len(image_list)):
+            print('\nmismatch of magnitude and phase images: abort')
+            return
     
     # load first image and use it to set dimensions and resolution
     img = load_volume(image_list[0])
     data = img.get_data()
+    #data = data[0:10,0:10,0:10]
     affine = img.get_affine()
     header = img.get_header()
     resolution = [x.item() for x in header.get_zooms()]
@@ -110,9 +125,20 @@ def lpca_denoising(image_list,
     # input images
     # important: set image number before adding images
     for idx, image in enumerate(image_list):
+        #print('\nloading ('+str(idx)+'): '+image)
         data = load_volume(image).get_data()
-        lpca.addImageAt(idx, cbstools.JArray('float')(
-                                (data.flatten('F')).astype(float)))
+        #data = data[0:10,0:10,0:10]
+        lpca.setMagnitudeImageAt(idx, cbstools.JArray('float')(
+                                    (data.flatten('F')).astype(float)))
+    
+    # input phase, if specified
+    if (phase_list!=None):
+        for idx, image in enumerate(phase_list):
+            #print('\nloading '+image)
+            data = load_volume(image).get_data()
+            #data = data[0:10,0:10,0:10]
+            lpca.setPhaseImageAt(idx, cbstools.JArray('float')(
+                                    (data.flatten('F')).astype(float)))
     
     # set algorithm parameters
     lpca.setPatchSize(ngb_size)
@@ -135,26 +161,42 @@ def lpca_denoising(image_list,
     # reshape output to what nibabel likes
     denoised_list = []
     for idx, image in enumerate(image_list):
-        den_data = np.reshape(np.array(lpca.getDenoisedImageAt(idx),
+        den_data = np.reshape(np.array(lpca.getDenoisedMagnitudeImageAt(idx),
                                    dtype=np.int32), dimensions, 'F')
+        header['cal_min'] = np.nanmin(den_data)
         header['cal_max'] = np.nanmax(den_data)
         denoised = nb.Nifti1Image(den_data, affine, header)
         denoised_list.append(denoised)
 
         if save_data:
-            save_volume(os.path.join(output_dir, den_files[idx]), den)
+            save_volume(os.path.join(output_dir, den_files[idx]), denoised)
+
+    if (phase_list!=None):
+        for idx, image in enumerate(phase_list):
+            den_data = np.reshape(np.array(lpca.getDenoisedPhaseImageAt(idx),
+                                       dtype=np.int32), dimensions, 'F')
+            header['cal_min'] = np.nanmin(den_data)
+            header['cal_max'] = np.nanmax(den_data)
+            denoised = nb.Nifti1Image(den_data, affine, header)
+            denoised_list.append(denoised)
+    
+            if save_data:
+                save_volume(os.path.join(output_dir, 
+                                    den_files[idx+len(image_list)]), denoised)
 
     dim_data = np.reshape(np.array(lpca.getLocalDimensionImage(),
                                     dtype=np.float32), dimensions, 'F')
 
-    err_data = np.reshape(np.array(lpca.getNoiseMagnitudeImage(),
+    err_data = np.reshape(np.array(lpca.getNoiseFitImage(),
                                     dtype=np.float32), dimensions, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
+    header['cal_min'] = np.nanmin(dim_data)
     header['cal_max'] = np.nanmax(dim_data)
     dim = nb.Nifti1Image(dim_data, affine, header)
 
+    header['cal_min'] = np.nanmin(err_data)
     header['cal_max'] = np.nanmax(err_data)
     err = nb.Nifti1Image(err_data, affine, header)
 
