@@ -236,8 +236,8 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
                 'inverse': inverse_img}
 
     # clean-up intermediate files
-    os.remove(src_map_file)
-    os.remove(trg_map_file)
+    #os.remove(src_map_file)
+    #os.remove(trg_map_file)
     os.remove(result.outputs.affine_transform)
     os.remove(result.outputs.warp_transform)
     os.remove(result.outputs.inverse_warp_transform)

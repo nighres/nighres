@@ -85,15 +85,13 @@ skullstripping_results2 = nighres.brain.mp2rage_skullstripping(
 # .
 
 if not skip_plots:
-    plotting.plot_roi(skullstripping_results1['brain_mask'], dataset1['t1w'],
+    plotting.plot_roi(skullstripping_results1['brain_mask'], dataset1['t1map'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')
     plotting.plot_roi(skullstripping_results2['brain_mask'], dataset2['t1w'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')
 ############################################################################
-# .. image:: ../_static/tissue_classification1.png
-#############################################################################
 
 #############################################################################
 # SyN co-registration
@@ -117,8 +115,32 @@ if not skip_plots:
                       annotate=False,  draw_cross=False)
 
 ############################################################################
-# .. image:: ../_static/tissue_classification2.png
+
 #############################################################################
+# Apply deformations to images
+# ----------------------------
+# Finally, we use the computed deformation to transform other associated images
+deformed = nighres.registration.apply_coordinate_mappings(
+                        image=dataset1['t1map'],
+                        mapping1=syn_results['mapping'],
+                        save_data=True, file_name="sub001_sess1_t1map",
+                        output_dir=out_dir)
+
+inverse = nighres.registration.apply_coordinate_mappings(
+                        image=dataset2['t1w'],
+                        mapping1=syn_results['inverse'],
+                        save_data=True, file_name="sub002_sess1_t1w",
+                        output_dir=out_dir)
+
+############################################################################
+# Now we look at the coregistered image that SyN created
+if not skip_plots:
+    plotting.plot_img(deformed,
+                      annotate=False,  draw_cross=False)
+    plotting.plot_img(inverse,
+                      annotate=False,  draw_cross=False)
+
+############################################################################
 
 #############################################################################
 # If the example is not run in a jupyter notebook, render the plots:
