@@ -13,7 +13,7 @@ by performing the following steps:
     :func:`nighres.brain.mp2rage_skullstripping`
 3. Co-register non-linearly the brains using
     :func:`nighres.registration.embedded_syn` [1]_
-4. Defomr additional contrasts using
+4. Deform additional contrasts using
     :func:`nighres.registration.apply_deformation`
 """
 
@@ -133,7 +133,7 @@ inverse = nighres.registration.apply_coordinate_mappings(
                         output_dir=out_dir)
 
 ############################################################################
-# Now we look at the coregistered image that SyN created
+# Now we look at the coregistered images from applying the deformation
 if not skip_plots:
     plotting.plot_img(deformed,
                       annotate=False,  draw_cross=False)
