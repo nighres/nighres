@@ -51,9 +51,9 @@ def download_7T_TRT(data_dir, overwrite=False, subject_id='sub001_sess1'):
 
         if os.path.isfile(target) and overwrite is False:
             print("\nThe file {0} exists and overwrite was set to False "
-                  "-- not downloading.").format(target)
+                  "-- not downloading.".format(target))
         else:
-            print("\nDownloading to {0}").format(target)
+            print("\nDownloading to {0}".format(target))
             urllib.urlretrieve(source, target)
 
     return {'inv2': file_targets[0],

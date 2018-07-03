@@ -29,7 +29,8 @@ def load_volume(volume):
     """  # noqa
 
     # if input is a filename, try to load it
-    if isinstance(volume, basestring):
+    # python 2 version if isinstance(volume, basestring):
+    if isinstance(volume, str):
         # importing nifti files
         image = nb.load(volume)
     # if volume is already a nibabel object
@@ -78,6 +79,6 @@ def save_volume(filename, volume, dtype='float32', overwrite_file=True):
     else:
         try:
             volume.to_filename(filename)
-            print("\nSaving {0}").format(filename)
+            print("\nSaving {0}".format(filename))
         except AttributeError:
             print('\nInput volume must be a Nibabel SpatialImage.')

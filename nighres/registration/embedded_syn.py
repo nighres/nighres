@@ -132,9 +132,9 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
     # build coordinate mapping matrices and save them to disk
     src_coord = np.zeros((nsx,nsy,nsz,3))
     trg_coord = np.zeros((ntx,nty,ntz,3))
-    for x in xrange(nsx):
-        for y in xrange(nsy):
-            for z in xrange(nsz):
+    for x in range(nsx):
+        for y in range(nsy):
+            for z in range(nsz):
                 src_coord[x,y,z,X] = x
                 src_coord[x,y,z,Y] = y
                 src_coord[x,y,z,Z] = z
@@ -143,9 +143,9 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
                             rootfile=source_image,
                             suffix='tmp_srccoord')
     save_volume(os.path.join(output_dir, src_map_file), src_map)
-    for x in xrange(ntx):
-        for y in xrange(nty):
-            for z in xrange(ntz):
+    for x in range(ntx):
+        for y in range(nty):
+            for z in range(ntz):
                 trg_coord[x,y,z,X] = x
                 trg_coord[x,y,z,Y] = y
                 trg_coord[x,y,z,Z] = z

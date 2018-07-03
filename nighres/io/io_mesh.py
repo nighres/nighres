@@ -35,7 +35,7 @@ def load_mesh_geometry(surf_mesh):
        Python. DOI: 10.3897/rio.3.e12346
     '''
     # if input is a filename, try to load it with nibabel
-    if isinstance(surf_mesh, basestring):
+    if isinstance(surf_mesh, str):
         if (surf_mesh.endswith('orig') or surf_mesh.endswith('pial') or
                 surf_mesh.endswith('white') or surf_mesh.endswith('sphere') or
                 surf_mesh.endswith('inflated')):
@@ -97,7 +97,7 @@ def load_mesh_data(surf_data, gii_darray=None):
        Python. DOI: 10.3897/rio.3.e12346
     '''
     # if the input is a filename, load it
-    if isinstance(surf_data, basestring):
+    if isinstance(surf_data, str):
         if (surf_data.endswith('nii') or surf_data.endswith('nii.gz') or
                 surf_data.endswith('mgz')):
             data = np.squeeze(nb.load(surf_data).get_data())
@@ -161,14 +161,14 @@ def save_mesh_data(filename, surf_data):
        depth-resolved analysis of high-resolution brain imaging data in
        Python. DOI: 10.3897/rio.3.e12346
     '''
-    if isinstance(filename, basestring) and isinstance(surf_data, np.ndarray):
+    if isinstance(filename, str) and isinstance(surf_data, np.ndarray):
         if (filename.endswith('curv') or filename.endswith('thickness') or
                 filename.endswith('sulc')):
             nb.freesurfer.io.write_morph_data(filename, surf_data)
-            print("\nSaving {0}").format(filename)
+            print("\nSaving {0}".format(filename))
         elif filename.endswith('txt'):
             np.savetxt(filename, surf_data)
-            print("\nSaving {0}").format(filename)
+            print("\nSaving {0}".format(filename))
         else:
             raise ValueError('File format not recognized. Currently supported '
                              'are freesurfer formats curv, sulc, thickness '
@@ -203,30 +203,30 @@ def save_mesh_geometry(filename, surf_dict):
        depth-resolved analysis of high-resolution brain imaging data in
        Python. DOI: 10.3897/rio.3.e12346
     '''
-    if isinstance(filename, basestring) and isinstance(surf_dict, dict):
+    if isinstance(filename, str) and isinstance(surf_dict, dict):
         if (filename.endswith('orig') or filename.endswith('pial') or
                 filename.endswith('white') or filename.endswith('sphere') or
                 filename.endswith('inflated')):
             nb.freesurfer.io.write_geometry(filename, surf_dict['coords'],
                                             surf_dict['faces'])
-            print("\nSaving {0}").format(filename)
+            print("\nSaving {0}".format(filename))
         elif filename.endswith('gii'):
             _write_gifti(filename, surf_dict['coords'], surf_dict['faces'])
-            print("\nSaving {0}").format(filename)
+            print("\nSaving {0}".format(filename))
         elif filename.endswith('vtk'):
             if 'data' in surf_dict.keys():
                 _write_vtk(filename, surf_dict['coords'], surf_dict['faces'],
                            surf_dict['data'])
-                print("\nSaving {0}").format(filename)
+                print("\nSaving {0}".format(filename))
             else:
                 _write_vtk(filename, surf_dict['coords'], surf_dict['faces'])
-                print("\nSaving {0}").format(filename)
+                print("\nSaving {0}".format(filename))
         elif filename.endswith('ply'):
             _write_ply(filename, surf_dict['coords'], surf_dict['faces'])
-            print("\nSaving {0}").format(filename)
+            print("\nSaving {0}".format(filename))
         elif filename.endswith('obj'):
             _write_obj(filename, surf_dict['coords'], surf_dict['faces'])
-            print("\nSaving {0}").format(filename)
+            print("\nSaving {0}".format(filename))
             print('To view mesh in brainview, run the command:\n')
             print('average_objects ' + filename + ' ' + filename)
     else:
@@ -283,7 +283,7 @@ def _read_vtk(file):
         vertex_array = vertex_array[~np.isnan(vertex_array)].reshape(
                                                             number_vertices, 3)
     else:
-        print "vertex indices out of shape"
+        print("vertex indices out of shape")
     # read faces into df and array
     start_faces = (vtk_df[vtk_df[0].str.contains(
                                             'POLYGONS')].index.tolist()[0]) + 1
@@ -343,7 +343,7 @@ def _read_obj(file):
 
     def chunks(l, n):
         """Yield n-sized chunks from l"""
-        for i in xrange(0, len(l), n):
+        for i in range(0, len(l), n):
             yield l[i:i + n]
 
     def indices(lst, element):
@@ -514,7 +514,7 @@ def _write_vtk(filename, vertices, faces, data=None, comment=None):
 
 def _write_ply(filename, vertices, faces, comment=None):
     import pandas as pd
-    print "writing ply format"
+    print("writing ply format")
     # infer number of vertices and faces
     number_vertices = vertices.shape[0]
     number_faces = faces.shape[0]

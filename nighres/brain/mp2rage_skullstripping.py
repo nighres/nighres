@@ -10,7 +10,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
                            skip_zero_values=True, topology_lut_dir=None,
-                           save_data=False, output_dir=None,
+                           save_data=False, overwrite=False, output_dir=None,
                            file_name=None):
     """ MP2RAGE skull stripping
 
@@ -35,6 +35,8 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         in TOPOLOGY_LUT_DIR)
     save_data: bool
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -73,21 +75,38 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, second_inversion)
 
-        inv2_file = _fname_4saving(file_name=file_name,
+        inv2_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                    rootfile=second_inversion,
-                                   suffix='strip_inv2')
-        mask_file = _fname_4saving(file_name=file_name,
+                                   suffix='strip_inv2'))
+        mask_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                    rootfile=second_inversion,
-                                   suffix='strip_mask')
+                                   suffix='strip_mask'))
         if t1_weighted is not None:
-            t1w_file = _fname_4saving(file_name=file_name,
+            t1w_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                       rootfile=t1_weighted,
-                                      suffix='strip_t1w')
+                                      suffix='strip_t1w'))
 
         if t1_map is not None:
-            t1map_file = _fname_4saving(file_name=file_name,
+            t1map_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                         rootfile=t1_map,
-                                        suffix='strip_t1map')
+                                        suffix='strip_t1map'))
+        
+        if overwrite is False \
+            and os.path.isfile(mask_file) \
+            and os.path.isfile(inv2_file) :
+            
+            print("\n skip computation (use existing results)")
+            output = {'brain_mask': load_volume(mask_file), 
+                    'inv2_masked': load_volume(inv2_file)}
+            if os.path.isfile(t1w_file) :     
+                output['t1w_masked'] = load_volume(t1w_file)
+            if os.path.isfile(t1map_file) :     
+                output['t1map_masked'] = load_volume(t1map_file)
+            return output
 
     # start virtual machine, if not already running
     try:
@@ -139,7 +158,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")
-        print sys.exc_info()[0]
+        print(sys.exc_info()[0])
         raise
         return
 
@@ -158,8 +177,8 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
     outputs = {'brain_mask': mask, 'inv2_masked': inv2_masked}
 
     if save_data:
-        save_volume(os.path.join(output_dir, inv2_file), inv2_masked)
-        save_volume(os.path.join(output_dir, mask_file), mask)
+        save_volume(inv2_file, inv2_masked)
+        save_volume(mask_file, mask)
 
     if t1_weighted is not None:
         t1w_masked_data = np.reshape(np.array(

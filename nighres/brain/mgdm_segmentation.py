@@ -49,7 +49,7 @@ def _get_mgdm_intensity_priors(atlas_file):
         for i, line in enumerate(fp):
             if "Structures:" in line:  # this is the beginning of the LUT
                 lut_idx = i
-                lut_rows = map(int, [line.split()[1]])[0]
+                lut_rows = list(map(int, [line.split()[1]]))[0]
             if "Intensity Prior:" in line:
                 priors.append(line.split()[-1])
     return priors
@@ -273,7 +273,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")
-        print sys.exc_info()[0]
+        print(sys.exc_info()[0])
         raise
         return
 

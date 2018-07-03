@@ -1,1 +1,1 @@
-from lpca_denoising import lpca_denoising
+from nighres.intensity.lpca_denoising import lpca_denoising

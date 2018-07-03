@@ -94,7 +94,7 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
 
     if (roi_mask_data!=None): 
         smoother.setROIMask(cbstools.JArray('int')(
-                                  (roi_mask_data.flatten('F')).astype(int)))
+                                  (roi_mask_data.flatten('F')).astype(int).tolist()))
     smoother.setFWHMmm(float(fwhm_mm))
 
     # execute class
@@ -104,7 +104,7 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")
-        print sys.exc_info()[0]
+        print(sys.exc_info()[0])
         raise
         return
 

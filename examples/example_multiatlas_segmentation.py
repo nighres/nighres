@@ -215,8 +215,15 @@ if not skip_plots:
 # Trasnform a selected labels into levelset representation 
 # ----------------------------------
 # We use the deformed MGDM segmentations
-struct1 = (deformed1==32)
-struct2 = (deformed2==32)
+
+# label 32 = left caudate
+img1 = nighres.io.load_volume(deformed1)
+struct1 = nb.Nifti1Image((img1.get_data()==32).astype(float), 
+                            img1.get_affine(), img1.get_header())
+
+img2 = nighres.io.load_volume(deformed2)
+struct2 = nb.Nifti1Image((img2.get_data()==32).astype(float), 
+                            img2.get_affine(), img2.get_header())
 
 levelset1 = nighres.surface.probability_to_levelset(
                         probability_image=struct1,

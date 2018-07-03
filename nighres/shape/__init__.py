@@ -1,2 +1,2 @@
-from levelset_fusion import levelset_fusion
-from topology_correction import topology_correction
+from nighres.shape.levelset_fusion import levelset_fusion
+from nighres.shape.topology_correction import topology_correction

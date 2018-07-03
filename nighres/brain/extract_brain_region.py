@@ -123,7 +123,7 @@ def extract_brain_region(segmentation, levelset_boundary,
     xbr.setComponents(load_volume(maximum_membership).get_header().get_data_shape()[3])
 
     xbr.setSegmentationImage(cbstools.JArray('int')(
-        (data.flatten('F')).astype(int)))
+        (data.flatten('F')).astype(int).tolist()))
 
     data = load_volume(levelset_boundary).get_data()
     xbr.setLevelsetBoundaryImage(cbstools.JArray('float')(
@@ -135,7 +135,7 @@ def extract_brain_region(segmentation, levelset_boundary,
 
     data = load_volume(maximum_label).get_data()
     xbr.setMaximumLabelImage(cbstools.JArray('int')(
-        (data.flatten('F')).astype(int)))
+        (data.flatten('F')).astype(int).tolist()))
 
     # execute
     try:
@@ -144,7 +144,7 @@ def extract_brain_region(segmentation, levelset_boundary,
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")
-        print sys.exc_info()[0]
+        print(sys.exc_info()[0])
         raise
         return
 

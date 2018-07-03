@@ -1,5 +1,6 @@
 
-import os, _cbstools
+import os
+from . import _cbstools
 
 __dir__ = os.path.abspath(os.path.dirname(__file__))
 
@@ -20,4 +21,4 @@ CLASSPATH = os.pathsep.join(CLASSPATH)
 _cbstools.CLASSPATH = CLASSPATH
 _cbstools._set_function_self(_cbstools.initVM, _cbstools)
 
-from _cbstools import *
+from ._cbstools import *

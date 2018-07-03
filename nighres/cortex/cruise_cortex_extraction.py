@@ -179,7 +179,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
     cruise.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     cruise.setResolutions(resolution[0], resolution[1], resolution[2])
     cruise.importInitialWMSegmentationImage(cbstools.JArray('int')(
-                                        (init_data.flatten('F')).astype(int)))
+                                        (init_data.flatten('F')).astype(int).tolist()))
 
     wm_data = load_volume(wm_image).get_data()
     cruise.setFilledWMProbabilityImage(cbstools.JArray('float')(
@@ -205,7 +205,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")
-        print sys.exc_info()[0]
+        print(sys.exc_info()[0])
         raise
         return
 
