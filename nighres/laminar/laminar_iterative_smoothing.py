@@ -7,7 +7,8 @@ from ..utils import _output_dir_4saving, _fname_4saving
 
 
 def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
-                     roi_mask_image=None, save_data=False, output_dir=None,
+                     roi_mask_image=None, 
+                     save_data=False, overwrite=False, output_dir=None,
                      file_name=None):
 
     '''Smoothing data on multiple intracortical layers
@@ -25,6 +26,8 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
         Mask image defining a region of interest to restrict the smoothing
     save_data: bool
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -49,9 +52,10 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, intensity_image)
 
-        smoothed_file = _fname_4saving(file_name=file_name,
+        smoothed_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                       rootfile=intensity_image,
-                                      suffix='lis_smooth')
+                                      suffix='lis_smooth'))
 
     # start VM if not already running
     try:

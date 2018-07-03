@@ -9,7 +9,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def levelset_fusion(levelset_images,
                     correct_topology=True, topology_lut_dir=None,
-                    save_data=False, output_dir=None,
+                    save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
 
     """Levelset fusion
@@ -28,6 +28,8 @@ def levelset_fusion(levelset_images,
         in TOPOLOGY_LUT_DIR)
     save_data: bool
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -53,9 +55,16 @@ def levelset_fusion(levelset_images,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, levelset_images[0])
 
-        levelset_file = _fname_4saving(file_name=file_name,
+        levelset_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                        rootfile=levelset_images[0],
-                                       suffix='lsf_avg')
+                                       suffix='lsf-avg'))
+        if overwrite is False \
+            and os.path.isfile(levelset_file) :
+            
+            print("skip computation (use existing results)")
+            output = load_volume(levelset_file)
+            return output
 
     # start virtual machine if not running
     try:

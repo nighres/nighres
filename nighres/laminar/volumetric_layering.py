@@ -10,7 +10,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def volumetric_layering(inner_levelset, outer_levelset,
                         n_layers=4, topology_lut_dir=None,
-                        save_data=False, output_dir=None,
+                        save_data=False, overwrite=False, output_dir=None,
                         file_name=None):
 
     '''Equivolumetric layering of the cortical sheet.
@@ -28,6 +28,8 @@ def volumetric_layering(inner_levelset, outer_levelset,
         in TOPOLOGY_LUT_DIR)
     save_data: bool
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -67,17 +69,30 @@ def volumetric_layering(inner_levelset, outer_levelset,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, inner_levelset)
 
-        depth_file = _fname_4saving(file_name=file_name,
+        depth_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                     rootfile=inner_levelset,
-                                    suffix='layering_depth')
+                                    suffix='layering_depth'))
 
-        layer_file = _fname_4saving(file_name=file_name,
+        layer_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                     rootfile=inner_levelset,
-                                    suffix='layering_layers')
+                                    suffix='layering_layers'))
 
-        boundary_file = _fname_4saving(file_name=file_name,
+        boundary_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                        rootfile=inner_levelset,
-                                       suffix='layering_boundaries')
+                                       suffix='layering_boundaries'))
+        if overwrite is False \
+            and os.path.isfile(depth_file) \
+            and os.path.isfile(layer_file) \
+            and os.path.isfile(boundary_file) :
+            
+            print("skip computation (use existing results)")
+            output = {'depth': load_volume(depth_file), 
+                      'layers': load_volume(layer_file), 
+                      'boundaries': load_volume(boundary_file)}
+            return output
 
     # start virutal machine if not already running
     try:

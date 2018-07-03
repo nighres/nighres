@@ -64,7 +64,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                       adjust_intensity_priors=False,
                       compute_posterior=False,
                       diffuse_probabilities=False,
-                      save_data=False, output_dir=None,
+                      save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ MGDM segmentation
 
@@ -122,6 +122,8 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         (default is False)
     save_data: bool
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -189,21 +191,25 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, contrast_image1)
 
-        seg_file = _fname_4saving(file_name=file_name,
+        seg_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                   rootfile=contrast_image1,
-                                  suffix='mgdm_seg', )
+                                  suffix='mgdm_seg', ))
 
-        lbl_file = _fname_4saving(file_name=file_name,
+        lbl_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                   rootfile=contrast_image1,
-                                  suffix='mgdm_lbls')
+                                  suffix='mgdm_lbls'))
 
-        mems_file = _fname_4saving(file_name=file_name,
+        mems_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                    rootfile=contrast_image1,
-                                   suffix='mgdm_mems')
+                                   suffix='mgdm_mems'))
 
-        dist_file = _fname_4saving(file_name=file_name,
+        dist_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                    rootfile=contrast_image1,
-                                   suffix='mgdm_dist')
+                                   suffix='mgdm_dist'))
 
     # start virtual machine, if not already running
     try:

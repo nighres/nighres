@@ -7,7 +7,7 @@ from ..utils import _output_dir_4saving, _fname_4saving
 
 
 def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None, 
-                           save_data=False, output_dir=None,
+                           save_data=False, overwrite=False, output_dir=None,
                            file_name=None):
     """ Filter stacking
 
@@ -29,6 +29,8 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
         At least one prior image is required
     save_data: bool
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -51,9 +53,10 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, second_inversion)
 
-        filter_file = _fname_4saving(file_name=file_name,
+        filter_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                    rootfile=second_inversion,
-                                   suffix='filter_img')
+                                   suffix='filter_img'))
 
     # check if there's inputs
     if (dura_img is None and pvcsf_img is None and arteries_img is None):

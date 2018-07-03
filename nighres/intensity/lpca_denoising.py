@@ -11,7 +11,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def lpca_denoising(image_list, phase_list=None, 
                     ngb_size=4, stdev_cutoff=1.05,
                       min_dimension=0, max_dimension=-1,
-                      save_data=False, output_dir=None,
+                      save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ LPCA denoising
 
@@ -37,6 +37,8 @@ def lpca_denoising(image_list, phase_list=None,
         (default is -1 for all components)
     save_data: bool
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -75,25 +77,29 @@ def lpca_denoising(image_list, phase_list=None,
 
         den_files = []
         for idx,image in enumerate(image_list):
-            den_file = _fname_4saving(file_name=file_name,
+            den_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                       rootfile=image,
-                                      suffix='lpca_den')
+                                      suffix='lpca_den'))
             den_files.append(den_file)
 
         if (phase_list!=None):
             for idx,image in enumerate(phase_list):
-                den_file = _fname_4saving(file_name=file_name,
+                den_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                           rootfile=image,
-                                          suffix='lpca_den')
+                                          suffix='lpca_den'))
                 den_files.append(den_file)
 
-        dim_file = _fname_4saving(file_name=file_name,
+        dim_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                    rootfile=image_list[0],
-                                   suffix='lpca_dim')
+                                   suffix='lpca_dim'))
 
-        err_file = _fname_4saving(file_name=file_name,
+        err_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                    rootfile=image_list[0],
-                                   suffix='lpca_err')
+                                   suffix='lpca_err'))
 
     # start virtual machine, if not already running
     try:

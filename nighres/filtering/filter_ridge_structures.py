@@ -11,7 +11,7 @@ def filter_ridge_structures(input_image,
                             structure_intensity='bright',
                             output_type='probability',
                             use_strict_min_max_filter=True,
-                            save_data=False, output_dir=None,
+                            save_data=False, overwrite=False, output_dir=None,
                             file_name=None):
 
     """ Filter Ridge Structures
@@ -33,6 +33,8 @@ def filter_ridge_structures(input_image,
         Choose between the more specific recursive ridge filter or a more sensitive bidirectional filter
     save_data: bool, optional
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -56,9 +58,10 @@ def filter_ridge_structures(input_image,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, input_image)
 
-        ridge_file = _fname_4saving(file_name=file_name,
+        ridge_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                        rootfile=input_image,
-                                       suffix='rdg', )
+                                       suffix='rdg', ))
     outputs = {}
 
     # start virtual machine, if not already running

@@ -10,7 +10,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def topology_correction(image, shape_type, 
                     connectivity='wcs', propagation='object->background',
                     minimum_distance=0.00001, topology_lut_dir=None,
-                    save_data=False, output_dir=None,
+                    save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
 
     """Topology correction
@@ -35,6 +35,8 @@ def topology_correction(image, shape_type,
         in TOPOLOGY_LUT_DIR)
     save_data: bool
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -70,13 +72,23 @@ def topology_correction(image, shape_type,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, shape_image)
 
-        corrected_file = _fname_4saving(file_name=file_name,
+        corrected_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                        rootfile=shape_image,
-                                       suffix='tpc_img')
+                                       suffix='tpc-img'))
 
-        corrected_obj_file = _fname_4saving(file_name=file_name,
+        corrected_obj_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                        rootfile=shape_image,
-                                       suffix='tpc_obj')
+                                       suffix='tpc-obj'))
+        if overwrite is False \
+            and os.path.isfile(corrected_file) \
+            and os.path.isfile(corrected_obj_file) :
+            
+            print("skip computation (use existing results)")
+            output = {'corrected': load_volume(corrected_file), 
+                      'object': load_volume(corrected_obj_file)}
+            return output
 
     # start virtual machine if not running
     try:

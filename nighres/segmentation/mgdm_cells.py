@@ -16,7 +16,7 @@ def mgdm_cells(contrast_image1, contrast_type1,
                       cell_threshold=0.1,
                       max_iterations=200, min_change=0.0001,
                       topology='wcs', topology_lut_dir=None,
-                      save_data=False, output_dir=None,
+                      save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ MGDM segmentation
 
@@ -69,6 +69,8 @@ def mgdm_cells(contrast_image1, contrast_type1,
         in TOPOLOGY_LUT_DIR)
     save_data: bool
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -117,13 +119,24 @@ def mgdm_cells(contrast_image1, contrast_type1,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, contrast_image1)
 
-        seg_file = _fname_4saving(file_name=file_name,
+        seg_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                   rootfile=contrast_image1,
-                                  suffix='mgdmc_seg', )
+                                  suffix='mgdmc_seg', ))
 
-        dist_file = _fname_4saving(file_name=file_name,
+        dist_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                    rootfile=contrast_image1,
-                                   suffix='mgdmc_dist')
+                                   suffix='mgdmc_dist'))
+        if overwrite is False \
+            and os.path.isfile(seg_file) \
+            and os.path.isfile(dist_file) :
+            
+            print("skip computation (use existing results)")
+            output = {'segmentation': load_volume(seg_file), 
+                      'distance': load_volume(dist_file)}
+            return output
+
 
     # start virtual machine, if not already running
     try:

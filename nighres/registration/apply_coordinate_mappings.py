@@ -11,7 +11,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def apply_coordinate_mappings(image, mapping1, 
                         mapping2=None, mapping3=None, mapping4=None,
                         interpolation="nearest", padding="closest",
-                        save_data=False, output_dir=None,
+                        save_data=False, overwrite=False, output_dir=None,
                         file_name=None):
 
     '''Apply a coordinate mapping (or a succession of coordinate mappings) to
@@ -35,6 +35,8 @@ def apply_coordinate_mappings(image, mapping1,
         Image padding method (default is 'closest')
     save_data: bool
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -58,9 +60,16 @@ def apply_coordinate_mappings(image, mapping1,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, image)
 
-        deformed_file = _fname_4saving(file_name=file_name,
+        deformed_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                     rootfile=image,
-                                    suffix='def_img')
+                                    suffix='def_img'))
+        if overwrite is False \
+            and os.path.isfile(deformed_file) :
+            
+            print("skip computation (use existing results)")
+            output = load_volume(deformed_file)
+            return output
 
     # start virutal machine if not already running
     try:

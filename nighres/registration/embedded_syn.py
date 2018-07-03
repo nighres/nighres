@@ -22,7 +22,7 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
                     medium_iterations=50, fine_iterations=40,
 					run_affine_first=False, cost_function='MutualInformation', 
 					interpolation='NearestNeighbor',
-                    save_data=False, output_dir=None,
+                    save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
     """ Embedded SyN
 
@@ -50,6 +50,8 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
         Interpolation for the registration (default is 'NearestNeighbor')
     save_data: bool
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -96,17 +98,31 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
     # make sure that saving related parameters are correct
     output_dir = _output_dir_4saving(output_dir, source_image) # needed for intermediate results
     if save_data:
-        deformed_source_file = _fname_4saving(file_name=file_name,
+        deformed_source_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                    rootfile=source_image,
-                                   suffix='syn_def')
+                                   suffix='syn_def'))
 
-        mapping_file = _fname_4saving(file_name=file_name,
+        mapping_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                    rootfile=source_image,
-                                   suffix='syn_map')
+                                   suffix='syn_map'))
 
-        inverse_mapping_file = _fname_4saving(file_name=file_name,
+        inverse_mapping_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                    rootfile=source_image,
-                                   suffix='syn_invmap')
+                                   suffix='syn_invmap'))
+        if overwrite is False \
+            and os.path.isfile(deformed_source_file) \
+            and os.path.isfile(mapping_file) \
+            and os.path.isfile(inverse_mapping_file) :
+            
+            print("skip computation (use existing results)")
+            output = {'deformed_source': load_volume(deformed_source_file), 
+                      'mapping': load_volume(mapping_file), 
+                      'inverse': load_volume(inverse_mapping_file)}
+            return output
+
 
     # load and get dimensions and resolution from input images
     source = load_volume(source_image)

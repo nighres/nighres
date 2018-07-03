@@ -14,7 +14,7 @@ def extract_brain_region(segmentation, levelset_boundary,
                          normalize_probabilities=False,
                          estimate_tissue_densities=False,
                          partial_volume_distance=1.0,
-                         save_data=False, output_dir=None,
+                         save_data=False, overwrite=False, output_dir=None,
                          file_name=None):
     """ Extract Brain Region
 
@@ -48,6 +48,8 @@ def extract_brain_region(segmentation, levelset_boundary,
         (default is 1mm).
     save_data: bool
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -150,41 +152,50 @@ def extract_brain_region(segmentation, levelset_boundary,
 
 	# build names for saving after the computations to get the proper names
     if save_data:
-        reg_mask_file = _fname_4saving(file_name=file_name,
+        reg_mask_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                        rootfile=segmentation,
-                                       suffix='xmask'+xbr.getStructureName(), )
+                                       suffix='xmask'+xbr.getStructureName(), ))
 
-        ins_mask_file = _fname_4saving(file_name=file_name,
+        ins_mask_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                        rootfile=segmentation,
-                                       suffix='xmask'+xbr.getInsideName(), )
+                                       suffix='xmask'+xbr.getInsideName(), ))
 
-        bg_mask_file = _fname_4saving(file_name=file_name,
+        bg_mask_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                       rootfile=segmentation,
-                                      suffix='xmask'+xbr.getBackgroundName(), )
+                                      suffix='xmask'+xbr.getBackgroundName(), ))
 
-        reg_proba_file = _fname_4saving(file_name=file_name,
+        reg_proba_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                         rootfile=segmentation,
-                                        suffix='xproba'+xbr.getStructureName(), )
+                                        suffix='xproba'+xbr.getStructureName(), ))
 
-        ins_proba_file = _fname_4saving(file_name=file_name,
+        ins_proba_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                         rootfile=segmentation,
-                                        suffix='xproba'+xbr.getInsideName(), )
+                                        suffix='xproba'+xbr.getInsideName(), ))
 
-        bg_proba_file = _fname_4saving(file_name=file_name,
+        bg_proba_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                        rootfile=segmentation,
-                                       suffix='xproba'+xbr.getBackgroundName(), )
+                                       suffix='xproba'+xbr.getBackgroundName(), ))
 
-        reg_lvl_file = _fname_4saving(file_name=file_name,
+        reg_lvl_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                       rootfile=segmentation,
-                                      suffix='xlvl'+xbr.getStructureName(), )
+                                      suffix='xlvl'+xbr.getStructureName(), ))
 
-        ins_lvl_file = _fname_4saving(file_name=file_name,
+        ins_lvl_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                       rootfile=segmentation,
-                                      suffix='xlvl'+xbr.getInsideName(), )
+                                      suffix='xlvl'+xbr.getInsideName(), ))
 
-        bg_lvl_file = _fname_4saving(file_name=file_name,
+        bg_lvl_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                      rootfile=segmentation,
-                                     suffix='xlvl'+xbr.getBackgroundName(), )
+                                     suffix='xlvl'+xbr.getBackgroundName(), ))
 
 
     # inside region
