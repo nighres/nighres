@@ -196,6 +196,28 @@ def extract_brain_region(segmentation, levelset_boundary,
                         _fname_4saving(file_name=file_name,
                                      rootfile=segmentation,
                                      suffix='xlvl'+xbr.getBackgroundName(), ))
+        if overwrite is False \
+            and os.path.isfile(reg_mask_file) \
+            and os.path.isfile(ins_mask_file) \
+            and os.path.isfile(bg_mask_file) \
+            and os.path.isfile(reg_proba_file) \
+            and os.path.isfile(ins_proba_file) \
+            and os.path.isfile(bg_proba_file) \
+            and os.path.isfile(reg_lvl_file) \
+            and os.path.isfile(ins_lvl_file) \
+            and os.path.isfile(bg_lvl_file) :
+            
+            print("skip computation (use existing results)")
+            output = {'inside_mask': load_volume(ins_mask_file), 
+                      'inside_proba': load_volume(ins_proba_file), 
+                      'inside_lvl': load_volume(ins_lvl_file), 
+                      'region_mask': load_volume(reg_mask_file), 
+                      'region_proba': load_volume(reg_proba_file), 
+                      'region_lvl': load_volume(reg_lvl_file), 
+                      'background_mask': load_volume(bg_mask_file), 
+                      'background_proba': load_volume(bg_proba_file), 
+                      'background_lvl': load_volume(bg_lvl_file)}
+            return output
 
 
     # inside region

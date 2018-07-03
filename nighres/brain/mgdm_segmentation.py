@@ -210,6 +210,18 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                         _fname_4saving(file_name=file_name,
                                    rootfile=contrast_image1,
                                    suffix='mgdm_dist'))
+        if overwrite is False \
+            and os.path.isfile(seg_file) \
+            and os.path.isfile(lbl_file) \
+            and os.path.isfile(mems_file) \
+            and os.path.isfile(dist_file) :
+            
+            print("skip computation (use existing results)")
+            output = {'segmentation': load_volume(seg_file), 
+                      'labels': load_volume(lbl_file), 
+                      'memberships': load_volume(mems_file), 
+                      'distance': load_volume(dist_file)}
+            return output
 
     # start virtual machine, if not already running
     try:

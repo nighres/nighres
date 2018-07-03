@@ -80,7 +80,7 @@ def lpca_denoising(image_list, phase_list=None,
             den_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                       rootfile=image,
-                                      suffix='lpca_den'))
+                                      suffix='lpca-den'))
             den_files.append(den_file)
 
         if (phase_list!=None):
@@ -88,18 +88,30 @@ def lpca_denoising(image_list, phase_list=None,
                 den_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                           rootfile=image,
-                                          suffix='lpca_den'))
+                                          suffix='lpca-den'))
                 den_files.append(den_file)
 
         dim_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=image_list[0],
-                                   suffix='lpca_dim'))
+                                   suffix='lpca-dim'))
 
         err_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=image_list[0],
-                                   suffix='lpca_err'))
+                                   suffix='lpca-err'))
+        if overwrite is False \
+            and os.path.isfile(dim_file) \
+            and os.path.isfile(err_file) :
+            
+            print("skip computation (use existing results)")
+            denoised = []
+            for den_file in enumerate(den_files):
+                denoised.append(load_volume(den_file))        
+            output = {'denoised': denoised,
+                      'dimensions': load_volume(dim_file), 
+                      'residuals': load_volume(err_file)}
+            return output
 
     # start virtual machine, if not already running
     try:

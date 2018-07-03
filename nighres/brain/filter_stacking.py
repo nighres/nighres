@@ -56,7 +56,13 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
         filter_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=second_inversion,
-                                   suffix='filter_img'))
+                                   suffix='bfs-img'))
+        if overwrite is False \
+            and os.path.isfile(filter_file) :
+            
+            print("skip computation (use existing results)")
+            output = load_volume(filter_file)
+            return output
 
     # check if there's inputs
     if (dura_img is None and pvcsf_img is None and arteries_img is None):

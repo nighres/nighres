@@ -55,7 +55,13 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
         smoothed_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                       rootfile=intensity_image,
-                                      suffix='lis_smooth'))
+                                      suffix='lis-smooth'))
+        if overwrite is False \
+            and os.path.isfile(smoothed_file) :
+            
+            print("skip computation (use existing results)")
+            output = load_volume(smoothed_file)            
+            return output
 
     # start VM if not already running
     try:

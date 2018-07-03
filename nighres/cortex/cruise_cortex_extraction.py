@@ -160,6 +160,26 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
                         _fname_4saving(file_name=file_name,
                                    rootfile=gm_image,
                                    suffix='cruise_pcsf', ))
+        if overwrite is False \
+            and os.path.isfile(cortex_file) \
+            and os.path.isfile(gwb_file) \
+            and os.path.isfile(cgb_file) \
+            and os.path.isfile(avg_file) \
+            and os.path.isfile(thick_file) \
+            and os.path.isfile(pwm_file) \
+            and os.path.isfile(pgm_file) \
+            and os.path.isfile(pcsf_file) :
+            
+            print("skip computation (use existing results)")
+            output = {'cortex': load_volume(cortex_file), 
+                      'gwb': load_volume(gwb_file), 
+                      'cgb': load_volume(cgb_file), 
+                      'avg': load_volume(avg_file), 
+                      'thickness': load_volume(thick_file), 
+                      'pwm': load_volume(pwm_file), 
+                      'pgm': load_volume(pgm_file), 
+                      'pcsf': load_volume(pcsf_file)}
+            return output
 
     # start virtual machine, if not already running
     try:

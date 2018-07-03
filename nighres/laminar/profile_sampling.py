@@ -50,6 +50,12 @@ def profile_sampling(profile_surface_image, intensity_image,
                         _fname_4saving(file_name=file_name,
                                       rootfile=intensity_image,
                                       suffix='lps-data'))
+        if overwrite is False \
+            and os.path.isfile(profile_file) :
+            
+            print("skip computation (use existing results)")
+            output = load_volume(profile_file)
+            return output
 
     # start VM if not already running
     try:
