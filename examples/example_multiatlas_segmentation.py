@@ -38,6 +38,7 @@ subjects would both be meaningful). This example is only meant as illustration.
 
 import nighres
 import os
+import nibabel as nb
 
 in_dir = os.path.join(os.getcwd(), 'nighres_examples/data_sets')
 out_dir = os.path.join(os.getcwd(), 'nighres_examples/multiatlas_segmentation')
@@ -243,13 +244,24 @@ final_seg = nighres.shape.levelset_fusion(levelset_images=[levelset1,levelset2],
 ############################################################################
 # Now we look at the final segmentation from shape fusion 
 if not skip_plots:
-    plotting.plot_roi((levelset1<0), dataset3['t1map'],
+    img = nighres.io.load_volume(levelset1)
+    mask = nb.Nifti1Image((img.get_data()<0).astype(bool), 
+                                img1.get_affine(), img1.get_header())
+    plotting.plot_roi(mask, dataset3['t1map'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')
-    plotting.plot_roi((levelset2<0), dataset3['t1map'],
+
+    img = nighres.io.load_volume(levelset2)
+    mask = nb.Nifti1Image((img.get_data()<0).astype(bool), 
+                                img1.get_affine(), img1.get_header())
+    plotting.plot_roi(mask, dataset3['t1map'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')
-    plotting.plot_roi((final_seg<0), dataset3['t1map'],
+    
+    img = nighres.io.load_volume(final_seg)
+    mask = nb.Nifti1Image((img.get_data()<0).astype(bool), 
+                                img1.get_affine(), img1.get_header())
+    plotting.plot_roi(mask, dataset3['t1map'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')
 

@@ -46,7 +46,7 @@ def levelset_fusion(levelset_images,
     Original Java module by Pierre-Louis Bazin
     """
 
-    print("\Levelset Shape Fusion")
+    print("\nLevelset Shape Fusion")
 
     # check topology_lut_dir and set default if not given
     topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
@@ -89,8 +89,8 @@ def levelset_fusion(levelset_images,
     algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
 
     levelset_data = [];
-    for image,idx in levelset_images:
-        img = load_volume(image)
+    for idx in range(len(levelset_images)):
+        img = load_volume(levelset_images[idx])
         data = img.get_data()
         algorithm.setLevelsetImageAt(idx, cbstools.JArray('float')(
                                             (data.flatten('F')).astype(float)))
@@ -110,7 +110,7 @@ def levelset_fusion(levelset_images,
         return
 
     # collect outputs
-    levelset_data = np.reshape(np.array(algorithm.getLevelSetImage(),
+    levelset_data = np.reshape(np.array(algorithm.getLevelsetAverage(),
                                dtype=np.float32), dimensions, 'F')
 
     hdr['cal_min'] = np.nanmin(levelset_data)
