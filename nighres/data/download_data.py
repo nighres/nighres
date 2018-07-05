@@ -1,5 +1,5 @@
 import os
-import urllib
+from urllib.request import urlretrieve
 
 
 # TODO: maybe add option to download different parts of the dataset
@@ -54,7 +54,7 @@ def download_7T_TRT(data_dir, overwrite=False, subject_id='sub001_sess1'):
                   "-- not downloading.".format(target))
         else:
             print("\nDownloading to {0}".format(target))
-            urllib.urlretrieve(source, target)
+            urlretrieve(source, target)
 
     return {'inv2': file_targets[0],
             't1map': file_targets[1],

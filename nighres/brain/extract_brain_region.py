@@ -112,45 +112,7 @@ def extract_brain_region(segmentation, levelset_boundary,
     xbr.setEstimateTissueDensities(estimate_tissue_densities)
     xbr.setPartialVolumingDistance(partial_volume_distance)
 
-    # load images and set dimensions and resolution
-    seg = load_volume(segmentation)
-    data = seg.get_data()
-    affine = seg.get_affine()
-    header = seg.get_header()
-    resolution = [x.item() for x in header.get_zooms()]
-    dimensions = data.shape
-
-    xbr.setDimensions(dimensions[0], dimensions[1], dimensions[2])
-    xbr.setResolutions(resolution[0], resolution[1], resolution[2])
-    xbr.setComponents(load_volume(maximum_membership).get_header().get_data_shape()[3])
-
-    xbr.setSegmentationImage(cbstools.JArray('int')(
-        (data.flatten('F')).astype(int).tolist()))
-
-    data = load_volume(levelset_boundary).get_data()
-    xbr.setLevelsetBoundaryImage(cbstools.JArray('float')(
-        (data.flatten('F')).astype(float)))
-
-    data = load_volume(maximum_membership).get_data()
-    xbr.setMaximumMembershipImage(cbstools.JArray('float')(
-        (data.flatten('F')).astype(float)))
-
-    data = load_volume(maximum_label).get_data()
-    xbr.setMaximumLabelImage(cbstools.JArray('int')(
-        (data.flatten('F')).astype(int).tolist()))
-
-    # execute
-    try:
-        xbr.execute()
-
-    except:
-        # if the Java module fails, reraise the error it throws
-        print("\n The underlying Java code did not execute cleanly: ")
-        print(sys.exc_info()[0])
-        raise
-        return
-
-	# build names for saving after the computations to get the proper names
+	# build names for saving after setting the parameters to get the proper names
     if save_data:
         reg_mask_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
@@ -219,6 +181,43 @@ def extract_brain_region(segmentation, levelset_boundary,
                       'background_lvl': load_volume(bg_lvl_file)}
             return output
 
+    # load images and set dimensions and resolution
+    seg = load_volume(segmentation)
+    data = seg.get_data()
+    affine = seg.get_affine()
+    header = seg.get_header()
+    resolution = [x.item() for x in header.get_zooms()]
+    dimensions = data.shape
+
+    xbr.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+    xbr.setResolutions(resolution[0], resolution[1], resolution[2])
+    xbr.setComponents(load_volume(maximum_membership).get_header().get_data_shape()[3])
+
+    xbr.setSegmentationImage(cbstools.JArray('int')(
+        (data.flatten('F')).astype(int).tolist()))
+
+    data = load_volume(levelset_boundary).get_data()
+    xbr.setLevelsetBoundaryImage(cbstools.JArray('float')(
+        (data.flatten('F')).astype(float)))
+
+    data = load_volume(maximum_membership).get_data()
+    xbr.setMaximumMembershipImage(cbstools.JArray('float')(
+        (data.flatten('F')).astype(float)))
+
+    data = load_volume(maximum_label).get_data()
+    xbr.setMaximumLabelImage(cbstools.JArray('int')(
+        (data.flatten('F')).astype(int).tolist()))
+
+    # execute
+    try:
+        xbr.execute()
+
+    except:
+        # if the Java module fails, reraise the error it throws
+        print("\n The underlying Java code did not execute cleanly: ")
+        print(sys.exc_info()[0])
+        raise
+        return
 
     # inside region
     # reshape output to what nibabel likes
