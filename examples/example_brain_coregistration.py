@@ -135,9 +135,9 @@ inverse = nighres.registration.apply_coordinate_mappings(
 ############################################################################
 # Now we look at the coregistered images from applying the deformation
 if not skip_plots:
-    plotting.plot_img(deformed,
+    plotting.plot_img(deformed['result'],
                       annotate=False,  draw_cross=False)
-    plotting.plot_img(inverse,
+    plotting.plot_img(inverse['result'],
                       annotate=False,  draw_cross=False)
 
 ############################################################################

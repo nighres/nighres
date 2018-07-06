@@ -194,22 +194,22 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         seg_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                   rootfile=contrast_image1,
-                                  suffix='mgdm_seg', ))
+                                  suffix='mgdm-seg', ))
 
         lbl_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                   rootfile=contrast_image1,
-                                  suffix='mgdm_lbls'))
+                                  suffix='mgdm-lbls'))
 
         mems_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=contrast_image1,
-                                   suffix='mgdm_mems'))
+                                   suffix='mgdm-mems'))
 
         dist_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=contrast_image1,
-                                   suffix='mgdm_dist'))
+                                   suffix='mgdm-dist'))
         if overwrite is False \
             and os.path.isfile(seg_file) \
             and os.path.isfile(lbl_file) \
@@ -324,10 +324,10 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     mems = nb.Nifti1Image(mems_data, affine, header)
 
     if save_data:
-        save_volume(os.path.join(output_dir, seg_file), seg)
-        save_volume(os.path.join(output_dir, dist_file), dist)
-        save_volume(os.path.join(output_dir, lbl_file), lbls)
-        save_volume(os.path.join(output_dir, mems_file), mems)
+        save_volume(seg_file, seg)
+        save_volume(dist_file, dist)
+        save_volume(lbl_file, lbls)
+        save_volume(mems_file, mems)
 
     return {'segmentation': seg, 'labels': lbls,
             'memberships': mems, 'distance': dist}

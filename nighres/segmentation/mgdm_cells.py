@@ -122,12 +122,12 @@ def mgdm_cells(contrast_image1, contrast_type1,
         seg_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                   rootfile=contrast_image1,
-                                  suffix='mgdmc_seg', ))
+                                  suffix='mgdmc-seg', ))
 
         dist_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=contrast_image1,
-                                   suffix='mgdmc_dist'))
+                                   suffix='mgdmc-dist'))
         if overwrite is False \
             and os.path.isfile(seg_file) \
             and os.path.isfile(dist_file) :
@@ -213,7 +213,7 @@ def mgdm_cells(contrast_image1, contrast_type1,
     dist = nb.Nifti1Image(dist_data, affine, header)
 
     if save_data:
-        save_volume(os.path.join(output_dir, seg_file), seg)
-        save_volume(os.path.join(output_dir, dist_file), dist)
+        save_volume(seg_file, seg)
+        save_volume(dist_file, dist)
 
     return {'segmentation': seg, 'distance': dist}

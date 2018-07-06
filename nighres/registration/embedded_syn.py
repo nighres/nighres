@@ -101,17 +101,17 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
         deformed_source_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=source_image,
-                                   suffix='syn_def'))
+                                   suffix='syn-def'))
 
         mapping_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=source_image,
-                                   suffix='syn_map'))
+                                   suffix='syn-map'))
 
         inverse_mapping_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=source_image,
-                                   suffix='syn_invmap'))
+                                   suffix='syn-invmap'))
         if overwrite is False \
             and os.path.isfile(deformed_source_file) \
             and os.path.isfile(mapping_file) \
@@ -155,10 +155,10 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
                 src_coord[x,y,z,Y] = y
                 src_coord[x,y,z,Z] = z
     src_map = nb.Nifti1Image(src_coord, source.affine, source.header)
-    src_map_file = _fname_4saving(file_name=file_name,
-                            rootfile=source_image,
-                            suffix='tmp_srccoord')
-    save_volume(os.path.join(output_dir, src_map_file), src_map)
+    src_map_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+                                                        rootfile=source_image,
+                                                        suffix='tmp_srccoord'))
+    save_volume(src_map_file, src_map)
     for x in range(ntx):
         for y in range(nty):
             for z in range(ntz):
@@ -166,10 +166,10 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
                 trg_coord[x,y,z,Y] = y
                 trg_coord[x,y,z,Z] = z
     trg_map = nb.Nifti1Image(trg_coord, target.affine, target.header)
-    trg_map_file = _fname_4saving(file_name=file_name,
-                            rootfile=source_image,
-                            suffix='tmp_trgcoord')
-    save_volume(os.path.join(output_dir, trg_map_file), trg_map)
+    trg_map_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+                                                        rootfile=source_image,
+                                                        suffix='tmp_trgcoord'))
+    save_volume(trg_map_file, trg_map)
     
     # run the main ANTS software
     ants = ANTS()
@@ -252,8 +252,8 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
                 'inverse': inverse_img}
 
     # clean-up intermediate files
-    #os.remove(src_map_file)
-    #os.remove(trg_map_file)
+    os.remove(src_map_file)
+    os.remove(trg_map_file)
     os.remove(result.outputs.affine_transform)
     os.remove(result.outputs.warp_transform)
     os.remove(result.outputs.inverse_warp_transform)
@@ -262,8 +262,8 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
     os.remove(inverse.outputs.output_image)
 
     if save_data:
-        save_volume(os.path.join(output_dir, deformed_source_file), deformed_img)
-        save_volume(os.path.join(output_dir, mapping_file), mapping_img)
-        save_volume(os.path.join(output_dir, inverse_mapping_file), inverse_img)
+        save_volume(deformed_source_file, deformed_img)
+        save_volume(mapping_file, mapping_img)
+        save_volume(inverse_mapping_file, inverse_img)
 
     return outputs

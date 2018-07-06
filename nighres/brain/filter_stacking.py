@@ -61,7 +61,7 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
             and os.path.isfile(filter_file) :
             
             print("skip computation (use existing results)")
-            output = load_volume(filter_file)
+            output = {"result": load_volume(filter_file)}
             return output
 
     # check if there's inputs
@@ -127,6 +127,6 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
     filter_img = nb.Nifti1Image(fliter_data, affine, header)
 
     if save_data:
-        save_volume(os.path.join(output_dir, filter_file), filter_img)
+        save_volume(filter_file, filter_img)
 
-    return filter_img
+    return {"result": filter_img}

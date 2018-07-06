@@ -117,47 +117,47 @@ def extract_brain_region(segmentation, levelset_boundary,
         reg_mask_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                        rootfile=segmentation,
-                                       suffix='xmask'+xbr.getStructureName(), ))
+                                       suffix='xmask-'+xbr.getStructureName(), ))
 
         ins_mask_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                        rootfile=segmentation,
-                                       suffix='xmask'+xbr.getInsideName(), ))
+                                       suffix='xmask-'+xbr.getInsideName(), ))
 
         bg_mask_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                       rootfile=segmentation,
-                                      suffix='xmask'+xbr.getBackgroundName(), ))
+                                      suffix='xmask-'+xbr.getBackgroundName(), ))
 
         reg_proba_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                         rootfile=segmentation,
-                                        suffix='xproba'+xbr.getStructureName(), ))
+                                        suffix='xproba-'+xbr.getStructureName(), ))
 
         ins_proba_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                         rootfile=segmentation,
-                                        suffix='xproba'+xbr.getInsideName(), ))
+                                        suffix='xproba-'+xbr.getInsideName(), ))
 
         bg_proba_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                        rootfile=segmentation,
-                                       suffix='xproba'+xbr.getBackgroundName(), ))
+                                       suffix='xproba-'+xbr.getBackgroundName(), ))
 
         reg_lvl_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                       rootfile=segmentation,
-                                      suffix='xlvl'+xbr.getStructureName(), ))
+                                      suffix='xlvl-'+xbr.getStructureName(), ))
 
         ins_lvl_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                       rootfile=segmentation,
-                                      suffix='xlvl'+xbr.getInsideName(), ))
+                                      suffix='xlvl-'+xbr.getInsideName(), ))
 
         bg_lvl_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                      rootfile=segmentation,
-                                     suffix='xlvl'+xbr.getBackgroundName(), ))
+                                     suffix='xlvl-'+xbr.getBackgroundName(), ))
         if overwrite is False \
             and os.path.isfile(reg_mask_file) \
             and os.path.isfile(ins_mask_file) \
@@ -295,15 +295,15 @@ def extract_brain_region(segmentation, levelset_boundary,
     background_lvl = nb.Nifti1Image(lvl_data, affine, header)
 
     if save_data:
-        save_volume(os.path.join(output_dir, ins_mask_file), inside_mask)
-        save_volume(os.path.join(output_dir, ins_proba_file), inside_proba)
-        save_volume(os.path.join(output_dir, ins_lvl_file), inside_lvl)
-        save_volume(os.path.join(output_dir, reg_mask_file), region_mask)
-        save_volume(os.path.join(output_dir, reg_proba_file), region_proba)
-        save_volume(os.path.join(output_dir, reg_lvl_file), region_lvl)
-        save_volume(os.path.join(output_dir, bg_mask_file), background_mask)
-        save_volume(os.path.join(output_dir, bg_proba_file), background_proba)
-        save_volume(os.path.join(output_dir, bg_lvl_file), background_lvl)
+        save_volume(ins_mask_file, inside_mask)
+        save_volume(ins_proba_file, inside_proba)
+        save_volume(ins_lvl_file, inside_lvl)
+        save_volume(reg_mask_file, region_mask)
+        save_volume(reg_proba_file, region_proba)
+        save_volume(reg_lvl_file, region_lvl)
+        save_volume(bg_mask_file, background_mask)
+        save_volume(bg_proba_file, background_proba)
+        save_volume(bg_lvl_file, background_lvl)
 
     return {'inside_mask': inside_mask, 'inside_proba': inside_proba,
             'inside_lvl': inside_lvl, 'region_mask': region_mask,

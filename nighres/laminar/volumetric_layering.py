@@ -72,17 +72,17 @@ def volumetric_layering(inner_levelset, outer_levelset,
         depth_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                     rootfile=inner_levelset,
-                                    suffix='layering_depth'))
+                                    suffix='layering-depth'))
 
         layer_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                     rootfile=inner_levelset,
-                                    suffix='layering_layers'))
+                                    suffix='layering-layers'))
 
         boundary_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                        rootfile=inner_levelset,
-                                       suffix='layering_boundaries'))
+                                       suffix='layering-boundaries'))
         if overwrite is False \
             and os.path.isfile(depth_file) \
             and os.path.isfile(layer_file) \
@@ -155,8 +155,8 @@ def volumetric_layering(inner_levelset, outer_levelset,
     boundaries = nb.Nifti1Image(boundary_data, aff, hdr)
 
     if save_data:
-        save_volume(os.path.join(output_dir, depth_file), depth)
-        save_volume(os.path.join(output_dir, layer_file), layers)
-        save_volume(os.path.join(output_dir, boundary_file), boundaries)
+        save_volume(depth_file, depth)
+        save_volume(layer_file, layers)
+        save_volume(boundary_file, boundaries)
 
     return {'depth': depth, 'layers': layers, 'boundaries': boundaries}

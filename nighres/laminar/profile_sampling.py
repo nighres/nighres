@@ -54,7 +54,7 @@ def profile_sampling(profile_surface_image, intensity_image,
             and os.path.isfile(profile_file) :
             
             print("skip computation (use existing results)")
-            output = load_volume(profile_file)
+            output = {'result': load_volume(profile_file)}
             return output
 
     # start VM if not already running
@@ -105,6 +105,6 @@ def profile_sampling(profile_surface_image, intensity_image,
     profiles = nb.Nifti1Image(profile_data, aff, hdr)
 
     if save_data:
-        save_volume(os.path.join(output_dir, profile_file), profiles)
+        save_volume(profile_file, profiles)
 
-    return profiles
+    return {'result': profiles}

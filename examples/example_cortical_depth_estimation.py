@@ -45,10 +45,10 @@ except ImportError:
 
 ############################################################################
 # Now we pull the MGDM results from previous example
-segmentation = os.path.join(in_dir, 'sub001_sess1_mgdm_seg.nii.gz')
-boundary_dist = os.path.join(in_dir, 'sub001_sess1_mgdm_dist.nii.gz')
-max_labels = os.path.join(in_dir, 'sub001_sess1_mgdm_lbls.nii.gz')
-max_probas = os.path.join(in_dir, 'sub001_sess1_mgdm_mems.nii.gz')
+segmentation = os.path.join(in_dir, 'sub001_sess1_mgdm-seg.nii.gz')
+boundary_dist = os.path.join(in_dir, 'sub001_sess1_mgdm-dist.nii.gz')
+max_labels = os.path.join(in_dir, 'sub001_sess1_mgdm-lbls.nii.gz')
+max_probas = os.path.join(in_dir, 'sub001_sess1_mgdm-mems.nii.gz')
 
 ###########################################################################
 # Region Extraction

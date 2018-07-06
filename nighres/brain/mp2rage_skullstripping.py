@@ -78,22 +78,22 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         inv2_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=second_inversion,
-                                   suffix='strip_inv2'))
+                                   suffix='strip-inv2'))
         mask_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=second_inversion,
-                                   suffix='strip_mask'))
+                                   suffix='strip-mask'))
         if t1_weighted is not None:
             t1w_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                       rootfile=t1_weighted,
-                                      suffix='strip_t1w'))
+                                      suffix='strip-t1w'))
 
         if t1_map is not None:
             t1map_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                         rootfile=t1_map,
-                                        suffix='strip_t1map'))
+                                        suffix='strip-t1map'))
         
         if overwrite is False \
             and os.path.isfile(mask_file) \
@@ -189,7 +189,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         outputs['t1w_masked'] = t1w_masked
 
         if save_data:
-            save_volume(os.path.join(output_dir, t1w_file), t1w_masked)
+            save_volume(t1w_file, t1w_masked)
 
     if t1_map is not None:
         t1map_masked_data = np.reshape(np.array(
@@ -201,6 +201,6 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         outputs['t1map_masked'] = t1map_masked
 
         if save_data:
-            save_volume(os.path.join(output_dir, t1map_file), t1map_masked)
+            save_volume(t1map_file, t1map_masked)
 
     return outputs

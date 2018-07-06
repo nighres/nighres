@@ -57,7 +57,7 @@ def probability_to_levelset(probability_image,
             and os.path.isfile(levelset_file) :
             
             print("skip computation (use existing results)")
-            output = load_volume(levelset_file)
+            output = {'result': load_volume(levelset_file)}
             return output
             
     # start virtual machine if not running
@@ -102,6 +102,6 @@ def probability_to_levelset(probability_image,
     levelset = nb.Nifti1Image(levelset_data, aff, hdr)
 
     if save_data:
-        save_volume(os.path.join(output_dir, levelset_file), levelset)
+        save_volume(levelset_file, levelset)
 
-    return levelset
+    return {'result': levelset}

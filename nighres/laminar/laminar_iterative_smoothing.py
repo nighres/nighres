@@ -60,7 +60,7 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
             and os.path.isfile(smoothed_file) :
             
             print("skip computation (use existing results)")
-            output = load_volume(smoothed_file)            
+            output = {"result": load_volume(smoothed_file)}          
             return output
 
     # start VM if not already running
@@ -127,6 +127,6 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
     smoothed = nb.Nifti1Image(smoothed_data, aff, hdr)
 
     if save_data:
-        save_volume(os.path.join(output_dir, smoothed_file), smoothed)
+        save_volume(smoothed_file, smoothed)
 
-    return smoothed
+    return {"result": smoothed}

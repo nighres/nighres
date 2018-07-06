@@ -66,7 +66,7 @@ def filter_ridge_structures(input_image,
             and os.path.isfile(ridge_file) :
             
             print("skip computation (use existing results)")
-            output = {'ridges': load_volume(ridge_file)}
+            output = {'result': load_volume(ridge_file)}
             return output
 
     # start virtual machine, if not already running
@@ -124,10 +124,10 @@ def filter_ridge_structures(input_image,
         header['cal_max'] = np.nanmax(ridge_structure_image_data)
 
     ridge_structure_image = nb.Nifti1Image(ridge_structure_image_data, affine, header)
-    outputs = {'ridges': ridge_structure_image}
+    outputs = {'result': ridge_structure_image}
 
     if save_data:
-        save_volume(os.path.join(output_dir, ridge_file), ridge_structure_image)
+        save_volume(ridge_file, ridge_structure_image)
 
     return outputs
 

@@ -205,9 +205,9 @@ deformed2 = nighres.registration.apply_coordinate_mappings(
 ############################################################################
 # Now we look at the segmentations deformed by SyN 
 if not skip_plots:
-    plotting.plot_img(deformed1,
+    plotting.plot_img(deformed1['result'],
                       annotate=False,  draw_cross=False)
-    plotting.plot_img(deformed2,
+    plotting.plot_img(deformed2['result'],
                       annotate=False,  draw_cross=False)
 
 ############################################################################
@@ -218,49 +218,50 @@ if not skip_plots:
 # We use the deformed MGDM segmentations
 
 # label 32 = left caudate
-img1 = nighres.io.load_volume(deformed1)
+img1 = nighres.io.load_volume(deformed1['result'])
 struct1 = nb.Nifti1Image((img1.get_data()==32).astype(float), 
                             img1.get_affine(), img1.get_header())
 
-img2 = nighres.io.load_volume(deformed2)
+img2 = nighres.io.load_volume(deformed2['result'])
 struct2 = nb.Nifti1Image((img2.get_data()==32).astype(float), 
                             img2.get_affine(), img2.get_header())
 
 levelset1 = nighres.surface.probability_to_levelset(
                         probability_image=struct1,
-                        save_data=True, file_name="sub001_sess1_struct1",
+                        save_data=True, file_name="sub001_sess1_struct",
                         output_dir=out_dir)
 
 levelset2 = nighres.surface.probability_to_levelset(
                         probability_image=struct2,
-                        save_data=True, file_name="sub001_sess1_struct2",
+                        save_data=True, file_name="sub002_sess1_struct",
                         output_dir=out_dir)
 
-final_seg = nighres.shape.levelset_fusion(levelset_images=[levelset1,levelset2],
-                        correct_topology=False, 
+final_seg = nighres.shape.levelset_fusion(levelset_images=[levelset1['result'],
+                        levelset2['result']],
+                        correct_topology=True, 
                         save_data=True, file_name="sub003_sess1_struct_seg",
-                        output_dir=out_dir)
+                        output_dir=out_dir, overwrite=True)
 
 ############################################################################
 # Now we look at the final segmentation from shape fusion 
 if not skip_plots:
-    img = nighres.io.load_volume(levelset1)
+    img = nighres.io.load_volume(levelset1['result'])
     mask = nb.Nifti1Image((img.get_data()<0).astype(bool), 
-                                img1.get_affine(), img1.get_header())
+                                img.get_affine(), img.get_header())
     plotting.plot_roi(mask, dataset3['t1map'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')
 
-    img = nighres.io.load_volume(levelset2)
+    img = nighres.io.load_volume(levelset2['result'])
     mask = nb.Nifti1Image((img.get_data()<0).astype(bool), 
-                                img1.get_affine(), img1.get_header())
+                                img.get_affine(), img.get_header())
     plotting.plot_roi(mask, dataset3['t1map'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')
     
-    img = nighres.io.load_volume(final_seg)
+    img = nighres.io.load_volume(final_seg['result'])
     mask = nb.Nifti1Image((img.get_data()<0).astype(bool), 
-                                img1.get_affine(), img1.get_header())
+                                img.get_affine(), img.get_header())
     plotting.plot_roi(mask, dataset3['t1map'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')

@@ -103,19 +103,24 @@ def lpca_denoising(image_list, phase_list=None,
         if overwrite is False \
             and os.path.isfile(dim_file) \
             and os.path.isfile(err_file) :
-            
-            print("skip computation (use existing results)")
-            denoised = []
-            for den_file in enumerate(den_files):
-                denoised.append(load_volume(den_file))        
-            output = {'denoised': denoised,
-                      'dimensions': load_volume(dim_file), 
-                      'residuals': load_volume(err_file)}
-            return output
+                # check that the denoised data is the same too
+                missing = False
+                for den_file in den_files:
+                    if not os.path.isfile(den_file):
+                        missing = True
+                if not missing:
+                    print("skip computation (use existing results)")
+                    denoised = []
+                    for den_file in den_files:
+                        denoised.append(load_volume(den_file))        
+                    output = {'denoised': denoised,
+                              'dimensions': load_volume(dim_file), 
+                              'residuals': load_volume(err_file)}
+                    return output
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        cbstools.initVM(initialheap='12000m', maxheap='12000m')
     except ValueError:
         pass
     # create lpca instance
@@ -187,7 +192,7 @@ def lpca_denoising(image_list, phase_list=None,
         denoised_list.append(denoised)
 
         if save_data:
-            save_volume(os.path.join(output_dir, den_files[idx]), denoised)
+            save_volume(den_files[idx], denoised)
 
     if (phase_list!=None):
         for idx, image in enumerate(phase_list):
@@ -199,8 +204,7 @@ def lpca_denoising(image_list, phase_list=None,
             denoised_list.append(denoised)
     
             if save_data:
-                save_volume(os.path.join(output_dir, 
-                                    den_files[idx+len(image_list)]), denoised)
+                save_volume(den_files[idx+len(image_list)], denoised)
 
     dim_data = np.reshape(np.array(lpca.getLocalDimensionImage(),
                                     dtype=np.float32), dimensions, 'F')
@@ -219,7 +223,7 @@ def lpca_denoising(image_list, phase_list=None,
     err = nb.Nifti1Image(err_data, affine, header)
 
     if save_data:
-        save_volume(os.path.join(output_dir, dim_file), dim)
-        save_volume(os.path.join(output_dir, err_file), err)
+        save_volume(dim_file, dim)
+        save_volume(err_file, err)
 
     return {'denoised': denoised_list, 'dimensions': dim, 'residuals': err}

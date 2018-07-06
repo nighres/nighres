@@ -148,7 +148,7 @@ def topology_correction(image, shape_type,
     corrected_obj = nb.Nifti1Image(corrected_obj_data, aff, hdr)
 
     if save_data:
-        save_volume(os.path.join(output_dir, corrected_file), corrected)
-        save_volume(os.path.join(output_dir, corrected_obj_file), corrected_obj)
+        save_volume(corrected_file, corrected)
+        save_volume(corrected_obj_file, corrected_obj)
 
     return {'corrected': corrected, 'object':corrected_obj}

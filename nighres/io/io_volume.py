@@ -38,7 +38,8 @@ def load_volume(volume):
         image = volume
     else:
         raise ValueError('Input volume must be a either a path to a file in a '
-                         'that Nibabel can load, or a nibabel SpatialImage.')
+                         'format that Nibabel can load, or a nibabel'
+                         'SpatialImage.')
     return image
 
 

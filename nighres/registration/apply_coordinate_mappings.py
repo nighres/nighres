@@ -63,12 +63,12 @@ def apply_coordinate_mappings(image, mapping1,
         deformed_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                     rootfile=image,
-                                    suffix='def_img'))
+                                    suffix='def-img'))
         if overwrite is False \
             and os.path.isfile(deformed_file) :
             
             print("skip computation (use existing results)")
-            output = load_volume(deformed_file)
+            output = {'result': load_volume(deformed_file)}
             return output
 
     # start virutal machine if not already running
@@ -145,6 +145,6 @@ def apply_coordinate_mappings(image, mapping1,
     deformed = nb.Nifti1Image(deformed_data, aff, hdr)
 
     if save_data:
-        save_volume(os.path.join(output_dir, deformed_file), deformed)
+        save_volume(deformed_file, deformed)
 
-    return deformed
+    return {'result': deformed}
