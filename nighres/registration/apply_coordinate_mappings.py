@@ -29,7 +29,7 @@ def apply_coordinate_mappings(image, mapping1,
         Third coordinate mapping to apply
     mapping4 : niimg, optional
         Fourth coordinate mapping to apply
-    interpolation: {'nearest', 'linear', 'wsinc'}
+    interpolation: {'nearest', 'linear'}
         Interpolation method (default is 'nearest')
     padding: {'closest', 'zero', 'max'}
         Image padding method (default is 'closest')

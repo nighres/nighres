@@ -47,7 +47,7 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
     cost_function: {'CrossCorrelation', 'MutualInformation'}
         Cost function for the registration (default is 'MutualInformation')
     interpolation: {'NearestNeighbor', 'Linear'}
-        Interpolation for the registration (default is 'NearestNeighbor')
+        Interpolation for the registration result (default is 'NearestNeighbor')
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -190,8 +190,8 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
         ants.inputs.metric = ['MI']
         ants.inputs.metric_weight = [1.0]
         ants.inputs.radius = [64]
-    ants.inputs.fixed_image = [target_image.get_filename()]
-    ants.inputs.moving_image = [source_image.get_filename()]
+    ants.inputs.fixed_image = [target.get_filename()]
+    ants.inputs.moving_image = [source.get_filename()]
     ants.inputs.transformation_model = 'SyN'
     ants.inputs.gradient_step_length = 0.25
     ants.inputs.number_of_iterations = [coarse_iterations, medium_iterations, 
@@ -207,8 +207,8 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
     # Transforms the moving image
     at = ApplyTransforms()
     at.inputs.dimension = 3
-    at.inputs.input_image = source_image.get_filename()
-    at.inputs.reference_image = target_image.get_filename()
+    at.inputs.input_image = source.get_filename()
+    at.inputs.reference_image = target.get_filename()
     at.inputs.interpolation = interpolation
     at.inputs.transforms = [result.outputs.warp_transform,
                             result.outputs.affine_transform]
@@ -220,7 +220,7 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
     src_at.inputs.dimension = 3
     src_at.inputs.input_image_type = 3
     src_at.inputs.input_image = src_map.get_filename()
-    src_at.inputs.reference_image = target_image.get_filename()
+    src_at.inputs.reference_image = target.get_filename()
     src_at.inputs.interpolation = 'Linear'
     src_at.inputs.transforms = [result.outputs.warp_transform,
                                 result.outputs.affine_transform]
@@ -231,7 +231,7 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
     trg_at.inputs.dimension = 3
     trg_at.inputs.input_image_type = 3
     trg_at.inputs.input_image = trg_map.get_filename()
-    trg_at.inputs.reference_image = source_image.get_filename()
+    trg_at.inputs.reference_image = source.get_filename()
     trg_at.inputs.interpolation = 'Linear'
     trg_at.inputs.transforms = [result.outputs.affine_transform,
                                 result.outputs.inverse_warp_transform]

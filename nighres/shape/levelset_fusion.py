@@ -59,6 +59,7 @@ def levelset_fusion(levelset_images,
                         _fname_4saving(file_name=file_name,
                                        rootfile=levelset_images[0],
                                        suffix='lsf-avg'))
+        print('output file: '+levelset_file)
         if overwrite is False \
             and os.path.isfile(levelset_file) :
             
