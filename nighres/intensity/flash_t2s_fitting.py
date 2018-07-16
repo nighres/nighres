@@ -79,6 +79,7 @@ def flash_t2s_fitting(image_list, te_list,
             and os.path.isfile(r2s_file) \
             and os.path.isfile(s0_file) \
             and os.path.isfile(err_file) :
+                print("skip computation (use existing results)")
                 output = {'t2s': load_volume(t2s_file),
                           'r2s': load_volume(r2s_file), 
                           's0': load_volume(s0_file), 
@@ -117,7 +118,8 @@ def flash_t2s_fitting(image_list, te_list,
         qt2fit.setEchoImageAt(idx, cbstools.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
-        qt2fit.setEchoImageAt(idx, te_list[idx])
+    for idx, te in enumerate(te_list):
+        qt2fit.setEchoTimeAt(idx, te)
 
     # execute the algorithm
     try:

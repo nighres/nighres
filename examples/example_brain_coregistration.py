@@ -101,12 +101,12 @@ if not skip_plots:
 syn_results = nighres.registration.embedded_syn(
                         source_image=skullstripping_results1['t1map_masked'],
                         target_image=skullstripping_results2['t1map_masked'],
-                        coarse_iterations=40, 
-                        medium_iterations=0, fine_iterations=0,
+                        coarse_iterations=75, 
+                        medium_iterations=5, fine_iterations=2,
                         run_affine_first=True, cost_function='MutualInformation', 
                         interpolation='NearestNeighbor',
                         save_data=True, file_name="sub001_sess1",
-                        output_dir=out_dir)
+                        output_dir=out_dir, overwrite=True)
 
 ############################################################################
 # Now we look at the coregistered image that SyN created
