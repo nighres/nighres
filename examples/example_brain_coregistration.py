@@ -106,7 +106,7 @@ syn_results = nighres.registration.embedded_syn(
                         run_affine_first=True, cost_function='MutualInformation', 
                         interpolation='NearestNeighbor',
                         save_data=True, file_name="sub001_sess1",
-                        output_dir=out_dir, overwrite=True)
+                        output_dir=out_dir, overwrite=False)
 
 ############################################################################
 # Now we look at the coregistered image that SyN created
@@ -124,13 +124,13 @@ deformed = nighres.registration.apply_coordinate_mappings(
                         image=dataset1['t1map'],
                         mapping1=syn_results['mapping'],
                         save_data=True, file_name="sub001_sess1_t1map",
-                        output_dir=out_dir)
+                        output_dir=out_dir, overwrite=True)
 
 inverse = nighres.registration.apply_coordinate_mappings(
                         image=dataset2['t1w'],
                         mapping1=syn_results['inverse'],
                         save_data=True, file_name="sub002_sess1_t1w",
-                        output_dir=out_dir)
+                        output_dir=out_dir, overwrite=True)
 
 ############################################################################
 # Now we look at the coregistered images from applying the deformation
