@@ -1,5 +1,6 @@
 import os
 import warnings
+import nibabel as nb
 from nighres.global_settings import TOPOLOGY_LUT_DIR, ATLAS_DIR, DEFAULT_ATLAS
 
 
@@ -9,6 +10,8 @@ def _output_dir_4saving(output_dir=None, rootfile=None):
             # if nothing is specified, use current working dir
             output_dir = os.getcwd()
         else:
+            if isinstance(rootfile, nb.spatialimages.SpatialImage):
+                rootfile = rootfile.get_filename()
             # if rootfile is specified, use its directory
             output_dir = os.path.dirname(rootfile)
             # if rootfile is in current directory, dirname returns ''
@@ -42,6 +45,9 @@ def _fname_4saving(file_name=None, rootfile=None, suffix=None):
         # if a rootfile is given (which is a file_name and not a data object)
         # use its file_name
         #python2 if isinstance(rootfile, basestring):
+        if isinstance(rootfile, nb.spatialimages.SpatialImage):
+            rootfile = rootfile.get_filename()
+        
         if isinstance(rootfile, str):
             file_name = os.path.basename(rootfile)
             #print(("You have not specified a file_name. We will use the "
