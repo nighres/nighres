@@ -1,9 +1,9 @@
 import os
-import urllib
+from urllib.request import urlretrieve
 
 
 # TODO: maybe add option to download different parts of the dataset
-def download_7T_TRT(data_dir, overwrite=False):
+def download_7T_TRT(data_dir, overwrite=False, subject_id='sub001_sess1'):
     """
     Downloads the MP2RAGE data of subject 001, session 1 of the 7T Test-Retest
     dataset published by Gorgolewski et al (2015) [1]_
@@ -41,20 +41,26 @@ def download_7T_TRT(data_dir, overwrite=False):
         os.makedirs(data_dir)
 
     nitrc = 'https://www.nitrc.org/frs/download.php/'
-    file_sources = [nitrc + x for x in ['10234', '10235', '10236']]
+    if subject_id is 'sub001_sess1':
+        file_sources = [nitrc + x for x in ['10234', '10235', '10236']]
+    elif subject_id is 'sub002_sess1':
+        file_sources = [nitrc + x for x in ['10852', '10853', '10854']]
+    elif subject_id is 'sub003_sess1':
+        file_sources = [nitrc + x for x in ['10855', '10856', '10857']]
+      
     file_targets = [os.path.join(data_dir, filename) for filename in
-                    ['sub001_sess1_INV2.nii.gz',
-                     'sub001_sess1_T1map.nii.gz',
-                     'sub001_sess1_T1w.nii.gz']]
+                    [subject_id+'_INV2.nii.gz',
+                     subject_id+'_T1map.nii.gz',
+                     subject_id+'_T1w.nii.gz']]
 
     for source, target in zip(file_sources, file_targets):
 
         if os.path.isfile(target) and overwrite is False:
             print("\nThe file {0} exists and overwrite was set to False "
-                  "-- not downloading.").format(target)
+                  "-- not downloading.".format(target))
         else:
-            print("\nDownloading to {0}").format(target)
-            urllib.urlretrieve(source, target)
+            print("\nDownloading to {0}".format(target))
+            urlretrieve(source, target)
 
     return {'inv2': file_targets[0],
             't1map': file_targets[1],

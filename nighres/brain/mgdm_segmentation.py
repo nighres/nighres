@@ -49,7 +49,7 @@ def _get_mgdm_intensity_priors(atlas_file):
         for i, line in enumerate(fp):
             if "Structures:" in line:  # this is the beginning of the LUT
                 lut_idx = i
-                lut_rows = map(int, [line.split()[1]])[0]
+                lut_rows = list(map(int, [line.split()[1]]))[0]
             if "Intensity Prior:" in line:
                 priors.append(line.split()[-1])
     return priors
@@ -64,7 +64,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                       adjust_intensity_priors=False,
                       compute_posterior=False,
                       diffuse_probabilities=False,
-                      save_data=False, output_dir=None,
+                      save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ MGDM segmentation
 
@@ -122,6 +122,8 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         (default is False)
     save_data: bool
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -189,21 +191,37 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, contrast_image1)
 
-        seg_file = _fname_4saving(file_name=file_name,
+        seg_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                   rootfile=contrast_image1,
-                                  suffix='mgdm_seg', )
+                                  suffix='mgdm-seg', ))
 
-        lbl_file = _fname_4saving(file_name=file_name,
+        lbl_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                   rootfile=contrast_image1,
-                                  suffix='mgdm_lbls')
+                                  suffix='mgdm-lbls'))
 
-        mems_file = _fname_4saving(file_name=file_name,
+        mems_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                    rootfile=contrast_image1,
-                                   suffix='mgdm_mems')
+                                   suffix='mgdm-mems'))
 
-        dist_file = _fname_4saving(file_name=file_name,
+        dist_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                    rootfile=contrast_image1,
-                                   suffix='mgdm_dist')
+                                   suffix='mgdm-dist'))
+        if overwrite is False \
+            and os.path.isfile(seg_file) \
+            and os.path.isfile(lbl_file) \
+            and os.path.isfile(mems_file) \
+            and os.path.isfile(dist_file) :
+            
+            print("skip computation (use existing results)")
+            output = {'segmentation': load_volume(seg_file), 
+                      'labels': load_volume(lbl_file), 
+                      'memberships': load_volume(mems_file), 
+                      'distance': load_volume(dist_file)}
+            return output
 
     # start virtual machine, if not already running
     try:
@@ -273,7 +291,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")
-        print sys.exc_info()[0]
+        print(sys.exc_info()[0])
         raise
         return
 
@@ -306,10 +324,10 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     mems = nb.Nifti1Image(mems_data, affine, header)
 
     if save_data:
-        save_volume(os.path.join(output_dir, seg_file), seg)
-        save_volume(os.path.join(output_dir, dist_file), dist)
-        save_volume(os.path.join(output_dir, lbl_file), lbls)
-        save_volume(os.path.join(output_dir, mems_file), mems)
+        save_volume(seg_file, seg)
+        save_volume(dist_file, dist)
+        save_volume(lbl_file, lbls)
+        save_volume(mems_file, mems)
 
     return {'segmentation': seg, 'labels': lbls,
             'memberships': mems, 'distance': dist}

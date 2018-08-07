@@ -14,7 +14,7 @@ function join_by { local IFS="$1"; shift; echo "$*"; }
 cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
 
 # Check the system has the necessary commands
-hash wget tar javac jar python pip 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python pip"
+hash wget tar javac jar python3 pip3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3 pip3"
 
 # Check for setuptools and wheels
 pip_modules=$(pip list --format columns | tr -s ' ' | cut -f 1 -d ' ')
@@ -29,12 +29,12 @@ export JAVA_HOME=${JAVA_HOME:-"$detected_home"}
 # echo "After detection: $JAVA_HOME"
 
 # Check that JCC is installed
-echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.\nInstall with `apt-get install jcc` or equivalent and `pip install jcc`'
+#echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.\nInstall with `apt-get install jcc` or equivalent and `pip install jcc`'
 
 # Attempt to check for python development headers
 # Inspired by https://stackoverflow.com/a/4850603
-python_include_path=$(python -c "from distutils import sysconfig as s; print s.get_config_vars()['INCLUDEPY']")
-test -f "${python_include_path}/Python.h" || fatal 'This script requires python development headers.\nInstall with `apt-get install python-dev`, or \n             `apt-get install python3-dev`, or equivalent'
+python_include_path=$(python3 -c "from distutils import sysconfig as s; print s.get_config_vars()['INCLUDEPY']")
+test -f "${python_include_path}/Python.h" || fatal 'This script requires python 3 development headers.\nInstall with `apt-get install python3-dev`, or equivalent'
 
 # Get cbstools git clone
 test -d cbstools-public || (
@@ -106,7 +106,7 @@ jcc_args=(
 	"--build"
 )
 
-python -m jcc ${jcc_args[@]}
+python3 -m jcc ${jcc_args[@]}
 
 
 #

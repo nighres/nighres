@@ -45,10 +45,16 @@ except ImportError:
 
 ############################################################################
 # Now we pull the MGDM results from previous example
-segmentation = os.path.join(in_dir, 'sub001_sess1_mgdm_seg.nii.gz')
-boundary_dist = os.path.join(in_dir, 'sub001_sess1_mgdm_dist.nii.gz')
-max_labels = os.path.join(in_dir, 'sub001_sess1_mgdm_lbls.nii.gz')
-max_probas = os.path.join(in_dir, 'sub001_sess1_mgdm_mems.nii.gz')
+segmentation = os.path.join(in_dir, 'sub001_sess1_mgdm-seg.nii.gz')
+boundary_dist = os.path.join(in_dir, 'sub001_sess1_mgdm-dist.nii.gz')
+max_labels = os.path.join(in_dir, 'sub001_sess1_mgdm-lbls.nii.gz')
+max_probas = os.path.join(in_dir, 'sub001_sess1_mgdm-mems.nii.gz')
+
+if not (os.path.isfile(segmentation) and os.path.isfile(boundary_dist)
+        and os.path.isfile(max_labels) and os.path.isfile(max_probas)) :
+    print('This example builds upon the example_tissue_segmentation.py one')
+    print('Please run it first')
+    exit()
 
 ###########################################################################
 # Region Extraction

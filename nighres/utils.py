@@ -1,6 +1,7 @@
 import os
 import warnings
-from global_settings import TOPOLOGY_LUT_DIR, ATLAS_DIR, DEFAULT_ATLAS
+import nibabel as nb
+from nighres.global_settings import TOPOLOGY_LUT_DIR, ATLAS_DIR, DEFAULT_ATLAS
 
 
 def _output_dir_4saving(output_dir=None, rootfile=None):
@@ -9,10 +10,15 @@ def _output_dir_4saving(output_dir=None, rootfile=None):
             # if nothing is specified, use current working dir
             output_dir = os.getcwd()
         else:
-            # if rootfile is specified, use it's directory
+            if isinstance(rootfile, nb.spatialimages.SpatialImage):
+                rootfile = rootfile.get_filename()
+            # if rootfile is specified, use its directory
             output_dir = os.path.dirname(rootfile)
+            # if rootfile is in current directory, dirname returns ''
+            if (output_dir is None or output_dir==''):
+               output_dir = os.getcwd()
 
-    # create directory recursively if it doesn't exist
+   # create directory recursively if it doesn't exist
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -26,9 +32,9 @@ def _output_dir_4saving(output_dir=None, rootfile=None):
                          "output_dir. (Note that if you don't set output_dir "
                          "explicitly, it will be set to the directory of the "
                          "input file, if applicable, or to the current "
-                         "working directory otherwise)").format(output_dir)
+                         "working directory otherwise)".format(output_dir))
 
-    print("\nOutputs will be saved to {0}").format(output_dir)
+    print("\nOutputs will be saved to {0}".format(output_dir))
     return output_dir
 
 
@@ -38,11 +44,15 @@ def _fname_4saving(file_name=None, rootfile=None, suffix=None):
     if file_name is None:
         # if a rootfile is given (which is a file_name and not a data object)
         # use its file_name
-        if isinstance(rootfile, basestring):
+        #python2 if isinstance(rootfile, basestring):
+        if isinstance(rootfile, nb.spatialimages.SpatialImage):
+            rootfile = rootfile.get_filename()
+        
+        if isinstance(rootfile, str):
             file_name = os.path.basename(rootfile)
             #print(("You have not specified a file_name. We will use the "
             #       "name of your input ({0}) as a base name for saving "
-            #       "outputs.").format(file_name))
+            #       "outputs.".format(file_name)))
             # if there is no suffix set trivial one to avoid overriding input
             if suffix is None:
                 suffix = 'out'
@@ -55,9 +65,9 @@ def _fname_4saving(file_name=None, rootfile=None, suffix=None):
 
     # avoid empty strings
     if len(file_name) <= 1:
-        raise ValueError(("Empty string for file_name. Check if your inputs "
+        raise ValueError("Empty string for file_name. Check if your inputs "
                           "exist, or try to specify the file_name "
-                          "parameter for saving.").format(file_name))
+                          "parameter for saving.".format(file_name))
 
     # split off extension
     split_name = file_name.split('.')

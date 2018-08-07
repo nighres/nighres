@@ -14,7 +14,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
                              max_iterations=500, normalize_probabilities=False,
                              correct_wm_pv=True, wm_dropoff_dist=1.0,
                              topology='wcs', topology_lut_dir=None,
-                             save_data=False, output_dir=None,
+                             save_data=False, overwrite=False, output_dir=None,
                              file_name=None):
     """ CRUISE cortex extraction
 
@@ -67,6 +67,8 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
         in TOPOLOGY_LUT_DIR)
     save_data: bool
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -119,37 +121,65 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, gm_image)
 
-        cortex_file = _fname_4saving(file_name=file_name,
+        cortex_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                      rootfile=gm_image,
-                                     suffix='cruise_cortex', )
+                                     suffix='cruise-cortex', ))
 
-        gwb_file = _fname_4saving(file_name=file_name,
+        gwb_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                   rootfile=gm_image,
-                                  suffix='cruise_gwb', )
+                                  suffix='cruise-gwb', ))
 
-        cgb_file = _fname_4saving(file_name=file_name,
+        cgb_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                   rootfile=gm_image,
-                                  suffix='cruise_cgb', )
+                                  suffix='cruise-cgb', ))
 
-        avg_file = _fname_4saving(file_name=file_name,
+        avg_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                   rootfile=gm_image,
-                                  suffix='cruise_avg', )
+                                  suffix='cruise-avg', ))
 
-        thick_file = _fname_4saving(file_name=file_name,
+        thick_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                     rootfile=gm_image,
-                                    suffix='cruise_thick', )
+                                    suffix='cruise-thick', ))
 
-        pwm_file = _fname_4saving(file_name=file_name,
+        pwm_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                   rootfile=gm_image,
-                                  suffix='cruise_pwm', )
+                                  suffix='cruise-pwm', ))
 
-        pgm_file = _fname_4saving(file_name=file_name,
+        pgm_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                   rootfile=gm_image,
-                                  suffix='cruise_pgm', )
+                                  suffix='cruise-pgm', ))
 
-        pcsf_file = _fname_4saving(file_name=file_name,
+        pcsf_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
                                    rootfile=gm_image,
-                                   suffix='cruise_pcsf', )
+                                   suffix='cruise-pcsf', ))
+        if overwrite is False \
+            and os.path.isfile(cortex_file) \
+            and os.path.isfile(gwb_file) \
+            and os.path.isfile(cgb_file) \
+            and os.path.isfile(avg_file) \
+            and os.path.isfile(thick_file) \
+            and os.path.isfile(pwm_file) \
+            and os.path.isfile(pgm_file) \
+            and os.path.isfile(pcsf_file) :
+            
+            print("skip computation (use existing results)")
+            output = {'cortex': load_volume(cortex_file), 
+                      'gwb': load_volume(gwb_file), 
+                      'cgb': load_volume(cgb_file), 
+                      'avg': load_volume(avg_file), 
+                      'thickness': load_volume(thick_file), 
+                      'pwm': load_volume(pwm_file), 
+                      'pgm': load_volume(pgm_file), 
+                      'pcsf': load_volume(pcsf_file)}
+            return output
 
     # start virtual machine, if not already running
     try:
@@ -179,7 +209,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
     cruise.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     cruise.setResolutions(resolution[0], resolution[1], resolution[2])
     cruise.importInitialWMSegmentationImage(cbstools.JArray('int')(
-                                        (init_data.flatten('F')).astype(int)))
+                                        (init_data.flatten('F')).astype(int).tolist()))
 
     wm_data = load_volume(wm_image).get_data()
     cruise.setFilledWMProbabilityImage(cbstools.JArray('float')(
@@ -205,7 +235,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")
-        print sys.exc_info()[0]
+        print(sys.exc_info()[0])
         raise
         return
 
@@ -262,14 +292,14 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
     pcsf = nb.Nifti1Image(pcsf_data, affine, header)
 
     if save_data:
-        save_volume(os.path.join(output_dir, cortex_file), cortex)
-        save_volume(os.path.join(output_dir, gwb_file), gwb)
-        save_volume(os.path.join(output_dir, cgb_file), cgb)
-        save_volume(os.path.join(output_dir, avg_file), avg)
-        save_volume(os.path.join(output_dir, thick_file), thickness)
-        save_volume(os.path.join(output_dir, pwm_file), pwm)
-        save_volume(os.path.join(output_dir, pgm_file), pgm)
-        save_volume(os.path.join(output_dir, pcsf_file), pcsf)
+        save_volume(cortex_file, cortex)
+        save_volume(gwb_file, gwb)
+        save_volume(cgb_file, cgb)
+        save_volume(avg_file, avg)
+        save_volume(thick_file, thickness)
+        save_volume(pwm_file, pwm)
+        save_volume(pgm_file, pgm)
+        save_volume(pcsf_file, pcsf)
 
     return {'cortex': cortex, 'gwb': gwb, 'cgb': cgb, 'avg': avg,
             'thickness': thickness, 'pwm': pwm, 'pgm': pgm, 'pcsf': pcsf}
