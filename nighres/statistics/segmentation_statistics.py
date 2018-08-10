@@ -86,9 +86,8 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
             and os.path.isfile(map_file) :
                 # check that the denoised data is the same too
                 print("skip computation (use existing results)")
-                    output = {'csv': output_csv,
-                              'map': load_volume(map_file)}
-                    return output
+                output = {'csv': output_csv, 'map': load_volume(map_file)}
+                return output
 
         if overwrite is True:
             # delete current stats file to start from the beginning
@@ -137,10 +136,11 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
     stats.setSkipFirstLabel(skip_first)
     stats.setIgnoreZeroIntensities(ignore_zero)
     
+    for stat in 
 
     # execute the algorithm
     try:
-        lpca.execute()
+        stats.execute()
 
     except:
         # if the Java module fails, reraise the error it throws
