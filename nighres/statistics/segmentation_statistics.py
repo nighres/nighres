@@ -136,7 +136,9 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
     stats.setSkipFirstLabel(skip_first)
     stats.setIgnoreZeroIntensities(ignore_zero)
     
-    for stat in 
+    if len(statistics)>0: stats.setStatistic1(statistics[0])
+    if len(statistics)>1: stats.setStatistic2(statistics[1])
+    if len(statistics)>2: stats.setStatistic3(statistics[2])
 
     # execute the algorithm
     try:
@@ -150,18 +152,9 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
         return
 
     # reshape output to what nibabel likes
-    denoised_list = []
-    for idx, image in enumerate(image_list):
-        den_data = np.reshape(np.array(lpca.getDenoisedMagnitudeImageAt(idx),
-                                   dtype=np.int32), dimensions, 'F')
-        header['cal_min'] = np.nanmin(den_data)
-        header['cal_max'] = np.nanmax(den_data)
-        denoised = nb.Nifti1Image(den_data, affine, header)
-        denoised_list.append(denoised)
-
-        if save_data:
-            save_volume(den_files[idx], denoised)
-
+    boolean output=False
+    for st in statistics: if st=="Cluster_maps": output=True
+    
     if (phase_list!=None):
         for idx, image in enumerate(phase_list):
             den_data = np.reshape(np.array(lpca.getDenoisedPhaseImageAt(idx),
