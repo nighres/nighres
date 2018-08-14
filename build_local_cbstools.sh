@@ -114,3 +114,6 @@ cp -rv build/cbstools/ $nighres_local/
 # Find and copy the shared object file for the current architecture
 find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' $nighres_local/cbstools/_cbstools.so
 cd $nighres_local
+
+# finish the installation for the libabry
+pip3 install .

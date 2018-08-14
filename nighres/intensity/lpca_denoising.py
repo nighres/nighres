@@ -185,7 +185,7 @@ def lpca_denoising(image_list, phase_list=None,
     denoised_list = []
     for idx, image in enumerate(image_list):
         den_data = np.reshape(np.array(lpca.getDenoisedMagnitudeImageAt(idx),
-                                   dtype=np.int32), dimensions, 'F')
+                                   dtype=np.float32), dimensions, 'F')
         header['cal_min'] = np.nanmin(den_data)
         header['cal_max'] = np.nanmax(den_data)
         denoised = nb.Nifti1Image(den_data, affine, header)
@@ -197,7 +197,7 @@ def lpca_denoising(image_list, phase_list=None,
     if (phase_list!=None):
         for idx, image in enumerate(phase_list):
             den_data = np.reshape(np.array(lpca.getDenoisedPhaseImageAt(idx),
-                                       dtype=np.int32), dimensions, 'F')
+                                       dtype=np.float32), dimensions, 'F')
             header['cal_min'] = np.nanmin(den_data)
             header['cal_max'] = np.nanmax(den_data)
             denoised = nb.Nifti1Image(den_data, affine, header)

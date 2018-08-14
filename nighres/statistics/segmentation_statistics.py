@@ -82,16 +82,18 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
                                    rootfile=segmentation,
                                    suffix='stat-map'))
 
+        csv_file = os.path.join(output_dir, output_csv)
+
         if overwrite is False \
-            and os.path.isfile(map_file) :
+            and os.path.isfile(csv_file) :
                 # check that the denoised data is the same too
-                print("skip computation (use existing results)")
-                output = {'csv': output_csv, 'map': load_volume(map_file)}
-                return output
+                print("append results to existing csv file")
 
         if overwrite is True:
             # delete current stats file to start from the beginning
-            os.remove(output_csv)
+            os.remove(csv_file)
+    else:
+        csv_file = output_csv
 
     # start virtual machine, if not already running
     try:
@@ -113,7 +115,7 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
     stats.setResolutions(resolution[0], resolution[1], resolution[2])
 
     stats.setSegmentationImage(cbstools.JArray('int')(
-                                    (data.flatten('F')).astype(int)))
+                                    (data.flatten('F')).astype(int).tolist()))
     stats.setSegmentationName(_fname_4saving(rootfile=segmentation))
 
     # other input images, if any
@@ -126,7 +128,7 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
     if template is not None:
         data = load_volume(template).get_data()
         stats.setTemplateImage(cbstools.JArray('int')(
-                                    (data.flatten('F')).astype(int)))
+                                    (data.flatten('F')).astype(int).tolist()))
         stats.setTemplateName(_fname_4saving(rootfile=template))
     
     # set algorithm parameters
@@ -140,6 +142,8 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
     if len(statistics)>1: stats.setStatistic2(statistics[1])
     if len(statistics)>2: stats.setStatistic3(statistics[2])
 
+    stats.setSpreadsheetFile(csv_file)
+    
     # execute the algorithm
     try:
         stats.execute()
@@ -152,39 +156,24 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
         return
 
     # reshape output to what nibabel likes
-    boolean output=False
-    for st in statistics: if st=="Cluster_maps": output=True
+    output = False
+    for st in statistics: 
+        if st=="Cluster_maps": 
+            output=True
     
-    if (phase_list!=None):
-        for idx, image in enumerate(phase_list):
-            den_data = np.reshape(np.array(lpca.getDenoisedPhaseImageAt(idx),
+    if (output):
+        data = np.reshape(np.array(stats.getOutputImage(),
                                        dtype=np.int32), dimensions, 'F')
-            header['cal_min'] = np.nanmin(den_data)
-            header['cal_max'] = np.nanmax(den_data)
-            denoised = nb.Nifti1Image(den_data, affine, header)
-            denoised_list.append(denoised)
-    
-            if save_data:
-                save_volume(den_files[idx+len(image_list)], denoised)
+        header['cal_min'] = np.nanmin(data)
+        header['cal_max'] = np.nanmax(data)
+        output = nb.Nifti1Image(data, affine, header)
 
-    dim_data = np.reshape(np.array(lpca.getLocalDimensionImage(),
-                                    dtype=np.float32), dimensions, 'F')
+        if save_data:
+            save_volume(map_file, output)
 
-    err_data = np.reshape(np.array(lpca.getNoiseFitImage(),
-                                    dtype=np.float32), dimensions, 'F')
+    csv_file = stats.getOutputFile()
 
-    # adapt header max for each image so that correct max is displayed
-    # and create nifiti objects
-    header['cal_min'] = np.nanmin(dim_data)
-    header['cal_max'] = np.nanmax(dim_data)
-    dim = nb.Nifti1Image(dim_data, affine, header)
-
-    header['cal_min'] = np.nanmin(err_data)
-    header['cal_max'] = np.nanmax(err_data)
-    err = nb.Nifti1Image(err_data, affine, header)
-
-    if save_data:
-        save_volume(dim_file, dim)
-        save_volume(err_file, err)
-
-    return {'denoised': denoised_list, 'dimensions': dim, 'residuals': err}
+    if output:
+        return {'csv': csv_file, 'map': output}
+    else:
+        return {'csv': csv_file}
