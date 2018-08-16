@@ -18,17 +18,21 @@ Y=1
 Z=2
 T=3
 
-def embedded_syn(source_image, target_image, coarse_iterations=40, 
+def embedded_antsreg(source_image, target_image, 
+                    run_rigid=False, 
+                    rigid_iterations=1000,
+                    run_syn=True,
+                    coarse_iterations=40, 
                     medium_iterations=50, fine_iterations=40,
-					run_rigid_first=False, cost_function='MutualInformation', 
+					cost_function='MutualInformation', 
 					interpolation='NearestNeighbor',
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
-    """ Embedded SyN
+    """ Embedded ANTS Registration
 
-    Runs the Symmetric Normalization (SyN) algorithm of ANTs and formats the 
-    output deformations into voxel coordinate mappings as used in CBSTools 
-    registration and transformation routines.
+    Runs the rigid and/or Symmetric Normalization (SyN) algorithm of ANTs and 
+    formats the output deformations into voxel coordinate mappings as used in 
+    CBSTools registration and transformation routines.
 
     Parameters
     ----------
@@ -36,14 +40,18 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
         Image to register
     target_image: niimg
         Reference image to match
+    run_rigid: bool
+        Whether or not to run a rigid registration first (default is False)
+    run_syn: bool
+        Whether or not to run a SyN registration (default is True)
     coarse_iterations: float
         Number of iterations at the coarse level (default is 40)
     medium_iterations: float
         Number of iterations at the medium level (default is 50)
     fine_iterations: float
         Number of iterations at the fine level (default is 40)
-    run_rigid_first: bool
-        Runs a step of rigid registration before the non-linear step (default is False)
+    run_affine_first: bool
+        Runs a step of affine registration before the non-linear step (default is False)
     cost_function: {'CrossCorrelation', 'MutualInformation'}
         Cost function for the registration (default is 'MutualInformation')
     interpolation: {'NearestNeighbor', 'Linear'}
@@ -64,7 +72,7 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * deformed_source (niimg): Deformed source image (_syn_def)
+        * transformed_source (niimg): Deformed source image (_syn_def)
         * mapping (niimg): Coordinate mapping from source to target (_syn_map)
         * inverse (niimg): Inverse coordinate mapping from target to source (_syn_invmap) 
 
@@ -84,11 +92,11 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
        doi:10.3389/fninf.2011.00013
     """
 
-    print('\nEmbedded SyN')
+    print('\nEmbedded ANTs Registration')
 
     # for external tools: nipype
     try:
-        from nipype.interfaces.ants import ANTS
+        from nipype.interfaces.ants import Registration
         from nipype.interfaces.ants import ApplyTransforms
     except ImportError:
         print('Error: Nipype and/or ANTS could not be imported, they are required' 
@@ -98,7 +106,7 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
     # make sure that saving related parameters are correct
     output_dir = _output_dir_4saving(output_dir, source_image) # needed for intermediate results
     if save_data:
-        deformed_source_file = os.path.join(output_dir, 
+        transformed_source_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=source_image,
                                    suffix='syn-def'))
@@ -113,12 +121,12 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
                                    rootfile=source_image,
                                    suffix='syn-invmap'))
         if overwrite is False \
-            and os.path.isfile(deformed_source_file) \
+            and os.path.isfile(transformed_source_file) \
             and os.path.isfile(mapping_file) \
             and os.path.isfile(inverse_mapping_file) :
             
             print("skip computation (use existing results)")
-            output = {'deformed_source': load_volume(deformed_source_file), 
+            output = {'transformed_source': load_volume(transformed_source_file), 
                       'mapping': load_volume(mapping_file), 
                       'inverse': load_volume(inverse_mapping_file)}
             return output
@@ -172,8 +180,8 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
     save_volume(trg_map_file, trg_map)
     
     # run the main ANTS software
-    ants = ANTS()
-    ants.inputs.dimension = 3
+    reg = Registration()
+    reg.inputs.dimension = 3
     
      # add a prefix to avoid multiple names?
     prefix = _fname_4saving(file_name=file_name,
@@ -181,37 +189,74 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
                             suffix='tmp_syn')
     prefix = os.path.basename(prefix)
     prefix = prefix.split(".")[0]
-    ants.inputs.output_transform_prefix = prefix
-    if (cost_function=='CrossCorrelation'): 
-        ants.inputs.metric = ['CC']
-        ants.inputs.metric_weight = [1.0]
-        ants.inputs.radius = [5]
-    else :
-        ants.inputs.metric = ['MI']
-        ants.inputs.metric_weight = [1.0]
-        ants.inputs.radius = [64]
-    ants.inputs.fixed_image = [target.get_filename()]
-    ants.inputs.moving_image = [source.get_filename()]
-    ants.inputs.transformation_model = 'SyN'
-    ants.inputs.gradient_step_length = 0.25
-    ants.inputs.number_of_iterations = [coarse_iterations, medium_iterations, 
-                                            fine_iterations]
-    #ants.inputs.use_histogram_matching = True
-    ants.inputs.mi_option = [32, 16000]
-    ants.inputs.regularization = 'Gauss'
-    ants.inputs.regularization_gradient_field_sigma = 3
-    ants.inputs.regularization_deformation_field_sigma = 1
-    if run_rigid_first is False:
-        ants.inputs.number_of_affine_iterations = [0]
-    else:    
-        ants.inputs.number_of_affine_iterations = [1000,1000,1000,1000,1000]
-        # a bit of a hack in order to access ANTS options not supported by nipype
-        ants.inputs.output_transform_prefix = prefix+' --do-rigid true' 
+    reg.inputs.output_transform_prefix = prefix
+    reg.inputs.fixed_image = [target.get_filename()]
+    reg.inputs.moving_image = [source.get_filename()]
+    
+    if run_rigid is True and run_syn is True:
+        reg.inputs.transforms = ['Rigid','SyN']
+        reg.inputs.transform_parameters = [(2.0,), (0.25, 3.0, 0.0)]
+        reg.inputs.number_of_iterations = [[rigid_iterations, rigid_iterations, 
+                                            rigid_iterations],   
+                                           [coarse_iterations, medium_iterations, 
+                                            fine_iterations]]
+        if (cost_function=='CrossCorrelation'): 
+            reg.inputs.metric = ['CC', 'CC']
+            reg.inputs.metric_weight = [1.0, 1.0]
+            reg.inputs.radius_or_number_of_bins = [5, 5]
+        else :
+            reg.inputs.metric = ['MI', 'MI']
+            reg.inputs.metric_weight = [1.0, 1.0]
+            reg.inputs.radius_or_number_of_bins = [64, 64]
+        reg.inputs.shrink_factors = [[3, 2, 1]] + [[4, 2, 1]]   
+        reg.inputs.smoothing_sigmas = [[4, 2, 1]] + [[1, 0.5, 0]]
+
+    elif run_rigid is True and run_syn is False:
+        reg.inputs.transforms = ['Rigid']
+        reg.inputs.transform_parameters = [(2.0,)]
+        reg.inputs.number_of_iterations = [[rigid_iterations, rigid_iterations,
+                                            rigid_iterations]]
+        if (cost_function=='CrossCorrelation'): 
+            reg.inputs.metric = ['CC']
+            reg.inputs.metric_weight = [1.0]
+            reg.inputs.radius_or_number_of_bins = [5]
+        else :
+            reg.inputs.metric = ['MI']
+            reg.inputs.metric_weight = [1.0]
+            reg.inputs.radius_or_number_of_bins = [64]
+        reg.inputs.shrink_factors = [[3, 2, 1]] 
+        reg.inputs.smoothing_sigmas = [[4, 2, 1]] 
+
+    elif run_rigid is False and run_syn is True:
+        reg.inputs.transforms = ['SyN']
+        reg.inputs.transform_parameters = [(0.25, 3.0, 0.0)]
+        reg.inputs.number_of_iterations = [[coarse_iterations, medium_iterations, 
+                                            fine_iterations]]
+        if (cost_function=='CrossCorrelation'): 
+            reg.inputs.metric = ['CC']
+            reg.inputs.metric_weight = [1.0]
+            reg.inputs.radius_or_number_of_bins = [5]
+        else :
+            reg.inputs.metric = ['MI']
+            reg.inputs.metric_weight = [1.0]
+            reg.inputs.radius_or_number_of_bins = [64]
+        reg.inputs.shrink_factors = [[4, 2, 1]]
+        reg.inputs.smoothing_sigmas = [[1, 0.5, 0]]
+
+    elif run_rigid is False and run_syn is False:
+        reg.inputs.transforms = ['Rigid']
+        reg.inputs.transform_parameters = [(2.0,)]
+        reg.inputs.number_of_iterations = [[0]]
+        reg.inputs.metric = ['CC']
+        reg.inputs.metric_weight = [1.0]
+        reg.inputs.radius_or_number_of_bins = [5]
+        reg.inputs.shrink_factors = [[1]] 
+        reg.inputs.smoothing_sigmas = [[1]]
+
         
-    # check what we do    
-    #print(ants.cmdline)
-    # run the algorithm
-    result = ants.run()
+        
+    #print(reg.cmdline)
+    result = reg.run()
 
     # Transforms the moving image
     at = ApplyTransforms()
@@ -219,10 +264,9 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
     at.inputs.input_image = source.get_filename()
     at.inputs.reference_image = target.get_filename()
     at.inputs.interpolation = interpolation
-    at.inputs.transforms = [result.outputs.warp_transform,
-                            result.outputs.affine_transform]
-    at.inputs.invert_transform_flags = [False, False]
-    deformed = at.run()
+    at.inputs.transforms = result.outputs.forward_transforms
+    at.inputs.invert_transform_flags = result.outputs.forward_invert_flags
+    transformed = at.run()
 
     # Create coordinate mappings
     src_at = ApplyTransforms()
@@ -231,9 +275,8 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
     src_at.inputs.input_image = src_map.get_filename()
     src_at.inputs.reference_image = target.get_filename()
     src_at.inputs.interpolation = 'Linear'
-    src_at.inputs.transforms = [result.outputs.warp_transform,
-                                result.outputs.affine_transform]
-    src_at.inputs.invert_transform_flags = [False, False]
+    src_at.inputs.transforms = result.outputs.forward_transforms
+    src_at.inputs.invert_transform_flags = result.outputs.forward_invert_flags
     mapping = src_at.run()
 
     trg_at = ApplyTransforms()
@@ -242,36 +285,35 @@ def embedded_syn(source_image, target_image, coarse_iterations=40,
     trg_at.inputs.input_image = trg_map.get_filename()
     trg_at.inputs.reference_image = source.get_filename()
     trg_at.inputs.interpolation = 'Linear'
-    trg_at.inputs.transforms = [result.outputs.affine_transform,
-                                result.outputs.inverse_warp_transform]
-    trg_at.inputs.invert_transform_flags = [True, False]
+    trg_at.inputs.transforms = result.outputs.reverse_transforms
+    trg_at.inputs.invert_transform_flags = result.outputs.reverse_invert_flags
     inverse = trg_at.run()
 
     # pad coordinate mapping outside the image? hopefully not needed...
 
     # collect outputs and potentially save
-    deformed_img = nb.Nifti1Image(nb.load(deformed.outputs.output_image).get_data(), 
+    transformed_img = nb.Nifti1Image(nb.load(transformed.outputs.output_image).get_data(), 
                                     target.affine, target.header)
     mapping_img = nb.Nifti1Image(nb.load(mapping.outputs.output_image).get_data(), 
                                     target.affine, target.header)
     inverse_img = nb.Nifti1Image(nb.load(inverse.outputs.output_image).get_data(), 
                                     source.affine, source.header)
 
-    outputs = {'deformed_source': deformed_img, 'mapping': mapping_img,
+    outputs = {'transformed_source': transformed_img, 'mapping': mapping_img,
                 'inverse': inverse_img}
 
     # clean-up intermediate files
     os.remove(src_map_file)
     os.remove(trg_map_file)
-    os.remove(result.outputs.affine_transform)
-    os.remove(result.outputs.warp_transform)
-    os.remove(result.outputs.inverse_warp_transform)
-    os.remove(deformed.outputs.output_image)
+    for name in result.outputs.forward_transforms: 
+        if os.path.exists(name): os.remove(name)
+    for name in result.outputs.reverse_transforms: 
+        if os.path.exists(name): os.remove(name)
     os.remove(mapping.outputs.output_image)
     os.remove(inverse.outputs.output_image)
 
     if save_data:
-        save_volume(deformed_source_file, deformed_img)
+        save_volume(transformed_source_file, transformed_img)
         save_volume(mapping_file, mapping_img)
         save_volume(inverse_mapping_file, inverse_img)
 
