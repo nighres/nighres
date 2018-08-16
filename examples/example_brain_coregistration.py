@@ -112,7 +112,7 @@ syn_results = nighres.registration.embedded_antsreg(
                         source_image=skullstripping_results1['t1map_masked'],
                         target_image=skullstripping_results2['t1map_masked'],
                         run_rigid=True, run_syn=True,
-                        rigid_iterations=1, coarse_iterations=1, 
+                        rigid_iterations=1000, coarse_iterations=40, 
                         medium_iterations=0, fine_iterations=0,
                         cost_function='MutualInformation', 
                         interpolation='NearestNeighbor',
