@@ -95,28 +95,44 @@ def apply_coordinate_mappings(image, mapping1,
     applydef.setImageToDeform(cbstools.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
-    def1data = load_volume(mapping1).get_data()
+    def1 = load_volume(mapping1)
+    def1data = def1.get_data()
+    aff = def1.get_affine()
+    hdr = def1.get_header()
+    trgdim = def1data.shape
     applydef.setDeformationMapping1(cbstools.JArray('float')(
                                     (def1data.flatten('F')).astype(float)))
     applydef.setDeformation1Dimensions(def1data.shape[0],def1data.shape[1],def1data.shape[2])
     applydef.setDeformationType1("mapping(voxels)")
     
     if not (mapping2==None):
-        def2data = load_volume(mapping2).get_data()
+        def2 = load_volume(mapping2)
+        def2data = def2.get_data()
+        aff = def2.get_affine()
+        hdr = def2.get_header()
+        trgdim = def2data.shape
         applydef.setDeformationMapping2(cbstools.JArray('float')(
                                         (def2data.flatten('F')).astype(float)))
         applydef.setDeformation2Dimensions(def2data.shape[0],def2data.shape[1],def2data.shape[2])
         applydef.setDeformationType2("mapping(voxels)")
         
         if not (mapping3==None):
-            def3data = load_volume(mapping3).get_data()
+            def3 = load_volume(mapping3)
+            def3data = def3.get_data()
+            aff = def3.get_affine()
+            hdr = def3.get_header()
+            trgdim = def3data.shape
             applydef.setDeformationMapping3(cbstools.JArray('float')(
                                             (def3data.flatten('F')).astype(float)))
             applydef.setDeformation3Dimensions(def3data.shape[0],def3data.shape[1],def3data.shape[2])
             applydef.setDeformationType3("mapping(voxels)")
         
             if not (mapping4==None):
-                def4data = load_volume(mapping4).get_data()
+                def4 = load_volume(mapping4)
+                def4data = def4.get_data()
+                aff = def4.get_affine()
+                hdr = def4.get_header()
+                trgdim = def4data.shape
                 applydef.setDeformationMapping4(cbstools.JArray('float')(
                                                 (def4data.flatten('F')).astype(float)))
                 applydef.setDeformation4Dimensions(def4data.shape[0],def4data.shape[1],def4data.shape[2])
@@ -137,9 +153,13 @@ def apply_coordinate_mappings(image, mapping1,
         return
 
     # collect data
+    if len(imgdim) is 4:
+        trgdim = [trgdim[0],trgdim[1],trgdim[2],imgdim[3]]
+    else:
+        trgdim = [trgdim[0],trgdim[1],trgdim[2]]
     deformed_data = np.reshape(np.array(
                                 applydef.getDeformedImage(),
-                                dtype=np.float32), imgdim, 'F')
+                                dtype=np.float32), trgdim, 'F')
     hdr['cal_min'] = np.nanmin(deformed_data)
     hdr['cal_max'] = np.nanmax(deformed_data)
     deformed = nb.Nifti1Image(deformed_data, aff, hdr)
