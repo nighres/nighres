@@ -80,7 +80,8 @@ def embedded_antsreg(source_image, target_image,
     ----------
     Port of the CBSTools Java module by Pierre-Louis Bazin. The main algorithm
     is part of the ANTs software by Brian Avants and colleagues [1]_. The interfacing
-    with ANTs is performed through Nipype [2]_.
+    with ANTs is performed through Nipype [2]_. Parameters have been set to values
+    commonly found in neuroimaging scripts online, but not necessarily optimal.
 
     References
     ----------
@@ -195,7 +196,7 @@ def embedded_antsreg(source_image, target_image,
     
     if run_rigid is True and run_syn is True:
         reg.inputs.transforms = ['Rigid','SyN']
-        reg.inputs.transform_parameters = [(2.0,), (0.25, 3.0, 0.0)]
+        reg.inputs.transform_parameters = [(0.1,), (0.25, 3.0, 0.0)]
         reg.inputs.number_of_iterations = [[rigid_iterations, rigid_iterations, 
                                             rigid_iterations],   
                                            [coarse_iterations, medium_iterations, 
@@ -205,11 +206,21 @@ def embedded_antsreg(source_image, target_image,
             reg.inputs.metric_weight = [1.0, 1.0]
             reg.inputs.radius_or_number_of_bins = [5, 5]
         else :
-            reg.inputs.metric = ['MI', 'MI']
+            reg.inputs.metric = ['Mattes', 'Mattes']
             reg.inputs.metric_weight = [1.0, 1.0]
             reg.inputs.radius_or_number_of_bins = [64, 64]
         reg.inputs.shrink_factors = [[3, 2, 1]] + [[4, 2, 1]]   
         reg.inputs.smoothing_sigmas = [[4, 2, 1]] + [[1, 0.5, 0]]
+        reg.inputs.sampling_strategy = ['Regular'] + [None]
+        reg.inputs.sampling_percentage = [0.3] + [None]
+        reg.inputs.convergence_threshold = [1.e-8] + [-0.01]
+        reg.inputs.convergence_window_size = [20] + [5]
+        reg.inputs.sigma_units = ['vox'] + ['vox']
+        reg.inputs.use_estimate_learning_rate_once = [True] + [True]
+        reg.inputs.use_histogram_matching = [False] + [True]
+        reg.inputs.winsorize_lower_quantile = 0.005
+        reg.inputs.winsorize_upper_quantile = 0.995
+        reg.inputs.args = '--float'
 
     elif run_rigid is True and run_syn is False:
         reg.inputs.transforms = ['Rigid']
@@ -221,11 +232,21 @@ def embedded_antsreg(source_image, target_image,
             reg.inputs.metric_weight = [1.0]
             reg.inputs.radius_or_number_of_bins = [5]
         else :
-            reg.inputs.metric = ['MI']
+            reg.inputs.metric = ['Mattes']
             reg.inputs.metric_weight = [1.0]
             reg.inputs.radius_or_number_of_bins = [64]
-        reg.inputs.shrink_factors = [[3, 2, 1]] 
-        reg.inputs.smoothing_sigmas = [[4, 2, 1]] 
+        reg.inputs.shrink_factors = [[3, 2, 1]]   
+        reg.inputs.smoothing_sigmas = [[4, 2, 1]]
+        reg.inputs.sampling_strategy = ['Regular']
+        reg.inputs.sampling_percentage = [0.3]
+        reg.inputs.convergence_threshold = [1.e-8]
+        reg.inputs.convergence_window_size = [20]
+        reg.inputs.sigma_units = ['vox']
+        reg.inputs.use_estimate_learning_rate_once = [True]
+        reg.inputs.use_histogram_matching = [False]
+        reg.inputs.winsorize_lower_quantile = 0.005
+        reg.inputs.winsorize_upper_quantile = 0.995
+        reg.inputs.args = '--float'
 
     elif run_rigid is False and run_syn is True:
         reg.inputs.transforms = ['SyN']
@@ -237,11 +258,21 @@ def embedded_antsreg(source_image, target_image,
             reg.inputs.metric_weight = [1.0]
             reg.inputs.radius_or_number_of_bins = [5]
         else :
-            reg.inputs.metric = ['MI']
+            reg.inputs.metric = ['Mattes']
             reg.inputs.metric_weight = [1.0]
             reg.inputs.radius_or_number_of_bins = [64]
-        reg.inputs.shrink_factors = [[4, 2, 1]]
+        reg.inputs.shrink_factors = [[4, 2, 1]]   
         reg.inputs.smoothing_sigmas = [[1, 0.5, 0]]
+        reg.inputs.sampling_strategy = [None]
+        reg.inputs.sampling_percentage = [None]
+        reg.inputs.convergence_threshold = [-0.01]
+        reg.inputs.convergence_window_size = [5]
+        reg.inputs.sigma_units = ['vox']
+        reg.inputs.use_estimate_learning_rate_once = [True]
+        reg.inputs.use_histogram_matching = [True]
+        reg.inputs.winsorize_lower_quantile = 0.005
+        reg.inputs.winsorize_upper_quantile = 0.995
+        reg.inputs.args = '--float'
 
     elif run_rigid is False and run_syn is False:
         reg.inputs.transforms = ['Rigid']
