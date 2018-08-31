@@ -89,7 +89,10 @@ def apply_coordinate_mappings(image, mapping1,
     imgdim = data.shape
 
     # set parameters from input images
-    applydef.setImageDimensions(imgdim[0], imgdim[1], imgdim[2])
+    if len(imgdim) is 4:
+        applydef.setImageDimensions(imgdim[0], imgdim[1], imgdim[2], imgdim[3])
+    else:
+        applydef.setImageDimensions(imgdim[0], imgdim[1], imgdim[2])
     applydef.setImageResolutions(imgres[0], imgres[1], imgres[2])
     
     applydef.setImageToDeform(cbstools.JArray('float')(

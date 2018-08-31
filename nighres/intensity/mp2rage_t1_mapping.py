@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir
 
 
-def flash_t2s_fitting(first_inversion, second_inversion, 
+def mp2rage_t1_mapping(first_inversion, second_inversion, 
                       inversion_times, flip_angles, inversion_TR,
                       excitation_TR, N_excitations, efficiency=0.96,
                       correct_B1=False, B1_map=None,
