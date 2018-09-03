@@ -120,7 +120,7 @@ def lcpca_denoising(image_list, phase_list=None,
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='12000m', maxheap='12000m')
+        imcntk.initVM(initialheap='12000m', maxheap='12000m')
     except ValueError:
         pass
     # create lcpca instance
@@ -151,7 +151,7 @@ def lcpca_denoising(image_list, phase_list=None,
         #print('\nloading ('+str(idx)+'): '+image)
         data = load_volume(image).get_data()
         #data = data[0:10,0:10,0:10]
-        lcpca.setMagnitudeImageAt(idx, cbstools.JArray('float')(
+        lcpca.setMagnitudeImageAt(idx, imcntk.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
     # input phase, if specified
@@ -160,7 +160,7 @@ def lcpca_denoising(image_list, phase_list=None,
             #print('\nloading '+image)
             data = load_volume(image).get_data()
             #data = data[0:10,0:10,0:10]
-            lcpca.setPhaseImageAt(idx, cbstools.JArray('float')(
+            lcpca.setPhaseImageAt(idx, imcntk.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
     # set algorithm parameters

@@ -11,7 +11,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def mp2rage_t1_mapping(first_inversion, second_inversion, 
                       inversion_times, flip_angles, inversion_TR,
                       excitation_TR, N_excitations, efficiency=0.96,
-                      correct_B1=False, B1_map=None,
+                      correct_B1=False, B1_map=None, scale_phase=True,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ MP2RAGE T1 mapping
@@ -40,6 +40,9 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
         Whether to correct for B1 inhomogeneities (default is False)
     B1_map: niimg
         Computed B1 map
+    scale_phase: bool
+        Whether to rescale the phase image in [0,2PI] or to assume it is 
+        already in radians
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
