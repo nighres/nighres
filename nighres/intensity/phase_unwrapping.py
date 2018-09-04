@@ -68,10 +68,10 @@ def phase_unwrapping(image, mask=None, nquadrants=3,
 
         out_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
-                                   rootfile=image_list[0],
+                                   rootfile=image,
                                    suffix='unwrap-img'))
 
-       if overwrite is False \
+        if overwrite is False \
             and os.path.isfile(out_file) :
                 print("skip computation (use existing results)")
                 output = {'result': load_volume(out_file)}
@@ -98,7 +98,7 @@ def phase_unwrapping(image, mask=None, nquadrants=3,
     unwrap.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     unwrap.setResolutions(resolution[0], resolution[1], resolution[2])
 
-    unwrap.setPhaseImage(idx, nighresjava.JArray('float')(
+    unwrap.setPhaseImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
     
@@ -107,8 +107,8 @@ def phase_unwrapping(image, mask=None, nquadrants=3,
                 (load_volume(mask).get_data().flatten('F')).astype(int)))
     
     # set algorithm parameters
-    unwrap.setQuadrantNumber(ngb_size)
-    if tv_flattening: unwrap.setTVPostProcessing("TV-residuals"}
+    unwrap.setQuadrantNumber(nquadrants)
+    if tv_flattening: unwrap.setTVPostProcessing("TV-residuals")
     unwrap.setTVScale(tv_scale)
     
     # execute the algorithm
