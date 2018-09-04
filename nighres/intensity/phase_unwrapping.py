@@ -2,7 +2,7 @@ import numpy as np
 import nibabel as nb
 import os
 import sys
-import imcntk
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir
@@ -79,11 +79,11 @@ def phase_unwrapping(image, mask=None, nquadrants=3,
 
     # start virtual machine, if not already running
     try:
-        imcntk.initVM(initialheap='12000m', maxheap='12000m')
+        nighresjava.initVM(initialheap='12000m', maxheap='12000m')
     except ValueError:
         pass
     # create instance
-    unwrap = imcntk.FastMarchingPhaseUnwrapping()
+    unwrap = nighresjava.FastMarchingPhaseUnwrapping()
 
     # set parameters
     
@@ -98,12 +98,12 @@ def phase_unwrapping(image, mask=None, nquadrants=3,
     unwrap.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     unwrap.setResolutions(resolution[0], resolution[1], resolution[2])
 
-    unwrap.setPhaseImage(idx, imcntk.JArray('float')(
+    unwrap.setPhaseImage(idx, nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
     
     if mask is not None:
-        unwrap.setMaskImage(idx, imcntk.JArray('int')(
+        unwrap.setMaskImage(idx, nighresjava.JArray('int')(
                 (load_volume(mask).get_data().flatten('F')).astype(int)))
     
     # set algorithm parameters

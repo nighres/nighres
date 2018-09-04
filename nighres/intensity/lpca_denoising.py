@@ -2,7 +2,7 @@ import numpy as np
 import nibabel as nb
 import os
 import sys
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir
@@ -120,11 +120,11 @@ def lpca_denoising(image_list, phase_list=None,
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='12000m', maxheap='12000m')
+        nighresjava.initVM(initialheap='12000m', maxheap='12000m')
     except ValueError:
         pass
     # create lpca instance
-    lpca = cbstools.IntensityComplexPCADenoising()
+    lpca = nighresjava.IntensityComplexPCADenoising()
 
     # set lpca parameters
     lpca.setImageNumber(len(image_list))
@@ -151,7 +151,7 @@ def lpca_denoising(image_list, phase_list=None,
         #print('\nloading ('+str(idx)+'): '+image)
         data = load_volume(image).get_data()
         #data = data[0:10,0:10,0:10]
-        lpca.setMagnitudeImageAt(idx, cbstools.JArray('float')(
+        lpca.setMagnitudeImageAt(idx, nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
     # input phase, if specified
@@ -160,7 +160,7 @@ def lpca_denoising(image_list, phase_list=None,
             #print('\nloading '+image)
             data = load_volume(image).get_data()
             #data = data[0:10,0:10,0:10]
-            lpca.setPhaseImageAt(idx, cbstools.JArray('float')(
+            lpca.setPhaseImageAt(idx, nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
     # set algorithm parameters

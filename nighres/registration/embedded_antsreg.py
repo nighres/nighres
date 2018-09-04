@@ -6,8 +6,8 @@ import sys
 import numpy as np
 import nibabel as nb
 
-# cbstools and nighres functions
-import cbstools
+# nighresjava and nighres functions
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir
@@ -110,17 +110,17 @@ def embedded_antsreg(source_image, target_image,
         transformed_source_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=source_image,
-                                   suffix='syn-def'))
+                                   suffix='ants-def'))
 
         mapping_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=source_image,
-                                   suffix='syn-map'))
+                                   suffix='ants-map'))
 
         inverse_mapping_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=source_image,
-                                   suffix='syn-invmap'))
+                                   suffix='ants-invmap'))
         if overwrite is False \
             and os.path.isfile(transformed_source_file) \
             and os.path.isfile(mapping_file) \
@@ -196,7 +196,7 @@ def embedded_antsreg(source_image, target_image,
     
     if run_rigid is True and run_syn is True:
         reg.inputs.transforms = ['Rigid','SyN']
-        reg.inputs.transform_parameters = [(0.1,), (0.25, 3.0, 0.0)]
+        reg.inputs.transform_parameters = [(1.9,), (0.25, 3.0, 0.0)]
         reg.inputs.number_of_iterations = [[rigid_iterations, rigid_iterations, 
                                             rigid_iterations],   
                                            [coarse_iterations, medium_iterations, 
@@ -211,20 +211,21 @@ def embedded_antsreg(source_image, target_image,
             reg.inputs.radius_or_number_of_bins = [64, 64]
         reg.inputs.shrink_factors = [[3, 2, 1]] + [[4, 2, 1]]   
         reg.inputs.smoothing_sigmas = [[4, 2, 1]] + [[1, 0.5, 0]]
+        # some of these options make the registration very slow
         reg.inputs.sampling_strategy = ['Regular'] + [None]
         reg.inputs.sampling_percentage = [0.3] + [None]
-        reg.inputs.convergence_threshold = [1.e-8] + [-0.01]
-        reg.inputs.convergence_window_size = [20] + [5]
-        reg.inputs.sigma_units = ['vox'] + ['vox']
-        reg.inputs.use_estimate_learning_rate_once = [True] + [True]
-        reg.inputs.use_histogram_matching = [False] + [True]
+        #reg.inputs.convergence_threshold = [1.e-8] + [-0.01]
+        #reg.inputs.convergence_window_size = [20] + [5]
+        #reg.inputs.sigma_units = ['vox'] + ['vox']
+        #reg.inputs.use_estimate_learning_rate_once = [True] + [True]
+        #reg.inputs.use_histogram_matching = [False] + [True]
         reg.inputs.winsorize_lower_quantile = 0.005
         reg.inputs.winsorize_upper_quantile = 0.995
         reg.inputs.args = '--float'
 
     elif run_rigid is True and run_syn is False:
         reg.inputs.transforms = ['Rigid']
-        reg.inputs.transform_parameters = [(2.0,)]
+        reg.inputs.transform_parameters = [(1.9,)]
         reg.inputs.number_of_iterations = [[rigid_iterations, rigid_iterations,
                                             rigid_iterations]]
         if (cost_function=='CrossCorrelation'): 
@@ -237,15 +238,16 @@ def embedded_antsreg(source_image, target_image,
             reg.inputs.radius_or_number_of_bins = [64]
         reg.inputs.shrink_factors = [[3, 2, 1]]   
         reg.inputs.smoothing_sigmas = [[4, 2, 1]]
+        # some of these options make the registration very slow
         reg.inputs.sampling_strategy = ['Regular']
         reg.inputs.sampling_percentage = [0.3]
-        reg.inputs.convergence_threshold = [1.e-8]
-        reg.inputs.convergence_window_size = [20]
-        reg.inputs.sigma_units = ['vox']
-        reg.inputs.use_estimate_learning_rate_once = [True]
-        reg.inputs.use_histogram_matching = [False]
+        #reg.inputs.convergence_threshold = [1.e-8]
+        #reg.inputs.convergence_window_size = [20]
+        #reg.inputs.sigma_units = ['vox']
+        #reg.inputs.use_estimate_learning_rate_once = [True]
+        #reg.inputs.use_histogram_matching = [False]
         reg.inputs.winsorize_lower_quantile = 0.005
-        reg.inputs.winsorize_upper_quantile = 0.995
+        #eg.inputs.winsorize_upper_quantile = 0.995
         reg.inputs.args = '--float'
 
     elif run_rigid is False and run_syn is True:
@@ -263,13 +265,14 @@ def embedded_antsreg(source_image, target_image,
             reg.inputs.radius_or_number_of_bins = [64]
         reg.inputs.shrink_factors = [[4, 2, 1]]   
         reg.inputs.smoothing_sigmas = [[1, 0.5, 0]]
+        # some of these options make the registration very slow
         reg.inputs.sampling_strategy = [None]
         reg.inputs.sampling_percentage = [None]
-        reg.inputs.convergence_threshold = [-0.01]
-        reg.inputs.convergence_window_size = [5]
-        reg.inputs.sigma_units = ['vox']
-        reg.inputs.use_estimate_learning_rate_once = [True]
-        reg.inputs.use_histogram_matching = [True]
+        #reg.inputs.convergence_threshold = [-0.01]
+        #reg.inputs.convergence_window_size = [5]
+        #reg.inputs.sigma_units = ['vox']
+        #reg.inputs.use_estimate_learning_rate_once = [True]
+        #reg.inputs.use_histogram_matching = [True]
         reg.inputs.winsorize_lower_quantile = 0.005
         reg.inputs.winsorize_upper_quantile = 0.995
         reg.inputs.args = '--float'

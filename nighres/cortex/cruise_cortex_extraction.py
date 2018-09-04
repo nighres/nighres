@@ -2,7 +2,7 @@ import numpy as np
 import nibabel as nb
 import os
 import sys
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_atlas_file
@@ -183,11 +183,11 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        nighresjava.initVM(initialheap='6000m', maxheap='6000m')
     except ValueError:
         pass
     # create instance
-    cruise = cbstools.CortexOptimCRUISE()
+    cruise = nighresjava.CortexOptimCRUISE()
 
     # set parameters
     cruise.setDataWeight(data_weight)
@@ -208,24 +208,24 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
     dimensions = init_data.shape
     cruise.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     cruise.setResolutions(resolution[0], resolution[1], resolution[2])
-    cruise.importInitialWMSegmentationImage(cbstools.JArray('int')(
+    cruise.importInitialWMSegmentationImage(nighresjava.JArray('int')(
                                         (init_data.flatten('F')).astype(int).tolist()))
 
     wm_data = load_volume(wm_image).get_data()
-    cruise.setFilledWMProbabilityImage(cbstools.JArray('float')(
+    cruise.setFilledWMProbabilityImage(nighresjava.JArray('float')(
                                         (wm_data.flatten('F')).astype(float)))
 
     gm_data = load_volume(gm_image).get_data()
-    cruise.setGMProbabilityImage(cbstools.JArray('float')(
+    cruise.setGMProbabilityImage(nighresjava.JArray('float')(
                                         (gm_data.flatten('F')).astype(float)))
 
     csf_data = load_volume(csf_image).get_data()
-    cruise.setCSFandBGProbabilityImage(cbstools.JArray('float')(
+    cruise.setCSFandBGProbabilityImage(nighresjava.JArray('float')(
                                         (csf_data.flatten('F')).astype(float)))
 
     if vd_image is not None:
         vd_data = load_volume(vd_image).get_data()
-        cruise.setVeinsAndDuraProbabilityImage(cbstools.JArray('float')(
+        cruise.setVeinsAndDuraProbabilityImage(nighresjava.JArray('float')(
                                         (vd_data.flatten('F')).astype(float)))
 
     # execute

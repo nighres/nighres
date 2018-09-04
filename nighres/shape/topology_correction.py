@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import nibabel as nb
-import imcntk
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir
@@ -92,12 +92,12 @@ def topology_correction(image, shape_type,
 
     # start virtual machine if not running
     try:
-        imcntk.initVM(initialheap='6000m', maxheap='6000m')
+        nighresjava.initVM(initialheap='6000m', maxheap='6000m')
     except ValueError:
         pass
 
     # initiate class
-    algorithm = cbstools.ShapeTopologyCorrection2()
+    algorithm = nighresjava.ShapeTopologyCorrection2()
 
     # load the data
     img = load_volume(shape_image)
@@ -109,7 +109,7 @@ def topology_correction(image, shape_type,
     algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
     algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
 
-    algorithm.setShapeImage(imcntk.JArray('float')(
+    algorithm.setShapeImage(nighresjava.JArray('float')(
                             (data.flatten('F')).astype(float)))
     
     algorithm.setShapeImageType(shape_type)

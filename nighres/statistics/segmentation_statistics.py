@@ -2,7 +2,7 @@ import numpy as np
 import nibabel as nb
 import os
 import sys
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir
@@ -97,11 +97,11 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='12000m', maxheap='12000m')
+        nighresjava.initVM(initialheap='12000m', maxheap='12000m')
     except ValueError:
         pass
     # create algorithm instance
-    stats = cbstools.StatisticsSegmentation()
+    stats = nighresjava.StatisticsSegmentation()
 
     # load first image and use it to set dimensions and resolution
     img = load_volume(segmentation)
@@ -114,20 +114,20 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
     stats.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     stats.setResolutions(resolution[0], resolution[1], resolution[2])
 
-    stats.setSegmentationImage(cbstools.JArray('int')(
+    stats.setSegmentationImage(nighresjava.JArray('int')(
                                     (data.flatten('F')).astype(int).tolist()))
     stats.setSegmentationName(_fname_4saving(rootfile=segmentation))
 
     # other input images, if any
     if intensity is not None:
         data = load_volume(intensity).get_data()
-        stats.setIntensityImage(cbstools.JArray('float')(
+        stats.setIntensityImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
         stats.setIntensityName(_fname_4saving(rootfile=intensity))
     
     if template is not None:
         data = load_volume(template).get_data()
-        stats.setTemplateImage(cbstools.JArray('int')(
+        stats.setTemplateImage(nighresjava.JArray('int')(
                                     (data.flatten('F')).astype(int).tolist()))
         stats.setTemplateName(_fname_4saving(rootfile=template))
     

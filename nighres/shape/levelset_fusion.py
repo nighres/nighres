@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import nibabel as nb
-import imcntk
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir
@@ -69,12 +69,12 @@ def levelset_fusion(levelset_images,
 
     # start virtual machine if not running
     try:
-        imcntk.initVM(initialheap='6000m', maxheap='6000m')
+        nighresjava.initVM(initialheap='6000m', maxheap='6000m')
     except ValueError:
         pass
 
     # initiate class
-    algorithm = imcntk.ShapeLevelsetFusion()
+    algorithm = nighresjava.ShapeLevelsetFusion()
 
     # load the data
     nsubjects = len(levelset_images)
@@ -93,7 +93,7 @@ def levelset_fusion(levelset_images,
     for idx in range(len(levelset_images)):
         img = load_volume(levelset_images[idx])
         data = img.get_data()
-        algorithm.setLevelsetImageAt(idx, imcntk.JArray('float')(
+        algorithm.setLevelsetImageAt(idx, nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
     
     algorithm.setCorrectSkeletonTopology(correct_topology)

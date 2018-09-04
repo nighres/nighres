@@ -2,7 +2,7 @@ import os
 import numpy as np
 import nibabel as nb
 import sys
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir
@@ -73,12 +73,12 @@ def apply_coordinate_mappings(image, mapping1,
 
     # start virutal machine if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        nighresjava.initVM(initialheap='18000m', maxheap='18000m')
     except ValueError:
         pass
 
     # initate class
-    applydef = cbstools.RegistrationApplyDeformations()
+    applydef = nighresjava.RegistrationApplyDeformations()
 
     # load the data
     img = load_volume(image)
@@ -95,7 +95,7 @@ def apply_coordinate_mappings(image, mapping1,
         applydef.setImageDimensions(imgdim[0], imgdim[1], imgdim[2])
     applydef.setImageResolutions(imgres[0], imgres[1], imgres[2])
     
-    applydef.setImageToDeform(cbstools.JArray('float')(
+    applydef.setImageToDeform(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
     def1 = load_volume(mapping1)
@@ -103,7 +103,7 @@ def apply_coordinate_mappings(image, mapping1,
     aff = def1.get_affine()
     hdr = def1.get_header()
     trgdim = def1data.shape
-    applydef.setDeformationMapping1(cbstools.JArray('float')(
+    applydef.setDeformationMapping1(nighresjava.JArray('float')(
                                     (def1data.flatten('F')).astype(float)))
     applydef.setDeformation1Dimensions(def1data.shape[0],def1data.shape[1],def1data.shape[2])
     applydef.setDeformationType1("mapping(voxels)")
@@ -114,7 +114,7 @@ def apply_coordinate_mappings(image, mapping1,
         aff = def2.get_affine()
         hdr = def2.get_header()
         trgdim = def2data.shape
-        applydef.setDeformationMapping2(cbstools.JArray('float')(
+        applydef.setDeformationMapping2(nighresjava.JArray('float')(
                                         (def2data.flatten('F')).astype(float)))
         applydef.setDeformation2Dimensions(def2data.shape[0],def2data.shape[1],def2data.shape[2])
         applydef.setDeformationType2("mapping(voxels)")
@@ -125,7 +125,7 @@ def apply_coordinate_mappings(image, mapping1,
             aff = def3.get_affine()
             hdr = def3.get_header()
             trgdim = def3data.shape
-            applydef.setDeformationMapping3(cbstools.JArray('float')(
+            applydef.setDeformationMapping3(nighresjava.JArray('float')(
                                             (def3data.flatten('F')).astype(float)))
             applydef.setDeformation3Dimensions(def3data.shape[0],def3data.shape[1],def3data.shape[2])
             applydef.setDeformationType3("mapping(voxels)")
@@ -136,7 +136,7 @@ def apply_coordinate_mappings(image, mapping1,
                 aff = def4.get_affine()
                 hdr = def4.get_header()
                 trgdim = def4data.shape
-                applydef.setDeformationMapping4(cbstools.JArray('float')(
+                applydef.setDeformationMapping4(nighresjava.JArray('float')(
                                                 (def4data.flatten('F')).astype(float)))
                 applydef.setDeformation4Dimensions(def4data.shape[0],def4data.shape[1],def4data.shape[2])
                 applydef.setDeformationType4("mapping(voxels)")

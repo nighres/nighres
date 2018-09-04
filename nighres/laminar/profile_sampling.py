@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import nibabel as nb
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving
 
@@ -59,12 +59,12 @@ def profile_sampling(profile_surface_image, intensity_image,
 
     # start VM if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        nighresjava.initVM(initialheap='6000m', maxheap='6000m')
     except ValueError:
         pass
 
     # initate class
-    sampler = cbstools.LaminarProfileSampling()
+    sampler = nighresjava.LaminarProfileSampling()
 
     # load the data
     surface_img = load_volume(profile_surface_image)
@@ -77,9 +77,9 @@ def profile_sampling(profile_surface_image, intensity_image,
     intensity_data = load_volume(intensity_image).get_data()
 
     # pass inputs
-    sampler.setIntensityImage(cbstools.JArray('float')(
+    sampler.setIntensityImage(nighresjava.JArray('float')(
                                   (intensity_data.flatten('F')).astype(float)))
-    sampler.setProfileSurfaceImage(cbstools.JArray('float')(
+    sampler.setProfileSurfaceImage(nighresjava.JArray('float')(
                                    (surface_data.flatten('F')).astype(float)))
     sampler.setResolutions(resolution[0], resolution[1], resolution[2])
     sampler.setDimensions(dimensions[0], dimensions[1],

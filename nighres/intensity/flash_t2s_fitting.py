@@ -2,7 +2,7 @@ import numpy as np
 import nibabel as nb
 import os
 import sys
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir
@@ -87,11 +87,11 @@ def flash_t2s_fitting(image_list, te_list,
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='12000m', maxheap='12000m')
+        nighresjava.initVM(initialheap='12000m', maxheap='12000m')
     except ValueError:
         pass
     # create algorithm instance
-    qt2fit = cbstools.IntensityFlashT2sFitting()
+    qt2fit = nighresjava.IntensityFlashT2sFitting()
 
     # set algorithm parameters
     qt2fit.setNumberOfEchoes(len(image_list))
@@ -114,7 +114,7 @@ def flash_t2s_fitting(image_list, te_list,
         #print('\nloading ('+str(idx)+'): '+image)
         data = load_volume(image).get_data()
         #data = data[0:10,0:10,0:10]
-        qt2fit.setEchoImageAt(idx, cbstools.JArray('float')(
+        qt2fit.setEchoImageAt(idx, nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
         qt2fit.setEchoImageAt(idx, te_list[idx])

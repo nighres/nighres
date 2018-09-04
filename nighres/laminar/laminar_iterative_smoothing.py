@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import nibabel as nb
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving
 
@@ -65,12 +65,12 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
 
     # start VM if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        nighresjava.initVM(initialheap='6000m', maxheap='6000m')
     except ValueError:
         pass
 
     # initate class
-    smoother = cbstools.LaminarIterativeSmoothing()
+    smoother = nighresjava.LaminarIterativeSmoothing()
 
     # load the data
     surface_img = load_volume(profile_surface_image)
@@ -90,9 +90,9 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
         roi_mask_data = None
 
     # pass inputs
-    smoother.setIntensityImage(cbstools.JArray('float')(
+    smoother.setIntensityImage(nighresjava.JArray('float')(
                                   (intensity_data.flatten('F')).astype(float)))
-    smoother.setProfileSurfaceImage(cbstools.JArray('float')(
+    smoother.setProfileSurfaceImage(nighresjava.JArray('float')(
                                    (surface_data.flatten('F')).astype(float)))
     smoother.setResolutions(resolution[0], resolution[1], resolution[2])
     smoother.setDimensions(dimensions[0], dimensions[1], dimensions[2])
@@ -103,7 +103,7 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
         smoother.set4thDimension(1)
 
     if (roi_mask_data!=None): 
-        smoother.setROIMask(cbstools.JArray('int')(
+        smoother.setROIMask(nighresjava.JArray('int')(
                                   (roi_mask_data.flatten('F')).astype(int).tolist()))
     smoother.setFWHMmm(float(fwhm_mm))
 

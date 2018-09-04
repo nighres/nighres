@@ -2,7 +2,7 @@ import sys
 import os
 import numpy as np
 import nibabel as nb
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir
@@ -96,12 +96,12 @@ def volumetric_layering(inner_levelset, outer_levelset,
 
     # start virutal machine if not already running
     try:
-        cbstools.initVM(initialheap='12000m', maxheap='12000m')
+        nighresjava.initVM(initialheap='12000m', maxheap='12000m')
     except ValueError:
         pass
 
     # initate class
-    lamination = cbstools.LaminarVolumetricLayering()
+    lamination = nighresjava.LaminarVolumetricLayering()
 
     # load the data
     inner_img = load_volume(inner_levelset)
@@ -116,9 +116,9 @@ def volumetric_layering(inner_levelset, outer_levelset,
     # set parameters from input images
     lamination.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     lamination.setResolutions(resolution[0], resolution[1], resolution[2])
-    lamination.setInnerDistanceImage(cbstools.JArray('float')(
+    lamination.setInnerDistanceImage(nighresjava.JArray('float')(
                                     (inner_data.flatten('F')).astype(float)))
-    lamination.setOuterDistanceImage(cbstools.JArray('float')(
+    lamination.setOuterDistanceImage(nighresjava.JArray('float')(
                                     (outer_data.flatten('F')).astype(float)))
     lamination.setNumberOfLayers(n_layers)
     lamination.setTopologyLUTdirectory(topology_lut_dir)

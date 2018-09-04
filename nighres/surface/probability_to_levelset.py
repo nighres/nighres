@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import nibabel as nb
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving
 
@@ -62,12 +62,12 @@ def probability_to_levelset(probability_image,
             
     # start virtual machine if not running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        nighresjava.initVM(initialheap='6000m', maxheap='6000m')
     except ValueError:
         pass
 
     # initiate class
-    prob2level = cbstools.SurfaceProbabilityToLevelset()
+    prob2level = nighresjava.SurfaceProbabilityToLevelset()
 
     # load the data
     prob_img = load_volume(probability_image)
@@ -78,7 +78,7 @@ def probability_to_levelset(probability_image,
     dimensions = prob_data.shape
 
     # set parameters from input data
-    prob2level.setProbabilityImage(cbstools.JArray('float')(
+    prob2level.setProbabilityImage(nighresjava.JArray('float')(
                                     (prob_data.flatten('F')).astype(float)))
     prob2level.setResolutions(resolution[0], resolution[1], resolution[2])
     prob2level.setDimensions(dimensions[0], dimensions[1], dimensions[2])

@@ -97,6 +97,9 @@ jcc_args=(
 	# Java VM heap size limit
 	"--maxheap 4096M"
 
+	# in case we have several JCC wrapped modules
+	"--shared"
+	
 	# Compile
 	"--build"
 )

@@ -6,8 +6,8 @@ import sys
 import numpy as np
 import nibabel as nb
 
-# cbstools and nighres functions
-import cbstools
+# nighresjava and nighres functions
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir

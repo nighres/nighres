@@ -2,7 +2,7 @@ import numpy as np
 import nibabel as nb
 import os
 import sys
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir
@@ -140,11 +140,11 @@ def mgdm_cells(contrast_image1, contrast_type1,
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        nighresjava.initVM(initialheap='6000m', maxheap='6000m')
     except ValueError:
         pass
     # create mgdm instance
-    mgdm = cbstools.SegmentationCellMgdm()
+    mgdm = nighresjava.SegmentationCellMgdm()
 
     # set mgdm parameters
     mgdm.setDataStackDimension(stack_dimension)
@@ -169,20 +169,20 @@ def mgdm_cells(contrast_image1, contrast_type1,
     mgdm.setResolutions(resolution[0], resolution[1], resolution[2])
 
     # input image 1
-    mgdm.setContrastImage1(cbstools.JArray('float')(
+    mgdm.setContrastImage1(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
     mgdm.setContrastType1(contrast_type1)
 
     # if further contrast are specified, input them
     if contrast_image2 is not None:
         data = load_volume(contrast_image2).get_data()
-        mgdm.setContrastImage2(cbstools.JArray('float')(
+        mgdm.setContrastImage2(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
         mgdm.setContrastType2(contrast_type2)
 
         if contrast_image3 is not None:
             data = load_volume(contrast_image3).get_data()
-            mgdm.setContrastImage3(cbstools.JArray('float')(
+            mgdm.setContrastImage3(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
             mgdm.setContrastType3(contrast_type3)
 

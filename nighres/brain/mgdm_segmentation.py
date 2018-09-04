@@ -2,7 +2,7 @@ import numpy as np
 import nibabel as nb
 import os
 import sys
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_atlas_file
@@ -225,11 +225,11 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        nighresjava.initVM(initialheap='6000m', maxheap='6000m')
     except ValueError:
         pass
     # create mgdm instance
-    mgdm = cbstools.BrainMgdmMultiSegmentation2()
+    mgdm = nighresjava.BrainMgdmMultiSegmentation2()
 
     # set mgdm parameters
     mgdm.setAtlasFile(atlas_file)
@@ -261,26 +261,26 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     mgdm.setOrientations(sliceorder, LR, AP, IS)
 
     # input image 1
-    mgdm.setContrastImage1(cbstools.JArray('float')(
+    mgdm.setContrastImage1(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
     mgdm.setContrastType1(contrast_type1)
 
     # if further contrast are specified, input them
     if contrast_image2 is not None:
         data = load_volume(contrast_image2).get_data()
-        mgdm.setContrastImage2(cbstools.JArray('float')(
+        mgdm.setContrastImage2(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
         mgdm.setContrastType2(contrast_type2)
 
         if contrast_image3 is not None:
             data = load_volume(contrast_image3).get_data()
-            mgdm.setContrastImage3(cbstools.JArray('float')(
+            mgdm.setContrastImage3(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
             mgdm.setContrastType3(contrast_type3)
 
             if contrast_image4 is not None:
                 data = load_volume(contrast_image4).get_data()
-                mgdm.setContrastImage4(cbstools.JArray('float')(
+                mgdm.setContrastImage4(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
                 mgdm.setContrastType4(contrast_type4)
 

@@ -2,7 +2,7 @@ import numpy as np
 import nibabel as nb
 import os
 import sys
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir
@@ -25,13 +25,13 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
     second_inversion: [niimg]
         List of {magnitude, phase} images for the second inversion
     inversion_times: [float]
-        List of {first, second} inversion times
+        List of {first, second} inversion times, in seconds
     flip_angles: [float]
-        List of {first, second} flip angles
+        List of {first, second} flip angles, in degrees
     inversion_TR: float
-        Inversion repetition time
+        Inversion repetition time, in seconds
     excitation_TR: [float]
-        List of {first,second} repetition times
+        List of {first,second} repetition times,in seconds
     N_excitations: int
         Number of excitations
     efficiency: float
@@ -106,11 +106,11 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='12000m', maxheap='12000m')
+        nighresjava.initVM(initialheap='12000m', maxheap='12000m')
     except ValueError:
         pass
     # create algorithm instance
-    qt1map = cbstools.IntensityMp2rageT1Fitting()
+    qt1map = nighresjava.IntensityMp2rageT1Fitting()
 
     # set algorithm parameters
     qt1map.setFirstInversionTime(inversion_times[0])
@@ -137,24 +137,24 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
     qt1map.setResolutions(resolution[0], resolution[1], resolution[2])
 
     # input images
-    qt1map.setFirstInversionMagnitude(cbstools.JArray('float')(
+    qt1map.setFirstInversionMagnitude(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
     data = load_volume(first_inversion[1]).get_data()
-    qt1map.setFirstInversionPhase(cbstools.JArray('float')(
+    qt1map.setFirstInversionPhase(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
     data = load_volume(second_inversion[0]).get_data()
-    qt1map.setFirstInversionMagnitude(cbstools.JArray('float')(
+    qt1map.setFirstInversionMagnitude(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
     data = load_volume(second_inversion[1]).get_data()
-    qt1map.setFirstInversionPhase(cbstools.JArray('float')(
+    qt1map.setFirstInversionPhase(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
  
     if (correct_B1):
         data = load_volume(B1_map).get_data()
-        qt1map.setB1mapImage(cbstools.JArray('float')(
+        qt1map.setB1mapImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
  
     # execute the algorithm

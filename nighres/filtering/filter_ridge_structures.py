@@ -2,7 +2,7 @@ import numpy as np
 import nibabel as nb
 import os
 import sys
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
     _check_topology_lut_dir, _check_atlas_file
@@ -71,11 +71,11 @@ def filter_ridge_structures(input_image,
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        nighresjava.initVM(initialheap='6000m', maxheap='6000m')
     except ValueError:
         pass
     # create algorithm instance
-    filter_ridge = cbstools.FilterRidgeStructures()
+    filter_ridge = nighresjava.FilterRidgeStructures()
 
     # set parameters
     filter_ridge.setStructureIntensity(structure_intensity)
@@ -96,7 +96,7 @@ def filter_ridge_structures(input_image,
     filter_ridge.setResolutions(resolution[0], resolution[1], resolution[2])
 
     data = load_volume(input_image).get_data()
-    filter_ridge.setInputImage(cbstools.JArray('float')(
+    filter_ridge.setInputImage(nighresjava.JArray('float')(
                                (data.flatten('F')).astype(float)))
 
 

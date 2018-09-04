@@ -2,7 +2,7 @@ import numpy as np
 import nibabel as nb
 import os
 import sys
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
     _check_topology_lut_dir, _check_atlas_file
@@ -99,11 +99,11 @@ def extract_brain_region(segmentation, levelset_boundary,
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        nighresjava.initVM(initialheap='6000m', maxheap='6000m')
     except ValueError:
         pass
     # create algorithm instance
-    xbr = cbstools.BrainExtractBrainRegion()
+    xbr = nighresjava.BrainExtractBrainRegion()
 
     # set parameters
     xbr.setAtlasFile(atlas_file)
@@ -193,19 +193,19 @@ def extract_brain_region(segmentation, levelset_boundary,
     xbr.setResolutions(resolution[0], resolution[1], resolution[2])
     xbr.setComponents(load_volume(maximum_membership).get_header().get_data_shape()[3])
 
-    xbr.setSegmentationImage(cbstools.JArray('int')(
+    xbr.setSegmentationImage(nighresjava.JArray('int')(
         (data.flatten('F')).astype(int).tolist()))
 
     data = load_volume(levelset_boundary).get_data()
-    xbr.setLevelsetBoundaryImage(cbstools.JArray('float')(
+    xbr.setLevelsetBoundaryImage(nighresjava.JArray('float')(
         (data.flatten('F')).astype(float)))
 
     data = load_volume(maximum_membership).get_data()
-    xbr.setMaximumMembershipImage(cbstools.JArray('float')(
+    xbr.setMaximumMembershipImage(nighresjava.JArray('float')(
         (data.flatten('F')).astype(float)))
 
     data = load_volume(maximum_label).get_data()
-    xbr.setMaximumLabelImage(cbstools.JArray('int')(
+    xbr.setMaximumLabelImage(nighresjava.JArray('int')(
         (data.flatten('F')).astype(int).tolist()))
 
     # execute

@@ -2,7 +2,7 @@ import numpy as np
 import nibabel as nb
 import os
 import sys
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir
@@ -110,12 +110,12 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        nighresjava.initVM(initialheap='6000m', maxheap='6000m')
     except ValueError:
         pass
 
     # create skulltripping instance
-    stripper = cbstools.BrainMp2rageSkullStripping()
+    stripper = nighresjava.BrainMp2rageSkullStripping()
 
     # get dimensions and resolution from second inversion image
     inv2_img = load_volume(second_inversion)
@@ -126,7 +126,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
     dimensions = inv2_data.shape
     stripper.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     stripper.setResolutions(resolution[0], resolution[1], resolution[2])
-    stripper.setSecondInversionImage(cbstools.JArray('float')(
+    stripper.setSecondInversionImage(nighresjava.JArray('float')(
                                     (inv2_data.flatten('F')).astype(float)))
 
     # pass other inputs
@@ -138,14 +138,14 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         t1w_data = t1w_img.get_data()
         t1w_affine = t1w_img.get_affine()
         t1w_hdr = t1w_img.get_header()
-        stripper.setT1weightedImage(cbstools.JArray('float')(
+        stripper.setT1weightedImage(nighresjava.JArray('float')(
                                       (t1w_data.flatten('F')).astype(float)))
     if t1_map is not None:
         t1map_img = load_volume(t1_map)
         t1map_data = t1map_img.get_data()
         t1map_affine = t1map_img.get_affine()
         t1map_hdr = t1map_img.get_header()
-        stripper.setT1MapImage(cbstools.JArray('float')(
+        stripper.setT1MapImage(nighresjava.JArray('float')(
                                     (t1map_data.flatten('F')).astype(float)))
 
     stripper.setSkipZeroValues(skip_zero_values)
