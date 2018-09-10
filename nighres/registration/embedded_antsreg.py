@@ -339,10 +339,12 @@ def embedded_antsreg(source_image, target_image,
     # clean-up intermediate files
     os.remove(src_map_file)
     os.remove(trg_map_file)
+    os.remove(result.outputs.warped_image)
     for name in result.outputs.forward_transforms: 
         if os.path.exists(name): os.remove(name)
     for name in result.outputs.reverse_transforms: 
         if os.path.exists(name): os.remove(name)
+    os.remove(transformed.outputs.output_image)
     os.remove(mapping.outputs.output_image)
     os.remove(inverse.outputs.output_image)
 
