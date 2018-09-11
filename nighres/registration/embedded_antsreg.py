@@ -26,6 +26,7 @@ def embedded_antsreg(source_image, target_image,
                     medium_iterations=50, fine_iterations=40,
 					cost_function='MutualInformation', 
 					interpolation='NearestNeighbor',
+					ignore_affine=False, ignore_header=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
     """ Embedded ANTS Registration
@@ -42,6 +43,8 @@ def embedded_antsreg(source_image, target_image,
         Reference image to match
     run_rigid: bool
         Whether or not to run a rigid registration first (default is False)
+    rigid_iterations: float
+        Number of iterations in the rigid step (default is 1000)
     run_syn: bool
         Whether or not to run a SyN registration (default is True)
     coarse_iterations: float
@@ -50,12 +53,16 @@ def embedded_antsreg(source_image, target_image,
         Number of iterations at the medium level (default is 50)
     fine_iterations: float
         Number of iterations at the fine level (default is 40)
-    run_affine_first: bool
-        Runs a step of affine registration before the non-linear step (default is False)
     cost_function: {'CrossCorrelation', 'MutualInformation'}
         Cost function for the registration (default is 'MutualInformation')
     interpolation: {'NearestNeighbor', 'Linear'}
         Interpolation for the registration result (default is 'NearestNeighbor')
+    ignore_affine: bool
+        Ignore the affine matrix information extracted from the image header
+        (default is False)
+    ignore_header: bool
+        Ignore the orientation information and affine matrix information 
+        extracted from the image header (default is False)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -72,9 +79,9 @@ def embedded_antsreg(source_image, target_image,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * transformed_source (niimg): Deformed source image (_syn_def)
-        * mapping (niimg): Coordinate mapping from source to target (_syn_map)
-        * inverse (niimg): Inverse coordinate mapping from target to source (_syn_invmap) 
+        * transformed_source (niimg): Deformed source image (_ants_def)
+        * mapping (niimg): Coordinate mapping from source to target (_ants_map)
+        * inverse (niimg): Inverse coordinate mapping from target to source (_ants_invmap) 
 
     Notes
     ----------
@@ -154,6 +161,104 @@ def embedded_antsreg(source_image, target_image,
     rty = target.header.get_zooms()[Y]
     rtz = target.header.get_zooms()[Z]
 
+    # in case the affine transformations are not to be trusted: make them equal
+    if ignore_affine or ignore_header:
+        # create generic affine aligned with the orientation for the source
+        mx = np.argmax(np.abs(src_affine[0][0:3]))
+        my = np.argmax(np.abs(src_affine[1][0:3]))
+        mz = np.argmax(np.abs(src_affine[2][0:3]))
+        new_affine = np.zeros((4,4))
+        if ignore_header:
+            new_affine[0][0] = rsx
+            new_affine[1][1] = rsy
+            new_affine[2][2] = rsz
+            new_affine[0][3] = -rsx*nsx/2.0
+            new_affine[1][3] = -rsy*nsy/2.0
+            new_affine[2][3] = -rsz*nsz/2.0
+        else:
+            new_affine[0][mx] = rsx*np.sign(src_affine[0][mx])
+            new_affine[1][my] = rsy*np.sign(src_affine[1][my])
+            new_affine[2][mz] = rsz*np.sign(src_affine[2][mz])
+            if (np.sign(src_affine[0][mx])<0): 
+                new_affine[0][3] = rsx*nsx/2.0
+            else:
+                new_affine[0][3] = -rsx*nsx/2.0
+                
+            if (np.sign(src_affine[1][my])<0): 
+                new_affine[1][3] = rsy*nsy/2.0
+            else:
+                new_affine[1][3] = -rsy*nsy/2.0
+                
+            if (np.sign(src_affine[2][mz])<0): 
+                new_affine[2][3] = rsz*nsz/2.0
+            else:
+                new_affine[2][3] = -rsz*nsz/2.0
+        #if (np.sign(src_affine[0][mx])<0): new_affine[mx][3] = rsx*nsx
+        #if (np.sign(src_affine[1][my])<0): new_affine[my][3] = rsy*nsy
+        #if (np.sign(src_affine[2][mz])<0): new_affine[mz][3] = rsz*nsz
+        #new_affine[0][3] = nsx/2.0
+        #new_affine[1][3] = nsy/2.0
+        #new_affine[2][3] = nsz/2.0
+        new_affine[3][3] = 1.0
+        
+        src_img = nb.Nifti1Image(source.get_data(), new_affine, source.header)
+        src_img.update_header()
+        src_img_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+                                                        rootfile=source_image,
+                                                        suffix='tmp_srcimg'))
+        save_volume(src_img_file, src_img)
+        source = load_volume(src_img_file)
+        src_affine = source.affine
+        src_header = source.header
+        
+        # create generic affine aligned with the orientation for the target
+        mx = np.argmax(np.abs(trg_affine[0][0:3]))
+        my = np.argmax(np.abs(trg_affine[1][0:3]))
+        mz = np.argmax(np.abs(trg_affine[2][0:3]))
+        new_affine = np.zeros((4,4))
+        if ignore_header:
+            new_affine[0][0] = rtx
+            new_affine[1][1] = rty
+            new_affine[2][2] = rtz
+            new_affine[0][3] = -rtx*ntx/2.0
+            new_affine[1][3] = -rty*nty/2.0
+            new_affine[2][3] = -rtz*ntz/2.0
+        else:
+            new_affine[0][mx] = rtx*np.sign(trg_affine[0][mx])
+            new_affine[1][my] = rty*np.sign(trg_affine[1][my])
+            new_affine[2][mz] = rtz*np.sign(trg_affine[2][mz])
+            if (np.sign(trg_affine[0][mx])<0): 
+                new_affine[0][3] = rtx*ntx/2.0
+            else:
+                new_affine[0][3] = -rtx*ntx/2.0
+                
+            if (np.sign(trg_affine[1][my])<0): 
+                new_affine[1][3] = rty*nty/2.0
+            else:
+                new_affine[1][3] = -rty*nty/2.0
+                
+            if (np.sign(trg_affine[2][mz])<0): 
+                new_affine[2][3] = rtz*ntz/2.0
+            else:
+                new_affine[2][3] = -rtz*ntz/2.0
+        #if (np.sign(trg_affine[0][mx])<0): new_affine[mx][3] = rtx*ntx
+        #if (np.sign(trg_affine[1][my])<0): new_affine[my][3] = rty*nty
+        #if (np.sign(trg_affine[2][mz])<0): new_affine[mz][3] = rtz*ntz
+        #new_affine[0][3] = ntx/2.0
+        #new_affine[1][3] = nty/2.0
+        #new_affine[2][3] = ntz/2.0
+        new_affine[3][3] = 1.0
+        
+        trg_img = nb.Nifti1Image(target.get_data(), new_affine, target.header)
+        trg_img.update_header()
+        trg_img_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+                                                        rootfile=source_image,
+                                                        suffix='tmp_trgimg'))
+        save_volume(trg_img_file, trg_img)
+        target = load_volume(trg_img_file)
+        trg_affine = target.affine
+        trg_header = target.header
+        
     # build coordinate mapping matrices and save them to disk
     src_coord = np.zeros((nsx,nsy,nsz,3))
     trg_coord = np.zeros((ntx,nty,ntz,3))
@@ -193,6 +298,8 @@ def embedded_antsreg(source_image, target_image,
     reg.inputs.output_transform_prefix = prefix
     reg.inputs.fixed_image = [target.get_filename()]
     reg.inputs.moving_image = [source.get_filename()]
+    
+    print("registering "+source.get_filename()+"\n to "+target.get_filename())
     
     if run_rigid is True and run_syn is True:
         reg.inputs.transforms = ['Rigid','SyN']
@@ -339,7 +446,10 @@ def embedded_antsreg(source_image, target_image,
     # clean-up intermediate files
     os.remove(src_map_file)
     os.remove(trg_map_file)
-    os.remove(result.outputs.warped_image)
+    #if ignore_affine:
+    #    os.remove(src_img_file)
+    #    os.remove(trg_img_file)
+        
     for name in result.outputs.forward_transforms: 
         if os.path.exists(name): os.remove(name)
     for name in result.outputs.reverse_transforms: 
