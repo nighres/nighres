@@ -446,9 +446,9 @@ def embedded_antsreg(source_image, target_image,
     # clean-up intermediate files
     os.remove(src_map_file)
     os.remove(trg_map_file)
-    #if ignore_affine:
-    #    os.remove(src_img_file)
-    #    os.remove(trg_img_file)
+    if ignore_affine or ignore_header:
+        os.remove(src_img_file)
+        os.remove(trg_img_file)
         
     for name in result.outputs.forward_transforms: 
         if os.path.exists(name): os.remove(name)
