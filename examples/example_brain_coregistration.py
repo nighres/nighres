@@ -122,7 +122,7 @@ syn_results = nighres.registration.embedded_antsreg(
 ############################################################################
 # Now we look at the coregistered image that SyN created
 if not skip_plots:
-    plotting.plot_img(syn_results['deformed_source'],
+    plotting.plot_img(syn_results['transformed_source'],
                       annotate=False,  draw_cross=False)
 
 ############################################################################
