@@ -73,7 +73,7 @@ def apply_coordinate_mappings(image, mapping1,
 
     # start virutal machine if not already running
     try:
-        nighresjava.initVM(initialheap='18000m', maxheap='18000m')
+        nighresjava.initVM(initialheap='36000m', maxheap='36000m')
     except ValueError:
         pass
 

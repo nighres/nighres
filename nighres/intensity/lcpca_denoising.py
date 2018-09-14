@@ -11,8 +11,9 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def lcpca_denoising(image_list, phase_list=None, 
                     ngb_size=4, stdev_cutoff=1.05,
                       min_dimension=0, max_dimension=-1,
+                      unwrap=True,
                       save_data=False, overwrite=False, output_dir=None,
-                      file_name=None):
+                      file_names=None):
     """ LCPCA denoising
 
     Denoise multi-contrast data with a local complex-valued PCA-based method
@@ -35,14 +36,17 @@ def lcpca_denoising(image_list, phase_list=None,
     max_dimension: int, optional
         Maximum number of kept PCA components
         (default is -1 for all components)
+    unwrap: bool, optional
+        Whether to unwrap the phase data of keep it as is, assuming radians
+        (default is True)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
         Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
-    file_name: str, optional
-        Desired base name for output files with file extension
+    file_names: [str], optional
+        Desired base names for output files with file extension
         (suffixes will be added)
 
     Returns
@@ -78,7 +82,7 @@ def lcpca_denoising(image_list, phase_list=None,
         den_files = []
         for idx,image in enumerate(image_list):
             den_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(file_name=file_names[idx],
                                       rootfile=image,
                                       suffix='lcpca-den'))
             den_files.append(den_file)
@@ -86,18 +90,18 @@ def lcpca_denoising(image_list, phase_list=None,
         if (phase_list!=None):
             for idx,image in enumerate(phase_list):
                 den_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(file_name=file_names[len(image_list)+idx],
                                           rootfile=image,
                                           suffix='lcpca-den'))
                 den_files.append(den_file)
 
         dim_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(file_name=file_names[0],
                                    rootfile=image_list[0],
                                    suffix='lcpca-dim'))
 
         err_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(file_name=file_names[0],
                                    rootfile=image_list[0],
                                    suffix='lcpca-res'))
         if overwrite is False \
@@ -120,11 +124,11 @@ def lcpca_denoising(image_list, phase_list=None,
 
     # start virtual machine, if not already running
     try:
-        nighresjava.initVM(initialheap='12000m', maxheap='12000m')
+        nighresjava.initVM(initialheap='64000m', maxheap='64000m')
     except ValueError:
         pass
     # create lcpca instance
-    lcpca = nighresjava.IntensityComplexPCADenoising()
+    lcpca = nighresjava.LocalComplexPCADenoising()
 
     # set lcpca parameters
     lcpca.setImageNumber(len(image_list))
@@ -168,7 +172,7 @@ def lcpca_denoising(image_list, phase_list=None,
     lcpca.setStdevCutoff(stdev_cutoff)
     lcpca.setMinimumDimension(min_dimension)
     lcpca.setMaximumDimension(max_dimension)
-     
+    lcpca.setUnwrapPhase(unwrap) 
 
     # execute the algorithm
     try:

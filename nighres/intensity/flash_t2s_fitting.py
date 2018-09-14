@@ -117,7 +117,7 @@ def flash_t2s_fitting(image_list, te_list,
         qt2fit.setEchoImageAt(idx, nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
-        qt2fit.setEchoImageAt(idx, te_list[idx])
+        qt2fit.setEchoTimeAt(idx, te_list[idx])
 
     # execute the algorithm
     try:

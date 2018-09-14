@@ -59,7 +59,7 @@ skullstripping_results1 = nighres.brain.mp2rage_skullstripping(
                                             t1_map=dataset1['t1map'],
                                             save_data=True,
                                             file_name='sub001_sess1',
-                                            output_dir=out_dir, overwrite=True)
+                                            output_dir=out_dir, overwrite=False)
 
 skullstripping_results2 = nighres.brain.mp2rage_skullstripping(
                                             second_inversion=dataset2['inv2'],
@@ -67,7 +67,7 @@ skullstripping_results2 = nighres.brain.mp2rage_skullstripping(
                                             t1_map=dataset2['t1map'],
                                             save_data=True,
                                             file_name='sub002_sess1',
-                                            output_dir=out_dir, overwrite=True)
+                                            output_dir=out_dir, overwrite=False)
 
 ############################################################################
 # .. tip:: in Nighres functions that have several outputs return a
@@ -116,6 +116,7 @@ syn_results = nighres.registration.embedded_antsreg(
                         medium_iterations=0, fine_iterations=0,
                         cost_function='MutualInformation', 
                         interpolation='NearestNeighbor',
+                        ignore_affine=True,
                         save_data=True, file_name="sub001_sess1",
                         output_dir=out_dir, overwrite=True)
 
@@ -135,13 +136,13 @@ deformed = nighres.registration.apply_coordinate_mappings(
                         image=dataset1['t1map'],
                         mapping1=syn_results['mapping'],
                         save_data=True, file_name="sub001_sess1_t1map",
-                        output_dir=out_dir, overwrite=True)
+                        output_dir=out_dir, overwrite=False)
 
 inverse = nighres.registration.apply_coordinate_mappings(
                         image=dataset2['t1w'],
                         mapping1=syn_results['inverse'],
                         save_data=True, file_name="sub002_sess1_t1w",
-                        output_dir=out_dir, overwrite=True)
+                        output_dir=out_dir, overwrite=False)
 
 ############################################################################
 # Now we look at the coregistered images from applying the deformation

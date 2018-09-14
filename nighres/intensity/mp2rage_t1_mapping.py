@@ -78,21 +78,21 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
 
     # make sure that saving related parameters are correct
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, image_list[0])
+        output_dir = _output_dir_4saving(output_dir, first_inversion[0])
 
         t1_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
-                                   rootfile=image_list[0],
+                                   rootfile=first_inversion[0],
                                    suffix='qt1map-t1'))
 
         r1_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
-                                   rootfile=image_list[0],
+                                   rootfile=first_inversion[0],
                                    suffix='qt1map-r1'))
 
         uni_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
-                                   rootfile=image_list[0],
+                                   rootfile=first_inversion[0],
                                    suffix='qt1map-uni'))
 
         if overwrite is False \
@@ -145,11 +145,11 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
                                     (data.flatten('F')).astype(float)))
     
     data = load_volume(second_inversion[0]).get_data()
-    qt1map.setFirstInversionMagnitude(nighresjava.JArray('float')(
+    qt1map.setSecondInversionMagnitude(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
     data = load_volume(second_inversion[1]).get_data()
-    qt1map.setFirstInversionPhase(nighresjava.JArray('float')(
+    qt1map.setSecondInversionPhase(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
  
     if (correct_B1):
@@ -169,40 +169,32 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
         return
 
     # reshape output to what nibabel likes
-    t2s_data = np.reshape(np.array(qt2fit.getT2sImage(),
+    t1_data = np.reshape(np.array(qt1map.getQuantitativeT1mapImage(),
                                     dtype=np.float32), dimensions, 'F')
 
-    r2s_data = np.reshape(np.array(qt2fit.getR2sImage(),
+    r1_data = np.reshape(np.array(qt1map.getQuantitativeR1mapImage(),
                                     dtype=np.float32), dimensions, 'F')
 
-    s0_data = np.reshape(np.array(qt2fit.getS0Image(),
-                                    dtype=np.float32), dimensions, 'F')
-
-    err_data = np.reshape(np.array(qt2fit.getResidualImage(),
+    uni_data = np.reshape(np.array(qt1map.getUniformT1weightedImage(),
                                     dtype=np.float32), dimensions, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
-    header['cal_min'] = np.nanmin(t2s_data)
-    header['cal_max'] = np.nanmax(t2s_data)
-    t2s = nb.Nifti1Image(t2s_data, affine, header)
+    header['cal_min'] = np.nanmin(t1_data)
+    header['cal_max'] = np.nanmax(t1_data)
+    t1 = nb.Nifti1Image(t1_data, affine, header)
 
-    header['cal_min'] = np.nanmin(r2s_data)
-    header['cal_max'] = np.nanmax(r2s_data)
-    r2s = nb.Nifti1Image(r2s_data, affine, header)
+    header['cal_min'] = np.nanmin(r1_data)
+    header['cal_max'] = np.nanmax(r1_data)
+    r1 = nb.Nifti1Image(r1_data, affine, header)
 
-    header['cal_min'] = np.nanmin(s0_data)
-    header['cal_max'] = np.nanmax(s0_data)
-    s0 = nb.Nifti1Image(s0_data, affine, header)
-
-    header['cal_min'] = np.nanmin(err_data)
-    header['cal_max'] = np.nanmax(err_data)
-    err = nb.Nifti1Image(err_data, affine, header)
+    header['cal_min'] = np.nanmin(uni_data)
+    header['cal_max'] = np.nanmax(uni_data)
+    uni = nb.Nifti1Image(uni_data, affine, header)
 
     if save_data:
-        save_volume(t2s_file, t2s)
-        save_volume(r2s_file, r2s)
-        save_volume(s0_file, s0)
-        save_volume(err_file, err)
-
-    return {'t2s': t2s, 'r2s': r2s, 's0': s0, 'residuals': err}
+        save_volume(t1_file, t1)
+        save_volume(r1_file, r1)
+        save_volume(uni_file, uni)
+       
+    return {'t1': t1, 'r1': r1, 'uni': uni}
