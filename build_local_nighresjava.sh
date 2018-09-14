@@ -71,7 +71,7 @@ javac_opts=(
 echo "Compiling..."
 #cd cbstools-public
 cd $cbstools_local
-mkdir -p build
+#mkdir -p build
 javac -cp ${deps_list} ${javac_opts[@]} de/mpg/cbs/core/*/*.java $cbstools_list
 
 echo "Assembling..."
@@ -116,7 +116,7 @@ javac_opts=(
 echo "Compiling..."
 #cd cbstools-public
 cd $imcntk_local
-mkdir -p build
+#mkdir -p build
 javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java $imcntk_list
 
 echo "Assembling..."
