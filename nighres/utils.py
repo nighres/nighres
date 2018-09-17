@@ -121,3 +121,10 @@ def _check_atlas_file(atlas_file):
                 atlas_file = os.path.join(ATLAS_DIR, atlas_file)
 
     return atlas_file
+
+#def _check_available_memory():
+#    
+#    # run command here
+#    
+#    
+#    return memory

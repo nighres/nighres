@@ -1,3 +1,4 @@
+from nighres.intensity.background_estimation import background_estimation
 from nighres.intensity.flash_t2s_fitting import flash_t2s_fitting
 from nighres.intensity.intensity_propagation import intensity_propagation
 from nighres.intensity.lcpca_denoising import lcpca_denoising

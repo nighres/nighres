@@ -314,8 +314,8 @@ def embedded_antsreg(source_image, target_image,
                                             rigid_iterations],   
                                            [affine_iterations, affine_iterations, 
                                             affine_iterations],   
-                                           [coarse_iterations, medium_iterations, 
-                                            fine_iterations]]
+                                           [coarse_iterations, coarse_iterations, 
+                                            medium_iterations, fine_iterations]]
         if (cost_function=='CrossCorrelation'): 
             reg.inputs.metric = ['CC', 'CC', 'CC']
             reg.inputs.metric_weight = [1.0, 1.0, 1.0]
@@ -323,27 +323,24 @@ def embedded_antsreg(source_image, target_image,
         else :
             reg.inputs.metric = ['MI', 'MI', 'MI']
             reg.inputs.metric_weight = [1.0, 1.0, 1.0]
-            reg.inputs.radius_or_number_of_bins = [64, 64, 64]
-        reg.inputs.shrink_factors = [[4, 2, 1]] + [[4, 2, 1]] + [[4, 2, 1]]   
-        reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[3, 2, 1]] + [[1, 0.5, 0]]
-        # some of these options make the registration very slow??
-        reg.inputs.sampling_strategy = ['Regular'] + ['Regular'] + ['Regular']
+            reg.inputs.radius_or_number_of_bins = [32, 32, 32]
+        reg.inputs.shrink_factors = [[4, 2, 1]] + [[4, 2, 1]] + [[8, 4, 2, 1]]   
+        reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[3, 2, 1]] + [[2, 1, 0.5, 0]]
+        reg.inputs.sampling_strategy = ['Random'] + ['Random'] + ['Random']
         reg.inputs.sampling_percentage = [0.3] + [0.3] + [0.3]
-        reg.inputs.convergence_threshold = [1.e-8] + [1.e-8] + [1.e-8]
-        reg.inputs.convergence_window_size = [20] + [20] + [5]
-        reg.inputs.sigma_units = ['vox'] + ['vox'] + ['vox']
+        reg.inputs.convergence_threshold = [convergence] + [convergence] + [convergence]
+        reg.inputs.convergence_window_size = [10] + [10] + [5]
         reg.inputs.use_histogram_matching = [False] + [False] + [False]
         reg.inputs.winsorize_lower_quantile = 0.001
         reg.inputs.winsorize_upper_quantile = 0.999
-        reg.inputs.args = '--float 0'
 
     elif run_rigid is True and run_affine is False and run_syn is True:
         reg.inputs.transforms = ['Rigid','SyN']
         reg.inputs.transform_parameters = [(0.1,), (0.2, 3.0, 0.0)]
         reg.inputs.number_of_iterations = [[rigid_iterations, rigid_iterations, 
                                             rigid_iterations],   
-                                           [coarse_iterations, medium_iterations, 
-                                            fine_iterations]]
+                                           [coarse_iterations, coarse_iterations, 
+                                            medium_iterations, fine_iterations]]
         if (cost_function=='CrossCorrelation'): 
             reg.inputs.metric = ['CC', 'CC']
             reg.inputs.metric_weight = [1.0, 1.0]
@@ -351,27 +348,24 @@ def embedded_antsreg(source_image, target_image,
         else :
             reg.inputs.metric = ['MI', 'MI']
             reg.inputs.metric_weight = [1.0, 1.0]
-            reg.inputs.radius_or_number_of_bins = [64, 64]
-        reg.inputs.shrink_factors = [[4, 2, 1]] + [[4, 2, 1]]
-        reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[1, 0.5, 0]]
-        # some of these options make the registration very slow??
-        reg.inputs.sampling_strategy = ['Regular'] + ['Regular']
+            reg.inputs.radius_or_number_of_bins = [32, 32]
+        reg.inputs.shrink_factors = [[4, 2, 1]] + [[8, 4, 2, 1]]
+        reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[2, 1, 0.5, 0]]
+        reg.inputs.sampling_strategy = ['Random'] + ['Random']
         reg.inputs.sampling_percentage = [0.3] + [0.3]
-        reg.inputs.convergence_threshold = [1.e-8] + [1.e-8]
-        reg.inputs.convergence_window_size = [20] + [5]
-        reg.inputs.sigma_units = ['vox'] + ['vox']
+        reg.inputs.convergence_threshold = [convergence] + [convergence]
+        reg.inputs.convergence_window_size = [10] + [5]
         reg.inputs.use_histogram_matching = [False] + [False]
         reg.inputs.winsorize_lower_quantile = 0.001
         reg.inputs.winsorize_upper_quantile = 0.999
-        reg.inputs.args = '--float 0'
 
     elif run_rigid is False and run_affine is True and run_syn is True:
         reg.inputs.transforms = ['Affine','SyN']
         reg.inputs.transform_parameters = [(0.1,), (0.2, 3.0, 0.0)]
         reg.inputs.number_of_iterations = [[affine_iterations, affine_iterations, 
                                             affine_iterations],   
-                                           [coarse_iterations, medium_iterations, 
-                                            fine_iterations]]
+                                           [coarse_iterations, coarse_iterations, 
+                                            medium_iterations, fine_iterations]]
         if (cost_function=='CrossCorrelation'): 
             reg.inputs.metric = ['CC', 'CC']
             reg.inputs.metric_weight = [1.0, 1.0]
@@ -380,18 +374,15 @@ def embedded_antsreg(source_image, target_image,
             reg.inputs.metric = ['MI', 'MI']
             reg.inputs.metric_weight = [1.0, 1.0]
             reg.inputs.radius_or_number_of_bins = [64, 64]
-        reg.inputs.shrink_factors = [[4, 2, 1]] + [[4, 2, 1]]
-        reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[1, 0.5, 0]]
-        # some of these options make the registration very slow??
-        reg.inputs.sampling_strategy = ['Regular'] + ['Regular']
+        reg.inputs.shrink_factors = [[4, 2, 1]] + [[8, 4, 2, 1]]
+        reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[2, 1, 0.5, 0]]
+        reg.inputs.sampling_strategy = ['Random'] + ['Random']
         reg.inputs.sampling_percentage = [0.3] + [0.3]
-        reg.inputs.convergence_threshold = [1.e-8] + [1.e-8]
-        reg.inputs.convergence_window_size = [20] + [5]
-        reg.inputs.sigma_units = ['vox'] + ['vox']
+        reg.inputs.convergence_threshold = [convergence] + [convergence]
+        reg.inputs.convergence_window_size = [10] + [5]
         reg.inputs.use_histogram_matching = [False] + [False]
         reg.inputs.winsorize_lower_quantile = 0.001
         reg.inputs.winsorize_upper_quantile = 0.999
-        reg.inputs.args = '--float 0'
 
     if run_rigid is True and run_affine is True and run_syn is False:
         reg.inputs.transforms = ['Rigid','Affine']
@@ -407,19 +398,16 @@ def embedded_antsreg(source_image, target_image,
         else :
             reg.inputs.metric = ['MI', 'MI']
             reg.inputs.metric_weight = [1.0, 1.0]
-            reg.inputs.radius_or_number_of_bins = [64, 64]
+            reg.inputs.radius_or_number_of_bins = [32, 32]
         reg.inputs.shrink_factors = [[4, 2, 1]] + [[4, 2, 1]] 
         reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[3, 2, 1]]
-        # some of these options make the registration very slow??
-        reg.inputs.sampling_strategy = ['Regular'] + ['Regular']
+        reg.inputs.sampling_strategy = ['Random'] + ['Random']
         reg.inputs.sampling_percentage = [0.3] + [0.3]
-        reg.inputs.convergence_threshold = [1.e-8] + [1.e-8]
-        reg.inputs.convergence_window_size = [20] + [20]
-        reg.inputs.sigma_units = ['vox'] + ['vox']
-        reg.inputs.use_histogram_matching = [False] + [False] 
+        reg.inputs.convergence_threshold = [convergence] + [convergence]
+        reg.inputs.convergence_window_size = [10] + [10]
+        reg.inputs.use_histogram_matching = [False] + [False]
         reg.inputs.winsorize_lower_quantile = 0.001
         reg.inputs.winsorize_upper_quantile = 0.999
-        reg.inputs.args = '--float 0'
 
     elif run_rigid is True and run_affine is False and run_syn is False:
         reg.inputs.transforms = ['Rigid']
@@ -433,19 +421,16 @@ def embedded_antsreg(source_image, target_image,
         else :
             reg.inputs.metric = ['MI']
             reg.inputs.metric_weight = [1.0]
-            reg.inputs.radius_or_number_of_bins = [64]
+            reg.inputs.radius_or_number_of_bins = [32]
         reg.inputs.shrink_factors = [[4, 2, 1]]
         reg.inputs.smoothing_sigmas = [[3, 2, 1]]
-        # some of these options make the registration very slow??
-        reg.inputs.sampling_strategy = ['Regular']
+        reg.inputs.sampling_strategy = ['Random']
         reg.inputs.sampling_percentage = [0.3]
-        reg.inputs.convergence_threshold = [1.e-8]
-        reg.inputs.convergence_window_size = [20]
-        reg.inputs.sigma_units = ['vox']
+        reg.inputs.convergence_threshold = [convergence]
+        reg.inputs.convergence_window_size = [10]
         reg.inputs.use_histogram_matching = [False]
         reg.inputs.winsorize_lower_quantile = 0.001
         reg.inputs.winsorize_upper_quantile = 0.999
-        reg.inputs.args = '--float 0'
 
     elif run_rigid is False and run_affine is True and run_syn is False:
         reg.inputs.transforms = ['Affine']
@@ -462,22 +447,19 @@ def embedded_antsreg(source_image, target_image,
             reg.inputs.radius_or_number_of_bins = [32]
         reg.inputs.shrink_factors = [[4, 2, 1]]
         reg.inputs.smoothing_sigmas = [[3, 2, 1]]
-        # some of these options make the registration very slow??
         reg.inputs.sampling_strategy = ['Random']
         reg.inputs.sampling_percentage = [0.3]
         reg.inputs.convergence_threshold = [convergence]
         reg.inputs.convergence_window_size = [10]
-        reg.inputs.sigma_units = ['vox']
         reg.inputs.use_histogram_matching = [False]
-        #reg.inputs.winsorize_lower_quantile = 0.001
-        #reg.inputs.winsorize_upper_quantile = 0.999
-        #reg.inputs.args = '--float 0'
+        reg.inputs.winsorize_lower_quantile = 0.001
+        reg.inputs.winsorize_upper_quantile = 0.999
 
     elif run_rigid is False and run_affine is False and run_syn is True:
         reg.inputs.transforms = ['SyN']
         reg.inputs.transform_parameters = [(0.2, 3.0, 0.0)]
-        reg.inputs.number_of_iterations = [[coarse_iterations, medium_iterations, 
-                                            fine_iterations]]
+        reg.inputs.number_of_iterations = [[coarse_iterations, coarse_iterations, 
+                                            medium_iterations, fine_iterations]]
         if (cost_function=='CrossCorrelation'): 
             reg.inputs.metric = ['CC']
             reg.inputs.metric_weight = [1.0]
@@ -485,19 +467,16 @@ def embedded_antsreg(source_image, target_image,
         else :
             reg.inputs.metric = ['MI']
             reg.inputs.metric_weight = [1.0]
-            reg.inputs.radius_or_number_of_bins = [64]
-        reg.inputs.shrink_factors = [[4, 2, 1]]   
-        reg.inputs.smoothing_sigmas = [[1, 0.5, 0]]
-        # some of these options make the registration very slow??
-        reg.inputs.sampling_strategy = ['Regular']
+            reg.inputs.radius_or_number_of_bins = [32]
+        reg.inputs.shrink_factors = [[8, 4, 2, 1]]   
+        reg.inputs.smoothing_sigmas = [[2, 1, 0.5, 0]]
+        reg.inputs.sampling_strategy = ['Random']
         reg.inputs.sampling_percentage = [0.3]
-        reg.inputs.convergence_threshold = [1.e-8]
-        reg.inputs.convergence_window_size = [5]
-        reg.inputs.sigma_units = ['vox']
+        reg.inputs.convergence_threshold = [convergence]
+        reg.inputs.convergence_window_size = [10]
         reg.inputs.use_histogram_matching = [False]
         reg.inputs.winsorize_lower_quantile = 0.001
         reg.inputs.winsorize_upper_quantile = 0.999
-        reg.inputs.args = '--float 0'
 
     elif run_rigid is False and run_affine is False and run_syn is False:
         reg.inputs.transforms = ['Rigid']
@@ -875,8 +854,8 @@ def embedded_antsreg_2d(source_image, target_image,
                                             rigid_iterations],   
                                            [affine_iterations, affine_iterations, 
                                             affine_iterations],   
-                                           [coarse_iterations, medium_iterations, 
-                                            fine_iterations]]
+                                           [coarse_iterations, coarse_iterations, 
+                                            medium_iterations, fine_iterations]]
         if (cost_function=='CrossCorrelation'): 
             reg.inputs.metric = ['CC', 'CC', 'CC']
             reg.inputs.metric_weight = [1.0, 1.0, 1.0]
@@ -885,8 +864,8 @@ def embedded_antsreg_2d(source_image, target_image,
             reg.inputs.metric = ['MI', 'MI', 'MI']
             reg.inputs.metric_weight = [1.0, 1.0, 1.0]
             reg.inputs.radius_or_number_of_bins = [32, 32, 32]
-        reg.inputs.shrink_factors = [[4, 2, 1]] + [[4, 2, 1]] + [[4, 2, 1]]   
-        reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[3, 2, 1]] + [[1, 0.5, 0]]
+        reg.inputs.shrink_factors = [[4, 2, 1]] + [[4, 2, 1]] + [[8, 4, 2, 1]]   
+        reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[3, 2, 1]] + [[2, 1, 0.5, 0]]
         reg.inputs.sampling_strategy = ['Random'] + ['Random'] + ['Random']
         reg.inputs.sampling_percentage = [0.3] + [0.3] + [0.3]
         reg.inputs.convergence_threshold = [convergence] + [convergence] + [convergence]
@@ -900,8 +879,8 @@ def embedded_antsreg_2d(source_image, target_image,
         reg.inputs.transform_parameters = [(0.1,), (0.2, 3.0, 0.0)]
         reg.inputs.number_of_iterations = [[rigid_iterations, rigid_iterations, 
                                             rigid_iterations],   
-                                           [coarse_iterations, medium_iterations, 
-                                            fine_iterations]]
+                                           [coarse_iterations, coarse_iterations, 
+                                            medium_iterations, fine_iterations]]
         if (cost_function=='CrossCorrelation'): 
             reg.inputs.metric = ['CC', 'CC']
             reg.inputs.metric_weight = [1.0, 1.0]
@@ -910,8 +889,8 @@ def embedded_antsreg_2d(source_image, target_image,
             reg.inputs.metric = ['MI', 'MI']
             reg.inputs.metric_weight = [1.0, 1.0]
             reg.inputs.radius_or_number_of_bins = [32, 32]
-        reg.inputs.shrink_factors = [[4, 2, 1]] + [[4, 2, 1]]
-        reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[1, 0.5, 0]]
+        reg.inputs.shrink_factors = [[4, 2, 1]] + [[8, 4, 2, 1]]
+        reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[2, 1, 0.5, 0]]
         reg.inputs.sampling_strategy = ['Random'] + ['Random']
         reg.inputs.sampling_percentage = [0.3] + [0.3]
         reg.inputs.convergence_threshold = [convergence] + [convergence]
@@ -925,8 +904,8 @@ def embedded_antsreg_2d(source_image, target_image,
         reg.inputs.transform_parameters = [(0.1,), (0.2, 3.0, 0.0)]
         reg.inputs.number_of_iterations = [[affine_iterations, affine_iterations, 
                                             affine_iterations],   
-                                           [coarse_iterations, medium_iterations, 
-                                            fine_iterations]]
+                                           [coarse_iterations, coarse_iterations, 
+                                            medium_iterations, fine_iterations]]
         if (cost_function=='CrossCorrelation'): 
             reg.inputs.metric = ['CC', 'CC']
             reg.inputs.metric_weight = [1.0, 1.0]
@@ -935,8 +914,8 @@ def embedded_antsreg_2d(source_image, target_image,
             reg.inputs.metric = ['MI', 'MI']
             reg.inputs.metric_weight = [1.0, 1.0]
             reg.inputs.radius_or_number_of_bins = [64, 64]
-        reg.inputs.shrink_factors = [[4, 2, 1]] + [[4, 2, 1]]
-        reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[1, 0.5, 0]]
+        reg.inputs.shrink_factors = [[4, 2, 1]] + [[8, 4, 2, 1]]
+        reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[2, 1, 0.5, 0]]
         reg.inputs.sampling_strategy = ['Random'] + ['Random']
         reg.inputs.sampling_percentage = [0.3] + [0.3]
         reg.inputs.convergence_threshold = [convergence] + [convergence]
@@ -1019,8 +998,8 @@ def embedded_antsreg_2d(source_image, target_image,
     elif run_rigid is False and run_affine is False and run_syn is True:
         reg.inputs.transforms = ['SyN']
         reg.inputs.transform_parameters = [(0.2, 3.0, 0.0)]
-        reg.inputs.number_of_iterations = [[coarse_iterations, medium_iterations, 
-                                            fine_iterations]]
+        reg.inputs.number_of_iterations = [[coarse_iterations, coarse_iterations, 
+                                            medium_iterations, fine_iterations]]
         if (cost_function=='CrossCorrelation'): 
             reg.inputs.metric = ['CC']
             reg.inputs.metric_weight = [1.0]
@@ -1029,8 +1008,8 @@ def embedded_antsreg_2d(source_image, target_image,
             reg.inputs.metric = ['MI']
             reg.inputs.metric_weight = [1.0]
             reg.inputs.radius_or_number_of_bins = [32]
-        reg.inputs.shrink_factors = [[4, 2, 1]]   
-        reg.inputs.smoothing_sigmas = [[1, 0.5, 0]]
+        reg.inputs.shrink_factors = [[8, 4, 2, 1]]   
+        reg.inputs.smoothing_sigmas = [[2, 1, 0.5, 0]]
         reg.inputs.sampling_strategy = ['Random']
         reg.inputs.sampling_percentage = [0.3]
         reg.inputs.convergence_threshold = [convergence]

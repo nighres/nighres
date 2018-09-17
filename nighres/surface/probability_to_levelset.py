@@ -10,12 +10,12 @@ def probability_to_levelset(probability_image,
                             save_data=False, overwrite=False, output_dir=None,
                             file_name=None):
 
-    """Levelset from tissue classification
+    """Levelset from probability map
 
-    Creates a levelset surface representations from a probabilistic or
-    deterministic tissue classification. The levelset indicates each voxel's
-    distance to the closest boundary. It takes negative values inside and
-    positive values outside of the brain.
+    Creates a levelset surface representations from a probabilistic map
+    or a mask. The levelset indicates each voxel's distance to the closest 
+    boundary. It takes negative values inside and positive values outside 
+    of the object.
 
     Parameters
     ----------
@@ -34,8 +34,11 @@ def probability_to_levelset(probability_image,
 
     Returns
     ----------
-    niimg
-        Levelset representation of surface (output file suffix _levelset)
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files in brackets)
+
+        * result (niimg): Levelset representation of surface (output file suffix _p2l-surf)
 
     Notes
     ----------

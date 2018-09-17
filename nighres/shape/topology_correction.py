@@ -49,8 +49,8 @@ def topology_correction(image, shape_type,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * corrected (niimg): Corrected image (output file suffix _tpc_img)
-        * object (niimg): Corrected binary object (output file suffix _tpc_obj)
+        * corrected (niimg): Corrected image (output file suffix _tpc-img)
+        * object (niimg): Corrected binary object (output file suffix _tpc-obj)
 
     Notes
     ----------

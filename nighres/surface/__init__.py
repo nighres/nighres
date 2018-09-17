@@ -1,1 +1,2 @@
 from nighres.surface.probability_to_levelset import probability_to_levelset
+from nighres.surface.levelset_to_probability import levelset_to_probability

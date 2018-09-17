@@ -1,1 +1,2 @@
 from nighres.filtering.filter_ridge_structures import filter_ridge_structures
+from nighres.filtering.recursive_ridge_diffusion import recursive_ridge_diffusion
