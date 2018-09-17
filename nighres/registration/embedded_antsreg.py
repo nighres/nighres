@@ -28,6 +28,7 @@ def embedded_antsreg(source_image, target_image,
                     medium_iterations=50, fine_iterations=40,
 					cost_function='MutualInformation', 
 					interpolation='NearestNeighbor',
+					convergence=1e-6,
 					ignore_affine=False, ignore_header=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
@@ -63,6 +64,8 @@ def embedded_antsreg(source_image, target_image,
         Cost function for the registration (default is 'MutualInformation')
     interpolation: {'NearestNeighbor', 'Linear'}
         Interpolation for the registration result (default is 'NearestNeighbor')
+    convergence: float
+        Threshold for convergence, can make the algorithm very slow (default is convergence)
     ignore_affine: bool
         Ignore the affine matrix information extracted from the image header
         (default is False)
