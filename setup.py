@@ -44,8 +44,8 @@ setup(
     #           'develop': PostDevelopCommand,
     #           'install': PostInstallCommand,
     #          },
-    keywords='MRI high-resolution laminar',
+    keywords='MRI high-resolution laminar subcortex',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['numpy', 'nibabel'],
+    #install_requires=['numpy', 'nibabel'],
 )
