@@ -139,19 +139,19 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     rrd.setResolutions(resolution[0], resolution[1], resolution[2])
 
     # input input_image
-    rrd.setInputImage(cbstools.JArray('float')((data.flatten('F')).astype(float)))
+    rrd.setInputImage(nighresjava.JArray('float')((data.flatten('F')).astype(float)))
 
     # input surface_levelset : dirty fix for the case where surface image not input
     try:
         data = load_volume(surface_levelset).get_data()
-        rrd.setSurfaceLevelSet(cbstools.JArray('float')((data.flatten('F')).astype(float)))
+        rrd.setSurfaceLevelSet(nighresjava.JArray('float')((data.flatten('F')).astype(float)))
     except:
         print("no surface image")
     
     # input location prior image : loc_prior is optional
     try:
         data = load_volume(loc_prior).get_data()
-        rrd.setLocationPrior(cbstools.JArray('float')((data.flatten('F')).astype(float)))
+        rrd.setLocationPrior(nighresjava.JArray('float')((data.flatten('F')).astype(float)))
     except:
         print("no location prior image")
     
