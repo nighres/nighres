@@ -116,7 +116,6 @@ syn_results = nighres.registration.embedded_antsreg(
                         medium_iterations=0, fine_iterations=0,
                         cost_function='MutualInformation', 
                         interpolation='NearestNeighbor',
-                        ignore_affine=True,
                         save_data=True, file_name="sub001_sess1",
                         output_dir=out_dir, overwrite=True)
 
