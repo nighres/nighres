@@ -9,7 +9,8 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 
 def background_estimation(image, distribution='exponential', ratio=1e-3,
-                          skip_zero=True,
+                          skip_zero=True, iterate=True, dilate=0,
+                          threshold=0.5,
                           save_data=False, overwrite=False, output_dir=None,
                           file_name=None):
     """ Background Estimation
@@ -24,8 +25,12 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
         Distribution model to use for the background noise
     ratio: float, optional 
         Robustness ratio for estimating image intensities
-   skip_zero: bool, optional
+    skip_zero: bool, optional
         Whether to consider or skip zero values
+    iterate: bool, optional
+        Whether to run an iterative estimation (preferred, but sometimes unstable)
+    dilate: int, optional
+        Number of voxels to dilate or erode in the final mask
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -44,6 +49,7 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
 
         * masked (niimg): The background-masked input image
         * proba (niimg): The probability map of the foreground
+        * mask (niimg): The mask of the foreground
 
     Notes
     ----------
@@ -51,7 +57,7 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
 
     """
 
-    print('\nBackgeround Estimation')
+    print('\nBackground Estimation')
 
     # make sure that saving related parameters are correct
     if save_data:
@@ -67,11 +73,18 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
                                    rootfile=image,
                                    suffix='bge-proba'))
 
+        mask_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
+                                   rootfile=image,
+                                   suffix='bge-mask'))
+
         if overwrite is False \
-            and os.path.isfile(masked_file) and os.path.isfile(proba_file) :
+            and os.path.isfile(masked_file) and os.path.isfile(proba_file) \
+            and os.path.isfile(mask_file) :
                 print("skip computation (use existing results)")
                 output = {'masked': load_volume(masked_file), 
-                          'proba': load_volume(proba_file)}
+                          'proba': load_volume(proba_file), 
+                          'mask': load_volume(mask_file)}
                 return output
 
     # start virtual machine, if not already running
@@ -80,7 +93,7 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
     except ValueError:
         pass
     # create instance
-    bge = nighresjava.IntensityBackgroundEstimator()
+    bge = nighresjava.IntensityBackgroundEstimator2()
 
     # set parameters
     
@@ -92,9 +105,13 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 
-    bge.setDimensions(dimensions[0], dimensions[1], dimensions[2])
-    bge.setResolutions(resolution[0], resolution[1], resolution[2])
-
+    if len(dimensions)>2:
+        bge.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+        #bge.setResolutions(resolution[0], resolution[1], resolution[2])
+    else:
+        bge.setDimensions(dimensions[0], dimensions[1], 1)
+        #bge.setResolutions(resolution[0], resolution[1], 1)
+        
     bge.setInputImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
@@ -102,6 +119,9 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
     bge.setBackgroundDistribution(distribution)
     bge.setRobustMinMaxThresholding(ratio)
     bge.setSkipZeroValues(skip_zero)
+    bge.setIterative(iterate)
+    bge.setDilateMask(dilate)
+    bge.setMaskThreshold(threshold)
     
     # execute the algorithm
     try:
@@ -133,8 +153,18 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
     header['cal_max'] = np.nanmax(proba_data)
     proba = nb.Nifti1Image(proba_data, affine, header)
 
+    mask_data = np.reshape(np.array(bge.getMask(),
+                                    dtype=np.float32), dimensions, 'F')
+
+    # adapt header max for each image so that correct max is displayed
+    # and create nifiti objects
+    header['cal_min'] = np.nanmin(mask_data)
+    header['cal_max'] = np.nanmax(mask_data)
+    mask = nb.Nifti1Image(mask_data, affine, header)
+
     if save_data:
         save_volume(masked_file, masked)
         save_volume(proba_file, proba)
+        save_volume(mask_file, mask)
 
-    return {'masked': masked, 'proba': proba}
+    return {'masked': masked, 'proba': proba, 'mask': mask}

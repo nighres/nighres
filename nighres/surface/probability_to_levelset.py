@@ -83,9 +83,13 @@ def probability_to_levelset(probability_image,
     # set parameters from input data
     prob2level.setProbabilityImage(nighresjava.JArray('float')(
                                     (prob_data.flatten('F')).astype(float)))
-    prob2level.setResolutions(resolution[0], resolution[1], resolution[2])
-    prob2level.setDimensions(dimensions[0], dimensions[1], dimensions[2])
-
+    if len(dimensions)>2:
+        prob2level.setResolutions(resolution[0], resolution[1], resolution[2])
+        prob2level.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+    else:
+        prob2level.setResolutions(resolution[0], resolution[1], 1.0)
+        prob2level.setDimensions(dimensions[0], dimensions[1], 1)
+        
     # execute class
     try:
         prob2level.execute()

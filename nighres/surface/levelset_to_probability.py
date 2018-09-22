@@ -52,7 +52,7 @@ def levelset_to_probability(levelset_image, distance_mm=5,
 
         proba_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
-                                       rootfile=probability_image,
+                                       rootfile=levelset_image,
                                        suffix='l2p-proba'))
 
         if overwrite is False \
@@ -64,15 +64,16 @@ def levelset_to_probability(levelset_image, distance_mm=5,
             
     # load the data
     lvl_img = load_volume(levelset_image)
-    lvl_data = prob_img.get_data()
-    hdr = prob_img.header
-    aff = prob_img.affine
+    lvl_data = lvl_img.get_data()
+    hdr = lvl_img.header
+    aff = lvl_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
-    dimensions = prob_data.shape
+    dimensions = lvl_data.shape
 
     # algorithm
     distance = distance_mm/np.min(resolution)
-    p_data = 0.5*(np.maximum(-1,np.minimum(1,lvl_data/distance))+1)
+    print("voxel spread: "+str(distance))
+    p_data = 0.5*(np.maximum(-1,np.minimum(1,-lvl_data/distance))+1)
     
     hdr['cal_min'] = np.nanmin(p_data)
     hdr['cal_max'] = np.nanmax(p_data)
