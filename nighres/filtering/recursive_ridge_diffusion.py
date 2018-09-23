@@ -151,7 +151,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     rrd.setMaximumScale(max_scale)
     rrd.setDiffusionFactor(diffusion_factor)
     rrd.setSimilarityScale(similarity_scale)
-    rrd.SetPropagationModel("none")
+    rrd.setPropagationModel("none")
     if max_iter>0: rrd.setPropagationModel("diffusion")
     rrd.setMaxIterations(max_iter)
     rrd.setMaxDifference(max_diff)

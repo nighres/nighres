@@ -5,7 +5,7 @@ import sys
 import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
-                    _check_topology_lut_dir
+                    _check_topology_lut_dir, _check_available_memory
 
 
 def apply_coordinate_mappings(image, mapping1, 
@@ -73,7 +73,8 @@ def apply_coordinate_mappings(image, mapping1,
 
     # start virutal machine if not already running
     try:
-        nighresjava.initVM(initialheap='36000m', maxheap='36000m')
+        mem = _check_available_memory()
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
     except ValueError:
         pass
 

@@ -5,7 +5,7 @@ import sys
 import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
-                    _check_topology_lut_dir
+                    _check_topology_lut_dir, _check_available_memory
 
 
 def lcpca_denoising(image_list, phase_list=None, 
@@ -124,7 +124,8 @@ def lcpca_denoising(image_list, phase_list=None,
 
     # start virtual machine, if not already running
     try:
-        nighresjava.initVM(initialheap='64000m', maxheap='64000m')
+        mem = _check_available_memory()
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
     except ValueError:
         pass
     # create lcpca instance
