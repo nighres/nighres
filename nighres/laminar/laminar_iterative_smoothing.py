@@ -66,7 +66,7 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
     # start VM if not already running
     try:
         mem = _check_available_memory()
-        nighresjava.initVM(initialheap=mem, maxheap=mem)
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
     except ValueError:
         pass
 

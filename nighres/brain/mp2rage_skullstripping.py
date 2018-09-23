@@ -117,7 +117,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
     # start virtual machine, if not already running
     try:
         mem = _check_available_memory()
-        nighresjava.initVM(initialheap=mem, maxheap=mem)
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
     except ValueError:
         pass
 

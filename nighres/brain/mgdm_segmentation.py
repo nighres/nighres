@@ -227,7 +227,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     # start virtual machine, if not already running
     try:
         mem = _check_available_memory()
-        nighresjava.initVM(initialheap=mem, maxheap=mem)
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
     except ValueError:
         pass
     # create mgdm instance

@@ -63,23 +63,23 @@ def topology_correction(image, shape_type,
         doi:10.1016/j.cmpb.2007.08.006
     """
 
-    print("\Topology Correction")
+    print("\nTopology Correction")
 
     # check topology_lut_dir and set default if not given
     topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
 
     # make sure that saving related parameters are correct
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, shape_image)
+        output_dir = _output_dir_4saving(output_dir, image)
 
         corrected_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
-                                       rootfile=shape_image,
+                                       rootfile=image,
                                        suffix='tpc-img'))
 
         corrected_obj_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
-                                       rootfile=shape_image,
+                                       rootfile=image,
                                        suffix='tpc-obj'))
         if overwrite is False \
             and os.path.isfile(corrected_file) \
@@ -93,7 +93,7 @@ def topology_correction(image, shape_type,
     # start virtual machine if not running
     try:
         mem = _check_available_memory()
-        nighresjava.initVM(initialheap=mem, maxheap=mem)
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
     except ValueError:
         pass
 
@@ -101,11 +101,12 @@ def topology_correction(image, shape_type,
     algorithm = nighresjava.ShapeTopologyCorrection2()
 
     # load the data
-    img = load_volume(shape_image)
-    hdr = img.get_header()
-    aff = img.get_affine()
+    img = load_volume(image)
+    hdr = img.header
+    aff = img.affine
+    data = img.get_data()
     resolution = [x.item() for x in hdr.get_zooms()]
-    dimensions = img.get_data().shape
+    dimensions = data.shape
     
     algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
     algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])

@@ -60,7 +60,7 @@ def profile_sampling(profile_surface_image, intensity_image,
     # start VM if not already running
     try:
         mem = _check_available_memory()
-        nighresjava.initVM(initialheap=mem, maxheap=mem)
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
     except ValueError:
         pass
 

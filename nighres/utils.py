@@ -125,6 +125,7 @@ def _check_atlas_file(atlas_file):
 
 def _check_available_memory():
     
-    memory = str(int(round(0.95*psutil.virtual_memory()[1])))
+    init_memory = str(int(round(0.25*psutil.virtual_memory()[1])))
+    max_memory = str(int(round(0.95*psutil.virtual_memory()[1])))
      
-    return memory
+    return {"init": init_memory, "max": max_memory}

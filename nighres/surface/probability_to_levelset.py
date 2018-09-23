@@ -66,7 +66,7 @@ def probability_to_levelset(probability_image,
     # start virtual machine if not running
     try:
         mem = _check_available_memory()
-        nighresjava.initVM(initialheap=mem, maxheap=mem)
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
     except ValueError:
         pass
 
