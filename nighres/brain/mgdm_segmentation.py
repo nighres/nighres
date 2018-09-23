@@ -5,7 +5,8 @@ import sys
 import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
-                    _check_topology_lut_dir, _check_atlas_file
+                    _check_topology_lut_dir, _check_atlas_file, \
+                    _check_available_memory
 
 
 def _get_mgdm_orientation(affine, mgdm):
@@ -225,7 +226,8 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     # start virtual machine, if not already running
     try:
-        nighresjava.initVM(initialheap='6000m', maxheap='6000m')
+        mem = _check_available_memory()
+        nighresjava.initVM(initialheap=mem, maxheap=mem)
     except ValueError:
         pass
     # create mgdm instance

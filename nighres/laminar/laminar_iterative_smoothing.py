@@ -3,7 +3,7 @@ import numpy as np
 import nibabel as nb
 import nighresjava
 from ..io import load_volume, save_volume
-from ..utils import _output_dir_4saving, _fname_4saving
+from ..utils import _output_dir_4saving, _fname_4saving, _check_available_memory
 
 
 def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
@@ -65,7 +65,8 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
 
     # start VM if not already running
     try:
-        nighresjava.initVM(initialheap='6000m', maxheap='6000m')
+        mem = _check_available_memory()
+        nighresjava.initVM(initialheap=mem, maxheap=mem)
     except ValueError:
         pass
 

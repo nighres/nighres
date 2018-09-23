@@ -3,7 +3,7 @@ import numpy as np
 import nibabel as nb
 import nighresjava
 from ..io import load_volume, save_volume
-from ..utils import _output_dir_4saving, _fname_4saving
+from ..utils import _output_dir_4saving, _fname_4saving, _check_available_memory
 
 
 def probability_to_levelset(probability_image,
@@ -65,7 +65,8 @@ def probability_to_levelset(probability_image,
             
     # start virtual machine if not running
     try:
-        nighresjava.initVM(initialheap='6000m', maxheap='6000m')
+        mem = _check_available_memory()
+        nighresjava.initVM(initialheap=mem, maxheap=mem)
     except ValueError:
         pass
 
