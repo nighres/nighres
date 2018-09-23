@@ -5,7 +5,8 @@ import sys
 import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
-                    _check_topology_lut_dir, _check_atlas_file
+                    _check_topology_lut_dir, _check_atlas_file, \
+                    _check_available_memory
 
 
 def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter, 
@@ -15,7 +16,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
                               diffusion_factor=1.0, 
                               similarity_scale=0.1,
                               max_iter=100, max_diff=1e-3,
-                              save_data=False, output_dir=None,
+                              save_data=False, overwrite=False, output_dir=None,
                               file_name=None):
     
     """ Recursive Ridge Diffusion
@@ -48,6 +49,15 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
 	    Maximum number of diffusion iterations
 	max_diff:
         Maximum difference to stop the diffusion
+    save_data: bool
+        Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
+    output_dir: str, optional
+        Path to desired output directory, will be created if it doesn't exist
+    file_name: str, optional
+        Desired base name for output files with file extension
+        (suffixes will be added)
         
     Returns
     ----------
@@ -107,9 +117,27 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
                                   rootfile=input_image,
                                   suffix='rrd-size')
 
+        if overwrite is False \
+            and os.path.isfile(filter_file) \
+            and os.path.isfile(propagation_file) \
+            and os.path.isfile(scale_file) \
+            and os.path.isfile(ridge_direction_file) \
+            and os.path.isfile(ridge_pv_file) \
+            and os.path.isfile(ridge_size_file) :
+            
+            print("skip computation (use existing results)")
+            output = {'filter': load_volume(filter_file), 
+                      'propagation': load_volume(propagation_file), 
+                      'scale': load_volume(scale_file),
+                      'ridge_dir': load_volume(ridge_direction_file), 
+                      'ridge_pv': load_volume(ridge_pv_file), 
+                      'ridge_size': load_volume(ridge_size_file)}
+            return output
+
     # start virtual machine, if not already running
     try:
-        nighresjava.initVM(initialheap='6000m', maxheap='6000m')
+        mem = _check_available_memory()
+        nighresjava.initVM(initialheap=mem, maxheap=mem)
     except ValueError:
         pass
     # create extraction instance
@@ -123,6 +151,8 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     rrd.setMaximumScale(max_scale)
     rrd.setDiffusionFactor(diffusion_factor)
     rrd.setSimilarityScale(similarity_scale)
+    rrd.SetPropagationModel("none")
+    if max_iter>0: rrd.setPropagationModel("diffusion")
     rrd.setMaxIterations(max_iter)
     rrd.setMaxDifference(max_diff)
                      

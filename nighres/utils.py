@@ -1,5 +1,6 @@
 import os
 import warnings
+import psutil
 from nighres.global_settings import TOPOLOGY_LUT_DIR, ATLAS_DIR, DEFAULT_ATLAS
 
 
@@ -122,9 +123,8 @@ def _check_atlas_file(atlas_file):
 
     return atlas_file
 
-#def _check_available_memory():
-#    
-#    # run command here
-#    
-#    
-#    return memory
+def _check_available_memory():
+    
+    memory = str(int(round(0.95*psutil.virtual_memory()[1])))
+     
+    return memory
