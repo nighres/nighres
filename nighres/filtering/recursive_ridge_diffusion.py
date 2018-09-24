@@ -134,6 +134,17 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
                       'ridge_size': load_volume(ridge_size_file)}
             return output
 
+                                                   
+    # load input image and use it to set dimensions and resolution
+    img = load_volume(input_image)
+    data = img.get_data()
+    affine = img.affine
+    header = img.header
+    resolution = [x.item() for x in header.get_zooms()]
+    dimensions = data.shape
+    if (len(dimensions)<3) dimensions = [dimensions[0], dimensions[1], 1]
+    if (len(resolution)<3) resolution = [resolution[0], resolution[1], 1.0]
+    
     # start virtual machine, if not already running
     try:
         mem = _check_available_memory()
@@ -141,7 +152,8 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     except ValueError:
         pass
     # create extraction instance
-    rrd = nighresjava.FilterRecursiveRidgeDiffusion()
+    if dimensions[2] is 1 rrd = nighresjava.FilterRecursiveRidgeDiffusion2D()
+    else rrd = nighresjava.FilterRecursiveRidgeDiffusion()
 
     # set parameters
     rrd.setRidgeIntensities(ridge_intensities)
@@ -156,15 +168,6 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     rrd.setMaxIterations(max_iter)
     rrd.setMaxDifference(max_diff)
                      
-                                                   
-    # load input image and use it to set dimensions and resolution
-    img = load_volume(input_image)
-    data = img.get_data()
-    affine = img.affine
-    header = img.header
-    resolution = [x.item() for x in header.get_zooms()]
-    dimensions = data.shape
-
     rrd.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     rrd.setResolutions(resolution[0], resolution[1], resolution[2])
 
