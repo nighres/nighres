@@ -19,9 +19,9 @@ data by performing the following steps:
 4. Deform segmentation labels using
     :func:`nighres.registration.apply_deformation`
 5. Turn individual labels into levelset surfaces using
-    :func:`nighres.surface.probability_to_levelset
+    :func:`nighres.surface.probability_to_levelset`
 6. Build a final shape average using
-    :func: nighres.shape.levelset_fusion
+    :func: `nighres.shape.levelset_fusion`
     
 Important note: this example is both computationally expensive (recomputing
 everything from basic inputs) and practically pointless (a direct MGDM 

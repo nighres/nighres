@@ -7,7 +7,7 @@ import numpy as np
 def load_mesh_geometry(surf_mesh):
     '''
     Load a mesh geometry into a dictionary with entries
-    "coords" and "faces"
+    "points" and "faces"
 
     Parameters
     ----------
@@ -15,14 +15,14 @@ def load_mesh_geometry(surf_mesh):
         Mesh geometry to be loaded, can be a path to a file
         (currently supported formats are freesurfer geometry formats,
         gii and ASCII-coded vtk, ply or obj) or a dictionary with the
-        keys "coords" and "faces"
+        keys "points" and "faces"
 
     Returns
     ----------
     dict
-        Dictionary with a numpy array with key "coords" for a Numpy array of
+        Dictionary with a numpy array with key "points" for a Numpy array of
         the x-y-z coordinates of the mesh vertices and key "faces" for a
-        Numpy array of the the indices (into coords) of the mesh faces
+        Numpy array of the the indices (into points) of the mesh faces
 
     Notes
     ----------
@@ -39,33 +39,33 @@ def load_mesh_geometry(surf_mesh):
         if (surf_mesh.endswith('orig') or surf_mesh.endswith('pial') or
                 surf_mesh.endswith('white') or surf_mesh.endswith('sphere') or
                 surf_mesh.endswith('inflated')):
-            coords, faces = nb.freesurfer.io.read_geometry(surf_mesh)
+            points, faces = nb.freesurfer.io.read_geometry(surf_mesh)
         elif surf_mesh.endswith('gii'):
-            coords, faces = nb.gifti.read(surf_mesh).getArraysFromIntent(
+            points, faces = nb.gifti.read(surf_mesh).getArraysFromIntent(
                 nb.nifti1.intent_codes['NIFTI_INTENT_POINTSET'])[0].data, \
                 nb.gifti.read(surf_mesh).getArraysFromIntent(
                 nb.nifti1.intent_codes['NIFTI_INTENT_TRIANGLE'])[0].data
         elif surf_mesh.endswith('vtk'):
-            coords, faces, _ = _read_vtk(surf_mesh)
+            points, faces, _ = _read_vtk(surf_mesh)
         elif surf_mesh.endswith('ply'):
-            coords, faces = _read_ply(surf_mesh)
+            points, faces = _read_ply(surf_mesh)
         elif surf_mesh.endswith('obj'):
-            coords, faces = _read_obj(surf_mesh)
+            points, faces = _read_obj(surf_mesh)
         else:
             raise ValueError('Currently supported file formats are freesurfer '
                              'geometry formats and gii, vtk, ply, obj')
     elif isinstance(surf_mesh, dict):
-        if ('faces' in surf_mesh and 'coords' in surf_mesh):
-            coords, faces = surf_mesh['coords'], surf_mesh['faces']
+        if ('faces' in surf_mesh and 'points' in surf_mesh):
+            points, faces = surf_mesh['points'], surf_mesh['faces']
         else:
             raise ValueError('If surf_mesh is given as a dictionary it '
-                             'must contain items with keys "coords" and '
+                             'must contain items with keys "points" and '
                              '"faces"')
     else:
         raise ValueError('Input surf_mesh must be a either filename or a '
-                         'dictionary containing items with keys "coords" '
+                         'dictionary containing items with keys "points" '
                          'and "faces"')
-    return {'coords': coords, 'faces': faces}
+    return {'points': points, 'faces': faces}
 
 
 def load_mesh_data(surf_data, gii_darray=None):
@@ -189,9 +189,9 @@ def save_mesh_geometry(filename, surf_dict):
         freesurfer geometry formats, gii and ASCII-coded vtk, obj, ply'
     surf_dict: dict
         Surface mesh geometry to be saved. Dictionary with a numpy array with
-        key "coords" for a Numpy array of the x-y-z coordinates of the mesh
+        key "points" for a Numpy array of the x-y-z coordinates of the mesh
         vertices and key "faces2 for a Numpy array of the the indices
-        (into coords) of the mesh faces
+        (into points) of the mesh faces
 
     Notes
     ----------
@@ -207,31 +207,31 @@ def save_mesh_geometry(filename, surf_dict):
         if (filename.endswith('orig') or filename.endswith('pial') or
                 filename.endswith('white') or filename.endswith('sphere') or
                 filename.endswith('inflated')):
-            nb.freesurfer.io.write_geometry(filename, surf_dict['coords'],
+            nb.freesurfer.io.write_geometry(filename, surf_dict['points'],
                                             surf_dict['faces'])
             print("\nSaving {0}".format(filename))
         elif filename.endswith('gii'):
-            _write_gifti(filename, surf_dict['coords'], surf_dict['faces'])
+            _write_gifti(filename, surf_dict['points'], surf_dict['faces'])
             print("\nSaving {0}".format(filename))
         elif filename.endswith('vtk'):
             if 'data' in surf_dict.keys():
-                _write_vtk(filename, surf_dict['coords'], surf_dict['faces'],
+                _write_vtk(filename, surf_dict['points'], surf_dict['faces'],
                            surf_dict['data'])
                 print("\nSaving {0}".format(filename))
             else:
-                _write_vtk(filename, surf_dict['coords'], surf_dict['faces'])
+                _write_vtk(filename, surf_dict['points'], surf_dict['faces'])
                 print("\nSaving {0}".format(filename))
         elif filename.endswith('ply'):
-            _write_ply(filename, surf_dict['coords'], surf_dict['faces'])
+            _write_ply(filename, surf_dict['points'], surf_dict['faces'])
             print("\nSaving {0}".format(filename))
         elif filename.endswith('obj'):
-            _write_obj(filename, surf_dict['coords'], surf_dict['faces'])
+            _write_obj(filename, surf_dict['points'], surf_dict['faces'])
             print("\nSaving {0}".format(filename))
             print('To view mesh in brainview, run the command:\n')
             print('average_objects ' + filename + ' ' + filename)
     else:
         raise ValueError('Filename must be a string and surf_dict must be a '
-                         'dictionary with keys "coords" and "faces"')
+                         'dictionary with keys "points" and "faces"')
 
 
 # function to read vtk files
@@ -380,8 +380,8 @@ def _read_obj(file):
     return XYZ, triangles
 
 
-def _write_gifti(surf_mesh, coords, faces):
-    coord_array = nb.gifti.GiftiDataArray(data=coords,
+def _write_gifti(surf_mesh, points, faces):
+    coord_array = nb.gifti.GiftiDataArray(data=points,
                                           intent=nb.nifti1.intent_codes[
                                               'NIFTI_INTENT_POINTSET'])
     face_array = nb.gifti.GiftiDataArray(data=faces,
@@ -391,10 +391,10 @@ def _write_gifti(surf_mesh, coords, faces):
     nb.gifti.write(gii, surf_mesh)
 
 
-def _write_obj(surf_mesh, coords, faces):
+def _write_obj(surf_mesh, points, faces):
     # write out MNI - obj format
-    n_vert = len(coords)
-    XYZ = coords.tolist()
+    n_vert = len(points)
+    XYZ = points.tolist()
     Tri = faces.tolist()
     with open(surf_mesh, 'w') as s:
         line1 = "P 0.3 0.3 0.4 10 1 " + str(n_vert) + "\n"

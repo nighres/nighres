@@ -15,9 +15,37 @@ It developed out of `CBS High-Res Brain Processing Tools
 <https://www.cbs.mpg.de/institute/software/cbs-tools>`_ and aims to make those
 tools easier to install, use and extend.
 
-Because parts of the package have to be built locally it is currently not possible to use ``pip install`` directly from PyPI. Instead, please follow the installation instructions provided at http://nighres.readthedocs.io/en/latest/installation.html
+Because parts of the package have to be built locally it is currently not possible to 
+use ``pip install`` directly from PyPI. Instead, please follow the installation 
+instructions provided at http://nighres.readthedocs.io/en/latest/installation.html
 
-Currently, Nighres is developed and tested on Linux Ubuntu Trusty and Python 2.7. We hope to support all common Unix platforms and Python 3 soon.
+Currently, Nighres is developed and tested on Linux Ubuntu Trusty and Python 2.7. 
+The next releases are scheduled to use Python 3. Release versions have been
+extensively tested on our example data. Development versions include additional
+modules and functions but with limited guarantees.
+
+
+Required packages
+=================
+
+In order to run Nighres, you will need:
+
+* Java JDK 1.7, 1.8 or 1.9
+* JCC >=3.0
+* nibabel
+* nipype
+* numpy
+* pandas
+* psutil
+
+For instance, in Debian/Ubuntu (amd64 systems):
+
+    sudo apt-get install openjdk-8-jdk
+    export JCC_JDK=/usr/lib/jvm/java-8-openjdk-amd64
+    pip install jcc 
+    pip install nibabel nipype numpy pandas psutil
+
+Note that JCC may require additional packages to support code compilation.
 
 
 Docker

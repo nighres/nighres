@@ -1,4 +1,5 @@
 import os
+import sys
 import numpy as np
 import nibabel as nb
 import nighresjava

@@ -35,8 +35,8 @@ def _output_dir_4saving(output_dir=None, rootfile=None):
     print("\nOutputs will be saved to {0}".format(output_dir))
     return output_dir
 
-
-def _fname_4saving(file_name=None, rootfile=None, suffix=None):
+## preferred: use given extension (see below)
+def _fname_4saving_prev(file_name=None, rootfile=None, suffix=None):
 
     # if a file_name is given, use that
     if file_name is None:
@@ -78,6 +78,64 @@ def _fname_4saving(file_name=None, rootfile=None, suffix=None):
         # file extension could have two parts if compressed
         if ext == 'gz':
             ext = split_name.pop(-1)+'.gz'
+        # now that the extension has been popped out of the list
+        # what's left is the basename, put back together
+        base = split_name.pop(0)
+        while split_name:
+            base += '.'+split_name.pop(0)
+
+    # insert suffix if given
+    if suffix is not None:
+        fullname = base + '_' + suffix + '.' + ext
+    else:
+        fullname = base + '.' + ext
+
+    return fullname
+
+
+def _fname_4saving(file_name=None, rootfile=None, suffix=None, ext="nii.gz"):
+
+    # if a file_name is given, use that
+    if file_name is None:
+        # if a rootfile is given (which is a file_name and not a data object)
+        # use its file_name
+        #python2 if isinstance(rootfile, basestring):
+        if isinstance(rootfile, str):
+            file_name = os.path.basename(rootfile)
+            #print(("You have not specified a file_name. We will use the "
+            #       "name of your input ({0}) as a base name for saving "
+            #       "outputs.".format(file_name)))
+            # if there is no suffix set trivial one to avoid overriding input
+            if suffix is None:
+                suffix = 'out'
+
+        # if nothing is given, raise error
+        else:
+            raise ValueError("You have not specified a file_name, and we "
+                             "cannot determine a name from your input, wich "
+                             "is a data object. Please specify a file_name.")
+
+    # avoid empty strings
+    if len(file_name) <= 1:
+        raise ValueError("Empty string for file_name. Check if your inputs "
+                          "exist, or try to specify the file_name "
+                          "parameter for saving.".format(file_name))
+
+    # split off extension
+    split_name = file_name.split('.')
+    # if there was no dot in the file_name set nii.gz as extension (not
+    # foolproof, if the name is e.g. 'hello.bello' without
+    # extension it will think bello is the extension)
+    if len(split_name) == 1:
+        base = split_name[0]
+        #ext = 'nii.gz'
+    else:
+        # pop file extension
+        #ext = split_name.pop(-1)
+        file_ext = split_name.pop(-1)
+        # file extension could have two parts if compressed
+        if file_ext == 'gz':
+            file_ext = split_name.pop(-1)+'.gz'
         # now that the extension has been popped out of the list
         # what's left is the basename, put back together
         base = split_name.pop(0)
