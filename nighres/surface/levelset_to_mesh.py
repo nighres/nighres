@@ -44,7 +44,7 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0, inclusive=T
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * result (mesh): Surface mesh dictionary of "coords" and "faces"
+        * result (mesh): Surface mesh dictionary of "points" and "faces"
 
     Notes
     ----------
