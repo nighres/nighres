@@ -81,27 +81,33 @@ def lcpca_denoising(image_list, phase_list=None,
 
         den_files = []
         for idx,image in enumerate(image_list):
+            if file_names is None: name=None
+            else: name=file_names[idx]
             den_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_names[idx],
+                        _fname_4saving(file_name=name,
                                       rootfile=image,
                                       suffix='lcpca-den'))
             den_files.append(den_file)
 
         if (phase_list!=None):
-            for idx,image in enumerate(phase_list):
+                for idx,image in enumerate(phase_list):
+                    if file_names is None: name=None
+                    else: name=file_names[len(image_list)+idx]
                 den_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_names[len(image_list)+idx],
+                            _fname_4saving(file_name=name,
                                           rootfile=image,
                                           suffix='lcpca-den'))
                 den_files.append(den_file)
 
+        if file_names is None: name=None
+        else: name=file_names[0]
         dim_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_names[0],
+                        _fname_4saving(file_name=name,
                                    rootfile=image_list[0],
                                    suffix='lcpca-dim'))
 
         err_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_names[0],
+                        _fname_4saving(file_name=name,
                                    rootfile=image_list[0],
                                    suffix='lcpca-res'))
         if overwrite is False \
