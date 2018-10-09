@@ -3,6 +3,90 @@ import numpy as np
 
 # TODO: compare with Nilearn functions and possibly extend
 
+def load_mesh(surf_mesh):
+    '''
+    Load a mesh into a dictionary with entries
+    "points", "faces" and "data"
+
+    Parameters
+    ----------
+    surf_mesh:
+        Mesh to be loaded, can be a path to a file
+        (currently supported formats are freesurfer geometry formats,
+        gii and ASCII-coded vtk, ply or obj) or a dictionary with the
+        keys "points", "faces" and (optionally) "data"
+
+    Returns
+    ----------
+    dict
+        Dictionary with a numpy array with key "points" for a Numpy array of
+        the x-y-z coordinates of the mesh vertices and key "faces" for a
+        Numpy array of the the indices (into points) of the mesh faces.
+        Optional "data" key is a Numpy array of values sampled on the "points".
+
+    Notes
+    ----------
+    Originally created as part of Laminar Python [1]_
+
+    References
+    -----------
+    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+       depth-resolved analysis of high-resolution brain imaging data in
+       Python. DOI: 10.3897/rio.3.e12346
+    '''
+    
+    if surf_mesh.endswith('vtk'):
+        points, faces, data = _read_vtk(surf_mesh)
+        return {'points': points, 'faces': faces, 'data': data}
+
+    elif surf_mesh.endswith('gii'):
+        points, faces, data = _read_gifti(surf_mesh)
+        return {'points': points, 'faces': faces, 'data': data}
+
+    else:    
+        geom = load_mesh_geometry(surf_mesh)
+        return geom
+        
+
+def save_mesh(filename, surf_dict):
+     '''
+    Saves surface mesh to file
+
+    Parameters
+    ----------
+    filename: str
+        Full path and filename under which surfaces data should be saved. The
+        extension determines the file format. Currently supported are
+        freesurfer geometry formats, gii and ASCII-coded vtk, obj, ply. Note
+        that only ASCII-coded vtk currently saves data, the others only save
+        the geometry.
+    surf_dict: dict
+        Surface mesh geometry to be saved. Dictionary with a numpy array with
+        key "points" for a Numpy array of the x-y-z coordinates of the mesh
+        vertices and key "faces" for a Numpy array of the the indices
+        (into points) of the mesh faces. Optional "data" key is a Numpy array 
+        of values sampled on the "points"
+
+    Notes
+    ----------
+    Originally created as part of Laminar Python [1]_
+
+    References
+    -----------
+    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+       depth-resolved analysis of high-resolution brain imaging data in
+       Python. DOI: 10.3897/rio.3.e12346
+    '''
+   
+    if surf_mesh.endswith('vtk'):
+        _write_vtk(filename, surf_dict['points'], surf_dict['faces'],
+                           surf_dict['data'])
+    elif surf_mesh.endswith('gii'):
+        _write_gifti(filename, surf_dict['points'], surf_dict['faces'],
+                           surf_dict['data'])
+    else:    
+        save_mesh_geometry(filename, surf_dict)
+
 
 def load_mesh_geometry(surf_mesh):
     '''
@@ -41,10 +125,7 @@ def load_mesh_geometry(surf_mesh):
                 surf_mesh.endswith('inflated')):
             points, faces = nb.freesurfer.io.read_geometry(surf_mesh)
         elif surf_mesh.endswith('gii'):
-            points, faces = nb.gifti.read(surf_mesh).getArraysFromIntent(
-                nb.nifti1.intent_codes['NIFTI_INTENT_POINTSET'])[0].data, \
-                nb.gifti.read(surf_mesh).getArraysFromIntent(
-                nb.nifti1.intent_codes['NIFTI_INTENT_TRIANGLE'])[0].data
+            points, faces, = _read_gifti(surf_mesh)
         elif surf_mesh.endswith('vtk'):
             points, faces, _ = _read_vtk(surf_mesh)
         elif surf_mesh.endswith('ply'):
@@ -110,20 +191,7 @@ def load_mesh_data(surf_data, gii_darray=None):
             data = nb.freesurfer.io.read_label(surf_data)
         # check if this works with multiple indices (if dim(data)>1)
         elif surf_data.endswith('gii'):
-            fulldata = nb.gifti.giftiio.read(surf_data)
-            n_vectors = len(fulldata.darrays)
-            if n_vectors == 1:
-                data = fulldata.darrays[0].data
-            else:
-                if gii_darray is not None:
-                    data = fulldata.darrays[gii_darray].data
-                else:
-                    print('Multiple gii data arrays found and gii_darray is '
-                          'not set, output will be a matrix')
-                    data = np.zeros([len(fulldata.darrays[gii_darray].data),
-                                     n_vectors])
-                    for gii_darray in range(n_vectors):
-                        data[:, gii_darray] = fulldata.darrays[gii_darray].data
+            _, _, data = _read_gifti(surf_data)
         elif surf_data.endswith('vtk'):
             _, _, data = _read_vtk(surf_data)
         elif surf_data.endswith('txt'):
@@ -172,7 +240,7 @@ def save_mesh_data(filename, surf_data):
         else:
             raise ValueError('File format not recognized. Currently supported '
                              'are freesurfer formats curv, sulc, thickness '
-                             'and ASCII coded txt')
+                             'and ASCII coded vtk and txt')
     else:
         raise ValueError('Filename must be a string')
 
@@ -232,6 +300,27 @@ def save_mesh_geometry(filename, surf_dict):
     else:
         raise ValueError('Filename must be a string and surf_dict must be a '
                          'dictionary with keys "points" and "faces"')
+
+
+def _read_gifti(file):
+    points = nb.gifti.read(file).get_arrays_from_intent(
+                nb.nifti1.intent_codes['NIFTI_INTENT_POINTSET'])[0].data
+    faces = nb.gifti.read(file).get_arrays_from_intent(
+                nb.nifti1.intent_codes['NIFTI_INTENT_TRIANGLE'])[0].data
+    
+    narrays = len(nb.gifti.read(file).darrays)-2
+    if narrays>0:
+        data = np.zeros([points.shape[0], narrays])
+        n=0;
+        for darray in nb.gifti.read(file).darrays:
+            if darray.intent is not nb.nifti1.intent_codes['NIFTI_INTENT_POINTSET']
+                and darray.intent is not nb.nifti1.intent_codes['NIFTI_INTENT_TRIANGLE']:
+            data[:,n] = darray.data
+            n++
+    else:
+        data = None
+
+    return points, faces, data
 
 
 # function to read vtk files
@@ -301,7 +390,7 @@ def _read_vtk(file):
                               engine='python')
         data_array = np.array(data_df)
     else:
-        data_array = np.empty(0)
+        data_array = None
 
     return vertex_array, face_array, data_array
 
@@ -380,14 +469,21 @@ def _read_obj(file):
     return XYZ, triangles
 
 
-def _write_gifti(surf_mesh, points, faces):
+def _write_gifti(surf_mesh, points, faces, data=None):
     coord_array = nb.gifti.GiftiDataArray(data=points,
                                           intent=nb.nifti1.intent_codes[
                                               'NIFTI_INTENT_POINTSET'])
     face_array = nb.gifti.GiftiDataArray(data=faces,
                                          intent=nb.nifti1.intent_codes[
                                              'NIFTI_INTENT_TRIANGLE'])
-    gii = nb.gifti.GiftiImage(darrays=[coord_array, face_array])
+    if data is not None:
+        dara_array = nb.gifti.GiftiDataArray(data=data,
+                                         intent=nb.nifti1.intent_codes[
+                                             'NIFTI_INTENT_ESTIMATE'])
+        gii = nb.gifti.GiftiImage(darrays=[coord_array, face_array, data_array])
+    else:
+        gii = nb.gifti.GiftiImage(darrays=[coord_array, face_array])
+        
     nb.gifti.write(gii, surf_mesh)
 
 
