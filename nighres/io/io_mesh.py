@@ -49,9 +49,9 @@ def load_mesh(surf_mesh):
         
 
 def save_mesh(filename, surf_dict):
-     '''
+    '''
     Saves surface mesh to file
-
+    
     Parameters
     ----------
     filename: str
@@ -66,27 +66,26 @@ def save_mesh(filename, surf_dict):
         vertices and key "faces" for a Numpy array of the the indices
         (into points) of the mesh faces. Optional "data" key is a Numpy array 
         of values sampled on the "points"
-
+    
     Notes
     ----------
     Originally created as part of Laminar Python [1]_
-
+    
     References
     -----------
     .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
        depth-resolved analysis of high-resolution brain imaging data in
        Python. DOI: 10.3897/rio.3.e12346
     '''
-   
-    if surf_mesh.endswith('vtk'):
+    if filename.endswith('vtk'):
         _write_vtk(filename, surf_dict['points'], surf_dict['faces'],
                            surf_dict['data'])
-    elif surf_mesh.endswith('gii'):
+    elif filename.endswith('gii'):
         _write_gifti(filename, surf_dict['points'], surf_dict['faces'],
                            surf_dict['data'])
     else:    
         save_mesh_geometry(filename, surf_dict)
-
+    
 
 def load_mesh_geometry(surf_mesh):
     '''
@@ -313,10 +312,10 @@ def _read_gifti(file):
         data = np.zeros([points.shape[0], narrays])
         n=0;
         for darray in nb.gifti.read(file).darrays:
-            if darray.intent is not nb.nifti1.intent_codes['NIFTI_INTENT_POINTSET']
+            if darray.intent is not nb.nifti1.intent_codes['NIFTI_INTENT_POINTSET'] \
                 and darray.intent is not nb.nifti1.intent_codes['NIFTI_INTENT_TRIANGLE']:
-            data[:,n] = darray.data
-            n++
+                data[:,n] = darray.data
+                n=n+1
     else:
         data = None
 
@@ -477,7 +476,7 @@ def _write_gifti(surf_mesh, points, faces, data=None):
                                          intent=nb.nifti1.intent_codes[
                                              'NIFTI_INTENT_TRIANGLE'])
     if data is not None:
-        dara_array = nb.gifti.GiftiDataArray(data=data,
+        data_array = nb.gifti.GiftiDataArray(data=data,
                                          intent=nb.nifti1.intent_codes[
                                              'NIFTI_INTENT_ESTIMATE'])
         gii = nb.gifti.GiftiImage(darrays=[coord_array, face_array, data_array])
@@ -595,7 +594,10 @@ def _write_vtk(filename, vertices, faces, data=None, comment=None):
                         sep=' ')
     # if there is data append second subheader and data
     if data is not None:
-        datapoints = data.shape[1]
+        if len(data.shape)>1:
+            datapoints = data.shape[1]
+        else:
+            datapoints = 1
         sub_header2 = ['POINT_DATA %i' % (number_data),
                        'SCALARS EmbedVertex float %i' % (datapoints),
                        'LOOKUP_TABLE default']
