@@ -90,9 +90,9 @@ def lcpca_denoising(image_list, phase_list=None,
             den_files.append(den_file)
 
         if (phase_list!=None):
-                for idx,image in enumerate(phase_list):
-                    if file_names is None: name=None
-                    else: name=file_names[len(image_list)+idx]
+            for idx,image in enumerate(phase_list):
+                if file_names is None: name=None
+                else: name=file_names[len(image_list)+idx]
                 den_file = os.path.join(output_dir, 
                             _fname_4saving(file_name=name,
                                           rootfile=image,
