@@ -69,7 +69,7 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0, inclusive=T
         mesh_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                        rootfile=levelset_image,
-                                       suffix='l2m-mesh'),"vtk")
+                                       suffix='l2m-mesh',ext="vtk"))
 
         if overwrite is False \
             and os.path.isfile(mesh_file) :
