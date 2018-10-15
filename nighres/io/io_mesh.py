@@ -596,11 +596,14 @@ def _write_vtk(filename, vertices, faces, data=None, comment=None):
     if data is not None:
         if len(data.shape)>1:
             datapoints = data.shape[1]
+            sub_header2 = ['POINT_DATA %i' % (number_data),
+                           'SCALARS Scalars float %i' % (datapoints),
+                           'LOOKUP_TABLE default']
         else:
             datapoints = 1
-        sub_header2 = ['POINT_DATA %i' % (number_data),
-                       'SCALARS EmbedVertex float %i' % (datapoints),
-                       'LOOKUP_TABLE default']
+            sub_header2 = ['POINT_DATA %i' % (number_data),
+                           'SCALARS Scalars float',
+                           'LOOKUP_TABLE default']
         sub_header_df2 = pd.DataFrame(sub_header2)
         data_df = pd.DataFrame(data)
         with open(filename, 'a') as f:
