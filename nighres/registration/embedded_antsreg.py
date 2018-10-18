@@ -28,6 +28,7 @@ def embedded_antsreg(source_image, target_image,
                     medium_iterations=50, fine_iterations=40,
 					cost_function='MutualInformation', 
 					interpolation='NearestNeighbor',
+					regularization='Medium',
 					convergence=1e-6,
 					ignore_affine=False, ignore_header=False,
                     save_data=False, overwrite=False, output_dir=None,
@@ -64,6 +65,8 @@ def embedded_antsreg(source_image, target_image,
         Cost function for the registration (default is 'MutualInformation')
     interpolation: {'NearestNeighbor', 'Linear'}
         Interpolation for the registration result (default is 'NearestNeighbor')
+    regularization: {'Low', 'Medium', 'High'}
+        Regularization preset for the SyN deformation (default is 'Medium')
     convergence: float
         Threshold for convergence, can make the algorithm very slow (default is convergence)
     ignore_affine: bool
@@ -310,9 +313,15 @@ def embedded_antsreg(source_image, target_image,
     
     print("registering "+source.get_filename()+"\n to "+target.get_filename())
     
+    if run_syn is True:
+        if regularization is 'Low': syn_param = (0.2, 1.0, 0.0)
+        elif regularization is 'Medium': syn_param = (0.2, 3.0, 0.0)
+        elif regularization is 'High': syn_param - (0.2, 4.0, 3.0)
+        else: syn_param = (0.2, 3.0, 0.0)
+    
     if run_rigid is True and run_affine is True and run_syn is True:
         reg.inputs.transforms = ['Rigid','Affine','SyN']
-        reg.inputs.transform_parameters = [(0.1,), (0.1,), (0.2, 3.0, 0.0)]
+        reg.inputs.transform_parameters = [(0.1,), (0.1,), syn_param]
         reg.inputs.number_of_iterations = [[rigid_iterations, rigid_iterations, 
                                             rigid_iterations],   
                                            [affine_iterations, affine_iterations, 
@@ -339,7 +348,7 @@ def embedded_antsreg(source_image, target_image,
 
     elif run_rigid is True and run_affine is False and run_syn is True:
         reg.inputs.transforms = ['Rigid','SyN']
-        reg.inputs.transform_parameters = [(0.1,), (0.2, 3.0, 0.0)]
+        reg.inputs.transform_parameters = [(0.1,), syn_param]
         reg.inputs.number_of_iterations = [[rigid_iterations, rigid_iterations, 
                                             rigid_iterations],   
                                            [coarse_iterations, coarse_iterations, 
@@ -364,7 +373,7 @@ def embedded_antsreg(source_image, target_image,
 
     elif run_rigid is False and run_affine is True and run_syn is True:
         reg.inputs.transforms = ['Affine','SyN']
-        reg.inputs.transform_parameters = [(0.1,), (0.2, 3.0, 0.0)]
+        reg.inputs.transform_parameters = [(0.1,), syn_param]
         reg.inputs.number_of_iterations = [[affine_iterations, affine_iterations, 
                                             affine_iterations],   
                                            [coarse_iterations, coarse_iterations, 
@@ -460,7 +469,7 @@ def embedded_antsreg(source_image, target_image,
 
     elif run_rigid is False and run_affine is False and run_syn is True:
         reg.inputs.transforms = ['SyN']
-        reg.inputs.transform_parameters = [(0.2, 3.0, 0.0)]
+        reg.inputs.transform_parameters = [syn_param]
         reg.inputs.number_of_iterations = [[coarse_iterations, coarse_iterations, 
                                             medium_iterations, fine_iterations]]
         if (cost_function=='CrossCorrelation'): 
