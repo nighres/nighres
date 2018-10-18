@@ -316,7 +316,7 @@ def embedded_antsreg(source_image, target_image,
     if run_syn is True:
         if regularization is 'Low': syn_param = (0.2, 1.0, 0.0)
         elif regularization is 'Medium': syn_param = (0.2, 3.0, 0.0)
-        elif regularization is 'High': syn_param - (0.2, 4.0, 3.0)
+        elif regularization is 'High': syn_param = (0.2, 4.0, 3.0)
         else: syn_param = (0.2, 3.0, 0.0)
     
     if run_rigid is True and run_affine is True and run_syn is True:
