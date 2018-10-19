@@ -20,6 +20,7 @@ Because parts of the package have to be built locally it is currently not possib
 Currently, Nighres is developed and tested on Linux Ubuntu Trusty and Python 2.7. We hope to support all common Unix platforms and Python 3 soon.
 
 If you use nighres, please reference the publictation:
+
 Huntenburg JM, Steele CJ, Bazin P-L (2018) Nighres: processing tools for high-resolution neuroimaging. Gigascience 7 Available at: https://academic.oup.com/gigascience/article/7/7/giy082/5049008
 
 Docker
