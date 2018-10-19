@@ -19,7 +19,7 @@ Z=2
 T=3
 
 def embedded_antsreg(source_image, target_image, 
-                    run_rigid=False, 
+                    run_rigid=True, 
                     rigid_iterations=1000,
                     run_affine=False, 
                     affine_iterations=1000,
@@ -28,7 +28,7 @@ def embedded_antsreg(source_image, target_image,
                     medium_iterations=50, fine_iterations=40,
 					cost_function='MutualInformation', 
 					interpolation='NearestNeighbor',
-					regularization='Medium',
+					regularization='High',
 					convergence=1e-6,
 					ignore_affine=False, ignore_header=False,
                     save_data=False, overwrite=False, output_dir=None,
