@@ -143,6 +143,7 @@ cd ..
 #
 ## WRAP TO PYTHON
 #
+cd nighresjava
 
 jcc_args=(
 	# All public methods in this JAR will be wrapped
