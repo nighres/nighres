@@ -13,16 +13,17 @@ Nighres
 Nighres is a Python package for processing of high-resolution neuroimaging data.
 It developed out of `CBS High-Res Brain Processing Tools
 <https://www.cbs.mpg.de/institute/software/cbs-tools>`_ and aims to make those
-tools easier to install, use and extend.
+tools easier to install, use and extend. Nighres now includes new functions from
+the `IMCN imaging toolkit <https://github.com/IMCN-UvA/imcn-imaging>`_ and 
+additional packages may be added in future releases.
 
 Because parts of the package have to be built locally it is currently not possible to 
 use ``pip install`` directly from PyPI. Instead, please follow the installation 
 instructions provided at http://nighres.readthedocs.io/en/latest/installation.html
 
-Currently, Nighres is developed and tested on Linux Ubuntu Trusty and Python 2.7. 
-The next releases are scheduled to use Python 3. Release versions have been
-extensively tested on our example data. Development versions include additional
-modules and functions but with limited guarantees.
+Currently, Nighres is developed and tested on Linux Ubuntu Trusty and Python 3.5. 
+Release versions have been extensively tested on our example data. Development 
+versions include additional modules and functions but with limited guarantees.
 
 
 Required packages
@@ -30,6 +31,7 @@ Required packages
 
 In order to run Nighres, you will need:
 
+* python >= 3.5
 * Java JDK 1.7, 1.8 or 1.9
 * JCC >=3.0
 * nibabel
@@ -42,8 +44,8 @@ For instance, in Debian/Ubuntu (amd64 systems):
 
     sudo apt-get install openjdk-8-jdk
     export JCC_JDK=/usr/lib/jvm/java-8-openjdk-amd64
-    pip install jcc 
-    pip install nibabel nipype numpy pandas psutil
+    pip3 install jcc 
+    pip3 install nibabel nipype numpy pandas psutil
 
 Note that JCC may require additional packages to support code compilation.
 
