@@ -14,6 +14,8 @@ function join_by { local IFS="$1"; shift; echo "$*"; }
 cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
 imcntk_repo="https://github.com/imcn-uva/imcn-imaging.git"
 
+release="release-1.1.0b"
+
 # Check the system has the necessary commands
 hash wget tar javac jar python3 pip3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3 pip3"
 
@@ -44,6 +46,7 @@ test -f "${python_include_path}/Python.h" || fatal 'This script requires python 
 # Get cbstools git clone
 test -d cbstools-public || (
 	git clone $cbstools_repo
+	git checkout $release
 )
 
 # Java dependencies. Order matters
@@ -94,6 +97,7 @@ cd ..
 # Get imcntk git clone
 test -d imcn-imaging || (
 	git clone $imcntk_repo
+	git checkout $release
 )
 
 # Java dependencies. Order matters
