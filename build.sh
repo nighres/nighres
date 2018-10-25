@@ -44,7 +44,12 @@ test -f "${python_include_path}/Python.h" || fatal 'This script requires python 
 #
 
 # Get cbstools git clone
-test -d cbstools-public || (
+test -d cbstools-public && (
+    cd cbstools-public
+	git checkout $release
+	git pull
+	cd ..
+) || (
 	git clone $cbstools_repo
 	cd cbstools-public
 	git checkout $release
@@ -97,7 +102,12 @@ cd ..
 #
 
 # Get imcntk git clone
-test -d imcn-imaging || (
+test -d imcn-imaging && (
+    cd imcn-imaging
+	git checkout $release
+	git pull
+	cd ..
+) || (
 	git clone $imcntk_repo
 	cd imcn-imaging
 	git checkout $release
@@ -178,6 +188,8 @@ cp -rv build/nighresjava/ ../
 # Find and copy the shared object file for the current architecture
 find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' ../nighresjava/_nighresjava.so
 cd ..
+
+pip3 install .
 
 # Make the python wheel
 # PLT=$(uname | tr '[:upper:]' '[:lower:]')
