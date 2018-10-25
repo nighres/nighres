@@ -11,7 +11,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def lcpca_denoising(image_list, phase_list=None, 
                     ngb_size=4, stdev_cutoff=1.05,
                       min_dimension=0, max_dimension=-1,
-                      unwrap=True,
+                      unwrap=True, eigen=False,
                       save_data=False, overwrite=False, output_dir=None,
                       file_names=None):
     """ LCPCA denoising
@@ -39,6 +39,9 @@ def lcpca_denoising(image_list, phase_list=None,
     unwrap: bool, optional
         Whether to unwrap the phase data of keep it as is, assuming radians
         (default is True)
+    eigen: bool, optional
+        Whether to output the eigenvectors and eigenvalues (warning: quite
+        memory intensive, default is False)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -110,6 +113,17 @@ def lcpca_denoising(image_list, phase_list=None,
                         _fname_4saving(file_name=name,
                                    rootfile=image_list[0],
                                    suffix='lcpca-res'))
+        
+        if eigen:
+            vec_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=name,
+                                   rootfile=image_list[0],
+                                   suffix='lcpca-vec'))
+            val_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=name,
+                                   rootfile=image_list[0],
+                                   suffix='lcpca-val'))
+        
         if overwrite is False \
             and os.path.isfile(dim_file) \
             and os.path.isfile(err_file) :
@@ -118,6 +132,9 @@ def lcpca_denoising(image_list, phase_list=None,
                 for den_file in den_files:
                     if not os.path.isfile(den_file):
                         missing = True
+                if eigen:        
+                    if not os.path.isfile(vec_file): missing = True    
+                    if not os.path.isfile(val_file): missing = True    
                 if not missing:
                     print("skip computation (use existing results)")
                     denoised = []
@@ -126,6 +143,10 @@ def lcpca_denoising(image_list, phase_list=None,
                     output = {'denoised': denoised,
                               'dimensions': load_volume(dim_file), 
                               'residuals': load_volume(err_file)}
+                    if eigen:
+                        output.update({'eigenvectors': load_volume(vec_file),
+                                       'eigenvalues': load_volume(val_file)})
+                    
                     return output
 
     # start virtual machine, if not already running
@@ -139,7 +160,9 @@ def lcpca_denoising(image_list, phase_list=None,
 
     # set lcpca parameters
     lcpca.setImageNumber(len(image_list))
+    eigdim = len(image_list)
     if (phase_list!=None): 
+        eigdim = 2*eigdim
         if (len(phase_list)!=len(image_list)):
             print('\nmismatch of magnitude and phase images: abort')
             return
@@ -180,6 +203,7 @@ def lcpca_denoising(image_list, phase_list=None,
     lcpca.setMinimumDimension(min_dimension)
     lcpca.setMaximumDimension(max_dimension)
     lcpca.setUnwrapPhase(unwrap) 
+    lcpca.setOutputEigenmaps(eigen) 
 
     # execute the algorithm
     try:
@@ -237,4 +261,29 @@ def lcpca_denoising(image_list, phase_list=None,
         save_volume(dim_file, dim)
         save_volume(err_file, err)
 
-    return {'denoised': denoised_list, 'dimensions': dim, 'residuals': err}
+    output = {'denoised': denoised_list, 'dimensions': dim, 'residuals': err}
+
+    if eigen:
+        vec_data = np.reshape(np.array(lcpca.getEigenvectorImage(),
+                                    dtype=np.float32), dimensions.append(eigdim), 'F')
+
+        val_data = np.reshape(np.array(lcpca.getEigenvalueImage(),
+                                    dtype=np.float32), dimensions.append(eigdim), 'F')
+
+        # adapt header max for each image so that correct max is displayed
+        # and create nifiti objects
+        header['cal_min'] = np.nanmin(vec_data)
+        header['cal_max'] = np.nanmax(vec_data)
+        vec = nb.Nifti1Image(vec_data, affine, header)
+    
+        header['cal_min'] = np.nanmin(val_data)
+        header['cal_max'] = np.nanmax(val_data)
+        val = nb.Nifti1Image(val_data, affine, header)
+    
+        if save_data:
+            save_volume(vec_file, vec)
+            save_volume(val_file, val)
+            
+        output.update({'eigenvectors': vec, 'eigenvalues': val})
+
+    return output
