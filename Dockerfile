@@ -11,7 +11,7 @@ RUN useradd -g root --create-home --shell /bin/bash neuro \
     && usermod -aG sudo neuro \
     && usermod -aG users neuro
 
-RUN pip install --upgrade wheel JCC twine urllib3 pip 
+RUN pip3 install --upgrade wheel JCC twine urllib3 pip3 
 RUN mkdir /home/neuro/nighres
 COPY build.sh cbstools-lib-files.sh setup.py MANIFEST.in README.rst LICENSE /home/neuro/nighres/
 COPY nighres /home/neuro/nighres/nighres
