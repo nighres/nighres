@@ -154,11 +154,12 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     References
     ----------
-    .. [1] Bogovic, Prince and Bazin (2013). A multiple object geometric
-       deformable model for image segmentation.
+    .. [1] Bazin et al. (2014). A computational framework for ultra-high 
+       resolution cortical segmentation at 7 Tesla.
+       doi: 10.1016/j.neuroimage.2013.03.077
+    .. [2] Bogovic et al. (2013). A multiple object geometric deformable model 
+       for image segmentation.
        doi:10.1016/j.cviu.2012.10.006.A
-    .. [2] Fan, Bazin and Prince (2008). A multi-compartment segmentation
-       framework with homeomorphic level sets. DOI: 10.1109/CVPR.2008.4587475
     """
 
     print('\nMGDM Segmentation')
