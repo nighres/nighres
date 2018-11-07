@@ -49,19 +49,22 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * brain_mask (niimg): Binary brain mask (_strip_mask)
-        * inv2_masked (niimg): Masked second inversion imamge (_strip_inv2)
-        * t1w_masked (niimg): Masked T1-weighted image (_strip_t1w)
-        * t1map_masked (niimg): Masked T1 map (_strip_t1map)
+        * brain_mask (niimg): Binary brain mask (_strip-mask)
+        * inv2_masked (niimg): Masked second inversion imamge (_strip-inv2)
+        * t1w_masked (niimg): Masked T1-weighted image (_strip-t1w)
+        * t1map_masked (niimg): Masked T1 map (_strip-t1map)
 
     Notes
     ----------
-    Original Java module by Pierre-Louis Bazin. Details on the MP2RAGE
-    sequence can be found in [1]_
+    Original Java module by Pierre-Louis Bazin. Details on the algorithm can 
+    be found in [1]_ and a presentation of the MP2RAGE sequence in [2]_
 
     References
     ----------
-    .. [1] Marques et al. (2010). MP2RAGE, a self bias-field corrected sequence
+    .. [1] Bazin et al. (2014). A computational framework for ultra-high 
+       resolution cortical segmentation at 7 Tesla.
+       DOI: 10.1016/j.neuroimage.2013.03.077
+    .. [2] Marques et al. (2010). MP2RAGE, a self bias-field corrected sequence
        for improved segmentation and T1-mapping at high field.
        DOI: 10.1016/j.neuroimage.2009.10.002
     """
@@ -122,7 +125,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         pass
 
     # create skulltripping instance
-    stripper = nighresjava.BrainMp2rageSkullStripping()
+    algo = nighresjava.BrainMp2rageSkullStripping()
 
     # get dimensions and resolution from second inversion image
     inv2_img = load_volume(second_inversion)
@@ -131,9 +134,9 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
     inv2_hdr = inv2_img.get_header()
     resolution = [x.item() for x in inv2_hdr.get_zooms()]
     dimensions = inv2_data.shape
-    stripper.setDimensions(dimensions[0], dimensions[1], dimensions[2])
-    stripper.setResolutions(resolution[0], resolution[1], resolution[2])
-    stripper.setSecondInversionImage(nighresjava.JArray('float')(
+    algo.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+    algo.setResolutions(resolution[0], resolution[1], resolution[2])
+    algo.setSecondInversionImage(nighresjava.JArray('float')(
                                     (inv2_data.flatten('F')).astype(float)))
 
     # pass other inputs
@@ -145,22 +148,22 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         t1w_data = t1w_img.get_data()
         t1w_affine = t1w_img.get_affine()
         t1w_hdr = t1w_img.get_header()
-        stripper.setT1weightedImage(nighresjava.JArray('float')(
+        algo.setT1weightedImage(nighresjava.JArray('float')(
                                       (t1w_data.flatten('F')).astype(float)))
     if t1_map is not None:
         t1map_img = load_volume(t1_map)
         t1map_data = t1map_img.get_data()
         t1map_affine = t1map_img.get_affine()
         t1map_hdr = t1map_img.get_header()
-        stripper.setT1MapImage(nighresjava.JArray('float')(
+        algo.setT1MapImage(nighresjava.JArray('float')(
                                     (t1map_data.flatten('F')).astype(float)))
 
-    stripper.setSkipZeroValues(skip_zero_values)
-    stripper.setTopologyLUTdirectory(topology_lut_dir)
+    algo.setSkipZeroValues(skip_zero_values)
+    algo.setTopologyLUTdirectory(topology_lut_dir)
 
     # execute skull stripping
     try:
-        stripper.execute()
+        algo.execute()
 
     except:
         # if the Java module fails, reraise the error it throws
@@ -171,12 +174,12 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     # collect outputs and potentially save
     inv2_masked_data = np.reshape(np.array(
-                                stripper.getMaskedSecondInversionImage(),
+                                algo.getMaskedSecondInversionImage(),
                                 dtype=np.float32), dimensions, 'F')
     inv2_hdr['cal_max'] = np.nanmax(inv2_masked_data)
     inv2_masked = nb.Nifti1Image(inv2_masked_data, inv2_affine, inv2_hdr)
 
-    mask_data = np.reshape(np.array(stripper.getBrainMaskImage(),
+    mask_data = np.reshape(np.array(algo.getBrainMaskImage(),
                                     dtype=np.uint32), dimensions, 'F')
     inv2_hdr['cal_max'] = np.nanmax(mask_data)
     mask = nb.Nifti1Image(mask_data, inv2_affine, inv2_hdr)
@@ -189,7 +192,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     if t1_weighted is not None:
         t1w_masked_data = np.reshape(np.array(
-                                stripper.getMaskedT1weightedImage(),
+                                algo.getMaskedT1weightedImage(),
                                 dtype=np.float32), dimensions, 'F')
         t1w_hdr['cal_max'] = np.nanmax(t1w_masked_data)
         t1w_masked = nb.Nifti1Image(t1w_masked_data, t1w_affine, t1w_hdr)
@@ -200,7 +203,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     if t1_map is not None:
         t1map_masked_data = np.reshape(np.array(
-                                        stripper.getMaskedT1MapImage(),
+                                        algo.getMaskedT1MapImage(),
                                         dtype=np.float32), dimensions, 'F')
         t1map_hdr['cal_max'] = np.nanmax(t1map_masked_data)
         t1map_masked = nb.Nifti1Image(t1map_masked_data, t1map_affine,
