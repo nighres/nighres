@@ -264,11 +264,12 @@ def lcpca_denoising(image_list, phase_list=None,
     output = {'denoised': denoised_list, 'dimensions': dim, 'residuals': err}
 
     if eigen:
+        dimensions = dimensions + (eigdim,)
         vec_data = np.reshape(np.array(lcpca.getEigenvectorImage(),
-                                    dtype=np.float32), dimensions.append(eigdim), 'F')
+                                    dtype=np.float32), dimensions, 'F')
 
         val_data = np.reshape(np.array(lcpca.getEigenvalueImage(),
-                                    dtype=np.float32), dimensions.append(eigdim), 'F')
+                                    dtype=np.float32), dimensions, 'F')
 
         # adapt header max for each image so that correct max is displayed
         # and create nifiti objects
