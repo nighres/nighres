@@ -166,8 +166,8 @@ def generate_coordinate_mapping(reference_image,
     src_map_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoord'))
-    if save
-    save_volume(src_map_file, src_map)
+    if save:
+        save_volume(src_map_file, src_map)
     for x in range(ntx):
         for y in range(nty):
             for z in range(ntz):
