@@ -177,7 +177,8 @@ jcc_args=(
 
 python3 -m jcc ${jcc_args[@]}
 
-
+# post-processing for Mac users: replace __dir__ variable in __init__.py
+sed -i -e 's/__dir__/__ndir__/g' build/nighresjava/__init__.py
 #
 # Assemble PYPI package
 #
