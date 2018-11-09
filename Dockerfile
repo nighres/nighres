@@ -7,20 +7,18 @@ ENV JCC_JDK /docker-java-home
 
 RUN sudo apt-get install -y git python3-pip python3-dev wget jcc
 
-RUN useradd -g root --create-home --shell /bin/bash neuro \
-    && usermod -aG sudo neuro \
-    && usermod -aG users neuro
+RUN useradd --no-user-group --create-home --shell /bin/bash neuro
 
-RUN pip3 install --upgrade wheel JCC twine urllib3
+RUN python3 -m pip install --upgrade wheel JCC twine urllib3
 RUN mkdir /home/neuro/nighres
 COPY build.sh cbstools-lib-files.sh setup.py MANIFEST.in README.rst LICENSE imcntk-lib-files.sh /home/neuro/nighres/
 COPY nighres /home/neuro/nighres/nighres
 
 RUN python3 -m pip install --upgrade pip
 RUN cd /home/neuro/nighres && ./build.sh
-RUN cd /home/neuro/nighres && pip install .
+RUN cd /home/neuro/nighres && python3 -m pip install .
 
-RUN pip install jupyter nilearn sklearn nose matplotlib
+RUN python3 -m pip install jupyter nilearn sklearn nose matplotlib scipy
 COPY docker/jupyter_notebook_config.py /etc/jupyter/
 
 RUN mkdir /home/neuro/notebooks
@@ -36,7 +34,7 @@ ENTRYPOINT ["/usr/bin/tini", "--"]
 EXPOSE 8888
 CMD ["jupyter", "notebook", "--port=8888", "--no-browser", "--ip=0.0.0.0"]
 
-RUN pip install psutil
+RUN python3 -m pip install psutil
 
 USER neuro
 
