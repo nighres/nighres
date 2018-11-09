@@ -20,7 +20,7 @@ nighres_local="/home/pilou/Code/github/nighres"
 hash wget tar javac jar python3 pip3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3 pip3"
 
 # Check for setuptools and wheels
-pip_modules=$(pip3 list | tr -s ' ' | cut -f 1 -d ' ')
+pip_modules=$(python3 -m pip list | tr -s ' ' | cut -f 1 -d ' ')
 echo "${pip_modules}" | grep setuptools > /dev/null || fatal 'This script requires setuptools.\nInstall with `pip install --upgrade setuptools`'
 echo "${pip_modules}" | grep wheel > /dev/null || fatal 'This script requires wheel.\nInstall with `pip install --upgrade wheel`'
 
@@ -166,4 +166,4 @@ find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' $nighre
 cd $nighres_local
 
 # finish the installation for the libabry
-pip3 install .
+python3 -m pip install .
