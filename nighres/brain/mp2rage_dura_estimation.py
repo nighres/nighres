@@ -102,7 +102,7 @@ def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
     # pass other inputs
     mask_data = load_volume(skullstrip_mask).get_data()
     algo.setSkullStrippingMask(nighresjava.JArray('int')(
-                                    (t1map_data.flatten('F')).astype(int)))
+                                    (mask_data.flatten('F')).astype(int).tolist()))
 
     algo.setDistanceToBackground_mm(background_distance)
     algo.setOutputType(output_type)

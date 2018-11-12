@@ -105,7 +105,7 @@ def phase_unwrapping(image, mask=None, nquadrants=3,
     
     if mask is not None:
         unwrap.setMaskImage(idx, nighresjava.JArray('int')(
-                (load_volume(mask).get_data().flatten('F')).astype(int)))
+                (load_volume(mask).get_data().flatten('F')).astype(int).tolist()))
     
     # set algorithm parameters
     unwrap.setQuadrantNumber(nquadrants)
