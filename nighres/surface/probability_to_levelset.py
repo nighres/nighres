@@ -91,7 +91,7 @@ def probability_to_levelset(probability_image,
     else:
         prob2level.setResolutions(resolution[0], resolution[1], 1.0)
         prob2level.setDimensions(dimensions[0], dimensions[1], 1)
-        
+    
     # execute class
     try:
         prob2level.execute()
