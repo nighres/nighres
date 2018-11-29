@@ -9,9 +9,8 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 
 def lcat_denoising(image_list, phase_list=None, 
-                    ngb_size=4, stdev_cutoff=1.05,
+                    ngb_size=3, ngb_time=3, stdev_cutoff=1.05,
                       min_dimension=0, max_dimension=-1,
-                      unwrap=True, eigen=False,
                       save_data=False, overwrite=False, output_dir=None,
                       file_names=None):
     """ LCaT denoising
