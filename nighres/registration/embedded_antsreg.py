@@ -1566,7 +1566,7 @@ def embedded_antsreg_multi(source_images, target_images,
     src_at.inputs.interpolation = 'Linear'
     src_at.inputs.transforms = forward
     src_at.inputs.invert_transform_flags = flag
-    mapping = src_at.run()
+    trans_mapping = src_at.run()
 
     trg_at = ApplyTransforms()
     trg_at.inputs.dimension = 3
@@ -1576,7 +1576,7 @@ def embedded_antsreg_multi(source_images, target_images,
     trg_at.inputs.interpolation = 'Linear'
     trg_at.inputs.transforms = inverse
     trg_at.inputs.invert_transform_flags = linear
-    inverse = trg_at.run()
+    trans_inverse = trg_at.run()
 
     # pad coordinate mapping outside the image? hopefully not needed...
 
@@ -1585,28 +1585,32 @@ def embedded_antsreg_multi(source_images, target_images,
     for idx,trans in enumerate(transformed):
         transformed_imgs.append(nb.Nifti1Image(nb.load(trans.outputs.output_image).get_data(), 
                                     targets[idx].affine, targets[idx].header))
-    mapping_img = nb.Nifti1Image(nb.load(mapping.outputs.output_image).get_data(), 
+    mapping_img = nb.Nifti1Image(nb.load(trans_mapping.outputs.output_image).get_data(), 
                                     targets[0].affine, targets[0].header)
-    inverse_img = nb.Nifti1Image(nb.load(inverse.outputs.output_image).get_data(), 
+    inverse_img = nb.Nifti1Image(nb.load(trans_inverse.outputs.output_image).get_data(), 
                                     sources[0].affine, sources[0].header)
 
     outputs = {'transformed_source': transformed_imgs, 'mapping': mapping_img,
                 'inverse': inverse_img}
 
     # clean-up intermediate files
-    #os.remove(src_map_file)
-    #os.remove(trg_map_file)
-    #if ignore_affine or ignore_header:
-    #    os.remove(src_img_file)
-    #    os.remove(trg_img_file)
+    if os.path.exists(src_map_file): os.remove(src_map_file)
+    if os.path.exists(trg_map_file): os.remove(trg_map_file)
+    if ignore_affine or ignore_header:
+        if os.path.exists(src_img_file): os.remove(src_img_file)
+        if os.path.exists(trg_img_file): os.remove(trg_img_file)
         
-    #for name in result.outputs.forward_transforms: 
-    #    if os.path.exists(name): os.remove(name)
-    #for name in result.outputs.reverse_transforms: 
-    #    if os.path.exists(name): os.remove(name)
-    #os.remove(transformed.outputs.output_image)
-    #os.remove(mapping.outputs.output_image)
-    #os.remove(inverse.outputs.output_image)
+    for name in forward: 
+        if os.path.exists(name): os.remove(name)
+    for name in inverse: 
+        if os.path.exists(name): os.remove(name)
+    for trans in transformed:
+        if os.path.exists(trans.outputs.output_image): 
+            os.remove(trans.outputs.output_image)
+    if os.path.exists(trans_mapping.outputs.output_image): 
+        os.remove(trans_mapping.outputs.output_image)
+    if os.path.exists(trans_inverse.outputs.output_image): 
+        os.remove(trans_inverse.outputs.output_image)
 
     if save_data:
         for idx,source_image in enumerate(source_images):
