@@ -82,8 +82,8 @@ def levelset_fusion(levelset_images,
     nsubjects = len(levelset_images)
     
     img = load_volume(levelset_images[0])
-    hdr = img.get_header()
-    aff = img.get_affine()
+    hdr = img.header
+    aff = img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = img.get_data().shape
     

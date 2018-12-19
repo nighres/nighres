@@ -148,8 +148,8 @@ def lcpca_denoising(image_list, phase_list=None,
     img = load_volume(image_list[0])
     data = img.get_data()
     #data = data[0:10,0:10,0:10]
-    affine = img.get_affine()
-    header = img.get_header()
+    affine = img.affine
+    header = img.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 

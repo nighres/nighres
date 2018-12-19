@@ -107,8 +107,8 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
     # load first image and use it to set dimensions and resolution
     img = load_volume(segmentation)
     data = img.get_data()
-    affine = img.get_affine()
-    header = img.get_header()
+    affine = img.affine
+    header = img.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 

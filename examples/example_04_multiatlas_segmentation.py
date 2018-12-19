@@ -222,11 +222,11 @@ if not skip_plots:
 # label 32 = left caudate
 img1 = nighres.io.load_volume(deformed1['result'])
 struct1 = nb.Nifti1Image((img1.get_data()==32).astype(float), 
-                            img1.get_affine(), img1.get_header())
+                            img1.affine, img1.header)
 
 img2 = nighres.io.load_volume(deformed2['result'])
 struct2 = nb.Nifti1Image((img2.get_data()==32).astype(float), 
-                            img2.get_affine(), img2.get_header())
+                            img2.affine, img2.header)
 
 levelset1 = nighres.surface.probability_to_levelset(
                         probability_image=struct1,
@@ -249,21 +249,21 @@ final_seg = nighres.shape.levelset_fusion(levelset_images=[levelset1['result'],
 if not skip_plots:
     img = nighres.io.load_volume(levelset1['result'])
     mask = nb.Nifti1Image((img.get_data()<0).astype(bool), 
-                                img.get_affine(), img.get_header())
+                                img.affine, img.header)
     plotting.plot_roi(mask, dataset3['t1map'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')
 
     img = nighres.io.load_volume(levelset2['result'])
     mask = nb.Nifti1Image((img.get_data()<0).astype(bool), 
-                                img.get_affine(), img.get_header())
+                                img.affine, img.header)
     plotting.plot_roi(mask, dataset3['t1map'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')
     
     img = nighres.io.load_volume(final_seg['result'])
     mask = nb.Nifti1Image((img.get_data()<0).astype(bool), 
-                                img.get_affine(), img.get_header())
+                                img.affine, img.header)
     plotting.plot_roi(mask, dataset3['t1map'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')

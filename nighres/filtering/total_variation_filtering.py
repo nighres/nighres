@@ -96,8 +96,8 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
     # load image and use it to set dimensions and resolution
     img = load_volume(image)
     data = img.get_data()
-    affine = img.get_affine()
-    header = img.get_header()
+    affine = img.affine
+    header = img.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 

@@ -80,8 +80,8 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
 
     intensity_img = load_volume(intensity_image)
     intensity_data = intensity_img.get_data()
-    hdr = intensity_img.get_header()
-    aff = intensity_img.get_affine()
+    hdr = intensity_img.header
+    aff = intensity_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = intensity_data.shape
     

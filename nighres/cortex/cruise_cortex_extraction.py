@@ -204,8 +204,8 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
     # load images
     init = load_volume(init_image)
     init_data = init.get_data()
-    affine = init.get_affine()
-    header = init.get_header()
+    affine = init.affine
+    header = init.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = init_data.shape
     cruise.setDimensions(dimensions[0], dimensions[1], dimensions[2])

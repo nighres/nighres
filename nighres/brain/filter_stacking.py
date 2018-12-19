@@ -75,8 +75,8 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
     elif (pvcsf_img != None): img = pvcsf_img
     elif (arteries_img != None): img = artereis_img
 
-    affine = load_volume(img).get_affine()
-    header = load_volume(img).get_header()
+    affine = load_volume(img).affine
+    header = load_volume(img).header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = header.get_shape()
     nx = dimensions[0];

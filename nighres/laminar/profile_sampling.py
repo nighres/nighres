@@ -71,8 +71,8 @@ def profile_sampling(profile_surface_image, intensity_image,
     # load the data
     surface_img = load_volume(profile_surface_image)
     surface_data = surface_img.get_data()
-    hdr = surface_img.get_header()
-    aff = surface_img.get_affine()
+    hdr = surface_img.header
+    aff = surface_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = surface_data.shape
 

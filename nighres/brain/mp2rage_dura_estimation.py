@@ -90,8 +90,8 @@ def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
     # get dimensions and resolution from second inversion image
     inv2_img = load_volume(second_inversion)
     inv2_data = inv2_img.get_data()
-    inv2_affine = inv2_img.get_affine()
-    inv2_hdr = inv2_img.get_header()
+    inv2_affine = inv2_img.affine
+    inv2_hdr = inv2_img.header
     resolution = [x.item() for x in inv2_hdr.get_zooms()]
     dimensions = inv2_data.shape
     algo.setDimensions(dimensions[0], dimensions[1], dimensions[2])

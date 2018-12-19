@@ -107,8 +107,8 @@ def volumetric_layering(inner_levelset, outer_levelset,
     # load the data
     inner_img = load_volume(inner_levelset)
     inner_data = inner_img.get_data()
-    hdr = inner_img.get_header()
-    aff = inner_img.get_affine()
+    hdr = inner_img.header
+    aff = inner_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = inner_data.shape
 

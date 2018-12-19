@@ -185,14 +185,14 @@ def extract_brain_region(segmentation, levelset_boundary,
     # load images and set dimensions and resolution
     seg = load_volume(segmentation)
     data = seg.get_data()
-    affine = seg.get_affine()
-    header = seg.get_header()
+    affine = seg.affine
+    header = seg.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 
     xbr.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     xbr.setResolutions(resolution[0], resolution[1], resolution[2])
-    xbr.setComponents(load_volume(maximum_membership).get_header().get_data_shape()[3])
+    xbr.setComponents(load_volume(maximum_membership).header.get_data_shape()[3])
 
     xbr.setSegmentationImage(nighresjava.JArray('int')(
         (data.flatten('F')).astype(int).tolist()))

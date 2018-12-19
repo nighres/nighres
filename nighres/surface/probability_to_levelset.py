@@ -77,8 +77,8 @@ def probability_to_levelset(probability_image,
     # load the data
     prob_img = load_volume(probability_image)
     prob_data = prob_img.get_data()
-    hdr = prob_img.get_header()
-    aff = prob_img.get_affine()
+    hdr = prob_img.header
+    aff = prob_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = prob_data.shape
 

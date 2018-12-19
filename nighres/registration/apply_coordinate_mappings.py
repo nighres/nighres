@@ -84,8 +84,8 @@ def apply_coordinate_mappings(image, mapping1,
     # load the data
     img = load_volume(image)
     data = img.get_data()
-    hdr = img.get_header()
-    aff = img.get_affine()
+    hdr = img.header
+    aff = img.affine
     imgres = [x.item() for x in hdr.get_zooms()]
     imgdim = data.shape
 
@@ -101,8 +101,8 @@ def apply_coordinate_mappings(image, mapping1,
     
     def1 = load_volume(mapping1)
     def1data = def1.get_data()
-    aff = def1.get_affine()
-    hdr = def1.get_header()
+    aff = def1.affine
+    hdr = def1.header
     trgdim = def1data.shape
     applydef.setDeformationMapping1(nighresjava.JArray('float')(
                                     (def1data.flatten('F')).astype(float)))
@@ -112,8 +112,8 @@ def apply_coordinate_mappings(image, mapping1,
     if not (mapping2==None):
         def2 = load_volume(mapping2)
         def2data = def2.get_data()
-        aff = def2.get_affine()
-        hdr = def2.get_header()
+        aff = def2.affine
+        hdr = def2.header
         trgdim = def2data.shape
         applydef.setDeformationMapping2(nighresjava.JArray('float')(
                                         (def2data.flatten('F')).astype(float)))
@@ -123,8 +123,8 @@ def apply_coordinate_mappings(image, mapping1,
         if not (mapping3==None):
             def3 = load_volume(mapping3)
             def3data = def3.get_data()
-            aff = def3.get_affine()
-            hdr = def3.get_header()
+            aff = def3.affine
+            hdr = def3.header
             trgdim = def3data.shape
             applydef.setDeformationMapping3(nighresjava.JArray('float')(
                                             (def3data.flatten('F')).astype(float)))
@@ -134,8 +134,8 @@ def apply_coordinate_mappings(image, mapping1,
             if not (mapping4==None):
                 def4 = load_volume(mapping4)
                 def4data = def4.get_data()
-                aff = def4.get_affine()
-                hdr = def4.get_header()
+                aff = def4.affine
+                hdr = def4.header
                 trgdim = def4data.shape
                 applydef.setDeformationMapping4(nighresjava.JArray('float')(
                                                 (def4data.flatten('F')).astype(float)))
