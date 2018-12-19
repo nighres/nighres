@@ -91,15 +91,15 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
         * avg (niimg): Central level set function, obtained as geometric
           average of GWB and CGB (*not* the middle depth of the
           cortex, use volumetric_layering if you want accurate
-          depth measures) (_cruise_avg)
+          depth measures) (_cruise-avg)
         * thickness (niimg): Simple cortical thickness estimate: distance to
-          the GWB and CGB surfaces, in mm (_cruise_thick)
+          the GWB and CGB surfaces, in mm (_cruise-thick)
         * pwm (niimg): Optimized WM probability, including partial volume and
-          distant values correction (_cruise_pwm)
+          distant values correction (_cruise-pwm)
         * pgm (niimg): Optimized GM probability, including CSF sulcal ridges
           correction (_cruise_pgm)
         * pcsf (niimg): Optimized CSF probability, including sulcal ridges and
-          vessel/dura correction (_cruise_pwm)
+          vessel/dura correction (_cruise-pwm)
 
     Notes
     ----------
@@ -122,42 +122,42 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, gm_image)
 
-        cortex_file = os.path.join(output_dir, 
+        cortex_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                      rootfile=gm_image,
                                      suffix='cruise-cortex', ))
 
-        gwb_file = os.path.join(output_dir, 
+        gwb_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                   rootfile=gm_image,
                                   suffix='cruise-gwb', ))
 
-        cgb_file = os.path.join(output_dir, 
+        cgb_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                   rootfile=gm_image,
                                   suffix='cruise-cgb', ))
 
-        avg_file = os.path.join(output_dir, 
+        avg_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                   rootfile=gm_image,
                                   suffix='cruise-avg', ))
 
-        thick_file = os.path.join(output_dir, 
+        thick_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                     rootfile=gm_image,
                                     suffix='cruise-thick', ))
 
-        pwm_file = os.path.join(output_dir, 
+        pwm_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                   rootfile=gm_image,
                                   suffix='cruise-pwm', ))
 
-        pgm_file = os.path.join(output_dir, 
+        pgm_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                   rootfile=gm_image,
                                   suffix='cruise-pgm', ))
 
-        pcsf_file = os.path.join(output_dir, 
+        pcsf_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                    rootfile=gm_image,
                                    suffix='cruise-pcsf', ))
@@ -170,15 +170,15 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
             and os.path.isfile(pwm_file) \
             and os.path.isfile(pgm_file) \
             and os.path.isfile(pcsf_file) :
-            
+
             print("skip computation (use existing results)")
-            output = {'cortex': load_volume(cortex_file), 
-                      'gwb': load_volume(gwb_file), 
-                      'cgb': load_volume(cgb_file), 
-                      'avg': load_volume(avg_file), 
-                      'thickness': load_volume(thick_file), 
-                      'pwm': load_volume(pwm_file), 
-                      'pgm': load_volume(pgm_file), 
+            output = {'cortex': load_volume(cortex_file),
+                      'gwb': load_volume(gwb_file),
+                      'cgb': load_volume(cgb_file),
+                      'avg': load_volume(avg_file),
+                      'thickness': load_volume(thick_file),
+                      'pwm': load_volume(pwm_file),
+                      'pgm': load_volume(pgm_file),
                       'pcsf': load_volume(pcsf_file)}
             return output
 
@@ -211,7 +211,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
     cruise.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     cruise.setResolutions(resolution[0], resolution[1], resolution[2])
     cruise.importInitialWMSegmentationImage(nighresjava.JArray('int')(
-                                        (init_data.flatten('F')).astype(int).tolist()))
+                                (init_data.flatten('F')).astype(int).tolist()))
 
     wm_data = load_volume(wm_image).get_data()
     cruise.setFilledWMProbabilityImage(nighresjava.JArray('float')(

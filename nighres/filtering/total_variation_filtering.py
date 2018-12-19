@@ -46,8 +46,8 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * filtered (niimg): The filtered image
-        * residual (niimg): The image residuals
+        * filtered (niimg): The filtered image (_tv-img)
+        * residual (niimg): The image residuals (_tv-res)
 
     Notes
     ----------
@@ -55,7 +55,7 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
 
     References
     ----------
-    .. [1] Chambolle (2004). An Algorithm for Total Variation Minimization and 
+    .. [1] Chambolle (2004). An Algorithm for Total Variation Minimization and
         Applications. doi:10.1023/B:JMIV.0000011325.36760.1e
     """
 
@@ -65,12 +65,12 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, image)
 
-        out_file = os.path.join(output_dir, 
+        out_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                    rootfile=image,
                                    suffix='tv-img'))
 
-        res_file = os.path.join(output_dir, 
+        res_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                    rootfile=image,
                                    suffix='tv-res'))
@@ -78,7 +78,7 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
         if overwrite is False \
             and os.path.isfile(out_file) and os.path.isfile(res_file) :
                 print("skip computation (use existing results)")
-                output = {'filtered': load_volume(out_file), 
+                output = {'filtered': load_volume(out_file),
                           'residual': load_volume(res_file)}
                 return output
 
@@ -92,7 +92,7 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
     algo = nighresjava.TotalVariationFiltering()
 
     # set parameters
-    
+
     # load image and use it to set dimensions and resolution
     img = load_volume(image)
     data = img.get_data()
@@ -106,18 +106,18 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
 
     algo.setImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
-    
-    
+
+
     if mask is not None:
         algo.setMaskImage(idx, nighresjava.JArray('int')(
                 (load_volume(mask).get_data().flatten('F')).astype(int)))
-    
+
     # set algorithm parameters
     algo.setLambdaScale(lambda_scale)
     algo.setTauStep(tau_step)
     algo.setMaxDist(max_dist)
     algo.setMaxIter(max_iter)
-     
+
     # execute the algorithm
     try:
         algo.execute()

@@ -6,7 +6,7 @@ from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving
 
 
-def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None, 
+def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
                            save_data=False, overwrite=False, output_dir=None,
                            file_name=None):
     """ Filter stacking
@@ -22,8 +22,8 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
         Prior for the location of remaining dura mater after skull stripping.
         At least one prior image is required
     pvcsf_img: niimg, optional
-        Prior for the location of CSF partial voluming (mostly in sulcal regions).
-        At least one prior image is required
+        Prior for the location of CSF partial voluming (mostly in sulcal
+        regions). At least one prior image is required
     arteries_img: niimg, optional
         Prior for the location of arteries, visible e.g. in MP2RAGE images.
         At least one prior image is required
@@ -39,12 +39,17 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
 
     Returns
     ----------
-    niimg
-        Comibned image, where only the strongest priors are kept
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix in brackets)
+
+        * result (niimg): Combined image, where only the strongest priors
+          are kept (_bfs-img)
+
 
     Notes
     ----------
-    Original Java module by Pierre-Louis Bazin.     
+    Original Java module by Pierre-Louis Bazin.
     """
 
     print('\nFilter stacking')
@@ -53,13 +58,13 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, second_inversion)
 
-        filter_file = os.path.join(output_dir, 
+        filter_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                    rootfile=second_inversion,
                                    suffix='bfs-img'))
         if overwrite is False \
             and os.path.isfile(filter_file) :
-            
+
             print("skip computation (use existing results)")
             output = {"result": load_volume(filter_file)}
             return output
@@ -104,7 +109,7 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
                 for z in range(nz):
                     if (pvcsf_data[x,y,z]>filter_data[x,y,z]):
                         filter_data[x,y,z] = pvcsf_data[x,y,z]+2.0
-                        
+
         pvcsf_data = None
         pvcsf_img = None
 
@@ -119,7 +124,7 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
                     else:
                          if (arteries_data[x,y,z]>filter_data[x,y,z]):
                             filter_data[x,y,z] = arteries_data[x,y,z]+4.0
-                       
+
         arteries_data = None
         arteries_img = None
 

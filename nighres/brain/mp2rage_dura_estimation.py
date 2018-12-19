@@ -24,7 +24,8 @@ def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
         Skullstripping mask defining the approximate region including the brain
     background_distance: float
         Maximum distance within the mask for dura (default is 5.0 mm)
-    output_type: {'dura_region','boundary','dura_prior','bg_prior','intens_prior'}
+    output_type: {'dura_region','boundary','dura_prior','bg_prior',
+        'intens_prior'}
         Type of output result (default is 'dura_region')
     save_data: bool
         Save output data to file (default is False)
@@ -46,12 +47,12 @@ def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
 
     Notes
     ----------
-    Original Java module by Pierre-Louis Bazin. Details on the algorithm can 
+    Original Java module by Pierre-Louis Bazin. Details on the algorithm can
     be found in [1]_ and a presentation of the MP2RAGE sequence in [2]_
 
     References
     ----------
-    .. [1] Bazin et al. (2014). A computational framework for ultra-high 
+    .. [1] Bazin et al. (2014). A computational framework for ultra-high
        resolution cortical segmentation at 7 Tesla.
        DOI: 10.1016/j.neuroimage.2013.03.077
     .. [2] Marques et al. (2010). MP2RAGE, a self bias-field corrected sequence
@@ -65,14 +66,14 @@ def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, second_inversion)
 
-        result_file = os.path.join(output_dir, 
+        result_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                    rootfile=second_inversion,
                                    suffix='dura-proba'))
-        
+
         if overwrite is False \
             and os.path.isfile(result_file) :
-            
+
             print("skip computation (use existing results)")
             output = {'result': load_volume(result_file)}
             return output

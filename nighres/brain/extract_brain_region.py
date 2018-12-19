@@ -35,14 +35,16 @@ def extract_brain_region(segmentation, levelset_boundary,
     atlas_file: str, optional
         Path to plain text atlas file (default is stored in DEFAULT_ATLAS).
         or atlas name to be searched in ATLAS_DIR
-   extracted_region: {'left_cerebrum', 'right_cerebrum', 'cerebrum', 'cerebellum', 
-        'cerebellum_brainstem', 'subcortex', 'tissues(anat)', 'tissues(func)', 'brain_mask'}
+    extracted_region: {'left_cerebrum', 'right_cerebrum', 'cerebrum',
+        'cerebellum', 'cerebellum_brainstem', 'subcortex', 'tissues(anat)',
+        'tissues(func)', 'brain_mask'}
         Region to be extracted from the MGDM segmentation.
     normalize_probabilities: bool
-        Whether to normalize the output probabilities to sum to 1 (default is False).
+        Whether to normalize the output probabilities to sum to 1
+        (default is False).
     estimate_tissue_densities: bool
-        Wheter to recompute partial volume densities from the probabilites (slow,
-        default is False).
+        Wheter to recompute partial volume densities from the probabilites
+        (slow, default is False).
     partial_volume_distance: float
         Distance in mm to use for tissues densities, if recomputed
         (default is 1mm).
@@ -60,28 +62,28 @@ def extract_brain_region(segmentation, levelset_boundary,
     ----------
     dict
         Dictionary collecting outputs under the following keys
-        (suffix of output files in brackets, # stands for shorthand names of 
+        (suffix of output files in brackets, # stands for shorthand names of
         the different extracted regions, respectively:
         rcr, lcr, cr, cb, cbs, sub, an, fn)
 
         * region_mask (niimg): Hard segmentation mask of the (GM) region
-          of interest (_xmask_#gm)
+          of interest (_xmask-#gm)
         * inside_mask (niimg): Hard segmentation mask of the (WM) inside of
-          the region of interest (_xmask_#wm)
+          the region of interest (_xmask-#wm)
         * background_mask (niimg): Hard segmentation mask of the (CSF) region
-          background (_xmask_#bg)
+          background (_xmask-#bg)
         * region_proba (niimg): Probability map of the (GM) region
-          of interest (_xproba_#gm)
+          of interest (_xproba-#gm)
         * inside_proba (niimg): Probability map of the (WM) inside of
-          the region of interest (_xproba_#wm)
+          the region of interest (_xproba-#wm)
         * background_proba (niimg): Probability map of the (CSF) region
-          background (_xproba_#bg)
+          background (_xproba-#bg)
         * region_lvl (niimg): Levelset surface of the (GM) region
-          of interest (_xlvl_#gm)
+          of interest (_xlvl-#gm)
         * inside_lvl (niimg): Levelset surface of the (WM) inside of
-          the region of interest (_xlvl_#wm)
+          the region of interest (_xlvl-#wm)
         * background_lvl (niimg): Levelset surface of the (CSF) region
-          background (_xlvl_#bg)
+          background (_xlvl-#bg)
 
     Notes
     ----------
@@ -115,47 +117,47 @@ def extract_brain_region(segmentation, levelset_boundary,
 
 	# build names for saving after setting the parameters to get the proper names
     if save_data:
-        reg_mask_file = os.path.join(output_dir, 
+        reg_mask_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                        rootfile=segmentation,
                                        suffix='xmask-'+xbr.getStructureName(), ))
 
-        ins_mask_file = os.path.join(output_dir, 
+        ins_mask_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                        rootfile=segmentation,
                                        suffix='xmask-'+xbr.getInsideName(), ))
 
-        bg_mask_file = os.path.join(output_dir, 
+        bg_mask_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                       rootfile=segmentation,
                                       suffix='xmask-'+xbr.getBackgroundName(), ))
 
-        reg_proba_file = os.path.join(output_dir, 
+        reg_proba_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                         rootfile=segmentation,
                                         suffix='xproba-'+xbr.getStructureName(), ))
 
-        ins_proba_file = os.path.join(output_dir, 
+        ins_proba_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                         rootfile=segmentation,
                                         suffix='xproba-'+xbr.getInsideName(), ))
 
-        bg_proba_file = os.path.join(output_dir, 
+        bg_proba_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                        rootfile=segmentation,
                                        suffix='xproba-'+xbr.getBackgroundName(), ))
 
-        reg_lvl_file = os.path.join(output_dir, 
+        reg_lvl_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                       rootfile=segmentation,
                                       suffix='xlvl-'+xbr.getStructureName(), ))
 
-        ins_lvl_file = os.path.join(output_dir, 
+        ins_lvl_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                       rootfile=segmentation,
                                       suffix='xlvl-'+xbr.getInsideName(), ))
 
-        bg_lvl_file = os.path.join(output_dir, 
+        bg_lvl_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                      rootfile=segmentation,
                                      suffix='xlvl-'+xbr.getBackgroundName(), ))
@@ -169,16 +171,16 @@ def extract_brain_region(segmentation, levelset_boundary,
             and os.path.isfile(reg_lvl_file) \
             and os.path.isfile(ins_lvl_file) \
             and os.path.isfile(bg_lvl_file) :
-            
+
             print("skip computation (use existing results)")
-            output = {'inside_mask': load_volume(ins_mask_file), 
-                      'inside_proba': load_volume(ins_proba_file), 
-                      'inside_lvl': load_volume(ins_lvl_file), 
-                      'region_mask': load_volume(reg_mask_file), 
-                      'region_proba': load_volume(reg_proba_file), 
-                      'region_lvl': load_volume(reg_lvl_file), 
-                      'background_mask': load_volume(bg_mask_file), 
-                      'background_proba': load_volume(bg_proba_file), 
+            output = {'inside_mask': load_volume(ins_mask_file),
+                      'inside_proba': load_volume(ins_proba_file),
+                      'inside_lvl': load_volume(ins_lvl_file),
+                      'region_mask': load_volume(reg_mask_file),
+                      'region_proba': load_volume(reg_proba_file),
+                      'region_lvl': load_volume(reg_lvl_file),
+                      'background_mask': load_volume(bg_mask_file),
+                      'background_proba': load_volume(bg_proba_file),
                       'background_lvl': load_volume(bg_lvl_file)}
             return output
 
