@@ -1,9 +1,14 @@
 .wy-nav-top {
-    background-color: #e7f2fa !important;
+    background-color: #d9d9d9 !important;
 }
 
 .wy-side-nav-search {
-  background-color: #e7f2fa !important;
+  background-color: #d9d9d9 !important;
+}
+
+.wy-side-nav-search>a {
+  padding: 0px 0px 0px 0px !important;
+  margin-bottom: 0 !important;
 }
 
 .version {
