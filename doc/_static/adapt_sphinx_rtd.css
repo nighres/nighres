@@ -1,6 +1,11 @@
 .wy-nav-top {
-    background-color: #1abc9c !important;
+    background-color: #e7f2fa !important;
 }
+
 .wy-side-nav-search {
-    background-color: #1abc9c !important;
+  background-color: #e7f2fa !important;
+}
+
+.version {
+  color: #4a74b5 !important;
 }
