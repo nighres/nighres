@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def topology_correction(image, shape_type, 
+def topology_correction(image, shape_type,
                     connectivity='wcs', propagation='object->background',
                     minimum_distance=0.00001, topology_lut_dir=None,
                     save_data=False, overwrite=False, output_dir=None,
@@ -23,20 +23,24 @@ def topology_correction(image, shape_type,
     ----------
     image: niimg
         Image representing the shape of interest
-    shape_type: {'binary_object','probability_map','signed_distance_function'}
+    shape_type: str
+        {'binary_object','probability_map','signed_distance_function'}
         Which type of image is used as input
-    connectivity: {'wcs','6/18','6/26','18/6','26/6'}
+    connectivity: str, optional
+        {'wcs','6/18','6/26','18/6','26/6'}
         What connectivity type to use (default is wcs: well-composed surfaces)
-    propagation: {'object->background','background->object'}
-        Whcih direction to use to enforce topology changes
-    minimum_distance: float
+    propagation: str, optional
+        {'object->background','background->object'}
+        Which direction to use to enforce topology changes
+        (default is 'object->background' )
+    minimum_distance: float, optional
         Minimum distance to impose between successive voxels (default is 1e-5)
-    topology_lut_dir: str
+    topology_lut_dir: str, optional
         Path to directory in which topology files are stored (default is stored
         in TOPOLOGY_LUT_DIR)
-    save_data: bool
+    save_data: bool, optional
         Save output data to file (default is False)
-    overwrite: bool
+    overwrite: bool, optional
         Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
@@ -56,10 +60,10 @@ def topology_correction(image, shape_type,
     Notes
     ----------
     Original Java module by Pierre-Louis Bazin
-    
+
     References
     ----------
-    .. [1] Bazin and Pham (2007). Topology correction of segmented medical 
+    .. [1] Bazin and Pham (2007). Topology correction of segmented medical
         images using a fast marching algorithm
         doi:10.1016/j.cmpb.2007.08.006
     """
@@ -73,21 +77,21 @@ def topology_correction(image, shape_type,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, image)
 
-        corrected_file = os.path.join(output_dir, 
+        corrected_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                        rootfile=image,
                                        suffix='tpc-img'))
 
-        corrected_obj_file = os.path.join(output_dir, 
+        corrected_obj_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                        rootfile=image,
                                        suffix='tpc-obj'))
         if overwrite is False \
             and os.path.isfile(corrected_file) \
             and os.path.isfile(corrected_obj_file) :
-            
+
             print("skip computation (use existing results)")
-            output = {'corrected': load_volume(corrected_file), 
+            output = {'corrected': load_volume(corrected_file),
                       'object': load_volume(corrected_obj_file)}
             return output
 
@@ -108,22 +112,22 @@ def topology_correction(image, shape_type,
     data = img.get_data()
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = data.shape
-    
+
     algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
     algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
 
     algorithm.setShapeImage(nighresjava.JArray('float')(
                             (data.flatten('F')).astype(float)))
-    
+
     algorithm.setShapeImageType(shape_type)
-    
+
     algorithm.setTopology(connectivity)
     algorithm.setTopologyLUTdirectory(topology_lut_dir)
-    
+
     algorithm.setPropagationDirection(propagation)
-    
+
     algorithm.setMinimumDistance(minimum_distance)
-    
+
     # execute class
     try:
         algorithm.execute()

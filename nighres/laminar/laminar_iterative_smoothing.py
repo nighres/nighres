@@ -7,7 +7,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, _check_available_memory
 
 
 def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
-                     roi_mask_image=None, 
+                     roi_mask_image=None,
                      save_data=False, overwrite=False, output_dir=None,
                      file_name=None):
 
@@ -36,13 +36,16 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
 
     Returns
     -----------
-    niimg
-        smoothed intensity image (output file suffix _lis_smooth)
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files in brackets)
+
+        * result (niimg): smoothed intensity image (_lis-smooth)
 
     Notes
     ----------
     Original Java module by Pierre-Louis Bazin
-    
+
     Important: this method assumes isotropic voxels
     '''
 
@@ -52,15 +55,15 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, intensity_image)
 
-        smoothed_file = os.path.join(output_dir, 
+        smoothed_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                       rootfile=intensity_image,
                                       suffix='lis-smooth'))
         if overwrite is False \
             and os.path.isfile(smoothed_file) :
-            
+
             print("skip computation (use existing results)")
-            output = {"result": load_volume(smoothed_file)}          
+            output = {"result": load_volume(smoothed_file)}
             return output
 
     # start VM if not already running
@@ -84,7 +87,7 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
     aff = intensity_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = intensity_data.shape
-    
+
     if (roi_mask_image!=None) :
         roi_mask_data = load_volume(data_image).get_data()
     else :
@@ -103,7 +106,7 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
     else :
         smoother.set4thDimension(1)
 
-    if (roi_mask_data!=None): 
+    if (roi_mask_data!=None):
         smoother.setROIMask(nighresjava.JArray('int')(
                                   (roi_mask_data.flatten('F')).astype(int).tolist()))
     smoother.setFWHMmm(float(fwhm_mm))

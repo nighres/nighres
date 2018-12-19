@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def apply_coordinate_mappings(image, mapping1, 
+def apply_coordinate_mappings(image, mapping1,
                         mapping2=None, mapping3=None, mapping4=None,
                         interpolation="nearest", padding="closest",
                         save_data=False, overwrite=False, output_dir=None,
@@ -45,13 +45,16 @@ def apply_coordinate_mappings(image, mapping1,
 
     Returns
     ----------
-    niimg
-       Result image (output file suffix _def_img)
-       
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files in brackets)
+
+        * result (niimg): Result image (_def-img)
+
     Notes
     ----------
     Original Java module by Pierre-Louis Bazin
-    
+
     '''
 
     print('\nApply coordinate mappings')
@@ -60,13 +63,13 @@ def apply_coordinate_mappings(image, mapping1,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, image)
 
-        deformed_file = os.path.join(output_dir, 
+        deformed_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                     rootfile=image,
                                     suffix='def-img'))
         if overwrite is False \
             and os.path.isfile(deformed_file) :
-            
+
             print("skip computation (use existing results)")
             output = {'result': load_volume(deformed_file)}
             return output
@@ -95,10 +98,10 @@ def apply_coordinate_mappings(image, mapping1,
     else:
         applydef.setImageDimensions(imgdim[0], imgdim[1], imgdim[2])
     applydef.setImageResolutions(imgres[0], imgres[1], imgres[2])
-    
+
     applydef.setImageToDeform(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
-    
+
     def1 = load_volume(mapping1)
     def1data = def1.get_data()
     aff = def1.affine
@@ -106,9 +109,10 @@ def apply_coordinate_mappings(image, mapping1,
     trgdim = def1data.shape
     applydef.setDeformationMapping1(nighresjava.JArray('float')(
                                     (def1data.flatten('F')).astype(float)))
-    applydef.setDeformation1Dimensions(def1data.shape[0],def1data.shape[1],def1data.shape[2])
+    applydef.setDeformation1Dimensions(def1data.shape[0],
+                                        def1data.shape[1],def1data.shape[2])
     applydef.setDeformationType1("mapping(voxels)")
-    
+
     if not (mapping2==None):
         def2 = load_volume(mapping2)
         def2data = def2.get_data()
@@ -117,9 +121,10 @@ def apply_coordinate_mappings(image, mapping1,
         trgdim = def2data.shape
         applydef.setDeformationMapping2(nighresjava.JArray('float')(
                                         (def2data.flatten('F')).astype(float)))
-        applydef.setDeformation2Dimensions(def2data.shape[0],def2data.shape[1],def2data.shape[2])
+        applydef.setDeformation2Dimensions(def2data.shape[0],
+                                        def2data.shape[1],def2data.shape[2])
         applydef.setDeformationType2("mapping(voxels)")
-        
+
         if not (mapping3==None):
             def3 = load_volume(mapping3)
             def3data = def3.get_data()
@@ -128,9 +133,10 @@ def apply_coordinate_mappings(image, mapping1,
             trgdim = def3data.shape
             applydef.setDeformationMapping3(nighresjava.JArray('float')(
                                             (def3data.flatten('F')).astype(float)))
-            applydef.setDeformation3Dimensions(def3data.shape[0],def3data.shape[1],def3data.shape[2])
+            applydef.setDeformation3Dimensions(def3data.shape[0],
+                                            def3data.shape[1],def3data.shape[2])
             applydef.setDeformationType3("mapping(voxels)")
-        
+
             if not (mapping4==None):
                 def4 = load_volume(mapping4)
                 def4data = def4.get_data()
@@ -138,10 +144,11 @@ def apply_coordinate_mappings(image, mapping1,
                 hdr = def4.header
                 trgdim = def4data.shape
                 applydef.setDeformationMapping4(nighresjava.JArray('float')(
-                                                (def4data.flatten('F')).astype(float)))
-                applydef.setDeformation4Dimensions(def4data.shape[0],def4data.shape[1],def4data.shape[2])
+                                        (def4data.flatten('F')).astype(float)))
+                applydef.setDeformation4Dimensions(def4data.shape[0],
+                                            def4data.shape[1],def4data.shape[2])
                 applydef.setDeformationType4("mapping(voxels)")
-        
+
     applydef.setInterpolationType(interpolation)
     applydef.setImagePadding(padding)
 

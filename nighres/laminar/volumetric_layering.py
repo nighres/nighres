@@ -43,11 +43,11 @@ def volumetric_layering(inner_levelset, outer_levelset,
         (suffix of output files in brackets)
 
         * depth (niimg): Continuous depth from 0 (inner surface) to 1
-          (outer surface) (_layering_depth)
+          (outer surface) (_layering-depth)
         * layers (niimg): Discrete layers from 1 (bordering inner surface) to
-          n_layers (bordering outer surface) (_layering_layers)
+          n_layers (bordering outer surface) (_layering-layers)
         * boundaries (niimg): Levelset representations of boundaries between
-          all layers in 4D (_layering_boundaries)
+          all layers in 4D (_layering-boundaries)
 
     Notes
     ----------
@@ -69,17 +69,17 @@ def volumetric_layering(inner_levelset, outer_levelset,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, inner_levelset)
 
-        depth_file = os.path.join(output_dir, 
+        depth_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                     rootfile=inner_levelset,
                                     suffix='layering-depth'))
 
-        layer_file = os.path.join(output_dir, 
+        layer_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                     rootfile=inner_levelset,
                                     suffix='layering-layers'))
 
-        boundary_file = os.path.join(output_dir, 
+        boundary_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                        rootfile=inner_levelset,
                                        suffix='layering-boundaries'))
@@ -87,10 +87,10 @@ def volumetric_layering(inner_levelset, outer_levelset,
             and os.path.isfile(depth_file) \
             and os.path.isfile(layer_file) \
             and os.path.isfile(boundary_file) :
-            
+
             print("skip computation (use existing results)")
-            output = {'depth': load_volume(depth_file), 
-                      'layers': load_volume(layer_file), 
+            output = {'depth': load_volume(depth_file),
+                      'layers': load_volume(layer_file),
                       'boundaries': load_volume(boundary_file)}
             return output
 

@@ -32,9 +32,12 @@ def profile_sampling(profile_surface_image, intensity_image,
 
     Returns
     -----------
-    niimg
-        4D profile image , where the 4th dimension represents the
-        profile for each voxel (output file suffix _profiles)
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files in brackets)
+
+        * result (niimg): 4D profile image , where the 4th dimension represents
+          the profile for each voxel (_lps-data)
 
     Notes
     ----------
@@ -47,13 +50,13 @@ def profile_sampling(profile_surface_image, intensity_image,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, intensity_image)
 
-        profile_file = os.path.join(output_dir, 
+        profile_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                       rootfile=intensity_image,
                                       suffix='lps-data'))
         if overwrite is False \
             and os.path.isfile(profile_file) :
-            
+
             print("skip computation (use existing results)")
             output = {'result': load_volume(profile_file)}
             return output

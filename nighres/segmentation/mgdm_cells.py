@@ -18,7 +18,7 @@ def mgdm_cells(contrast_image1, contrast_type1,
                       topology='wcs', topology_lut_dir=None,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
-    """ MGDM segmentation
+    """ MGDM cell segmentation
 
     Estimates cell structures using
     a Multiple Object Geometric Deformable Model (MGDM)
@@ -28,21 +28,25 @@ def mgdm_cells(contrast_image1, contrast_type1,
     contrast_image1: niimg
         First input image to perform segmentation on
     contrast_type1: str
-        Contrast type of first input image, must be in {"centroid-proba", 
-        "local-maxima","foreground-proba","image-intensities"}
+        {"centroid-proba", "local-maxima","foreground-proba",
+        "image-intensities"}
+        Contrast type of first input image
     contrast_image2: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type2
     contrast_type2: str, optional
-        Contrast type of second input image, must be in {"centroid-proba", 
-        "local-maxima","foreground-proba","image-intensities"}
+        {"centroid-proba", "local-maxima","foreground-proba",
+        "image-intensities"}
+        Contrast type of second input image
     contrast_image3: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type3
     contrast_type3: str, optional
-        Contrast type of third input image, must be in {"centroid-proba", 
-        "local-maxima","foreground-proba","image-intensities"}
-    stack_dimension: {'2D','3D'}, optional
+        {"centroid-proba", "local-maxima","foreground-proba",
+        "image-intensities"}
+        Contrast type of third input image
+    stack_dimension: str, optional
+        {'2D','3D'}
         Dimension of the data for processing, either a stack of independent
         2D slices or a fully 3D stack
     max_iterations: int, optional
@@ -50,7 +54,7 @@ def mgdm_cells(contrast_image1, contrast_type1,
         to 1 for quick testing of registration of priors, which does not
         perform true segmentation)
     min_change: float, optional
-        Minimum amount of change in the segmentation for MGDM to stop 
+        Minimum amount of change in the segmentation for MGDM to stop
         (default is 0.001)
     force_weight: float, optional
         Forces to drive MGDM to cell boundaries
@@ -61,15 +65,16 @@ def mgdm_cells(contrast_image1, contrast_type1,
     cell_threshold: float, optional
         Ratio of lower intensities from the local maximum to be included in
         a given cell (default is 0.1)
-    topology: {'wcs', 'no'}, optional
+    topology: str, optional
+        {'wcs', 'no'}
         Topology setting, choose 'wcs' (well-composed surfaces) for strongest
         topology constraint, 'no' for no topology constraint (default is 'wcs')
     topology_lut_dir: str, optional
         Path to directory in which topology files are stored (default is stored
         in TOPOLOGY_LUT_DIR)
-    save_data: bool
+    save_data: bool, optional
         Save output data to file (default is False)
-    overwrite: bool
+    overwrite: bool, optional
         Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
@@ -84,9 +89,9 @@ def mgdm_cells(contrast_image1, contrast_type1,
         (suffix of output files in brackets)
 
         * segmentation (niimg): Hard brain segmentation with topological
-          constraints (if chosen) (_mgdmc_seg)
+          constraints (if chosen) (_mgdmc-seg)
         * distance (niimg): Minimum distance to a segmentation boundary
-          (_mgdmc_dist)
+          (_mgdmc-dist)
 
     Notes
     ----------
@@ -106,7 +111,7 @@ def mgdm_cells(contrast_image1, contrast_type1,
 
     # check topology_lut_dir and set default if not given
     topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
-  
+
     # sanity check contrast types
     contrasts = [contrast_image1, contrast_image2, contrast_image3]
     ctypes = [contrast_type1, contrast_type2, contrast_type3]
@@ -119,21 +124,21 @@ def mgdm_cells(contrast_image1, contrast_type1,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, contrast_image1)
 
-        seg_file = os.path.join(output_dir, 
+        seg_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                   rootfile=contrast_image1,
                                   suffix='mgdmc-seg', ))
 
-        dist_file = os.path.join(output_dir, 
+        dist_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                    rootfile=contrast_image1,
                                    suffix='mgdmc-dist'))
         if overwrite is False \
             and os.path.isfile(seg_file) \
             and os.path.isfile(dist_file) :
-            
+
             print("skip computation (use existing results)")
-            output = {'segmentation': load_volume(seg_file), 
+            output = {'segmentation': load_volume(seg_file),
                       'distance': load_volume(dist_file)}
             return output
 
@@ -155,7 +160,7 @@ def mgdm_cells(contrast_image1, contrast_type1,
     mgdm.setDataWeight(force_weight)
     mgdm.setCurvatureWeight(curvature_weight)
     mgdm.setCellThreshold(cell_threshold)
-    
+
     mgdm.setTopology(topology)
 
     # load contrast image 1 and use it to set dimensions and resolution

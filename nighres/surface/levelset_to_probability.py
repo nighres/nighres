@@ -12,7 +12,7 @@ def levelset_to_probability(levelset_image, distance_mm=5,
 
     """Levelset to probability
 
-    Creates a probability map from the distance to a levelset surface 
+    Creates a probability map from the distance to a levelset surface
     representation.
 
     Parameters
@@ -21,9 +21,9 @@ def levelset_to_probability(levelset_image, distance_mm=5,
         Levelset image to be turned into probabilities
     distance_mm: float, optional
         Distance used for the range of probabilities in ]0,1[
-    save_data: bool
+    save_data: bool, optional
         Save output data to file (default is False)
-    overwrite: bool
+    overwrite: bool, optional
         Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
@@ -50,18 +50,18 @@ def levelset_to_probability(levelset_image, distance_mm=5,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, levelset_image)
 
-        proba_file = os.path.join(output_dir, 
+        proba_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                        rootfile=levelset_image,
                                        suffix='l2p-proba'))
 
         if overwrite is False \
             and os.path.isfile(proba_file) :
-            
+
             print("skip computation (use existing results)")
             output = {'result': load_volume(proba_file)}
             return output
-            
+
     # load the data
     lvl_img = load_volume(levelset_image)
     lvl_data = lvl_img.get_data()
@@ -74,7 +74,7 @@ def levelset_to_probability(levelset_image, distance_mm=5,
     distance = distance_mm/np.min(resolution)
     print("voxel spread: "+str(distance))
     p_data = 0.5*(np.maximum(-1,np.minimum(1,-lvl_data/distance))+1)
-    
+
     hdr['cal_min'] = np.nanmin(p_data)
     hdr['cal_max'] = np.nanmax(p_data)
     proba = nb.Nifti1Image(p_data, aff, hdr)

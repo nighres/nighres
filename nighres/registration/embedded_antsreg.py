@@ -68,7 +68,8 @@ def embedded_antsreg(source_image, target_image,
     regularization: {'Low', 'Medium', 'High'}
         Regularization preset for the SyN deformation (default is 'Medium')
     convergence: float
-        Threshold for convergence, can make the algorithm very slow (default is convergence)
+        Threshold for convergence, can make the algorithm very slow
+        (default is convergence)
     ignore_affine: bool
         Ignore the affine matrix information extracted from the image header
         (default is False)
@@ -91,25 +92,27 @@ def embedded_antsreg(source_image, target_image,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * transformed_source (niimg): Deformed source image (_ants_def)
-        * mapping (niimg): Coordinate mapping from source to target (_ants_map)
-        * inverse (niimg): Inverse coordinate mapping from target to source (_ants_invmap)
+        * transformed_source (niimg): Deformed source image (_ants-def)
+        * mapping (niimg): Coordinate mapping from source to target (_ants-map)
+        * inverse (niimg): Inverse coordinate mapping from target to source
+          (_ants-invmap)
 
     Notes
     ----------
     Port of the CBSTools Java module by Pierre-Louis Bazin. The main algorithm
-    is part of the ANTs software by Brian Avants and colleagues [1]_. The interfacing
-    with ANTs is performed through Nipype [2]_. Parameters have been set to values
-    commonly found in neuroimaging scripts online, but not necessarily optimal.
+    is part of the ANTs software by Brian Avants and colleagues [1]_. The
+    interfacing with ANTs is performed through Nipype [2]_. Parameters have
+    been set to values commonly found in neuroimaging scripts online, but not
+    necessarily optimal.
 
     References
     ----------
     .. [1] Avants et al (2008), Symmetric diffeomorphic
        image registration with cross-correlation: evaluating automated labeling
        of elderly and neurodegenerative brain, Med Image Anal. 12(1):26-41
-    .. [2] Gorgolewski et al (2011) Nipype: a flexible, lightweight and extensible
-       neuroimaging data processing framework in python. Front Neuroinform 5.
-       doi:10.3389/fninf.2011.00013
+    .. [2] Gorgolewski et al (2011) Nipype: a flexible, lightweight and
+       extensible neuroimaging data processing framework in python. Front
+       Neuroinform 5. doi:10.3389/fninf.2011.00013
     """
 
     print('\nEmbedded ANTs Registration')
@@ -619,7 +622,8 @@ def embedded_antsreg_2d(source_image, target_image,
     interpolation: {'NearestNeighbor', 'Linear'}
         Interpolation for the registration result (default is 'NearestNeighbor')
     convergence: flaot
-        Threshold for convergence, can make the algorithm very slow (default is convergence)
+        Threshold for convergence, can make the algorithm very slow
+        (default is convergence)
     ignore_affine: bool
         Ignore the affine matrix information extracted from the image header
         (default is False)
@@ -642,25 +646,27 @@ def embedded_antsreg_2d(source_image, target_image,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * transformed_source (niimg): Deformed source image (_ants_def)
-        * mapping (niimg): Coordinate mapping from source to target (_ants_map)
-        * inverse (niimg): Inverse coordinate mapping from target to source (_ants_invmap)
+        * transformed_source (niimg): Deformed source image (_ants-def)
+        * mapping (niimg): Coordinate mapping from source to target (_ants-map)
+        * inverse (niimg): Inverse coordinate mapping from target to source
+          (_ants-invmap)
 
     Notes
     ----------
     Port of the CBSTools Java module by Pierre-Louis Bazin. The main algorithm
-    is part of the ANTs software by Brian Avants and colleagues [1]_. The interfacing
-    with ANTs is performed through Nipype [2]_. Parameters have been set to values
-    commonly found in neuroimaging scripts online, but not necessarily optimal.
+    is part of the ANTs software by Brian Avants and colleagues [1]_. The
+    interfacing with ANTs is performed through Nipype [2]_. Parameters have been
+    set to values commonly found in neuroimaging scripts online, but not
+    necessarily optimal.
 
     References
     ----------
     .. [1] Avants et al (2008), Symmetric diffeomorphic
        image registration with cross-correlation: evaluating automated labeling
        of elderly and neurodegenerative brain, Med Image Anal. 12(1):26-41
-    .. [2] Gorgolewski et al (2011) Nipype: a flexible, lightweight and extensible
-       neuroimaging data processing framework in python. Front Neuroinform 5.
-       doi:10.3389/fninf.2011.00013
+    .. [2] Gorgolewski et al (2011) Nipype: a flexible, lightweight and
+       extensible neuroimaging data processing framework in python.
+       Front Neuroinform 5. doi:10.3389/fninf.2011.00013
     """
 
     print('\nEmbedded ANTs Registration')
@@ -671,7 +677,7 @@ def embedded_antsreg_2d(source_image, target_image,
         from nipype.interfaces.ants import ApplyTransforms
     except ImportError:
         print('Error: Nipype and/or ANTS could not be imported, they are required'
-                +'in order to run this module. \n (aborting)')
+                +' in order to run this module. \n (aborting)')
         return None
 
     # make sure that saving related parameters are correct
