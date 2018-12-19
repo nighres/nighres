@@ -47,5 +47,5 @@ setup(
     keywords='MRI high-resolution laminar subcortex',
     packages=find_packages(),
     include_package_data=True,
-    #install_requires=['numpy', 'nibabel', 'pandas', 'psutil', 'nipype', 'jcc'],
+    install_requires=['numpy', 'nibabel', 'pandas', 'psutil'],
 )
