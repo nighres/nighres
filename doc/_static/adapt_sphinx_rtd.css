@@ -11,6 +11,10 @@
   margin-bottom: 0 !important;
 }
 
+.wy-side-nav-search img {
+  padding: 0px 0px 0px 0px !important;
+}
+
 .version {
   color: #4a74b5 !important;
 }
