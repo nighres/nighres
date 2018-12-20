@@ -1,8 +1,8 @@
 # Plots are currently included as images, because example is too big to
 # run on readthedocs servers
 """
-Brain co-registration from MP2RAGE data
-========================================
+Multiatlas Segmentation
+========================
 
 This example shows how to perform multi-atlas segmentation based on MP2RAGE
 data by performing the following steps:
