@@ -5,7 +5,7 @@ filter\_ridge\_structures
 
 .. This snippet automatically includes a sphinx gallery below the
 .. documentation with examples that use the function
-.. include:: ../gen_modules/backreferences/nighres.cortex.filter_ridge_structures.examples
+.. include:: ../gen_modules/backreferences/nighres.filtering.filter_ridge_structures.examples
 .. raw:: html
 
     <div style='clear:both'></div>

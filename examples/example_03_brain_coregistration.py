@@ -2,12 +2,12 @@
 # run on readthedocs servers
 """
 Brain co-registration from MP2RAGE data
-=======================================
+========================================
 
 This example shows how to co-register MP2RAGE data
 by performing the following steps:
 
-1. Downloading two open MP2RAGE datasets using 
+1. Downloading two open MP2RAGE datasets using
     :func:`nighres.data.download_7T_TRT`
 2. Remove the skull and create a brain mask using
     :func:`nighres.brain.mp2rage_skullstripping`
@@ -101,9 +101,9 @@ if not skip_plots:
 #syn_results = nighres.registration.embedded_syn(
 #                        source_image=skullstripping_results1['t1map_masked'],
 #                        target_image=skullstripping_results2['t1map_masked'],
-#                        coarse_iterations=0, 
+#                        coarse_iterations=0,
 #                        medium_iterations=0, fine_iterations=0,
-#                        run_rigid_first=True, cost_function='MutualInformation', 
+#                        run_rigid_first=True, cost_function='MutualInformation',
 #                        interpolation='NearestNeighbor',
 #                        save_data=True, file_name="sub001_sess1",
 #                        output_dir=out_dir, overwrite=True)
@@ -112,9 +112,9 @@ syn_results = nighres.registration.embedded_antsreg(
                         source_image=skullstripping_results1['t1map_masked'],
                         target_image=skullstripping_results2['t1map_masked'],
                         run_rigid=True, run_syn=True,
-                        rigid_iterations=1000, coarse_iterations=40, 
+                        rigid_iterations=1000, coarse_iterations=40,
                         medium_iterations=0, fine_iterations=0,
-                        cost_function='MutualInformation', 
+                        cost_function='MutualInformation',
                         interpolation='NearestNeighbor',
                         save_data=True, file_name="sub001_sess1",
                         output_dir=out_dir, overwrite=True)
@@ -161,8 +161,8 @@ if not skip_plots:
 #############################################################################
 # References
 # -----------
-# .. [1] Avants et al (2008). Symmetric diffeomorphic image registration with 
-#    cross-correlation: evaluating automated labeling of elderly and 
+# .. [1] Avants et al (2008). Symmetric diffeomorphic image registration with
+#    cross-correlation: evaluating automated labeling of elderly and
 #    neurodegenerative brain. DOI: 10.1016/j.media.2007.06.004
 # .. [2] Gorgolewski et al (2015). A high resolution 7-Tesla resting-state fMRI
 #    test-retest dataset with cognitive and physiological measures.

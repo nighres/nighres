@@ -34,8 +34,11 @@ tools easier to install, use and extend.
 
    brain/index
    cortex/index
-   surface/index
+   filtering/index
    laminar/index
+   registration/index
+   statistics/index
+   surface/index
    data/index
    io/index
 

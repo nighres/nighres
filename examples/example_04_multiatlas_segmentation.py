@@ -2,7 +2,7 @@
 # run on readthedocs servers
 """
 Brain co-registration from MP2RAGE data
-=======================================
+========================================
 
 This example shows how to perform multi-atlas segmentation based on MP2RAGE
 data by performing the following steps:
@@ -190,7 +190,7 @@ if not skip_plots:
 
 #############################################################################
 # Apply deformations to segmentations
-# ----------------------------------
+# ------------------------------------
 # We use the computed deformation to transform MGDM segmentations
 deformed1 = nighres.registration.apply_coordinate_mappings(
                         image=mgdm_results1['segmentation'],
@@ -216,7 +216,7 @@ if not skip_plots:
 
 #############################################################################
 # Trasnform a selected labels into levelset representation
-# ----------------------------------
+# ---------------------------------------------------------
 # We use the deformed MGDM segmentations
 
 # label 32 = left caudate

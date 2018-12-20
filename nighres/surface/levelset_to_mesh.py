@@ -15,7 +15,6 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
 
     Creates a triangulated mesh from the distance to a levelset surface
     representation using a connectivity-consistent marching cube algorithm.
-    Original algorithm from _[1] and adated from _[2].
 
     Parameters
     ----------
@@ -50,7 +49,8 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
 
     Notes
     ----------
-    Ported from original Java module by Pierre-Louis Bazin
+    Ported from original Java module by Pierre-Louis Bazin. Original algorithm
+    from [1]_ and adapted from [2]_.
 
     References
     ----------
