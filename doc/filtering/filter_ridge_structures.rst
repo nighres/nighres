@@ -1,7 +1,7 @@
 filter\_ridge\_structures
 ==========================
 
-.. autofunction:: nighres.cortex.filter_ridge_structures
+.. autofunction:: nighres.filtering.filter_ridge_structures
 
 .. This snippet automatically includes a sphinx gallery below the
 .. documentation with examples that use the function

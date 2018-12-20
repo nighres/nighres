@@ -1,7 +1,7 @@
 segmentation\_statistics
 =========================
 
-.. autofunction:: nighres.cortex.segmentation_statistics
+.. autofunction:: nighres.statistics.segmentation_statistics
 
 .. This snippet automatically includes a sphinx gallery below the
 .. documentation with examples that use the function

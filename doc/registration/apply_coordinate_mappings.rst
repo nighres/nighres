@@ -1,7 +1,7 @@
 apply\_coordinate\_mappings
 ===========================
 
-.. autofunction:: nighres.cortex.apply_coordinate_mappings
+.. autofunction:: nighres.registration.apply_coordinate_mappings
 
 .. This snippet automatically includes a sphinx gallery below the
 .. documentation with examples that use the function

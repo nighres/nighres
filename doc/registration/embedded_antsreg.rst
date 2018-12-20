@@ -1,7 +1,7 @@
 embedded\_antsreg
 ==================
 
-.. autofunction:: nighres.cortex.embedded_antsreg
+.. autofunction:: nighres.registration.embedded_antsreg
 
 .. This snippet automatically includes a sphinx gallery below the
 .. documentation with examples that use the function
