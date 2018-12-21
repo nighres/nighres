@@ -40,8 +40,7 @@ def flash_t2s_fitting(image_list, te_list,
         * t2s (niimg): Map of estimated T2* times (_qt2fit-t2s)
         * r2s (niimg): Map of estimated R2* relaxation rate (_qt2fit-r2s)
         * s0 (niimg): Estimated PD weighted image at TE=0 (_qt2fit-s0)
-        * residuals (niimg): Estimated residuals between input and estimated
-        echoes (_qt2fit-err)
+        * residuals (niimg): Estimated residuals between input and estimated echoes (_qt2fit-err)
 
     Notes
     ----------

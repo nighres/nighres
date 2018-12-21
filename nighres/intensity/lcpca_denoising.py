@@ -57,8 +57,7 @@ def lcpca_denoising(image_list, phase_list=None,
 
         * denoised ([niimg]): The list of denoised input images (_lcpca_den)
         * dimensions (niimg): Map of the estimated local dimensions (_lcpca_dim)
-        * residuals (niimg): Estimated residuals between input and denoised
-            images (_lcpca_err)
+        * residuals (niimg): Estimated residuals between input and denoised images (_lcpca_err)
 
     Notes
     ----------

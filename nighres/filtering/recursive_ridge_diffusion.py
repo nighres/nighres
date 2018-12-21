@@ -24,32 +24,32 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     Extracts planar of tubular structures across multiple scales, with an
     optional directional bias.
 
+
     Parameters
     ----------
     input_image: niimg
         Input image
-	ridge_intensities: {'bright','dark','both'}
-	    Which intensities to consider for the filtering
-	ridge_filter: {'2D','1D','0D'}
-	    Whether to filter for 2D ridges, 1D vessels, or 0D holes
-	surface_levelset: niimg, optional
-	    Level set surface to restrict the orientation of the detected features
-	orientation: {'undefined','parallel','orthogonal'}
-	    The orientation of features to keep with regard to the surface or
-        its normal
-	loc_prior: niimg, optional
-	    Location prior image to restrict the search for features
-	min_scale: int
-	    Minimum scale (in voxels) to look for features (default is 0)
+    ridge_intensities: {'bright','dark','both'}
+        Which intensities to consider for the filtering
+    ridge_filter: {'2D','1D','0D'}
+        Whether to filter for 2D ridges, 1D vessels, or 0D holes
+    surface_levelset: niimg, optional
+        Level set surface to restrict the orientation of the detected features
+    orientation: {'undefined','parallel','orthogonal'}
+        The orientation of features to keep with regard to the surface or its normal
+    loc_prior: niimg, optional
+        Location prior image to restrict the search for features
+    min_scale: int
+        Minimum scale (in voxels) to look for features (default is 0)
     max_scale: int
-	    Maximum scale (in voxels) to look for features (default is 3)
-	diffusion_factor: float
-	    Scaling factor for the diffusion weighting in [0,1] (default is 1.0)
-	similarity_scale: float
-	    Scaling of the similarity function as a factor of intensity range
-	max_iter: int
-	    Maximum number of diffusion iterations
-	max_diff: int
+        Maximum scale (in voxels) to look for features (default is 3)
+    diffusion_factor: float
+        Scaling factor for the diffusion weighting in [0,1] (default is 1.0)
+    similarity_scale: float
+        Scaling of the similarity function as a factor of intensity range
+    max_iter: int
+        Maximum number of diffusion iterations
+    max_diff: int
         Maximum difference to stop the diffusion
     save_data: bool
         Save output data to file (default is False)
@@ -63,19 +63,16 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
 
     Returns
     ----------
-   	dict
+    dict
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
         * filter (niimg): raw filter response (_rrd-filter)
-        * propagation (niimg): propagated probabilistic response after
-          diffusion (_rrd-propag)
+        * propagation (niimg): propagated probabilistic response after diffusion (_rrd-propag)
         * scale (niimg): scale of the detection filter  (_rrd-scale)
         * ridge_dir (niimg): estimated local ridge direction (_rrd-dir)
-        * ridge_pv (niimg): ridge partial volume map, taking size into account
-          (_rrd-pv)
-        * ridge_size (niimg): estimated size of each detected component
-          (rrd-size)
+        * ridge_pv (niimg): ridge partial volume map, taking size into account (_rrd-pv)
+        * ridge_size (niimg): estimated size of each detected component (rrd-size)
 
     Notes
     ----------
