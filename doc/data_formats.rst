@@ -1,7 +1,7 @@
 .. _data-formats:
 
-Data handling and the niimg
-============================
+Data handling and formats
+==========================
 
 Nighres represents data internally using `NibabelSpatialImage objects
 <http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage>`_

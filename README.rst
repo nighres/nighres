@@ -33,18 +33,19 @@ In order to run Nighres, you will need:
 
 * python >= 3.5
 * Java JDK >= 1.7
-* JCC >=3.0
+* JCC >= 3.0
 
 For instance, in Debian/Ubuntu (amd64 systems):
 
     sudo apt-get install openjdk-8-jdk
     export JCC_JDK=/usr/lib/jvm/java-8-openjdk-amd64
-    pip3 install jcc
+    python3 -m pip install jcc    (or just pip install jcc if Python 3 is your default)
 
 For some functionalities you need extra packages
 
-* nipype & ANTs (for registration using ANTs)
-* pandas (for working with surface meshes)
+* Nipype & ANTs (for registration using ANTs)
+* Pandas (for working with surface meshes)
+* Nilearn (for plotting in the examples)
 
 
 Docker

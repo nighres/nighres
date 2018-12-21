@@ -7,8 +7,8 @@ Requirements
 To build Nighres you need:
 
 * Python 3.5 or higher
-* `JCC <http://jcc.readthedocs.io/en/latest/>`_ 3
 * Java JDK 1.7 or higher
+* `JCC 3.0 <https://pypi.org/project/JCC/>`_ or higher
 
 
 The following Python packages are automatically installed with Nighres
@@ -45,7 +45,9 @@ Build Nighres
 
     sudo apt-get install openjdk-8-jdk
     export JCC_JDK=/usr/lib/jvm/java-8-openjdk-amd64
-    pip install jcc
+    python3 -m pip install jcc
+
+(or just pip install jcc if Python 3 is your default)
 
 2. Navigate to the Nighres directory you downloaded (and unpacked) and run the build script::
 
