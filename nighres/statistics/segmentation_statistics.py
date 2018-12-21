@@ -25,8 +25,7 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
         Input intensity image for intensity-based statistics
     template: niimg, optional
         Input template segmentation for comparisons
-    statistics: str, optional
-         {"Voxels", "Volume", "Mean_intensity", "Std_intensity",
+    statistics: {"Voxels", "Volume", "Mean_intensity", "Std_intensity",
           "10_intensity","25_intensity","50_intensity","75_intensity",
           "90_intensity", "Volumes", "Dice_overlap", "Jaccard_overlap",
           "Volume_difference", "False_positives","False_negatives",

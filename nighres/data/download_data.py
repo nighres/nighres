@@ -2,10 +2,9 @@ import os
 from urllib.request import urlretrieve
 
 
-# TODO: maybe add option to download different parts of the dataset
 def download_7T_TRT(data_dir, overwrite=False, subject_id='sub001_sess1'):
     """
-    Downloads the MP2RAGE data of subject 001, session 1 of the 7T Test-Retest
+    Downloads the MP2RAGE data from the 7T Test-Retest
     dataset published by Gorgolewski et al (2015) [1]_
 
     Parameters
@@ -15,6 +14,8 @@ def download_7T_TRT(data_dir, overwrite=False, subject_id='sub001_sess1'):
         subdirectory called '7T_TRT' will be created in this location.
     overwrite: bool
         Overwrite existing files in the same exact path (default is False)
+    subject_id: 'sub001_sess1', 'sub002_sess1', 'sub003_sess1'}
+        Which dataset to download (default is 'sub001_sess1')
 
     Returns
     ----------
@@ -47,7 +48,7 @@ def download_7T_TRT(data_dir, overwrite=False, subject_id='sub001_sess1'):
         file_sources = [nitrc + x for x in ['10852', '10853', '10854']]
     elif subject_id is 'sub003_sess1':
         file_sources = [nitrc + x for x in ['10855', '10856', '10857']]
-      
+
     file_targets = [os.path.join(data_dir, filename) for filename in
                     [subject_id+'_INV2.nii.gz',
                      subject_id+'_T1map.nii.gz',

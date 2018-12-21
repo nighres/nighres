@@ -23,14 +23,11 @@ def topology_correction(image, shape_type,
     ----------
     image: niimg
         Image representing the shape of interest
-    shape_type: str
-        {'binary_object','probability_map','signed_distance_function'}
+    shape_type: {'binary_object','probability_map','signed_distance_function'}
         Which type of image is used as input
-    connectivity: str, optional
-        {'wcs','6/18','6/26','18/6','26/6'}
+    connectivity: {'wcs','6/18','6/26','18/6','26/6'}
         What connectivity type to use (default is wcs: well-composed surfaces)
-    propagation: str, optional
-        {'object->background','background->object'}
+    propagation: {'object->background','background->object'}
         Which direction to use to enforce topology changes
         (default is 'object->background' )
     minimum_distance: float, optional

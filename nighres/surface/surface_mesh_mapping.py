@@ -26,8 +26,7 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
         Mesh model of the surface
     inflated_mesh: mesh, optional
         Mesh model of the inflated surface
-    mapping_method: str, optional
-        {"closest_point","linear_interp","highest_value"}, optional
+    mapping_method: {"closest_point","linear_interp","highest_value"}, optional
         Choice of mapping method
     save_data: bool, optional
         Save output data to file (default is False)

@@ -14,7 +14,7 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
                       file_name=None):
     """ Total Variation Filtering
 
-    Total variation filtering, based on _[1]
+    Total variation filtering.
 
     Parameters
     ----------

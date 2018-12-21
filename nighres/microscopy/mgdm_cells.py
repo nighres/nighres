@@ -27,26 +27,22 @@ def mgdm_cells(contrast_image1, contrast_type1,
     ----------
     contrast_image1: niimg
         First input image to perform segmentation on
-    contrast_type1: str
-        {"centroid-proba", "local-maxima","foreground-proba",
+    contrast_type1: {"centroid-proba", "local-maxima","foreground-proba",
         "image-intensities"}
         Contrast type of first input image
     contrast_image2: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type2
-    contrast_type2: str, optional
-        {"centroid-proba", "local-maxima","foreground-proba",
-        "image-intensities"}
+    contrast_type2: str, {"centroid-proba", "local-maxima","foreground-proba",
+        "image-intensities"}, optional
         Contrast type of second input image
     contrast_image3: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type3
-    contrast_type3: str, optional
-        {"centroid-proba", "local-maxima","foreground-proba",
-        "image-intensities"}
+    contrast_type3: {"centroid-proba", "local-maxima","foreground-proba",
+        "image-intensities"}, optional
         Contrast type of third input image
-    stack_dimension: str, optional
-        {'2D','3D'}
+    stack_dimension: {'2D','3D'}, optional
         Dimension of the data for processing, either a stack of independent
         2D slices or a fully 3D stack
     max_iterations: int, optional
@@ -65,8 +61,7 @@ def mgdm_cells(contrast_image1, contrast_type1,
     cell_threshold: float, optional
         Ratio of lower intensities from the local maximum to be included in
         a given cell (default is 0.1)
-    topology: str, optional
-        {'wcs', 'no'}
+    topology: {'wcs', 'no'}, optional
         Topology setting, choose 'wcs' (well-composed surfaces) for strongest
         topology constraint, 'no' for no topology constraint (default is 'wcs')
     topology_lut_dir: str, optional

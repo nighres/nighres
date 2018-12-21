@@ -24,11 +24,9 @@ def filter_ridge_structures(input_image,
     ----------
     input_image: niimg
         Image containing structure-of-interest
-    structure_intensity: str
-        {'bright', 'dark', 'both}
+    structure_intensity: {'bright', 'dark', 'both}
         Image intensity of structure-of-interest'
-    output_type: str
-        {'probability','intensity'}
+    output_type: {'probability','intensity'}
         Whether the image should be normalized to reflect probabilities
     use_strict_min_max_filter: bool, optional
         Choose between the more specific recursive ridge filter or a more

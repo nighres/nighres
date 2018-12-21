@@ -28,16 +28,13 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     ----------
     input_image: niimg
         Input image
-	ridge_intensities: str
-        {'bright','dark','both'}
+	ridge_intensities: {'bright','dark','both'}
 	    Which intensities to consider for the filtering
-	ridge_filter: str
-        {'2D','1D','0D'}
+	ridge_filter: {'2D','1D','0D'}
 	    Whether to filter for 2D ridges, 1D vessels, or 0D holes
 	surface_levelset: niimg, optional
 	    Level set surface to restrict the orientation of the detected features
-	orientation: str
-        {'undefined','parallel','orthogonal'}
+	orientation: {'undefined','parallel','orthogonal'}
 	    The orientation of features to keep with regard to the surface or
         its normal
 	loc_prior: niimg, optional
