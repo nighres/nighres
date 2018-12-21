@@ -35,13 +35,18 @@ the `IMCN imaging toolkit <https://github.com/IMCN-UvA/imcn-imaging>`_.
 
    brain/index
    cortex/index
+   data/index
    filtering/index
+   intensity/index
+   io/index
    laminar/index
+   microscopy/index
    registration/index
+   shape/index
    statistics/index
    surface/index
-   data/index
-   io/index
+
+
 
 .. toctree::
    :maxdepth: 2

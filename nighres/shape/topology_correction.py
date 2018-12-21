@@ -17,7 +17,7 @@ def topology_correction(image, shape_type,
     """Topology correction
 
     Corrects the topology of a binary image, a probability map or a levelset
-    surface to spherical with a fast marching technique _[1].
+    surface to spherical with a fast marching technique [1]_.
 
     Parameters
     ----------

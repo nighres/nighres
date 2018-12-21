@@ -1,5 +1,5 @@
-cruise\_cortex\_extraction
-==========================
+total\_variation\_filtering
+===========================
 
 .. autofunction:: nighres.filtering.total_variation_filtering
 
