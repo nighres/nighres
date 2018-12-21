@@ -31,38 +31,15 @@ def generate_coordinate_mapping(reference_image,
 
     Parameters
     ----------
-    source_image: niimg
-        Image to register
-    target_image: niimg
-        Reference image to match
-    run_rigid: bool
-        Whether or not to run a rigid registration first (default is False)
-    rigid_iterations: float
-        Number of iterations in the rigid step (default is 1000)
-    run_affine: bool
-        Whether or not to run a affine registration first (default is False)
-    affine_iterations: float
-        Number of iterations in the affine step (default is 1000)
-    run_syn: bool
-        Whether or not to run a SyN registration (default is True)
-    coarse_iterations: float
-        Number of iterations at the coarse level (default is 40)
-    medium_iterations: float
-        Number of iterations at the medium level (default is 50)
-    fine_iterations: float
-        Number of iterations at the fine level (default is 40)
-    cost_function: {'CrossCorrelation', 'MutualInformation'}
-        Cost function for the registration (default is 'MutualInformation')
-    interpolation: {'NearestNeighbor', 'Linear'}
-        Interpolation for the registration result (default is 'NearestNeighbor')
-    convergence: float
-        Threshold for convergence, can make the algorithm very slow (default is convergence)
-    ignore_affine: bool
-        Ignore the affine matrix information extracted from the image header
-        (default is False)
-    ignore_header: bool
-        Ignore the orientation information and affine matrix information 
-        extracted from the image header (default is False)
+    reference_image: niimg
+        Image to generate a coordinate mapping from, listing its X,Y,Z coordinates
+    source_image: niimg,  optional
+        In case the mapping is from a source and target in different coordinate
+        spaces, this image represents the source space
+    transform_matrix: niimg, optional
+        Whether to use a MIPAV formatted transformation matrix to define the mapping
+    invert_matrix: bool
+        Whether or not to invert the transformation, if given
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -79,9 +56,7 @@ def generate_coordinate_mapping(reference_image,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * transformed_source (niimg): Deformed source image (_ants_def)
-        * mapping (niimg): Coordinate mapping from source to target (_ants_map)
-        * inverse (niimg): Inverse coordinate mapping from target to source (_ants_invmap) 
+        * result (niimg): Coordinate mapping of the reference image (_coord-map)
 
     Notes
     ----------
@@ -162,27 +137,11 @@ def generate_coordinate_mapping(reference_image,
                                 + transform[Z,Z]*z*rtz \
                                 + transform[Z,T])/rsz
                 
-    mapping_img = nb.Nifti1Image(src_coord, source.affine, source.header)
-    src_map_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
-                                                        rootfile=source_image,
-                                                        suffix='tmp_srccoord'))
+    mapping_img = nb.Nifti1Image(coord, ref_affine, ref_header)
+
     if save:
-        save_volume(src_map_file, src_map)
-    for x in range(ntx):
-        for y in range(nty):
-            for z in range(ntz):
-                trg_coord[x,y,z,X] = x
-                trg_coord[x,y,z,Y] = y
-                trg_coord[x,y,z,Z] = z
-    trg_map = nb.Nifti1Image(trg_coord, target.affine, target.header)
-    trg_map_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
-                                                        rootfile=source_image,
-                                                        suffix='tmp_trgcoord'))
-
-    # collect outputs and potentially save
-    mapping_img = nb.Nifti1Image(nb.load(mapping.outputs.output_image).get_data(), 
-                                    target.affine, target.header)
-
+        save_volume(mapping_file, mapping_img)
+ 
     outputs = {'result': mapping_img}
 
     return outputs
