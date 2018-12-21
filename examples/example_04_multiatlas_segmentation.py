@@ -215,7 +215,7 @@ if not skip_plots:
 ############################################################################
 
 #############################################################################
-# Trasnform a selected labels into levelset representation
+# Transform a selected label into levelset representation
 # ---------------------------------------------------------
 # We use the deformed MGDM segmentations
 
