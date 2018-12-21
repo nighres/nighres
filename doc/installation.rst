@@ -1,6 +1,8 @@
 Installing Nighres
 ===================
 
+Please see :ref:`trouble` if you run into errors during installation.
+
 Requirements
 ------------
 
@@ -13,8 +15,8 @@ To build Nighres you need:
 
 The following Python packages are automatically installed with Nighres
 
-* `Numpy <http://www.numpy.org/>`_
-* `Nibabel <http://nipy.org/nibabel/>`_
+* `numpy <http://www.numpy.org/>`_
+* `nibabel <http://nipy.org/nibabel/>`_
 * `psutils <https://pypi.org/project/psutil/>`_
 
 For further dependencies of specific interfaces see :ref:`add-deps`.
@@ -47,21 +49,14 @@ Build Nighres
     export JCC_JDK=/usr/lib/jvm/java-8-openjdk-amd64
     python3 -m pip install jcc
 
-(or just pip install jcc if Python 3 is your default)
-
-2. Navigate to the Nighres directory you downloaded (and unpacked) and run the build script::
+2. Navigate to the Nighres directory you downloaded and unpacked, and run the build script::
 
     ./build.sh
-
-If you experience errors regarding missing java libraries (such as ljvm/libjvm or ljava/libjava), although you install Java JDK, it can be that JCC does not find the libraries for some reason. It can help to search for the "missing" library and make a symbolic link to it like this::
-
-    sudo find / -type f -name libjvm.so   (this returns e.g. /usr/lib/jvm/java-11-openjdk-amd64/lib/server/libjvm.so)
-    sudo ln -s /usr/lib/jvm/java-11-openjdk-amd64/lib/server/libjvm.so /usr/lib/libjvm.so
 
 
 3. Install the Python package::
 
-    pip install .
+    python3 -m pip install .
 
 
 Testing the installation
@@ -69,7 +64,7 @@ Testing the installation
 
 You can often catch installation problems by simply import Nighres in Python. Make sure to navigate out of the directory from which you installed to make sure Nighres has actually been installed correctly and can be accessed from any location ::
 
-    python -c "import nighres"
+    python3 -c "import nighres"
 
 If that works, you can try running one of the examples. You can find them inside the unpacked Nighres directory, in the subdirectory *examples*. Alternatively, you can also download the :ref:`examples <examples-index>` from the online documentation.
 
@@ -135,3 +130,37 @@ Building the documentation
 * `sphinx-rtd-theme <http://docs.readthedocs.io/en/latest/theme.html>`_ (pip install sphinx-rtd-theme)
 * `pillow <https://python-pillow.org/>`_ (pip install pillow)
 * `mock <https://pypi.org/project/mock/>`_
+
+
+.. _trouble:
+
+Troubleshooting
+---------------
+
+If you experience errors not listed here, please help us by reporting them through `neurostars.org <neurostars.org>`_ using the tag **nighres**, or on `github <https://github.com/nighres/nighres/issues>`_. Or if you solve them yourself help others by contributing your solution here (see :ref:`Developers guide <devguide>`)
+
+
+Missing Java libraries
+~~~~~~~~~~~~~~~~~~~~~~~
+
+If you get errors regarding missing java libraries (such as ljvm/libjvm or ljava/libjava), although you install Java JDK, it means that JCC does not find the libraries. It can help to search for the "missing" library and make a symbolic link to it like this::
+
+    sudo find / -type f -name libjvm.so
+    >> /usr/lib/jvm/java-11-openjdk-amd64/lib/server/libjvm.so
+    sudo ln -s /usr/lib/jvm/java-11-openjdk-amd64/lib/server/libjvm.so /usr/lib/libjvm.so
+
+Missing Python packages
+~~~~~~~~~~~~~~~~~~~~~~~
+
+If you get errors about Python packages not being installed, it might be that you are trying to run a function that requires :ref:`add-deps`. If packages are reported missing that you think you have installed, make sure that they are installed under the same python installation as nighres. They should be listed when you run::
+
+    python3 -m pip list
+
+If they aren't, install them using::
+
+    python3 -m pip install <package_name>
+
+If there is still confusion, make sure nighres is installed in the same directory that your python3 -m pip command points to. These two commands should give the same base directory::
+
+    python3 -m pip
+    python3 -c 'import nighres; print(nighres.__file__)'
