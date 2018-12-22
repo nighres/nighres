@@ -25,7 +25,7 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
         Input intensity image for intensity-based statistics
     template: niimg, optional
         Input template segmentation for comparisons
-    statistics: {"Voxels", "Volume","Mean_intensity","Std_intensity", "10_intensity","25_intensity","50_intensity","75_intensity","90_intensity","Volumes","Dice_overlap","Jaccard_overlap","Volume_difference","False_positives","False_negatives","Dilated_Dice_overlap","Dilated_false_positive","Dilated_false_negative","Dilated_false_negative_volume","Dilated_false_positive_volume","Detected_clusters","False_detections","Cluster_numbers", "Mean_cluster_sizes","Cluster_maps","Average_surface_distance","Average_surface_difference","Average_squared_surface_distance","Hausdorff_distance"}
+    statistics: {"Voxels", "Volume", "Mean_intensity", "Std_intensity", "10_intensity", "25_intensity", "50_intensity", "75_intensity", "90_intensity", "Volumes", "Dice_overlap", "Jaccard_overlap", "Volume_difference", "False_positives", "False_negatives", "Dilated_Dice_overlap", "Dilated_false_positive", "Dilated_false_negative", "Dilated_false_negative_volume", "Dilated_false_positive_volume", "Detected_clusters", "False_detections", "Cluster_numbers", "Mean_cluster_sizes", "Cluster_maps", "Average_surface_distance", "Average_surface_difference", "Average_squared_surface_distance", "Hausdorff_distance"}
          Statistics to compute
     output_csv: str, optional
         File name of the statistics file to generate or expand
