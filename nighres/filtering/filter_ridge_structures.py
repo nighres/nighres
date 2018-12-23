@@ -15,7 +15,7 @@ def filter_ridge_structures(input_image,
                             file_name=None):
 
     """ Filter Ridge Structures
-    
+
     Uses an image filter to make a probabilistic image of ridge
     structures.
 
@@ -24,13 +24,13 @@ def filter_ridge_structures(input_image,
     ----------
     input_image: niimg
         Image containing structure-of-interest
-    structure_intensity: str
-        Image intensity of structure-of-interest 'bright', 'dark', or 'both'.
-    output_type: str
-        Whether the image should be normalized to reflect probabilities ('probability'
-        or 'intensity'
-    use_strict_min_max_filter: bool, optional (defaulti s True)
-        Choose between the more specific recursive ridge filter or a more sensitive bidirectional filter
+    structure_intensity: {'bright', 'dark', 'both}
+        Image intensity of structure-of-interest'
+    output_type: {'probability','intensity'}
+        Whether the image should be normalized to reflect probabilities
+    use_strict_min_max_filter: bool, optional
+        Choose between the more specific recursive ridge filter or a more
+        sensitive bidirectional filter (default is True)
     save_data: bool, optional
         Save output data to file (default is False)
     overwrite: bool
@@ -48,7 +48,7 @@ def filter_ridge_structures(input_image,
         (suffix of output files in brackets)
 
         * ridge_structure_image: Image that reflects the presensence of ridges
-          in the image
+          in the image (_rdg-img)
 
     Notes
     ----------
@@ -58,13 +58,13 @@ def filter_ridge_structures(input_image,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, input_image)
 
-        ridge_file = os.path.join(output_dir, 
+        ridge_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                        rootfile=input_image,
                                        suffix='rdg-img', ))
         if overwrite is False \
             and os.path.isfile(ridge_file) :
-            
+
             print("skip computation (use existing results)")
             output = {'result': load_volume(ridge_file)}
             return output
@@ -87,8 +87,8 @@ def filter_ridge_structures(input_image,
     # load images and set dimensions and resolution
     input_image = load_volume(input_image)
     data = input_image.get_data()
-    affine = input_image.get_affine()
-    header = input_image.get_header()
+    affine = input_image.affine
+    header = input_image.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = input_image.shape
 
@@ -124,13 +124,11 @@ def filter_ridge_structures(input_image,
         header['cal_min'] = np.nanmin(ridge_structure_image_data)
         header['cal_max'] = np.nanmax(ridge_structure_image_data)
 
-    ridge_structure_image = nb.Nifti1Image(ridge_structure_image_data, affine, header)
+    ridge_structure_image = nb.Nifti1Image(ridge_structure_image_data, affine,
+                                           header)
     outputs = {'result': ridge_structure_image}
 
     if save_data:
         save_volume(ridge_file, ridge_structure_image)
 
     return outputs
-
-
-

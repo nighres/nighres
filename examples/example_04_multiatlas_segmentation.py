@@ -1,13 +1,13 @@
 # Plots are currently included as images, because example is too big to
 # run on readthedocs servers
 """
-Brain co-registration from MP2RAGE data
-=======================================
+Multiatlas Segmentation
+========================
 
-This example shows how to perform multi-atlas segmentation based on MP2RAGE 
+This example shows how to perform multi-atlas segmentation based on MP2RAGE
 data by performing the following steps:
 
-1. Downloading three open MP2RAGE datasets using 
+1. Downloading three open MP2RAGE datasets using
     :func:`nighres.data.download_7T_TRT`
 2. Remove the skull and create a brain mask using
     :func:`nighres.brain.mp2rage_skullstripping`
@@ -22,9 +22,9 @@ data by performing the following steps:
     :func:`nighres.surface.probability_to_levelset`
 6. Build a final shape average using
     :func: `nighres.shape.levelset_fusion`
-    
+
 Important note: this example is both computationally expensive (recomputing
-everything from basic inputs) and practically pointless (a direct MGDM 
+everything from basic inputs) and practically pointless (a direct MGDM
 segmentation or a multi-atlas approach with manually defined labels and more
 subjects would both be meaningful). This example is only meant as illustration.
 """
@@ -160,9 +160,9 @@ syn_results1 = nighres.registration.embedded_antsreg(
                         source_image=skullstripping_results1['t1map_masked'],
                         target_image=skullstripping_results3['t1map_masked'],
                         run_rigid=True, run_affine=True, run_syn=True,
-                        coarse_iterations=40, 
+                        coarse_iterations=40,
                         medium_iterations=0, fine_iterations=0,
-                        cost_function='MutualInformation', 
+                        cost_function='MutualInformation',
                         interpolation='NearestNeighbor',
                         save_data=True, file_name="sub001_sess1",
                         output_dir=out_dir)
@@ -171,9 +171,9 @@ syn_results2 = nighres.registration.embedded_antsreg(
                         source_image=skullstripping_results2['t1map_masked'],
                         target_image=skullstripping_results3['t1map_masked'],
                         run_rigid=True, run_affine=True, run_syn=True,
-                        coarse_iterations=40, 
+                        coarse_iterations=40,
                         medium_iterations=0, fine_iterations=0,
-                        cost_function='MutualInformation', 
+                        cost_function='MutualInformation',
                         interpolation='NearestNeighbor',
                         save_data=True, file_name="sub002_sess1",
                         output_dir=out_dir)
@@ -181,16 +181,16 @@ syn_results2 = nighres.registration.embedded_antsreg(
 ############################################################################
 # Now we look at the coregistered image that SyN created
 if not skip_plots:
-    plotting.plot_img(syn_results1['deformed_source'],
+    plotting.plot_img(syn_results1['transformed_source'],
                       annotate=False,  draw_cross=False)
-    plotting.plot_img(syn_results2['deformed_source'],
+    plotting.plot_img(syn_results2['transformed_source'],
                       annotate=False,  draw_cross=False)
 
 ############################################################################
 
 #############################################################################
 # Apply deformations to segmentations
-# ----------------------------------
+# ------------------------------------
 # We use the computed deformation to transform MGDM segmentations
 deformed1 = nighres.registration.apply_coordinate_mappings(
                         image=mgdm_results1['segmentation'],
@@ -205,7 +205,7 @@ deformed2 = nighres.registration.apply_coordinate_mappings(
                         output_dir=out_dir)
 
 ############################################################################
-# Now we look at the segmentations deformed by SyN 
+# Now we look at the segmentations deformed by SyN
 if not skip_plots:
     plotting.plot_img(deformed1['result'],
                       annotate=False,  draw_cross=False)
@@ -215,18 +215,18 @@ if not skip_plots:
 ############################################################################
 
 #############################################################################
-# Trasnform a selected labels into levelset representation 
-# ----------------------------------
+# Transform a selected label into levelset representation
+# ---------------------------------------------------------
 # We use the deformed MGDM segmentations
 
 # label 32 = left caudate
 img1 = nighres.io.load_volume(deformed1['result'])
-struct1 = nb.Nifti1Image((img1.get_data()==32).astype(float), 
-                            img1.get_affine(), img1.get_header())
+struct1 = nb.Nifti1Image((img1.get_data()==32).astype(float),
+                            img1.affine, img1.header)
 
 img2 = nighres.io.load_volume(deformed2['result'])
-struct2 = nb.Nifti1Image((img2.get_data()==32).astype(float), 
-                            img2.get_affine(), img2.get_header())
+struct2 = nb.Nifti1Image((img2.get_data()==32).astype(float),
+                            img2.affine, img2.header)
 
 levelset1 = nighres.surface.probability_to_levelset(
                         probability_image=struct1,
@@ -240,30 +240,30 @@ levelset2 = nighres.surface.probability_to_levelset(
 
 final_seg = nighres.shape.levelset_fusion(levelset_images=[levelset1['result'],
                         levelset2['result']],
-                        correct_topology=True, 
+                        correct_topology=True,
                         save_data=True, file_name="sub003_sess1_struct_seg",
                         output_dir=out_dir, overwrite=True)
 
 ############################################################################
-# Now we look at the final segmentation from shape fusion 
+# Now we look at the final segmentation from shape fusion
 if not skip_plots:
     img = nighres.io.load_volume(levelset1['result'])
-    mask = nb.Nifti1Image((img.get_data()<0).astype(bool), 
-                                img.get_affine(), img.get_header())
+    mask = nb.Nifti1Image((img.get_data()<0).astype(bool),
+                                img.affine, img.header)
     plotting.plot_roi(mask, dataset3['t1map'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')
 
     img = nighres.io.load_volume(levelset2['result'])
-    mask = nb.Nifti1Image((img.get_data()<0).astype(bool), 
-                                img.get_affine(), img.get_header())
+    mask = nb.Nifti1Image((img.get_data()<0).astype(bool),
+                                img.affine, img.header)
     plotting.plot_roi(mask, dataset3['t1map'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')
-    
+
     img = nighres.io.load_volume(final_seg['result'])
-    mask = nb.Nifti1Image((img.get_data()<0).astype(bool), 
-                                img.get_affine(), img.get_header())
+    mask = nb.Nifti1Image((img.get_data()<0).astype(bool),
+                                img.affine, img.header)
     plotting.plot_roi(mask, dataset3['t1map'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')
@@ -282,8 +282,8 @@ if not skip_plots:
 # -----------
 # .. [1] Bogovic, Prince and Bazin (2013). A multiple object geometric
 #    deformable model for image segmentation. DOI: 10.1016/j.cviu.2012.10.006.A
-# .. [2] Avants et al (2008). Symmetric diffeomorphic image registration with 
-#    cross-correlation: evaluating automated labeling of elderly and 
+# .. [2] Avants et al (2008). Symmetric diffeomorphic image registration with
+#    cross-correlation: evaluating automated labeling of elderly and
 #    neurodegenerative brain. DOI: 10.1016/j.media.2007.06.004
 # .. [3] Gorgolewski et al (2015). A high resolution 7-Tesla resting-state fMRI
 #    test-retest dataset with cognitive and physiological measures.

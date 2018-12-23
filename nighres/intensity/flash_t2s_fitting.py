@@ -8,12 +8,12 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def flash_t2s_fitting(image_list, te_list, 
+def flash_t2s_fitting(image_list, te_list,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ FLASH T2* fitting
 
-    Estimate T2*/R2* by linear least squares fitting in log space. 
+    Estimate T2*/R2* by linear least squares fitting in log space.
 
     Parameters
     ----------
@@ -21,9 +21,9 @@ def flash_t2s_fitting(image_list, te_list,
         List of input images to fit the T2* curve
     te_list: [float]
         List of input echo times (TE)
-    save_data: bool
+    save_data: bool, optional
         Save output data to file (default is False)
-    overwrite: bool
+    overwrite: bool, optional
         Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
@@ -40,8 +40,7 @@ def flash_t2s_fitting(image_list, te_list,
         * t2s (niimg): Map of estimated T2* times (_qt2fit-t2s)
         * r2s (niimg): Map of estimated R2* relaxation rate (_qt2fit-r2s)
         * s0 (niimg): Estimated PD weighted image at TE=0 (_qt2fit-s0)
-        * residuals (niimg): Estimated residuals between input and estimated
-        echoes (_qt2fit-err)
+        * residuals (niimg): Estimated residuals between input and estimated echoes (_qt2fit-err)
 
     Notes
     ----------
@@ -54,34 +53,34 @@ def flash_t2s_fitting(image_list, te_list,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, image_list[0])
 
-        t2s_file = os.path.join(output_dir, 
+        t2s_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2fit-t2s'))
 
-        r2s_file = os.path.join(output_dir, 
+        r2s_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2fit-r2s'))
 
-        s0_file = os.path.join(output_dir, 
+        s0_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2fit-s0'))
 
-        err_file = os.path.join(output_dir, 
+        err_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2fit-err'))
-        
+
         if overwrite is False \
             and os.path.isfile(t2s_file) \
             and os.path.isfile(r2s_file) \
             and os.path.isfile(s0_file) \
             and os.path.isfile(err_file) :
                 output = {'t2s': load_volume(t2s_file),
-                          'r2s': load_volume(r2s_file), 
-                          's0': load_volume(s0_file), 
+                          'r2s': load_volume(r2s_file),
+                          's0': load_volume(s0_file),
                           'residuals': load_volume(err_file)}
                 return output
 
@@ -96,13 +95,13 @@ def flash_t2s_fitting(image_list, te_list,
 
     # set algorithm parameters
     qt2fit.setNumberOfEchoes(len(image_list))
-     
+
     # load first image and use it to set dimensions and resolution
     img = load_volume(image_list[0])
     data = img.get_data()
     #data = data[0:10,0:10,0:10]
-    affine = img.get_affine()
-    header = img.get_header()
+    affine = img.affine
+    header = img.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 
@@ -117,7 +116,7 @@ def flash_t2s_fitting(image_list, te_list,
         #data = data[0:10,0:10,0:10]
         qt2fit.setEchoImageAt(idx, nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
-    
+
         qt2fit.setEchoTimeAt(idx, te_list[idx])
 
     # execute the algorithm

@@ -17,12 +17,12 @@ imcntk_repo="https://github.com/piloubazin/imcn-imaging.git"
 release="release-1.1.0b"
 
 # Check the system has the necessary commands
-hash wget tar javac jar python3 pip3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3 pip3"
+hash wget tar javac jar python3 pip 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3 pip"
 
 # Check for setuptools and wheels
-pip_modules=$(pip3 list --format columns | tr -s ' ' | cut -f 1 -d ' ')
-echo "${pip_modules}" | grep setuptools > /dev/null || fatal 'This script requires setuptools.\nInstall with `pip3 install --upgrade setuptools`'
-echo "${pip_modules}" | grep wheel > /dev/null || fatal 'This script requires wheel.\nInstall with `pip3 install --upgrade wheel`'
+pip_modules=$(python3 -m pip list --format columns | tr -s ' ' | cut -f 1 -d ' ')
+echo "${pip_modules}" | grep setuptools > /dev/null || fatal 'This script requires setuptools.\nInstall with `python3 -m pip install --upgrade setuptools`'
+echo "${pip_modules}" | grep wheel > /dev/null || fatal 'This script requires wheel.\nInstall with `python3 -m pip install --upgrade wheel`'
 
 # echo "Before detection: $JAVA_HOME"
 
@@ -32,7 +32,7 @@ export JAVA_HOME=${JAVA_HOME:-"$detected_home"}
 # echo "After detection: $JAVA_HOME"
 
 # Check that JCC is installed
-echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.\nInstall with `apt-get install jcc` or equivalent and `pip3 install jcc`'
+echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.\nInstall with `apt-get install jcc` or equivalent and `python3 -m pip install jcc`'
 
 # Attempt to check for python development headers
 # Inspired by https://stackoverflow.com/a/4850603
@@ -145,7 +145,7 @@ javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java $imcntk_li
 
 echo "Assembling..."
 jar uf ../nighresjava/src/nighresjava.jar nl/uva/imcn/algorithms/*.class
-jar cf ../nighresjava/src/imcntk-lib.jar nl/uva/imcn/libraries/*.class nl/uva/imcn/methods/*.class nl/uva/imcn/structures/*.class nl/uva/imcn/utilities/*.class 
+jar cf ../nighresjava/src/imcntk-lib.jar nl/uva/imcn/libraries/*.class nl/uva/imcn/methods/*.class nl/uva/imcn/structures/*.class nl/uva/imcn/utilities/*.class
 
 cp lib/*.jar ../nighresjava/lib/
 cd ..
@@ -190,7 +190,7 @@ cp -rv build/nighresjava/ ../
 find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' ../nighresjava/_nighresjava.so
 cd ..
 
-pip3 install .
+# python3 -m pip install .
 
 # Make the python wheel
 # PLT=$(uname | tr '[:upper:]' '[:lower:]')

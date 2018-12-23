@@ -14,8 +14,8 @@ def probability_to_levelset(probability_image,
     """Levelset from probability map
 
     Creates a levelset surface representations from a probabilistic map
-    or a mask. The levelset indicates each voxel's distance to the closest 
-    boundary. It takes negative values inside and positive values outside 
+    or a mask. The levelset indicates each voxel's distance to the closest
+    boundary. It takes negative values inside and positive values outside
     of the object.
 
     Parameters
@@ -23,9 +23,9 @@ def probability_to_levelset(probability_image,
     probability_image: niimg
         Probability image to be turned into levelset. Values should be in
         [0, 1], either a binary mask or defining the boundary at 0.5.
-    save_data: bool
+    save_data: bool, optional
         Save output data to file (default is False)
-    overwrite: bool
+    overwrite: bool, optional
         Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
@@ -39,7 +39,7 @@ def probability_to_levelset(probability_image,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * result (niimg): Levelset representation of surface (output file suffix _p2l-surf)
+        * result (niimg): Levelset representation of surface (_p2l-surf)
 
     Notes
     ----------
@@ -52,18 +52,18 @@ def probability_to_levelset(probability_image,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, probability_image)
 
-        levelset_file = os.path.join(output_dir, 
+        levelset_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                        rootfile=probability_image,
                                        suffix='p2l-surf'))
 
         if overwrite is False \
             and os.path.isfile(levelset_file) :
-            
+
             print("skip computation (use existing results)")
             output = {'result': load_volume(levelset_file)}
             return output
-            
+
     # start virtual machine if not running
     try:
         mem = _check_available_memory()
@@ -77,8 +77,8 @@ def probability_to_levelset(probability_image,
     # load the data
     prob_img = load_volume(probability_image)
     prob_data = prob_img.get_data()
-    hdr = prob_img.get_header()
-    aff = prob_img.get_affine()
+    hdr = prob_img.header
+    aff = prob_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = prob_data.shape
 
@@ -91,7 +91,7 @@ def probability_to_levelset(probability_image,
     else:
         prob2level.setResolutions(resolution[0], resolution[1], 1.0)
         prob2level.setDimensions(dimensions[0], dimensions[1], 1)
-        
+
     # execute class
     try:
         prob2level.execute()

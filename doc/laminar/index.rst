@@ -6,3 +6,4 @@ Laminar
 
    volumetric_layering
    profile_sampling
+   laminar_iterative_smoothing
