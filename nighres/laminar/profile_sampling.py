@@ -1,13 +1,14 @@
 import os
+import sys
 import numpy as np
 import nibabel as nb
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
-from ..utils import _output_dir_4saving, _fname_4saving
+from ..utils import _output_dir_4saving, _fname_4saving, _check_available_memory
 
 
 def profile_sampling(profile_surface_image, intensity_image,
-                     save_data=False, output_dir=None,
+                     save_data=False, overwrite=False, output_dir=None,
                      file_name=None):
 
     '''Sampling data on multiple intracortical layers
@@ -21,6 +22,8 @@ def profile_sampling(profile_surface_image, intensity_image,
         Image from which data should be sampled
     save_data: bool
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -29,9 +32,12 @@ def profile_sampling(profile_surface_image, intensity_image,
 
     Returns
     -----------
-    niimg
-        4D profile image , where the 4th dimension represents the
-        profile for each voxel (output file suffix _profiles)
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files in brackets)
+
+        * result (niimg): 4D profile image , where the 4th dimension represents
+          the profile for each voxel (_lps-data)
 
     Notes
     ----------
@@ -44,33 +50,41 @@ def profile_sampling(profile_surface_image, intensity_image,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, intensity_image)
 
-        profile_file = _fname_4saving(file_name=file_name,
+        profile_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
                                       rootfile=intensity_image,
-                                      suffix='profiles')
+                                      suffix='lps-data'))
+        if overwrite is False \
+            and os.path.isfile(profile_file) :
+
+            print("skip computation (use existing results)")
+            output = {'result': load_volume(profile_file)}
+            return output
 
     # start VM if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        mem = _check_available_memory()
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
     except ValueError:
         pass
 
     # initate class
-    sampler = cbstools.LaminarProfileSampling()
+    sampler = nighresjava.LaminarProfileSampling()
 
     # load the data
     surface_img = load_volume(profile_surface_image)
     surface_data = surface_img.get_data()
-    hdr = surface_img.get_header()
-    aff = surface_img.get_affine()
+    hdr = surface_img.header
+    aff = surface_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = surface_data.shape
 
     intensity_data = load_volume(intensity_image).get_data()
 
     # pass inputs
-    sampler.setIntensityImage(cbstools.JArray('float')(
+    sampler.setIntensityImage(nighresjava.JArray('float')(
                                   (intensity_data.flatten('F')).astype(float)))
-    sampler.setProfileSurfaceImage(cbstools.JArray('float')(
+    sampler.setProfileSurfaceImage(nighresjava.JArray('float')(
                                    (surface_data.flatten('F')).astype(float)))
     sampler.setResolutions(resolution[0], resolution[1], resolution[2])
     sampler.setDimensions(dimensions[0], dimensions[1],
@@ -83,7 +97,7 @@ def profile_sampling(profile_surface_image, intensity_image,
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")
-        print sys.exc_info()[0]
+        print(sys.exc_info()[0])
         raise
         return
 
@@ -96,6 +110,6 @@ def profile_sampling(profile_surface_image, intensity_image,
     profiles = nb.Nifti1Image(profile_data, aff, hdr)
 
     if save_data:
-        save_volume(os.path.join(output_dir, profile_file), profiles)
+        save_volume(profile_file, profiles)
 
-    return profiles
+    return {'result': profiles}

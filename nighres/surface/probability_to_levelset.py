@@ -1,29 +1,32 @@
 import os
+import sys
 import numpy as np
 import nibabel as nb
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
-from ..utils import _output_dir_4saving, _fname_4saving
+from ..utils import _output_dir_4saving, _fname_4saving, _check_available_memory
 
 
 def probability_to_levelset(probability_image,
-                            save_data=False, output_dir=None,
+                            save_data=False, overwrite=False, output_dir=None,
                             file_name=None):
 
-    """Levelset from tissue classification
+    """Levelset from probability map
 
-    Creates a levelset surface representations from a probabilistic or
-    deterministic tissue classification. The levelset indicates each voxel's
-    distance to the closest boundary. It takes negative values inside and
-    positive values outside of the brain.
+    Creates a levelset surface representations from a probabilistic map
+    or a mask. The levelset indicates each voxel's distance to the closest
+    boundary. It takes negative values inside and positive values outside
+    of the object.
 
     Parameters
     ----------
     probability_image: niimg
-        Tissue segmentation to be turned into levelset. Values should be in
+        Probability image to be turned into levelset. Values should be in
         [0, 1], either a binary mask or defining the boundary at 0.5.
-    save_data: bool
+    save_data: bool, optional
         Save output data to file (default is False)
+    overwrite: bool, optional
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -32,8 +35,11 @@ def probability_to_levelset(probability_image,
 
     Returns
     ----------
-    niimg
-        Levelset representation of surface (output file suffix _levelset)
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files in brackets)
+
+        * result (niimg): Levelset representation of surface (_p2l-surf)
 
     Notes
     ----------
@@ -46,32 +52,45 @@ def probability_to_levelset(probability_image,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, probability_image)
 
-        levelset_file = _fname_4saving(file_name=file_name,
+        levelset_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
                                        rootfile=probability_image,
-                                       suffix='levelset')
+                                       suffix='p2l-surf'))
+
+        if overwrite is False \
+            and os.path.isfile(levelset_file) :
+
+            print("skip computation (use existing results)")
+            output = {'result': load_volume(levelset_file)}
+            return output
 
     # start virtual machine if not running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        mem = _check_available_memory()
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
     except ValueError:
         pass
 
     # initiate class
-    prob2level = cbstools.SurfaceProbabilityToLevelset()
+    prob2level = nighresjava.SurfaceProbabilityToLevelset()
 
     # load the data
     prob_img = load_volume(probability_image)
     prob_data = prob_img.get_data()
-    hdr = prob_img.get_header()
-    aff = prob_img.get_affine()
+    hdr = prob_img.header
+    aff = prob_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = prob_data.shape
 
     # set parameters from input data
-    prob2level.setProbabilityImage(cbstools.JArray('float')(
+    prob2level.setProbabilityImage(nighresjava.JArray('float')(
                                     (prob_data.flatten('F')).astype(float)))
-    prob2level.setResolutions(resolution[0], resolution[1], resolution[2])
-    prob2level.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+    if len(dimensions)>2:
+        prob2level.setResolutions(resolution[0], resolution[1], resolution[2])
+        prob2level.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+    else:
+        prob2level.setResolutions(resolution[0], resolution[1], 1.0)
+        prob2level.setDimensions(dimensions[0], dimensions[1], 1)
 
     # execute class
     try:
@@ -80,7 +99,7 @@ def probability_to_levelset(probability_image,
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")
-        print sys.exc_info()[0]
+        print(sys.exc_info()[0])
         raise
         return
 
@@ -92,6 +111,6 @@ def probability_to_levelset(probability_image,
     levelset = nb.Nifti1Image(levelset_data, aff, hdr)
 
     if save_data:
-        save_volume(os.path.join(output_dir, levelset_file), levelset)
+        save_volume(levelset_file, levelset)
 
-    return levelset
+    return {'result': levelset}

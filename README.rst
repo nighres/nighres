@@ -13,11 +13,39 @@ Nighres
 Nighres is a Python package for processing of high-resolution neuroimaging data.
 It developed out of `CBS High-Res Brain Processing Tools
 <https://www.cbs.mpg.de/institute/software/cbs-tools>`_ and aims to make those
-tools easier to install, use and extend.
+tools easier to install, use and extend. Nighres now includes new functions from
+the `IMCN imaging toolkit <https://github.com/IMCN-UvA/imcn-imaging>`_ and
+additional packages may be added in future releases.
 
-Because parts of the package have to be built locally it is currently not possible to use ``pip install`` directly from PyPI. Instead, please follow the installation instructions provided at http://nighres.readthedocs.io/en/latest/installation.html
+Because parts of the package have to be built locally it is currently not possible to
+use ``pip install`` directly from PyPI. Instead, please follow the installation
+instructions provided at http://nighres.readthedocs.io/en/latest/installation.html
 
-Currently, Nighres is developed and tested on Linux Ubuntu Trusty and Python 2.7. We hope to support all common Unix platforms and Python 3 soon.
+Currently, Nighres is developed and tested on Linux Ubuntu Trusty and Python 3.5.
+Release versions have been extensively tested on our example data. Development
+versions include additional modules and functions but with limited guarantees.
+
+
+Required packages
+=================
+
+In order to run Nighres, you will need:
+
+* python >= 3.5
+* Java JDK >= 1.7
+* JCC >= 3.0
+
+For instance, in Debian/Ubuntu (amd64 systems):
+
+    sudo apt-get install openjdk-8-jdk
+    export JCC_JDK=/usr/lib/jvm/java-8-openjdk-amd64
+    python3 -m pip install jcc    (or just pip install jcc if Python 3 is your default)
+
+For some functionalities you need extra packages
+
+* Nipype & ANTs (for registration using ANTs)
+* Pandas (for working with surface meshes)
+* Nilearn (for plotting in the examples)
 
 
 Docker
