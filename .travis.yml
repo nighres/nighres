@@ -4,13 +4,15 @@ matrix:
     jdk: openjdk8
     before_install:
     - sudo apt-get update
+    - sudo apt-get install python3
+    - sudo apt-get install python3-pip
     - sudo apt-get install -y jcc
-    - pip install --upgrade --user wheel
-    - pip install --upgrade --user JCC
+    - python3 -m pip install --upgrade --user wheel
+    - python3 -m pip install --upgrade --user JCC
     script: "travis/make_dist.sh"
     before_deploy:
-    - pip install --user twine
-    - pip install --user urllib3[secure]
+    - python3 -m pip install --user twine
+    - python3 -m pip install --user urllib3[secure]
     deploy:
       provider: pypi
       #server: https://test.pypi.org/legacy/
