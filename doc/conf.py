@@ -140,9 +140,9 @@ def setup(app):
 # documentation.
 #
 # html_theme_options = {'rightsidebar': True}
-# html_theme_options = {
-#     'logo_only': True,  # if we have a html_logo below, this shows /only/ the logo with no title text
-# }
+html_theme_options = {
+    'logo_only': True,  # if we have a html_logo below, this shows /only/ the logo with no title text
+}
 
 
 # html_title = 'Nighres'
@@ -150,7 +150,7 @@ def setup(app):
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = []
 
 
 html_logo = '_static/nighres_logo.png'
