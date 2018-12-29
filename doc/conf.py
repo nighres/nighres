@@ -118,7 +118,7 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
             return MagicMock()
 
-MOCK_MODULES = ['_cbstools', 'cbstools']
+MOCK_MODULES = ['_nighresjava', 'nighresjava']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
@@ -133,7 +133,7 @@ html_theme = 'sphinx_rtd_theme'
 
 # add options to default css
 def setup(app):
-    app.add_stylesheet('adapt_sphinx_rtd.css')
+    app.add_css_file('adapt_sphinx_rtd.css')
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
