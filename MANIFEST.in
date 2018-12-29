@@ -4,7 +4,5 @@ include MANIFEST.in
 include build.sh
 include cbstools-lib-files.sh
 include imcntk-lib-files.sh
-include nighresjava/*.jar
-include nighresjava/_nighresjava.so
 recursive-include nighres/atlases *
 recursive-include nighres/examples *
