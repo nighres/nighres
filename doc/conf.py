@@ -140,9 +140,9 @@ def setup(app):
 # documentation.
 #
 # html_theme_options = {'rightsidebar': True}
-html_theme_options = {
-    'logo_only': True,  # if we have a html_logo below, this shows /only/ the logo with no title text
-}
+# html_theme_options = {
+#     'logo_only': True,  # if we have a html_logo below, this shows /only/ the logo with no title text
+# }
 
 
 # html_title = 'Nighres'
