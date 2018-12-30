@@ -1,2 +1,3 @@
-from filter_ridge_structures import filter_ridge_structures
-from bandpass_filtering import bandpass_filtering
+from nighres.filtering.filter_ridge_structures import filter_ridge_structures
+from nighres.filtering.recursive_ridge_diffusion import recursive_ridge_diffusion
+from nighres.filtering.total_variation_filtering import total_variation_filtering

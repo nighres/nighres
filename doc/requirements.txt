@@ -1,8 +1,8 @@
-sphinx
+sphinx==1.8.2
 pillow
 matplotlib
 git+https://github.com/sphinx-gallery/sphinx-gallery
-sphinx-rtd-theme
+sphinx-rtd-theme==0.4.2
 scipy
 sklearn
 ipython

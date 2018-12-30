@@ -16,13 +16,9 @@ Let's get into it
 
 1. Follow the steps described in :ref:`set-up`
 
-|
-
 2. Decide  where to put your code
 
    If the functionality that you are adding falls within the scope of a pre-existing submodule, edit or create files within the submodule. If it is entirely new (e.g., *statistics*), create a new submodule with its own dedicated subdirectory.
-
-|
 
 3. Coding
    If you are creating a submodule from scratch, an easy way to start is to copy the *__init.py__* and initial import statements from an existing module.
@@ -37,19 +33,11 @@ Let's get into it
 
    Test you code internally. We aim to add unittests in the future, feel free to make a start on that.
 
-|
-
 4. :ref:`Write an example <examples>` showcasing your new function
-
-|
 
 5. To get your code into the Nighres master follow :ref:`adapt-docs` and :ref:`make-pr`
 
-|
-
 6. Pat yourself on the back, you have now joined the Nighres developer community!
-
-|
 
 .. admonition:: A word on dependencies
 

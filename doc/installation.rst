@@ -1,6 +1,26 @@
 Installing Nighres
 ===================
 
+Please see :ref:`trouble` if you run into errors during installation.
+
+Requirements
+------------
+
+To build Nighres you need:
+
+* Python 3.5 or higher
+* Java JDK 1.7 or higher
+* `JCC 3.0 <https://pypi.org/project/JCC/>`_ or higher
+
+
+The following Python packages are automatically installed with Nighres
+
+* `numpy <http://www.numpy.org/>`_
+* `nibabel <http://nipy.org/nibabel/>`_
+* `psutils <https://pypi.org/project/psutil/>`_
+
+For further dependencies of specific interfaces see :ref:`add-deps`.
+
 From PyPI
 ----------
 
@@ -18,26 +38,25 @@ You can also get the latest version from Github ::
 Or download and unpack the zip file from Github under **Clone and download** ->
 **Download ZIP**
 
+
 .. _build-nighres:
 
 Build Nighres
 --------------
-1. Make sure you have `JCC <http://jcc.readthedocs.io/en/latest/>`_ installed. You need to both get the package via your package manager and install using pip to make it accessible to the Python interpreter, e.g::
+1. Make sure you have Java JDK and JCC installed and set up. You will likely need to point the JCC_JDK variable to you Java JDK installation, e.g on a Debian/Ubuntu amd64 system::
 
-    sudo apt-get install jcc
-    pip install jcc
+    sudo apt-get install openjdk-8-jdk
+    export JCC_JDK=/usr/lib/jvm/java-8-openjdk-amd64
+    python3 -m pip install jcc
 
-2. Navigate to the Nighres directory you downloaded (and unpacked) and run the build script::
+2. Navigate to the Nighres directory you downloaded and unpacked, and run the build script::
 
     ./build.sh
 
-The build might take a while because it pulls the original Java code from
-https://github.com/piloubazin/cbstools-public and builds the wrappers using
-JCC.
 
 3. Install the Python package::
 
-    pip install .
+    python3 -m pip install .
 
 
 Testing the installation
@@ -45,75 +64,9 @@ Testing the installation
 
 You can often catch installation problems by simply import Nighres in Python. Make sure to navigate out of the directory from which you installed to make sure Nighres has actually been installed correctly and can be accessed from any location ::
 
-    python -c "import nighres"
+    python3 -c "import nighres"
 
 If that works, you can try running one of the examples. You can find them inside the unpacked Nighres directory, in the subdirectory *examples*. Alternatively, you can also download the :ref:`examples <examples-index>` from the online documentation.
-
-.. |
-..
-.. Troubleshooting
-.. ----------------
-..
-.. libjvm.so error
-.. ~~~~~~~~~~~~~~~~
-..
-.. You might get the following error when trying to import nighres::
-..
-..     ImportError: libjvm.so: cannot open shared object file: No such file or directory
-..
-.. This is because the original CBS Tools Java code in the **cbstools** module has been compiled against a Java installation that is different from yours.
-..
-.. You can fix this by finding your libjvm.so location::
-..
-..     find / -type f -name libjvm.so
-..
-.. And then adding it to the library path. Depending on you Java installation it will be something similar to one of these::
-..
-..     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/
-..     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/jvm/java-8-openjdk-amd64/lib/amd64/server/
-..
-.. This can be run within the current terminal for a single session, or made permanent by adding the export statement to your terminal execution script (i.e., .bashrc on most linux systems).
-..
-.. If that doesn't do the trick, try running::
-..
-..     sudo R CMD javareconf
-..
-.. Rebuilding
-.. ~~~~~~~~~~~
-..
-.. If you the above does not work for you, you might have to
-.. rebuild the package locally.
-..
-.. 1. Make sure you have `JCC <http://jcc.readthedocs.io/en/latest/>`_ installed::
-..
-..     sudo apt-get install jcc
-..
-.. 2. Navigate to the nighres directory and run the build script::
-..
-..     ./build.sh
-..
-.. The build might take a while because it pulls the original Java code from
-.. https://github.com/piloubazin/cbstools-public, downloads its dependencies
-.. *JIST* and *MIPAV*, compiles the Java classes and builds the wrappers using
-.. JCC.
-..
-.. |
-
-Dependencies
-------------
-To build Nighres you need:
-
-* `JCC <http://jcc.readthedocs.io/en/latest/>`_
-* Java, a version that is 1.7 or higher
-
-To run Nighres depends on:
-
-* `Numpy <http://www.numpy.org/>`_
-* `Nibabel <http://nipy.org/nibabel/>`_
-
-If not already available, these packages are automatically installed when you run pip install.
-
-.. todo:: Check and include version dependencies
 
 
 .. _docker-image:
@@ -149,12 +102,25 @@ Now, in your notebook you will be able to access your data on the path `/data`
 
 .. _add-deps:
 
-Additional dependencies (optional)
-----------------------------------
+Optional dependencies
+----------------------
+
+Working with surface mesh files
+
+* `pandas <https://pandas.pydata.org/>`_
+
+Using the registration tools
+
+* `nipype <https://nipype.readthedocs.io/en/latest/>`_
+* `ANTs <https://github.com/ANTsX/ANTs>`_
 
 Plotting in the examples
 
 * `Nilearn <http://nilearn.github.io/>`_ and its dependencies, if Nilearn is not installed, plotting in the examples will be skipped and you can view the results in any other nifti viewer
+
+Using the docker image
+
+* `Docker <https://www.docker.com/>`_
 
 Building the documentation
 
@@ -163,7 +129,38 @@ Building the documentation
 * `matplotlib <http://matplotlib.org/>`_
 * `sphinx-rtd-theme <http://docs.readthedocs.io/en/latest/theme.html>`_ (pip install sphinx-rtd-theme)
 * `pillow <https://python-pillow.org/>`_ (pip install pillow)
+* `mock <https://pypi.org/project/mock/>`_
 
-Using the docker image
 
-* `Docker <https://www.docker.com/>`_
+.. _trouble:
+
+Troubleshooting
+---------------
+
+If you experience errors not listed here, please help us by reporting them through `neurostars.org <neurostars.org>`_ using the tag **nighres**, or on `github <https://github.com/nighres/nighres/issues>`_. Or if you solve them yourself help others by contributing your solution here (see :ref:`Developers guide <devguide>`)
+
+
+Missing Java libraries
+~~~~~~~~~~~~~~~~~~~~~~~
+
+If you get errors regarding missing java libraries (such as ljvm/libjvm or ljava/libjava), although you install Java JDK, it means that JCC does not find the libraries. It can help to search for the "missing" library and make a symbolic link to it like this::
+
+    sudo find / -type f -name libjvm.so
+    >> /usr/lib/jvm/java-11-openjdk-amd64/lib/server/libjvm.so
+    sudo ln -s /usr/lib/jvm/java-11-openjdk-amd64/lib/server/libjvm.so /usr/lib/libjvm.so
+
+Missing Python packages
+~~~~~~~~~~~~~~~~~~~~~~~
+
+If you get errors about Python packages not being installed, it might be that you are trying to run a function that requires :ref:`add-deps`. If packages are reported missing that you think you have installed, make sure that they are installed under the same python installation as nighres. They should be listed when you run::
+
+    python3 -m pip list
+
+If they aren't, install them using::
+
+    python3 -m pip install <package_name>
+
+If there is still confusion, make sure nighres is installed in the same directory that your python3 -m pip command points to. These two commands should give the same base directory::
+
+    python3 -m pip
+    python3 -c 'import nighres; print(nighres.__file__)'

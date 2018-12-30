@@ -24,6 +24,7 @@ by performing the following steps:
 import nighres
 import os
 
+in_dir = os.path.join(os.getcwd(), 'nighres_examples/data_sets')
 out_dir = os.path.join(os.getcwd(), 'nighres_examples/tissue_classification')
 
 ############################################################################
@@ -40,7 +41,7 @@ except ImportError:
 # Now we download an example MP2RAGE dataset. It is the structural scan of the
 # first subject, first session of the 7T Test-Retest dataset published by
 # Gorgolewski et al (2015) [2]_.
-dataset = nighres.data.download_7T_TRT(out_dir)
+dataset = nighres.data.download_7T_TRT(in_dir, subject_id='sub001_sess1')
 ############################################################################
 # Skull stripping
 # ----------------
