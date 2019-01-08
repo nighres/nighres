@@ -141,9 +141,8 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
     stats.setSkipFirstLabel(skip_first)
     stats.setIgnoreZeroIntensities(ignore_zero)
     
-    if len(statistics)>0: stats.setStatistic1(statistics[0])
-    if len(statistics)>1: stats.setStatistic2(statistics[1])
-    if len(statistics)>2: stats.setStatistic3(statistics[2])
+    stats.setStatisticNumber(len(statistics))
+    for idx,stat in enumerate(statistics): stats.setStatisticAt(idx, stat)
 
     stats.setSpreadsheetFile(csv_file)
     
