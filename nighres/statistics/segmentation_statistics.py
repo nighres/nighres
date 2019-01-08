@@ -29,6 +29,8 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
         Statistics to compute. Available options include:
         "Voxels", "Volume", "Mean_intensity", "Std_intensity",
         "10_intensity","25_intensity","50_intensity","75_intensity","90_intensity",
+        "Median_intensity","IQR_intensity",
+        "SNR_intensity","rSNR_intensity",
 		"Volumes", "Dice_overlap", "Jaccard_overlap", "Volume_difference",
         "False_positives","False_negatives",
         "Dilated_Dice_overlap","Dilated_false_positive","Dilated_false_negative",
