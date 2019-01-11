@@ -162,28 +162,11 @@ def generate_coordinate_mapping(reference_image,
                                 + transform[Z,Z]*z*rtz \
                                 + transform[Z,T])/rsz
                 
-    mapping_img = nibabel.Nifti1Image(src_coord, source.affine, source.header)
-    src_map_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
-                                                        rootfile=source_image,
-                                                        suffix='tmp_srccoord'))
-    if save:
-    	save_volume(src_map_file, src_map)
-    for x in range(ntx):
-        for y in range(nty):
-            for z in range(ntz):
-                trg_coord[x,y,z,X] = x
-                trg_coord[x,y,z,Y] = y
-                trg_coord[x,y,z,Z] = z
-    trg_map = nibabel.Nifti1Image(trg_coord, target.affine, target.header)
-    trg_map_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
-                                                        rootfile=source_image,
-                                                        suffix='tmp_trgcoord'))
+    mapping_img = nibabel.Nifti1Image(coord, ref_affine, ref_header)
 
-    # collect outputs and potentially save
-    mapping_img = nibabel.Nifti1Image(nibabel.load(mapping.outputs.output_image).get_data(), 
-                                    target.affine, target.header)
-
+    if save_data:
+        save_volume(mapping_file, mapping_img)
+ 
     outputs = {'result': mapping_img}
 
     return outputs
-
