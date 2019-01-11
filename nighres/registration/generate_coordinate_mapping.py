@@ -3,8 +3,8 @@ import os
 import sys
 
 # main dependencies: numpy, nibabel
-import numpy as np
-import nibabel as nb
+import numpy
+import nibabel
 
 # nighresjava and nighres functions
 import nighresjava
@@ -121,7 +121,7 @@ def generate_coordinate_mapping(reference_image,
     rsx = rtx
     rsy = rty
     rsz = rtz
-    if source is not None:
+    if source_image is not None:
         source = load_volume(source_image)
         rsx = source.header.get_zooms()[X]
         rsy = source.header.get_zooms()[Y]
@@ -142,10 +142,10 @@ def generate_coordinate_mapping(reference_image,
         transform = numpy.eye(4,4)
         
     if not invert_matrix:
-        transform.invert()
+        transform = numpy.linalg.inv(transform)
         
     # build coordinate mapping matrices and save them to disk
-    coord = np.zeros((nx,ny,nz,3))
+    coord = numpy.zeros((nx,ny,nz,3))
     for x in range(nx):
         for y in range(ny):
             for z in range(nz):
@@ -162,7 +162,7 @@ def generate_coordinate_mapping(reference_image,
                                 + transform[Z,Z]*z*rtz \
                                 + transform[Z,T])/rsz
                 
-    mapping_img = nb.Nifti1Image(src_coord, source.affine, source.header)
+    mapping_img = nibabel.Nifti1Image(src_coord, source.affine, source.header)
     src_map_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoord'))
@@ -174,13 +174,13 @@ def generate_coordinate_mapping(reference_image,
                 trg_coord[x,y,z,X] = x
                 trg_coord[x,y,z,Y] = y
                 trg_coord[x,y,z,Z] = z
-    trg_map = nb.Nifti1Image(trg_coord, target.affine, target.header)
+    trg_map = nibabel.Nifti1Image(trg_coord, target.affine, target.header)
     trg_map_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_trgcoord'))
 
     # collect outputs and potentially save
-    mapping_img = nb.Nifti1Image(nb.load(mapping.outputs.output_image).get_data(), 
+    mapping_img = nibabel.Nifti1Image(nibabel.load(mapping.outputs.output_image).get_data(), 
                                     target.affine, target.header)
 
     outputs = {'result': mapping_img}
