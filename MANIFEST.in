@@ -2,7 +2,11 @@ include README.rst
 include LICENSE
 include MANIFEST.in
 include build.sh
+include build_local_nighresjava.sh
+include nighresjava/*.jar
+include nighresjava/_nighresjava.so
 include cbstools-lib-files.sh
 include imcntk-lib-files.sh
+include Dockerfile
 recursive-include nighres/atlases *
 recursive-include nighres/examples *
