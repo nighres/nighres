@@ -26,7 +26,7 @@ with open('README.rst') as f:
 
 setup(
     name='nighres',
-    version='1.1.0b',
+    version='1.1.0b1',
     description='Processing tools for high-resolution neuroimaging',
     long_description=long_description,
     url='https://nighres.readthedocs.io/',
