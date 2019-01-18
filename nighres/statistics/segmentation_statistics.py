@@ -43,15 +43,15 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
         File name of the statistics file to generate or expand
     atlas: str, optional
         File name of an atlas file defining the segmentation labels
-    skip_first: bool
-        Whether to skip the first segmentation label (usually representing the 
+    skip_first: bool, optional
+        Whether to skip the first segmentation label (usually representing the
         background, default is True)
-    ignore_zero: bool
-        Whether to ignore zero intensity values in the intensity image 
+    ignore_zero: bool, optional
+        Whether to ignore zero intensity values in the intensity image
         (default is True)
-    save_data: bool
+    save_data: bool, optional
         Save output data to file (default is False)
-    overwrite: bool
+    overwrite: bool, optional
         Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
@@ -66,7 +66,7 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
         (suffix of output files in brackets)
 
         * csv (str): The csv statistics file
-        * map (niimg): Map of the estimated statistic, if relevant (opt)
+        * map (niimg): Map of the estimated statistic, if relevant (stat-map)
 
     Notes
     ----------
@@ -79,7 +79,7 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
     if save_data:
         output_dir = _output_dir_4saving(output_dir,segmentation)
 
-        map_file = os.path.join(output_dir, 
+        map_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                    rootfile=segmentation,
                                    suffix='stat-map'))
@@ -109,8 +109,8 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
     # load first image and use it to set dimensions and resolution
     img = load_volume(segmentation)
     data = img.get_data()
-    affine = img.get_affine()
-    header = img.get_header()
+    affine = img.affine
+    header = img.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 
@@ -127,17 +127,17 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
         stats.setIntensityImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
         stats.setIntensityName(_fname_4saving(rootfile=intensity))
-    
+
     if template is not None:
         data = load_volume(template).get_data()
         stats.setTemplateImage(nighresjava.JArray('int')(
                                     (data.flatten('F')).astype(int).tolist()))
         stats.setTemplateName(_fname_4saving(rootfile=template))
-    
+
     # set algorithm parameters
     if atlas is not None:
         stats.setAtlasFile(atlas)
-        
+
     stats.setSkipFirstLabel(skip_first)
     stats.setIgnoreZeroIntensities(ignore_zero)
     
@@ -145,7 +145,7 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
     for idx,stat in enumerate(statistics): stats.setStatisticAt(idx, stat)
 
     stats.setSpreadsheetFile(csv_file)
-    
+
     # execute the algorithm
     try:
         stats.execute()
@@ -159,10 +159,10 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
 
     # reshape output to what nibabel likes
     output = False
-    for st in statistics: 
-        if st=="Cluster_maps": 
+    for st in statistics:
+        if st=="Cluster_maps":
             output=True
-    
+
     if (output):
         data = np.reshape(np.array(stats.getOutputImage(),
                                        dtype=np.int32), dimensions, 'F')

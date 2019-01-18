@@ -15,21 +15,22 @@ def levelset_fusion(levelset_images,
 
     """Levelset fusion
 
-    Creates an average levelset surface representations from a collection of 
-    levelset surfaces, with same avearage volume and (opftionally) spherical topology
+    Creates an average levelset surface representations from a collection of
+    levelset surfaces, with same avearage volume and (optionally) spherical
+    topology
 
     Parameters
     ----------
-    levelset_images: [niimg]
+    levelset_images: niimg
         List of levelset images to combine.
-    correct_topology: bool
+    correct_topology: bool, optional
         Corrects the average shape to ensure correct topology (default is True)
-    topology_lut_dir: str
+    topology_lut_dir: str, optional
         Path to directory in which topology files are stored (default is stored
         in TOPOLOGY_LUT_DIR)
-    save_data: bool
+    save_data: bool, optional
         Save output data to file (default is False)
-    overwrite: bool
+    overwrite: bool, optional
         Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
@@ -39,8 +40,11 @@ def levelset_fusion(levelset_images,
 
     Returns
     ----------
-    niimg
-        Levelset representation of combined surface (output file suffix _lsf_avg)
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files in brackets)
+
+        * result (niimg): Levelset representation of combined surface (_lsf-avg)
 
     Notes
     ----------
@@ -56,14 +60,14 @@ def levelset_fusion(levelset_images,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, levelset_images[0])
 
-        levelset_file = os.path.join(output_dir, 
+        levelset_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                        rootfile=levelset_images[0],
                                        suffix='lsf-avg'))
         print('output file: '+levelset_file)
         if overwrite is False \
             and os.path.isfile(levelset_file) :
-            
+
             print("skip computation (use existing results)")
             output = {'result': load_volume(levelset_file)}
             return output
@@ -80,13 +84,13 @@ def levelset_fusion(levelset_images,
 
     # load the data
     nsubjects = len(levelset_images)
-    
+
     img = load_volume(levelset_images[0])
-    hdr = img.get_header()
-    aff = img.get_affine()
+    hdr = img.header
+    aff = img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = img.get_data().shape
-    
+
     algorithm.setNumberOfImages(nsubjects)
     algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
     algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
@@ -97,10 +101,10 @@ def levelset_fusion(levelset_images,
         data = img.get_data()
         algorithm.setLevelsetImageAt(idx, nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
-    
+
     algorithm.setCorrectSkeletonTopology(correct_topology)
     algorithm.setTopologyLUTdirectory(topology_lut_dir)
-    
+
     # execute class
     try:
         algorithm.execute()

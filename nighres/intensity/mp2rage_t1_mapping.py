@@ -129,8 +129,8 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
     img = load_volume(first_inversion[0])
     data = img.get_data()
     #data = data[0:10,0:10,0:10]
-    affine = img.get_affine()
-    header = img.get_header()
+    affine = img.affine
+    header = img.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 

@@ -251,8 +251,8 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     # load contrast image 1 and use it to set dimensions and resolution
     img = load_volume(contrast_image1)
     data = img.get_data()
-    affine = img.get_affine()
-    header = img.get_header()
+    affine = img.affine
+    header = img.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 

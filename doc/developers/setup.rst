@@ -7,8 +7,6 @@ Setting up
 
    You can find a good description `here <https://help.github.com/articles/fork-a-repo/>`_. Make sure that you set up your local clone to track both your fork (typically as *origin*) as well as the original Nighres repo (typically as *upstream*).
 
-|
-
 **2. Make a new branch to work on**
 
    ``git checkout -b <branch_name>``
@@ -18,7 +16,6 @@ Setting up
    Pick a descriptive branch name. For example, when you fix a bug in the function load_volume a good name is ``fix/load_volume``. When you write a new interface called laminar_connectivity (that would be cool!) a good name is ``enh/laminar_connectivity``.
 
    Make one branch for each new feature or fix. That way independent changes can be handled in different :ref:`pull requests <make-pr>` later.
-|
 
 **3. Install in editable mode (optional)**
 
@@ -27,7 +24,6 @@ Setting up
    This way, when you import Nighres functions in Python, they will always come from the current version of the code in your Nighres directory. This is convenient for testing your code while developing.
 
    (Alternatively, you can stay inside your Nighres directory and import functions directly from there without installing at all)
-|
 
 **4. Let the coding begin!**
 

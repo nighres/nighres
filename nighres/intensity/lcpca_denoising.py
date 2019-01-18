@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def lcpca_denoising(image_list, phase_list=None, 
+def lcpca_denoising(image_list, phase_list=None,
                     ngb_size=4, stdev_cutoff=1.05,
                       min_dimension=0, max_dimension=-1,
                       unwrap=True, eigen=False,
@@ -25,9 +25,9 @@ def lcpca_denoising(image_list, phase_list=None,
     phase_list: [niimg], optional
         List of input phase to denoise (order must match that of image_list)
     ngb_size: int, optional
-        Size of the local PCA neighborhood, to be increased with number of 
+        Size of the local PCA neighborhood, to be increased with number of
         inputs (default is 4)
-    stdev_cutoff: float, optional 
+    stdev_cutoff: float, optional
         Factor of local noise level to remove PCA components. Higher
         values remove more components (default is 1.05)
     min_dimension: int, optional
@@ -60,8 +60,7 @@ def lcpca_denoising(image_list, phase_list=None,
 
         * denoised ([niimg]): The list of denoised input images (_lcpca_den)
         * dimensions (niimg): Map of the estimated local dimensions (_lcpca_dim)
-        * residuals (niimg): Estimated residuals between input and denoised
-            images (_lcpca_err)
+        * residuals (niimg): Estimated residuals between input and denoised images (_lcpca_err)
 
     Notes
     ----------
@@ -71,7 +70,7 @@ def lcpca_denoising(image_list, phase_list=None,
 
     References
     ----------
-    .. [1] Manjon, Coupe, Concha, Buades, Collins, Robles (2013). Diffusion 
+    .. [1] Manjon, Coupe, Concha, Buades, Collins, Robles (2013). Diffusion
         Weighted Image Denoising Using Overcomplete Local PCA
         doi:10.1371/journal.pone.0073021
     """
@@ -86,7 +85,7 @@ def lcpca_denoising(image_list, phase_list=None,
         for idx,image in enumerate(image_list):
             if file_names is None: name=None
             else: name=file_names[idx]
-            den_file = os.path.join(output_dir, 
+            den_file = os.path.join(output_dir,
                         _fname_4saving(file_name=name,
                                       rootfile=image,
                                       suffix='lcpca-den'))
@@ -96,7 +95,7 @@ def lcpca_denoising(image_list, phase_list=None,
             for idx,image in enumerate(phase_list):
                 if file_names is None: name=None
                 else: name=file_names[len(image_list)+idx]
-                den_file = os.path.join(output_dir, 
+                den_file = os.path.join(output_dir,
                             _fname_4saving(file_name=name,
                                           rootfile=image,
                                           suffix='lcpca-den'))
@@ -104,12 +103,12 @@ def lcpca_denoising(image_list, phase_list=None,
 
         if file_names is None: name=None
         else: name=file_names[0]
-        dim_file = os.path.join(output_dir, 
+        dim_file = os.path.join(output_dir,
                         _fname_4saving(file_name=name,
                                    rootfile=image_list[0],
                                    suffix='lcpca-dim'))
 
-        err_file = os.path.join(output_dir, 
+        err_file = os.path.join(output_dir,
                         _fname_4saving(file_name=name,
                                    rootfile=image_list[0],
                                    suffix='lcpca-res'))
@@ -139,9 +138,9 @@ def lcpca_denoising(image_list, phase_list=None,
                     print("skip computation (use existing results)")
                     denoised = []
                     for den_file in den_files:
-                        denoised.append(load_volume(den_file))        
+                        denoised.append(load_volume(den_file))
                     output = {'denoised': denoised,
-                              'dimensions': load_volume(dim_file), 
+                              'dimensions': load_volume(dim_file),
                               'residuals': load_volume(err_file)}
                     if eigen:
                         output.update({'eigenvectors': load_volume(vec_file),
@@ -166,13 +165,13 @@ def lcpca_denoising(image_list, phase_list=None,
         if (len(phase_list)!=len(image_list)):
             print('\nmismatch of magnitude and phase images: abort')
             return
-    
+
     # load first image and use it to set dimensions and resolution
     img = load_volume(image_list[0])
     data = img.get_data()
     #data = data[0:10,0:10,0:10]
-    affine = img.get_affine()
-    header = img.get_header()
+    affine = img.affine
+    header = img.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 
@@ -187,7 +186,7 @@ def lcpca_denoising(image_list, phase_list=None,
         #data = data[0:10,0:10,0:10]
         lcpca.setMagnitudeImageAt(idx, nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
-    
+
     # input phase, if specified
     if (phase_list!=None):
         for idx, image in enumerate(phase_list):
@@ -196,7 +195,7 @@ def lcpca_denoising(image_list, phase_list=None,
             #data = data[0:10,0:10,0:10]
             lcpca.setPhaseImageAt(idx, nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
-    
+
     # set algorithm parameters
     lcpca.setPatchSize(ngb_size)
     lcpca.setStdevCutoff(stdev_cutoff)
@@ -237,7 +236,7 @@ def lcpca_denoising(image_list, phase_list=None,
             header['cal_max'] = np.nanmax(den_data)
             denoised = nb.Nifti1Image(den_data, affine, header)
             denoised_list.append(denoised)
-    
+
             if save_data:
                 save_volume(den_files[idx+len(image_list)], denoised)
 
