@@ -62,7 +62,7 @@ def conditional_shape(target_images, levelset_images, contrast_images,
 
         proba_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
-                                  rootfile=target_images[o],
+                                  rootfile=target_images[0],
                                   suffix='cspmax-proba', ))
 
         label_file = os.path.join(output_dir, 
@@ -103,7 +103,7 @@ def conditional_shape(target_images, levelset_images, contrast_images,
     cspmax.setResolutions(resolution[0], resolution[1], resolution[2])
 
     # target image 1
-    cspmax.setTargetImageAt(0, (nighresjava.JArray('float')(
+    cspmax.setTargetImageAt(0, nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
     
     # if further contrast are specified, input them
@@ -115,16 +115,16 @@ def conditional_shape(target_images, levelset_images, contrast_images,
     # load the atlas structures and contrasts
     for sub in range(subjects):
         for struct in range(structures):
-            data = load_volume(levelset_images[sub,struct]).get_data()
+            data = load_volume(levelset_images[sub][struct]).get_data()
             cspmax.setLevelsetImageAt(sub, struct, nighresjava.JArray('float')(
                                                 (data.flatten('F')).astype(float)))
                 
         for cnt in range(contrasts):
-            data = load_volume(levelset_images[sub,cnt]).get_data()
+            data = load_volume(levelset_images[sub][cnt]).get_data()
             cspmax.setContrastImageAt(sub, cnt, nighresjava.JArray('float')(
                                                 (data.flatten('F')).astype(float)))
 
-    dimensions = dimensions.append(cspmax.getBestDimension())
+    dimensions = (dimensions[0],dimensions[1],dimensions[2],cspmax.getBestDimension())
 
     # execute
     try:
@@ -138,8 +138,8 @@ def conditional_shape(target_images, levelset_images, contrast_images,
         return
 
     # reshape output to what nibabel likes
-    proba_data = np.reshape(np.array(cspmax.getBestProbabilityMap(),
-                                   dtype=np.int32), dimensions, 'F')
+    proba_data = np.reshape(np.array(cspmax.getBestProbabilityMaps(),
+                                   dtype=np.float32), dimensions, 'F')
 
     label_data = np.reshape(np.array(cspmax.getBestProbabilityLabels(),
                                     dtype=np.int32), dimensions, 'F')
@@ -150,7 +150,7 @@ def conditional_shape(target_images, levelset_images, contrast_images,
     proba = nb.Nifti1Image(proba_data, affine, header)
 
     header['cal_max'] = np.nanmax(label_data)
-    dist = nb.Nifti1Image(label_data, affine, header)
+    label = nb.Nifti1Image(label_data, affine, header)
 
     if save_data:
         save_volume(proba_file, proba)
