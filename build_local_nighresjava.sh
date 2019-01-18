@@ -166,4 +166,4 @@ find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' $nighre
 cd $nighres_local
 
 # finish the installation for the libabry
-python3 -m pip install .
+#python3 -m pip install .

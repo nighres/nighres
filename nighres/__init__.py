@@ -5,8 +5,9 @@ import nighres.data
 import nighres.filtering
 import nighres.intensity
 import nighres.laminar
-import nighres.registration
 import nighres.microscopy
+import nighres.registration
+import nighres.segmentation
 import nighres.shape
 import nighres.surface
 import nighres.statistics
