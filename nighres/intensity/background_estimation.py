@@ -101,8 +101,8 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
     # load image and use it to set dimensions and resolution
     img = load_volume(image)
     data = img.get_data()
-    affine = img.get_affine()
-    header = img.get_header()
+    affine = img.affine
+    header = img.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 

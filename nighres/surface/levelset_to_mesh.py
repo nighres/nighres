@@ -7,15 +7,14 @@ from ..io import load_volume, save_volume, load_mesh_geometry, save_mesh_geometr
 from ..utils import _output_dir_4saving, _fname_4saving,_check_available_memory
 
 
-def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0, inclusive=True,
-                            save_data=False, overwrite=False, output_dir=None,
-                            file_name=None):
+def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
+                     inclusive=True, save_data=False, overwrite=False,
+                     output_dir=None, file_name=None):
 
     """Levelset to mesh
 
-    Creates a triangulated mesh from the distance to a levelset surface 
+    Creates a triangulated mesh from the distance to a levelset surface
     representation using a connectivity-consistent marching cube algorithm.
-    Original algorithm from _[1] and adated from _[2].
 
     Parameters
     ----------
@@ -25,12 +24,12 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0, inclusive=T
         Choice of digital connectivity to build the mesh (default is 18/6)
     level: float, optional
         Value of the levelset function to use as isosurface (default is 0)
-    inclusive: bool
-        Whether voxels at the exact 'level' value are inside the isosurface 
+    inclusive: bool, optional
+        Whether voxels at the exact 'level' value are inside the isosurface
         (default is True)
-    save_data: bool
+    save_data: bool, optional
         Save output data to file (default is False)
-    overwrite: bool
+    overwrite: bool, optional
         Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
@@ -45,17 +44,19 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0, inclusive=T
         (suffix of output files in brackets)
 
         * result (mesh): Surface mesh dictionary of "points" and "faces"
+          (_l2m-mesh)
 
     Notes
     ----------
-    Ported from original Java module by Pierre-Louis Bazin
-    
+    Ported from original Java module by Pierre-Louis Bazin. Original algorithm
+    from [1]_ and adapted from [2]_.
+
     References
     ----------
     .. [1] Han et al (2003). A Topology Preserving Level Set Method for
         Geometric Deformable Models
         doi:
-    .. [2] Lucas et al (2010). The Java Image Science Toolkit (JIST) for 
+    .. [2] Lucas et al (2010). The Java Image Science Toolkit (JIST) for
         Rapid Prototyping and Publishing of Neuroimaging Software
         doi:
     """
@@ -66,18 +67,18 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0, inclusive=T
     if save_data:
         output_dir = _output_dir_4saving(output_dir, levelset_image)
 
-        mesh_file = os.path.join(output_dir, 
+        mesh_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                        rootfile=levelset_image,
                                        suffix='l2m-mesh',ext="vtk"))
 
         if overwrite is False \
             and os.path.isfile(mesh_file) :
-            
+
             print("skip computation (use existing results)")
             output = {'result': load_mesh_geometry(mesh_file)}
             return output
-            
+
     # start virtual machine if not running
     try:
         mem = _check_available_memory()
@@ -101,11 +102,11 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0, inclusive=T
 
     algorithm.setLevelsetImage(nighresjava.JArray('float')(
                             (lvl_data.flatten('F')).astype(float)))
-    
+
     algorithm.setConnectivity(connectivity)
     algorithm.setZeroLevel(level)
     algorithm.setInclusive(inclusive)
-    
+
     # execute class
     try:
         algorithm.execute()
@@ -121,11 +122,11 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0, inclusive=T
     npt = int(np.array(algorithm.getPointList(), dtype=np.float32).shape[0]/3)
     mesh_points = np.reshape(np.array(algorithm.getPointList(),
                                dtype=np.float32), (npt,3), 'C')
-  
-    nfc = int(np.array(algorithm.getTriangleList(), dtype=np.int32).shape[0]/3)  
+
+    nfc = int(np.array(algorithm.getTriangleList(), dtype=np.int32).shape[0]/3)
     mesh_faces = np.reshape(np.array(algorithm.getTriangleList(),
                                dtype=np.int32), (nfc,3), 'C')
-  
+
     # create the mesh dictionary
     mesh = {"points": mesh_points, "faces": mesh_faces}
 

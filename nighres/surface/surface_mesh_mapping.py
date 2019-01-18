@@ -24,13 +24,13 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
         Intensity image to map onto the surface mesh
     surface_mesh: mesh
         Mesh model of the surface
-    inflated_mesh: mesh
+    inflated_mesh: mesh, optional
         Mesh model of the inflated surface
     mapping_method: {"closest_point","linear_interp","highest_value"}, optional
         Choice of mapping method
-    save_data: bool
+    save_data: bool, optional
         Save output data to file (default is False)
-    overwrite: bool
+    overwrite: bool, optional
         Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
@@ -45,12 +45,14 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
         (suffix of output files in brackets)
 
         * original (mesh): Surface mesh dictionary of "points" and "faces"
+          (_map-orig)
         * inflated (mesh): Surface mesh dictionary of "points" and "faces"
+          (_map-inf)
 
     Notes
     ----------
     Ported from original Java module by Pierre-Louis Bazin
-    
+
     """
 
     print("\nSurface mesh mapping")
@@ -59,32 +61,32 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, levelset_image)
 
-        orig_file = os.path.join(output_dir, 
+        orig_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                        rootfile=levelset_image,
                                        suffix='map-orig'),"vtk")
 
-        inf_file = os.path.join(output_dir, 
+        inf_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                        rootfile=levelset_image,
                                        suffix='map-inf'),"vtk")
 
         if overwrite is False \
             and os.path.isfile(orig_file) and os.path.isfile(inf_file) :
-            
+
             print("skip computation (use existing results)")
-            output = {'original': load_mesh(orig_file), 
+            output = {'original': load_mesh(orig_file),
                       'inflated': load_mesh(inf_file)}
             return output
-            
+
         elif overwrite is False \
             and os.path.isfile(orig_file) and inflated_mesh is None :
-            
+
             print("skip computation (use existing results)")
-            output = {'original': load_mesh(orig_file), 
+            output = {'original': load_mesh(orig_file),
                       'inflated': None}
             return output
-            
+
     # start virtual machine if not running
     try:
         mem = _check_available_memory()
@@ -107,33 +109,33 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
     if len(dimensions)<4:
         algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
         nt = 1
-    else:    
-        algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2], 
+    else:
+        algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2],
                                 dimensions[3])
         nt = dimension[3]
 
     algorithm.setIntensityImage(nighresjava.JArray('float')(
                             (int_data.flatten('F')).astype(float)))
-    
+
     orig_mesh = load_mesh_geometry(surface_mesh)
-    
+
     algorithm.setOriginalSurfacePoints(nighresjava.JArray('float')(
                             (orig_mesh['points'].flatten('C')).astype(float)))
     algorithm.setOriginalSurfaceTriangles(nighresjava.JArray('int')(
                             (orig_mesh['faces'].flatten('C')).astype(int).tolist()))
-    
+
     if inflated_mesh is not None:
         inf_mesh = load_mesh_geometry(inflated_mesh)
-    
+
         algorithm.setInflatedSurfacePoints(nighresjava.JArray('float')(
                             (orig_mesh['points'].flatten('C')).astype(float)))
         algorithm.setInflatedSurfaceTriangles(nighresjava.JArray('int')(
                             (orig_mesh['faces'].flatten('C')).astype(int).tolist()))
-    
-   
+
+
     algorithm.setSurfaceConvention("voxels")
     algorithm.setMappingMethod(mapping_method)
-    
+
     # execute class
     try:
         algorithm.execute()
@@ -146,18 +148,18 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
         return
 
     # collect outputs
-    npt = int(np.array(algorithm.getMappedOriginalSurfacePoints(), 
+    npt = int(np.array(algorithm.getMappedOriginalSurfacePoints(),
                 dtype=np.float32).shape[0]/3)
-    nfc = int(np.array(algorithm.getMappedOriginalSurfaceTriangles(), 
-                dtype=np.int32).shape[0]/3)  
-    
+    nfc = int(np.array(algorithm.getMappedOriginalSurfaceTriangles(),
+                dtype=np.int32).shape[0]/3)
+
     orig_points = np.reshape(np.array(algorithm.getMappedOriginalSurfacePoints(),
                                dtype=np.float32), (npt,3), 'C')
     orig_faces = np.reshape(np.array(algorithm.getMappedOriginalSurfaceTriangles(),
                                dtype=np.int32), (nfc,3), 'C')
     orig_data = np.reshape(np.array(algorithm.getMappedOriginalSurfaceValues(),
                                dtype=np.float32), (npt,nt), 'C')
- 
+
     if inflated_mesh is not None:
         inf_points = np.reshape(np.array(algorithm.getMappedInflatedSurfacePoints(),
                                    dtype=np.float32), (npt,3), 'C')
@@ -165,11 +167,11 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
                                    dtype=np.int32), (nfc,3), 'C')
         inf_data = np.reshape(np.array(algorithm.getMappedInflatedSurfaceValues(),
                                    dtype=np.float32), (npt,nt), 'C')
-    
+
     # create the mesh dictionary
-    mapped_orig_mesh = {"points": orig_points, "faces": orig_faces, 
+    mapped_orig_mesh = {"points": orig_points, "faces": orig_faces,
                         "data": orig_data}
-    mapped_inf_mesh = {"points": inf_points, "faces": inf_faces, 
+    mapped_inf_mesh = {"points": inf_points, "faces": inf_faces,
                         "data": inf_data}
 
     if save_data:

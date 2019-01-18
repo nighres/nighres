@@ -17,7 +17,7 @@ imcntk_local="/home/pilou/Code/github/imcn-imaging"
 nighres_local="/home/pilou/Code/github/nighres"
 
 # Check the system has the necessary commands
-hash wget tar javac jar python3 pip3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3 pip3"
+hash wget tar javac jar python3 pip 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3 pip"
 
 # Check for setuptools and wheels
 pip_modules=$(python3 -m pip list | tr -s ' ' | cut -f 1 -d ' ')
@@ -122,7 +122,7 @@ javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java $imcntk_li
 echo "Assembling..."
 #jar cf imcntk.jar     nl/uva/imcn/algorithms/*.class
 jar uf $nighres_local/nighresjava/src/nighresjava.jar nl/uva/imcn/algorithms/*.class
-jar cf $nighres_local/nighresjava/src/imcntk-lib.jar nl/uva/imcn/libraries/*.class nl/uva/imcn/methods/*.class nl/uva/imcn/structures/*.class nl/uva/imcn/utilities/*.class 
+jar cf $nighres_local/nighresjava/src/imcntk-lib.jar nl/uva/imcn/libraries/*.class nl/uva/imcn/methods/*.class nl/uva/imcn/structures/*.class nl/uva/imcn/utilities/*.class
 
 cp lib/*.jar $nighres_local/nighresjava/lib/
 
