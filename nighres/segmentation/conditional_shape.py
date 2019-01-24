@@ -9,7 +9,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 
 def conditional_shape(target_images, levelset_images, contrast_images, 
-                      subjects, structures,contrasts,
+                      subjects, structures, contrasts,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Conditioanl Shape Parcellation
@@ -92,6 +92,7 @@ def conditional_shape(target_images, levelset_images, contrast_images,
     cspmax.setNumberOfSubjectsObjectsAndContrasts(subjects,structures,contrasts)
     
     # load target image for parameters
+    #print("load: "+str(target_images[0]))
     img = load_volume(target_images[0])
     data = img.get_data()
     affine = img.get_affine()
@@ -108,6 +109,7 @@ def conditional_shape(target_images, levelset_images, contrast_images,
     
     # if further contrast are specified, input them
     for contrast in range(1,contrasts):    
+        #print("load: "+str(target_images[contrast]))
         data = load_volume(target_images[contrast]).get_data()
         cspmax.setTargetImageAt(contrast, nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
@@ -115,11 +117,13 @@ def conditional_shape(target_images, levelset_images, contrast_images,
     # load the atlas structures and contrasts
     for sub in range(subjects):
         for struct in range(structures):
+            #print("load: "+str(levelset_images[sub][struct]))
             data = load_volume(levelset_images[sub][struct]).get_data()
             cspmax.setLevelsetImageAt(sub, struct, nighresjava.JArray('float')(
                                                 (data.flatten('F')).astype(float)))
                 
         for cnt in range(contrasts):
+            #print("load: "+str(levelset_images[sub][cnt]))
             data = load_volume(levelset_images[sub][cnt]).get_data()
             cspmax.setContrastImageAt(sub, cnt, nighresjava.JArray('float')(
                                                 (data.flatten('F')).astype(float)))
