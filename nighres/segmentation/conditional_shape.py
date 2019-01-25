@@ -109,7 +109,7 @@ def conditional_shape(target_images, levelset_images, contrast_images,
     
     # if further contrast are specified, input them
     for contrast in range(1,contrasts):    
-        #print("load: "+str(target_images[contrast]))
+        print("load: "+str(target_images[contrast]))
         data = load_volume(target_images[contrast]).get_data()
         cspmax.setTargetImageAt(contrast, nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
@@ -117,15 +117,15 @@ def conditional_shape(target_images, levelset_images, contrast_images,
     # load the atlas structures and contrasts
     for sub in range(subjects):
         for struct in range(structures):
-            #print("load: "+str(levelset_images[sub][struct]))
+            print("load: "+str(levelset_images[sub][struct]))
             data = load_volume(levelset_images[sub][struct]).get_data()
             cspmax.setLevelsetImageAt(sub, struct, nighresjava.JArray('float')(
                                                 (data.flatten('F')).astype(float)))
                 
-        for cnt in range(contrasts):
-            #print("load: "+str(levelset_images[sub][cnt]))
-            data = load_volume(levelset_images[sub][cnt]).get_data()
-            cspmax.setContrastImageAt(sub, cnt, nighresjava.JArray('float')(
+        for contrast in range(contrasts):
+            print("load: "+str(contrast_images[sub][contrast]))
+            data = load_volume(contrast_images[sub][contrast]).get_data()
+            cspmax.setContrastImageAt(sub, contrast, nighresjava.JArray('float')(
                                                 (data.flatten('F')).astype(float)))
 
     dimensions = (dimensions[0],dimensions[1],dimensions[2],cspmax.getBestDimension())
