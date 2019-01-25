@@ -10,6 +10,8 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def conditional_shape(target_images, levelset_images, contrast_images, 
                       subjects, structures, contrasts,
+                      cancel_bg=False, cancel_all=False, 
+                      sum_proba=False, max_proba=False,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Conditioanl Shape Parcellation
@@ -30,6 +32,14 @@ def conditional_shape(target_images, levelset_images, contrast_images,
         Number of structures to parcellate
     contrasts: int
        Number of image intensity contrasts
+    cancel_bg: bool
+        Cancel the main background class (default is False)
+    cancel_all: bool
+        Cancel all main classes (default is False)
+    sum_proba: bool
+        Output the sum of conditional probabilities (default is False)
+    max_proba: bool
+        Output the max of conditional probabilities (default is False)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -90,6 +100,7 @@ def conditional_shape(target_images, levelset_images, contrast_images,
 
     # set parameters
     cspmax.setNumberOfSubjectsObjectsAndContrasts(subjects,structures,contrasts)
+    cspmax.setOptions(True, cancel_bg, cancel_all, sum_proba, max_proba)
     
     # load target image for parameters
     #print("load: "+str(target_images[0]))
