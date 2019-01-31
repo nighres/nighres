@@ -91,7 +91,7 @@ def intensity_based_skullstripping(main_image, extra_image=None,
                                    suffix='istrip-proba'))
         main_file = os.path.join(output_dir, 
                     _fname_4saving(file_name=file_name,
-                                  rootfile=main_file,
+                                  rootfile=main_image,
                                   suffix='istrip-main'))
 
         if extra_image is not None:
@@ -127,7 +127,7 @@ def intensity_based_skullstripping(main_image, extra_image=None,
     algo = nighresjava.BrainIntensityBasedSkullStripping()
 
     # get dimensions and resolution from second inversion image
-    main_img = load_volume(second_inversion)
+    main_img = load_volume(main_image)
     main_data = main_img.get_data()
     main_affine = main_img.affine
     main_hdr = main_img.header
@@ -136,7 +136,7 @@ def intensity_based_skullstripping(main_image, extra_image=None,
     algo.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     algo.setResolutions(resolution[0], resolution[1], resolution[2])
     algo.setMainIntensityImage(nighresjava.JArray('float')(
-                                    (Main_data.flatten('F')).astype(float)))
+                                    (main_data.flatten('F')).astype(float)))
 
     # pass other inputs
     if extra_image is not None:
