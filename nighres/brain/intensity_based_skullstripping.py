@@ -72,7 +72,7 @@ def intensity_based_skullstripping(main_image, extra_image=None,
        DOI: 10.1016/j.neuroimage.2013.03.077
     """
 
-    print('\Intensity-based Skull Stripping')
+    print('\nIntensity-based Skull Stripping')
 
     # check topology lut dir and set default if not given
     topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
