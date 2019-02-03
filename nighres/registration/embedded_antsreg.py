@@ -543,6 +543,7 @@ def embedded_antsreg(source_image, target_image,
     inverse = trg_at.run()
 
     # pad coordinate mapping outside the image? hopefully not needed...
+    # unfortunately, yes needed: but we'll do that in apply_coordinate_mapping
 
     # collect outputs and potentially save
     transformed_img = nb.Nifti1Image(nb.load(transformed.outputs.output_image).get_data(),
