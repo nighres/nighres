@@ -69,10 +69,10 @@ def volume_som_mapping(proba_image,
                                        suffix='som-grid',ext='vtk'))
 
         if overwrite is False \
-            and os.path.isfile(orig_file) and os.path.isfile(som_file) :
+            and os.path.isfile(map_file) and os.path.isfile(som_file) :
             
             print("skip computation (use existing results)")
-            output = {'original': load_volume(orig_file), 
+            output = {'map': load_volume(map_file), 
                       'som': load_mesh(som_file)}
             return output
                         
@@ -94,7 +94,7 @@ def volume_som_mapping(proba_image,
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = prob_data.shape
     
-    algorithm.setProbabilityImage(nighresjava.JArray('float')(
+    algorithm.setProbaImage(nighresjava.JArray('float')(
                                     (prob_data.flatten('F')).astype(float)))
     
     algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
@@ -120,11 +120,12 @@ def volume_som_mapping(proba_image,
     print("collect outputs")
 
     print("volume...")
+    dimensions = (dimensions[0],dimensions[1],dimensions[2],2)
     map_data = np.reshape(np.array(algorithm.getMappedImage(),
                                dtype=np.float32), dimensions, 'F')
 
     hdr['cal_max'] = np.nanmax(map_data)
-    map_img = nb.Nifti1Image(map_data, aff, hdr)
+    mapped_img = nb.Nifti1Image(map_data, aff, hdr)
 
     npt = int(np.array(algorithm.getMappedSomPoints(), 
                 dtype=np.float32).shape[0]/3)
@@ -145,7 +146,7 @@ def volume_som_mapping(proba_image,
 
     if save_data:
         print("saving...")
-        save_volume(map_file, map_img)
+        save_volume(map_file, mapped_img)
         save_mesh(som_file, mapped_som_mesh)
 
-    return {'map': mapped_file, 'som': mapped_som_mesh}
+    return {'map': mapped_img, 'som': mapped_som_mesh}
