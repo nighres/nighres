@@ -70,6 +70,24 @@ def conditional_shape(target_images, levelset_images, contrast_images,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, target_images[0])
 
+        spatial_proba_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
+                                  rootfile=target_images[0],
+                                  suffix='cspmax-sproba', ))
+
+        spatial_label_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
+                                   rootfile=target_images[0],
+                                   suffix='cspmax-slabel'))
+        intensity_proba_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
+                                  rootfile=target_images[0],
+                                  suffix='cspmax-iproba', ))
+
+        intensity_label_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
+                                   rootfile=target_images[0],
+                                   suffix='cspmax-ilabel'))
         proba_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                   rootfile=target_images[0],
@@ -80,11 +98,19 @@ def conditional_shape(target_images, levelset_images, contrast_images,
                                    rootfile=target_images[0],
                                    suffix='cspmax-label'))
         if overwrite is False \
+            and os.path.isfile(spatial_proba_file) \
+            and os.path.isfile(spatial_label_file) \
+            and os.path.isfile(intensity_proba_file) \
+            and os.path.isfile(intensity_label_file) \
             and os.path.isfile(proba_file) \
             and os.path.isfile(label_file) :
             
             print("skip computation (use existing results)")
-            output = {'max_proba': load_volume(proba_file), 
+            output = {'max_spatial_proba': load_volume(spatial_proba_file), 
+                      'max_spatial_label': load_volume(spatial_label_file),
+                      'max_intensity_proba': load_volume(intensity_proba_file), 
+                      'max_intensity_label': load_volume(intensity_label_file),
+                      'max_proba': load_volume(proba_file), 
                       'max_label': load_volume(label_file)}
             return output
 
@@ -153,6 +179,18 @@ def conditional_shape(target_images, levelset_images, contrast_images,
         return
 
     # reshape output to what nibabel likes
+    spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(),
+                                   dtype=np.float32), dimensions, 'F')
+
+    spatial_label_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityLabels(),
+                                    dtype=np.int32), dimensions, 'F')
+
+    intensity_proba_data = np.reshape(np.array(cspmax.getBestIntensityProbabilityMaps(),
+                                   dtype=np.float32), dimensions, 'F')
+
+    intensity_label_data = np.reshape(np.array(cspmax.getBestIntensityProbabilityLabels(),
+                                    dtype=np.int32), dimensions, 'F')
+
     proba_data = np.reshape(np.array(cspmax.getBestProbabilityMaps(),
                                    dtype=np.float32), dimensions, 'F')
 
@@ -161,6 +199,18 @@ def conditional_shape(target_images, levelset_images, contrast_images,
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
+    header['cal_max'] = np.nanmax(spatial_proba_data)
+    spatial_proba = nb.Nifti1Image(spatial_proba_data, affine, header)
+
+    header['cal_max'] = np.nanmax(spatial_label_data)
+    spatial_label = nb.Nifti1Image(spatial_label_data, affine, header)
+
+    header['cal_max'] = np.nanmax(intensity_proba_data)
+    intensity_proba = nb.Nifti1Image(intensity_proba_data, affine, header)
+
+    header['cal_max'] = np.nanmax(intensity_label_data)
+    intensity_label = nb.Nifti1Image(intensity_label_data, affine, header)
+
     header['cal_max'] = np.nanmax(proba_data)
     proba = nb.Nifti1Image(proba_data, affine, header)
 
@@ -168,7 +218,13 @@ def conditional_shape(target_images, levelset_images, contrast_images,
     label = nb.Nifti1Image(label_data, affine, header)
 
     if save_data:
+        save_volume(spatial_proba_file, spatial_proba)
+        save_volume(spatial_label_file, spatial_label)
+        save_volume(intensity_proba_file, intensity_proba)
+        save_volume(intensity_label_file, intensity_label)
         save_volume(proba_file, proba)
         save_volume(label_file, label)
 
-    return {'max_proba': proba, 'max_label': label}
+    return {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 
+            'max_intensity_proba': intensity_proba, 'max_intensity_label': intensity_label, 
+            'max_proba': proba, 'max_label': label}
