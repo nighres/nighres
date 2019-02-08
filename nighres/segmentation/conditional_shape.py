@@ -165,8 +165,6 @@ def conditional_shape(target_images, levelset_images, contrast_images,
             cspmax.setContrastImageAt(sub, contrast, nighresjava.JArray('float')(
                                                 (data.flatten('F')).astype(float)))
 
-    dimensions = (dimensions[0],dimensions[1],dimensions[2],cspmax.getBestDimension())
-
     # execute
     try:
         cspmax.execute()
@@ -179,6 +177,8 @@ def conditional_shape(target_images, levelset_images, contrast_images,
         return
 
     # reshape output to what nibabel likes
+    dimensions = (dimensions[0],dimensions[1],dimensions[2],cspmax.getBestDimension())
+
     spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(),
                                    dtype=np.float32), dimensions, 'F')
 
