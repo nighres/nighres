@@ -12,6 +12,7 @@ def conditional_shape(target_images, levelset_images, contrast_images,
                       subjects, structures, contrasts,
                       cancel_bg=False, cancel_all=False, 
                       sum_proba=False, max_proba=False,
+                      max_iterations=20, max_difference=0.01,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Conditioanl Shape Parcellation
@@ -40,6 +41,10 @@ def conditional_shape(target_images, levelset_images, contrast_images,
         Output the sum of conditional probabilities (default is False)
     max_proba: bool
         Output the max of conditional probabilities (default is False)
+    max_iterations: int
+        Maximum number of diffusion iterations to perform
+    max_difference: float
+        Maximum difference between diffusion steps
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -56,6 +61,10 @@ def conditional_shape(target_images, levelset_images, contrast_images,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
+        * max_spatial_proba (niimg): Maximum spatial probability map (_cspmax-sproba)
+        * max_spatial_label (niimg): Maximum spatial probability labels (_cspmax-slabel)
+        * max_intensity_proba (niimg): Maximum intensity probability map (_cspmax-iproba)
+        * max_intensity_label (niimg): Maximum intensity probability labels (_cspmax-ilabel)
         * max_proba (niimg): Maximum probability map (_cspmax-proba)
         * max_label (niimg): Maximum probability labels (_cspmax-label)
 
@@ -127,6 +136,7 @@ def conditional_shape(target_images, levelset_images, contrast_images,
     # set parameters
     cspmax.setNumberOfSubjectsObjectsAndContrasts(subjects,structures,contrasts)
     cspmax.setOptions(True, cancel_bg, cancel_all, sum_proba, max_proba)
+    cspmax.setDiffusionParameters(max_iterations, max_difference)
     
     # load target image for parameters
     #print("load: "+str(target_images[0]))
