@@ -8,8 +8,11 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def conditional_shape(target_images, levelset_images, contrast_images, 
-                      subjects, structures, contrasts,
+def conditional_shape(target_images, subjects, structures, contrasts,
+                      recompute=True,
+                      levelset_images=None, contrast_images=None,
+                      shape_atlas_probas=None, shape_atlas_labels=None, 
+                      intensity_atlas_mean=None, intensity_atlas_stdv=None,
                       cancel_bg=False, cancel_all=False, 
                       sum_proba=False, max_proba=False,
                       max_iterations=20, max_difference=0.01,
@@ -23,16 +26,27 @@ def conditional_shape(target_images, levelset_images, contrast_images,
     ----------
     target_images: [niimg]
         Input images to perform the parcellation from
-    levelset_images: [niimg]
-        Atlas shape levelsets indexed by (subjects,structures)
-    contrast_images: [niimg]
-        Atlas images to use in the parcellation, indexed by (subjects, contrasts)
     subjects: int
         Number of atlas subjects
     structures: int
         Number of structures to parcellate
     contrasts: int
        Number of image intensity contrasts
+    recompute: bool
+        Whether to recompute shape and intensity priors from atlas images 
+        (default is True)
+    levelset_images: [niimg]
+        Atlas shape levelsets indexed by (subjects,structures)
+    contrast_images: [niimg]
+        Atlas images to use in the parcellation, indexed by (subjects, contrasts)
+    shape_atlas_probas: [niimg]
+        Pre-computed shape atlas from the shape levelsets (replacing them)
+    shape_atlas_labels: [niimg]
+        Pre-computed shape atlas from the shape levelsets (replacing them)
+    intensity_atlas_mean: [niimg]
+        Pre-computed intensity atlas from the contrast images (replacing them)
+    intensity_atlas_stdv: [niimg]
+        Pre-computed intensity atlas from the contrast images (replacing them)
     cancel_bg: bool
         Cancel the main background class (default is False)
     cancel_all: bool
@@ -67,6 +81,8 @@ def conditional_shape(target_images, levelset_images, contrast_images,
         * max_intensity_label (niimg): Maximum intensity probability labels (_cspmax-ilabel)
         * max_proba (niimg): Maximum probability map (_cspmax-proba)
         * max_label (niimg): Maximum probability labels (_cspmax-label)
+        * cond_mean (niimg): Conditional intensity mean (_cspmax-cmean)
+        * cond_stdv (niimg): Conditional intensity stdv (_cspmax-cstdv)
 
     Notes
     ----------
@@ -106,13 +122,24 @@ def conditional_shape(target_images, levelset_images, contrast_images,
                         _fname_4saving(file_name=file_name,
                                    rootfile=target_images[0],
                                    suffix='cspmax-label'))
+        condmean_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
+                                  rootfile=target_images[0],
+                                  suffix='cspmax-cmean', ))
+
+        condstdv_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
+                                   rootfile=target_images[0],
+                                   suffix='cspmax-cstd'))
         if overwrite is False \
             and os.path.isfile(spatial_proba_file) \
             and os.path.isfile(spatial_label_file) \
             and os.path.isfile(intensity_proba_file) \
             and os.path.isfile(intensity_label_file) \
             and os.path.isfile(proba_file) \
-            and os.path.isfile(label_file) :
+            and os.path.isfile(label_file) \
+            and os.path.isfile(condmean_file) \
+            and os.path.isfile(condstdv_file) :
             
             print("skip computation (use existing results)")
             output = {'max_spatial_proba': load_volume(spatial_proba_file), 
@@ -120,7 +147,9 @@ def conditional_shape(target_images, levelset_images, contrast_images,
                       'max_intensity_proba': load_volume(intensity_proba_file), 
                       'max_intensity_label': load_volume(intensity_label_file),
                       'max_proba': load_volume(proba_file), 
-                      'max_label': load_volume(label_file)}
+                      'max_label': load_volume(label_file),
+                      'cond_mean': load_volume(condmean_file), 
+                      'cond_stdv': load_volume(condstdv_file)}
             return output
 
 
@@ -139,7 +168,7 @@ def conditional_shape(target_images, levelset_images, contrast_images,
     cspmax.setDiffusionParameters(max_iterations, max_difference)
     
     # load target image for parameters
-    #print("load: "+str(target_images[0]))
+    print("load: "+str(target_images[0]))
     img = load_volume(target_images[0])
     data = img.get_data()
     affine = img.get_affine()
@@ -161,19 +190,38 @@ def conditional_shape(target_images, levelset_images, contrast_images,
         cspmax.setTargetImageAt(contrast, nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
 
-    # load the atlas structures and contrasts
-    for sub in range(subjects):
-        for struct in range(structures):
-            print("load: "+str(levelset_images[sub][struct]))
-            data = load_volume(levelset_images[sub][struct]).get_data()
-            cspmax.setLevelsetImageAt(sub, struct, nighresjava.JArray('float')(
-                                                (data.flatten('F')).astype(float)))
-                
-        for contrast in range(contrasts):
-            print("load: "+str(contrast_images[sub][contrast]))
-            data = load_volume(contrast_images[sub][contrast]).get_data()
-            cspmax.setContrastImageAt(sub, contrast, nighresjava.JArray('float')(
-                                                (data.flatten('F')).astype(float)))
+    # load the shape and intensity atlases, if existing
+    if recompute:
+        # load the atlas structures and contrasts, if needed
+        for sub in range(subjects):
+            for struct in range(structures):
+                print("load: "+str(levelset_images[sub][struct]))
+                data = load_volume(levelset_images[sub][struct]).get_data()
+                cspmax.setLevelsetImageAt(sub, struct, nighresjava.JArray('float')(
+                                                    (data.flatten('F')).astype(float)))
+                    
+            for contrast in range(contrasts):
+                print("load: "+str(contrast_images[sub][contrast]))
+                data = load_volume(contrast_images[sub][contrast]).get_data()
+                cspmax.setContrastImageAt(sub, contrast, nighresjava.JArray('float')(
+                                                    (data.flatten('F')).astype(float)))
+    else:         
+        print("load: "+str(os.path.join(output_dir,shape_atlas_probas)))
+        pdata = load_volume(os.path.join(output_dir,shape_atlas_probas)).get_data()
+        print("load: "+str(os.path.join(output_dir,shape_atlas_labels)))
+        ldata = load_volume(os.path.join(output_dir,shape_atlas_labels)).get_data()
+        cspmax.setShapeAtlasProbasAndLabels(nighresjava.JArray('float')(
+                                    (pdata.flatten('F')).astype(float)),
+                                    nighresjava.JArray('int')(
+                                    (ldata.flatten('F')).astype(int).tolist()))
+        print("load: "+str(os.path.join(output_dir,intensity_atlas_mean)))
+        data = load_volume(os.path.join(output_dir,intensity_atlas_mean)).get_data()
+        cspmax.setConditionalMean(nighresjava.JArray('float')(
+                                    (data.flatten('F')).astype(float)))
+        print("load: "+str(os.path.join(output_dir,intensity_atlas_stdv)))
+        data = load_volume(os.path.join(output_dir,intensity_atlas_stdv)).get_data()
+        cspmax.setConditionalStdv(nighresjava.JArray('float')(
+                                    (data.flatten('F')).astype(float)))
 
     # execute
     try:
@@ -188,6 +236,8 @@ def conditional_shape(target_images, levelset_images, contrast_images,
 
     # reshape output to what nibabel likes
     dimensions = (dimensions[0],dimensions[1],dimensions[2],cspmax.getBestDimension())
+    
+    intens_dims = (structures+1,structures+1,contrasts)
 
     spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(),
                                    dtype=np.float32), dimensions, 'F')
@@ -206,6 +256,12 @@ def conditional_shape(target_images, levelset_images, contrast_images,
 
     label_data = np.reshape(np.array(cspmax.getBestProbabilityLabels(),
                                     dtype=np.int32), dimensions, 'F')
+
+    intens_mean_data = np.reshape(np.array(cspmax.getConditionalMean(),
+                                   dtype=np.float32), intens_dims, 'F')
+
+    intens_stdv_data = np.reshape(np.array(cspmax.getConditionalStdv(),
+                                    dtype=np.float32), intens_dims, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -227,6 +283,10 @@ def conditional_shape(target_images, levelset_images, contrast_images,
     header['cal_max'] = np.nanmax(label_data)
     label = nb.Nifti1Image(label_data, affine, header)
 
+    cmean = nb.Nifti1Image(intens_mean_data, None, None)
+
+    cstdv = nb.Nifti1Image(intens_stdv_data, None, None)
+
     if save_data:
         save_volume(spatial_proba_file, spatial_proba)
         save_volume(spatial_label_file, spatial_label)
@@ -234,7 +294,9 @@ def conditional_shape(target_images, levelset_images, contrast_images,
         save_volume(intensity_label_file, intensity_label)
         save_volume(proba_file, proba)
         save_volume(label_file, label)
+        save_volume(condmean_file, cmean)
+        save_volume(condstdv_file, cstdv)
 
     return {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 
             'max_intensity_proba': intensity_proba, 'max_intensity_label': intensity_label, 
-            'max_proba': proba, 'max_label': label}
+            'max_proba': proba, 'max_label': label, 'cond_mean': cmean,'cond_stdv': cstdv}

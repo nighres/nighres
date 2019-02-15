@@ -32,6 +32,7 @@ def embedded_antsreg(source_image, target_image,
 					interpolation='NearestNeighbor',
 					regularization='High',
 					convergence=1e-6,
+					mask_zero=False,
 					ignore_affine=False, ignore_header=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
@@ -72,6 +73,9 @@ def embedded_antsreg(source_image, target_image,
     convergence: float
         Threshold for convergence, can make the algorithm very slow
         (default is convergence)
+    mask_zero: bool
+        Mask regions with zero value
+        (default is False)
     ignore_affine: bool
         Ignore the affine matrix information extracted from the image header
         (default is False)
@@ -241,23 +245,40 @@ def embedded_antsreg(source_image, target_image,
             new_affine[1][3] = -rty*nty/2.0
             new_affine[2][3] = -rtz*ntz/2.0
         else:
-            new_affine[0][mx] = rtx*np.sign(trg_affine[0][mx])
-            new_affine[1][my] = rty*np.sign(trg_affine[1][my])
-            new_affine[2][mz] = rtz*np.sign(trg_affine[2][mz])
-            if (np.sign(trg_affine[0][mx])<0):
-                new_affine[0][3] = rtx*ntx/2.0
+            #new_affine[0][mx] = rtx*np.sign(trg_affine[0][mx])
+            #new_affine[1][my] = rty*np.sign(trg_affine[1][my])
+            #new_affine[2][mz] = rtz*np.sign(trg_affine[2][mz])
+            #if (np.sign(trg_affine[0][mx])<0):
+            #    new_affine[0][3] = rtx*ntx/2.0
+            #else:
+            #    new_affine[0][3] = -rtx*ntx/2.0
+            #
+            #if (np.sign(trg_affine[1][my])<0):
+            #    new_affine[1][3] = rty*nty/2.0
+            #else:
+            #    new_affine[1][3] = -rty*nty/2.0
+            #
+            #if (np.sign(trg_affine[2][mz])<0):
+            #    new_affine[2][3] = rtz*ntz/2.0
+            #else:
+            #    new_affine[2][3] = -rtz*ntz/2.0
+            new_affine[mx][0] = rtx*np.sign(trg_affine[mx][0])
+            new_affine[my][1] = rty*np.sign(trg_affine[my][1])
+            new_affine[mz][2] = rtz*np.sign(trg_affine[mz][2])
+            if (np.sign(trg_affine[mx][0])<0):
+                new_affine[mx][3] = rtx*ntx/2.0
             else:
-                new_affine[0][3] = -rtx*ntx/2.0
+                new_affine[mx][3] = -rtx*ntx/2.0
 
-            if (np.sign(trg_affine[1][my])<0):
-                new_affine[1][3] = rty*nty/2.0
+            if (np.sign(trg_affine[my][1])<0):
+                new_affine[my][3] = rty*nty/2.0
             else:
-                new_affine[1][3] = -rty*nty/2.0
+                new_affine[my][3] = -rty*nty/2.0
 
-            if (np.sign(trg_affine[2][mz])<0):
-                new_affine[2][3] = rtz*ntz/2.0
+            if (np.sign(trg_affine[mz][2])<0):
+                new_affine[mz][3] = rtz*ntz/2.0
             else:
-                new_affine[2][3] = -rtz*ntz/2.0
+                new_affine[mz][3] = -rtz*ntz/2.0
         #if (np.sign(trg_affine[0][mx])<0): new_affine[mx][3] = rtx*ntx
         #if (np.sign(trg_affine[1][my])<0): new_affine[my][3] = rty*nty
         #if (np.sign(trg_affine[2][mz])<0): new_affine[mz][3] = rtz*ntz
@@ -302,9 +323,26 @@ def embedded_antsreg(source_image, target_image,
                                                         suffix='tmp_trgcoord'))
     save_volume(trg_map_file, trg_map)
 
-    # run the main ANTS software
-    reg = Registration()
-    reg.inputs.dimension = 3
+    if mask_zero:
+        # create and save temporary masks
+        trg_mask_data = (target.get_data()!=0)
+        trg_mask = nb.Nifti1Image(trg_mask_data, target.affine, target.header)
+        trg_mask_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+                                                            rootfile=source_image,
+                                                            suffix='tmp_trgmask'))
+        save_volume(trg_mask_file, trg_mask)
+        
+        src_mask_data = (source.get_data()!=0)
+        src_mask = nb.Nifti1Image(src_mask_data, source.affine, source.header)
+        src_mask_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+                                                            rootfile=source_image,
+                                                            suffix='tmp_srcmask'))
+        save_volume(src_mask_file, src_mask)
+        
+
+    # run the main ANTS software: here we directly build the command line call
+    reg = 'antsRegistration --collapse-output-transforms 1 --dimensionality 3' \
+            +' --initialize-transforms-per-stage 0 --interpolation Linear'
 
      # add a prefix to avoid multiple names?
     prefix = _fname_4saving(file_name=file_name,
@@ -312,9 +350,16 @@ def embedded_antsreg(source_image, target_image,
                             suffix='tmp_syn')
     prefix = os.path.basename(prefix)
     prefix = prefix.split(".")[0]
-    reg.inputs.output_transform_prefix = prefix
+    #reg.inputs.output_transform_prefix = prefix
+    reg = reg+' --output '+prefix
+
     reg.inputs.fixed_image = [target.get_filename()]
     reg.inputs.moving_image = [source.get_filename()]
+
+    if mask_zero:
+        reg.inputs.fixed_image_mask = trg_mask_file
+        reg.inputs.moving_image_mask = src_mask_file
+        
 
     print("registering "+source.get_filename()+"\n to "+target.get_filename())
 
@@ -562,6 +607,9 @@ def embedded_antsreg(source_image, target_image,
     if ignore_affine or ignore_header:
         os.remove(src_img_file)
         os.remove(trg_img_file)
+    if mask_zero:
+        os.remove(src_mask_file)
+        os.remove(trg_mask_file)
 
     for name in result.outputs.forward_transforms:
         if os.path.exists(name): os.remove(name)
@@ -1133,6 +1181,7 @@ def embedded_antsreg_multi(source_images, target_images,
 					interpolation='NearestNeighbor',
 					regularization='High',
 					convergence=1e-6,
+					mask_zero=False,
 					ignore_affine=False, ignore_header=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
@@ -1173,6 +1222,9 @@ def embedded_antsreg_multi(source_images, target_images,
         Regularization preset for the SyN deformation (default is 'Medium')
     convergence: float
         Threshold for convergence, can make the algorithm very slow (default is convergence)
+    mask_zero: bool
+        Mask regions with zero value
+        (default is False)
     ignore_affine: bool
         Ignore the affine matrix information extracted from the image header
         (default is False)
@@ -1293,9 +1345,6 @@ def embedded_antsreg_multi(source_images, target_images,
         # in case the affine transformations are not to be trusted: make them equal
         if ignore_affine or ignore_header:
             # create generic affine aligned with the orientation for the source
-            mx = np.argmax(np.abs(src_affine[0][0:3]))
-            my = np.argmax(np.abs(src_affine[1][0:3]))
-            mz = np.argmax(np.abs(src_affine[2][0:3]))
             new_affine = np.zeros((4,4))
             if ignore_header:
                 new_affine[0][0] = rsx
@@ -1305,23 +1354,46 @@ def embedded_antsreg_multi(source_images, target_images,
                 new_affine[1][3] = -rsy*nsy/2.0
                 new_affine[2][3] = -rsz*nsz/2.0
             else:
-                new_affine[0][mx] = rsx*np.sign(src_affine[0][mx])
-                new_affine[1][my] = rsy*np.sign(src_affine[1][my])
-                new_affine[2][mz] = rsz*np.sign(src_affine[2][mz])
-                if (np.sign(src_affine[0][mx])<0): 
-                    new_affine[0][3] = rsx*nsx/2.0
+                #mx = np.argmax(np.abs(src_affine[0][0:3]))
+                #my = np.argmax(np.abs(src_affine[1][0:3]))
+                #mz = np.argmax(np.abs(src_affine[2][0:3]))
+                #new_affine[0][mx] = rsx*np.sign(src_affine[0][mx])
+                #new_affine[1][my] = rsy*np.sign(src_affine[1][my])
+                #new_affine[2][mz] = rsz*np.sign(src_affine[2][mz])
+                #if (np.sign(src_affine[0][mx])<0): 
+                #    new_affine[0][3] = rsx*nsx/2.0
+                #else:
+                #    new_affine[0][3] = -rsx*nsx/2.0
+                #    
+                #if (np.sign(src_affine[1][my])<0): 
+                #    new_affine[1][3] = rsy*nsy/2.0
+                #else:
+                #    new_affine[1][3] = -rsy*nsy/2.0
+                #    
+                #if (np.sign(src_affine[2][mz])<0): 
+                #    new_affine[2][3] = rsz*nsz/2.0
+                #else:
+                #    new_affine[2][3] = -rsz*nsz/2.0
+                mx = np.argmax(np.abs([src_affine[0][0],src_affine[1][0],src_affine[2][0]]))
+                my = np.argmax(np.abs([src_affine[0][1],src_affine[1][1],src_affine[2][1]]))
+                mz = np.argmax(np.abs([src_affine[0][2],src_affine[1][2],src_affine[2][2]]))
+                new_affine[mx][0] = rsx*np.sign(src_affine[mx][0])
+                new_affine[my][1] = rsy*np.sign(src_affine[my][1])
+                new_affine[mz][2] = rsz*np.sign(src_affine[mz][2])
+                if (np.sign(src_affine[mx][0])<0): 
+                    new_affine[mx][3] = rsx*nsx/2.0
                 else:
-                    new_affine[0][3] = -rsx*nsx/2.0
+                    new_affine[mx][3] = -rsx*nsx/2.0
                     
-                if (np.sign(src_affine[1][my])<0): 
-                    new_affine[1][3] = rsy*nsy/2.0
+                if (np.sign(src_affine[my][1])<0): 
+                    new_affine[my][3] = rsy*nsy/2.0
                 else:
-                    new_affine[1][3] = -rsy*nsy/2.0
+                    new_affine[my][3] = -rsy*nsy/2.0
                     
-                if (np.sign(src_affine[2][mz])<0): 
-                    new_affine[2][3] = rsz*nsz/2.0
+                if (np.sign(src_affine[mz][2])<0): 
+                    new_affine[mz][3] = rsz*nsz/2.0
                 else:
-                    new_affine[2][3] = -rsz*nsz/2.0
+                    new_affine[mz][3] = -rsz*nsz/2.0
             #if (np.sign(src_affine[0][mx])<0): new_affine[mx][3] = rsx*nsx
             #if (np.sign(src_affine[1][my])<0): new_affine[my][3] = rsy*nsy
             #if (np.sign(src_affine[2][mz])<0): new_affine[mz][3] = rsz*nsz
@@ -1341,9 +1413,6 @@ def embedded_antsreg_multi(source_images, target_images,
             src_header = source.header
             
             # create generic affine aligned with the orientation for the target
-            mx = np.argmax(np.abs(trg_affine[0][0:3]))
-            my = np.argmax(np.abs(trg_affine[1][0:3]))
-            mz = np.argmax(np.abs(trg_affine[2][0:3]))
             new_affine = np.zeros((4,4))
             if ignore_header:
                 new_affine[0][0] = rtx
@@ -1353,23 +1422,48 @@ def embedded_antsreg_multi(source_images, target_images,
                 new_affine[1][3] = -rty*nty/2.0
                 new_affine[2][3] = -rtz*ntz/2.0
             else:
-                new_affine[0][mx] = rtx*np.sign(trg_affine[0][mx])
-                new_affine[1][my] = rty*np.sign(trg_affine[1][my])
-                new_affine[2][mz] = rtz*np.sign(trg_affine[2][mz])
-                if (np.sign(trg_affine[0][mx])<0): 
-                    new_affine[0][3] = rtx*ntx/2.0
+                #mx = np.argmax(np.abs(trg_affine[0][0:3]))
+                #my = np.argmax(np.abs(trg_affine[1][0:3]))
+                #mz = np.argmax(np.abs(trg_affine[2][0:3]))
+                #new_affine[0][mx] = rtx*np.sign(trg_affine[0][mx])
+                #new_affine[1][my] = rty*np.sign(trg_affine[1][my])
+                #new_affine[2][mz] = rtz*np.sign(trg_affine[2][mz])
+                #if (np.sign(trg_affine[0][mx])<0): 
+                #    new_affine[0][3] = rtx*ntx/2.0
+                #else:
+                #    new_affine[0][3] = -rtx*ntx/2.0
+                #    
+                #if (np.sign(trg_affine[1][my])<0): 
+                #    new_affine[1][3] = rty*nty/2.0
+                #else:
+                #    new_affine[1][3] = -rty*nty/2.0
+                #    
+                #if (np.sign(trg_affine[2][mz])<0): 
+                #    new_affine[2][3] = rtz*ntz/2.0
+                #else:
+                #    new_affine[2][3] = -rtz*ntz/2.0
+                mx = np.argmax(np.abs([trg_affine[0][0],trg_affine[1][0],trg_affine[2][0]]))
+                my = np.argmax(np.abs([trg_affine[0][1],trg_affine[1][1],trg_affine[2][1]]))
+                mz = np.argmax(np.abs([trg_affine[0][2],trg_affine[1][2],trg_affine[2][2]]))
+                #print('mx: '+str(mx)+', my: '+str(my)+', mz: '+str(mz))
+                #print('rx: '+str(rtx)+', ry: '+str(rty)+', rz: '+str(rtz))
+                new_affine[mx][0] = rtx*np.sign(trg_affine[mx][0])
+                new_affine[my][1] = rty*np.sign(trg_affine[my][1])
+                new_affine[mz][2] = rtz*np.sign(trg_affine[mz][2])
+                if (np.sign(trg_affine[mx][0])<0): 
+                    new_affine[mx][3] = rtx*ntx/2.0
                 else:
-                    new_affine[0][3] = -rtx*ntx/2.0
+                    new_affine[mx][3] = -rtx*ntx/2.0
                     
-                if (np.sign(trg_affine[1][my])<0): 
-                    new_affine[1][3] = rty*nty/2.0
+                if (np.sign(trg_affine[my][1])<0): 
+                    new_affine[my][3] = rty*nty/2.0
                 else:
-                    new_affine[1][3] = -rty*nty/2.0
+                    new_affine[my][3] = -rty*nty/2.0
                     
-                if (np.sign(trg_affine[2][mz])<0): 
-                    new_affine[2][3] = rtz*ntz/2.0
+                if (np.sign(trg_affine[mz][2])<0): 
+                    new_affine[mz][3] = rtz*ntz/2.0
                 else:
-                    new_affine[2][3] = -rtz*ntz/2.0
+                    new_affine[mz][3] = -rtz*ntz/2.0
             #if (np.sign(trg_affine[0][mx])<0): new_affine[mx][3] = rtx*ntx
             #if (np.sign(trg_affine[1][my])<0): new_affine[my][3] = rty*nty
             #if (np.sign(trg_affine[2][mz])<0): new_affine[mz][3] = rtz*ntz
@@ -1377,7 +1471,8 @@ def embedded_antsreg_multi(source_images, target_images,
             #new_affine[1][3] = nty/2.0
             #new_affine[2][3] = ntz/2.0
             new_affine[3][3] = 1.0
-            
+            #print("\nbefore: "+str(trg_affine))
+            #print("\nafter: "+str(new_affine))
             trg_img = nb.Nifti1Image(target.get_data(), new_affine, target.header)
             trg_img.update_header()
             trg_img_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
@@ -1417,6 +1512,22 @@ def embedded_antsreg_multi(source_images, target_images,
                                                         suffix='tmp_trgcoord'))
     save_volume(trg_map_file, trg_map)
        
+    if mask_zero:
+        # create and save temporary masks
+        trg_mask_data = (target.get_data()!=0)
+        trg_mask = nb.Nifti1Image(trg_mask_data, target.affine, target.header)
+        trg_mask_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+                                                            rootfile=source_image,
+                                                            suffix='tmp_trgmask'))
+        save_volume(trg_mask_file, trg_mask)
+        
+        src_mask_data = (source.get_data()!=0)
+        src_mask = nb.Nifti1Image(src_mask_data, source.affine, source.header)
+        src_mask_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+                                                            rootfile=source_image,
+                                                            suffix='tmp_srcmask'))
+        save_volume(src_mask_file, src_mask)
+
     # run the main ANTS software: here we directly build the command line call
     reg = 'antsRegistration --collapse-output-transforms 1 --dimensionality 3' \
             +' --initialize-transforms-per-stage 0 --interpolation Linear'
@@ -1429,7 +1540,10 @@ def embedded_antsreg_multi(source_images, target_images,
     prefix = prefix.split(".")[0]
     #reg.inputs.output_transform_prefix = prefix
     reg = reg+' --output '+prefix
-    
+
+    if mask_zero:
+        reg = reg+' --masks ['+trg_mask_file+', '+src_mask_file+']'
+
     srcfiles = []
     trgfiles = []
     for idx,img in enumerate(sources):
@@ -1555,14 +1669,30 @@ def embedded_antsreg_multi(source_images, target_images,
     # Transforms the moving image
     transformed = []
     for idx,source in enumerate(sources):
-        at = ApplyTransforms()
-        at.inputs.dimension = 3
-        at.inputs.input_image = sources[idx].get_filename()
-        at.inputs.reference_image = targets[idx].get_filename()
-        at.inputs.interpolation = interpolation
-        at.inputs.transforms = forward
-        at.inputs.invert_transform_flags = flag
-        transformed.append(at.run())
+        at = 'antsApplyTransforms --dimensionality 3 --input-image-type 0'
+        #at = ApplyTransforms()
+        #at.inputs.dimension = 3
+        at = at+' --input '+sources[idx].get_filename()
+        #at.inputs.input_image = sources[idx].get_filename()
+        at = at+' --reference-image '+targets[idx].get_filename()
+        #at.inputs.reference_image = targets[idx].get_filename()
+        at = at+' --interpolation '+interpolation
+        #at.inputs.interpolation = interpolation
+        for idx,transform in enumerate(forward):
+            if flag[idx]: 
+                at = at+' --transform ['+transform+', 1]'
+            else:
+                at = at+' --transform ['+transform+', 0]'
+        #at.inputs.transforms = forward
+        #at.inputs.invert_transform_flags = flag
+        
+        #transformed.append(at.run())
+        print(at)
+        try:
+            subprocess.check_output(at, shell=True, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+            raise subprocess.CalledProcessError(msg)
 
     # Create coordinate mappings
     src_at = ApplyTransforms()
