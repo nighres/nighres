@@ -1672,8 +1672,8 @@ def embedded_antsreg_multi(source_images, target_images,
         at = at+' --input '+sources[idx].get_filename()
         at = at+' --reference-image '+targets[idx].get_filename()
         at = at+' --interpolation '+interpolation
-        for idx,transform in enumerate(forward):
-            if flag[idx]: 
+        for idx2,transform in enumerate(forward):
+            if flag[idx2]: 
                 at = at+' --transform ['+transform+', 1]'
             else:
                 at = at+' --transform ['+transform+', 0]'
