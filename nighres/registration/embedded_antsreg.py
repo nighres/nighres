@@ -1652,7 +1652,7 @@ def embedded_antsreg_multi(source_images, target_images,
             forward.append(res)
             flag.append(False)
         
-    print('forward transforms: '+str(forward))    
+    #print('forward transforms: '+str(forward))    
         
     inverse = []
     linear = []
@@ -1664,29 +1664,21 @@ def embedded_antsreg_multi(source_images, target_images,
             inverse.append(res)
             linear.append(False)
      
-    print('inverse transforms: '+str(inverse))    
+    #print('inverse transforms: '+str(inverse))    
         
     # Transforms the moving image
-    transformed = []
     for idx,source in enumerate(sources):
         at = 'antsApplyTransforms --dimensionality 3 --input-image-type 0'
-        #at = ApplyTransforms()
-        #at.inputs.dimension = 3
         at = at+' --input '+sources[idx].get_filename()
-        #at.inputs.input_image = sources[idx].get_filename()
         at = at+' --reference-image '+targets[idx].get_filename()
-        #at.inputs.reference_image = targets[idx].get_filename()
         at = at+' --interpolation '+interpolation
-        #at.inputs.interpolation = interpolation
         for idx,transform in enumerate(forward):
             if flag[idx]: 
                 at = at+' --transform ['+transform+', 1]'
             else:
                 at = at+' --transform ['+transform+', 0]'
-        #at.inputs.transforms = forward
-        #at.inputs.invert_transform_flags = flag
+        at = at+' --output '+transformed_source_files[idx]
         
-        #transformed.append(at.run())
         print(at)
         try:
             subprocess.check_output(at, shell=True, stderr=subprocess.STDOUT)
@@ -1695,40 +1687,52 @@ def embedded_antsreg_multi(source_images, target_images,
             raise subprocess.CalledProcessError(msg)
 
     # Create coordinate mappings
-    src_at = ApplyTransforms()
-    src_at.inputs.dimension = 3
-    src_at.inputs.input_image_type = 3
-    src_at.inputs.input_image = src_map.get_filename()
-    src_at.inputs.reference_image = target.get_filename()
-    src_at.inputs.interpolation = 'Linear'
-    src_at.inputs.transforms = forward
-    src_at.inputs.invert_transform_flags = flag
-    trans_mapping = src_at.run()
+    src_at = 'antsApplyTransforms --dimensionality 3 --input-image-type 3'
+    src_at = src_at+' --input '+src_map.get_filename()
+    src_at = src_at+' --reference-image '+target.get_filename()
+    src_at = src_at+' --interpolation Linear'
+    for idx,transform in enumerate(forward):
+        if flag[idx]: 
+            src_at = src_at+' --transform ['+transform+', 1]'
+        else:
+            src_at = src_at+' --transform ['+transform+', 0]'
+    src_at = src_at+' --output '+mapping_file
+    
+    print(src_at)
+    try:
+        subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        raise subprocess.CalledProcessError(msg)
+    trans_mapping = []
 
-    trg_at = ApplyTransforms()
-    trg_at.inputs.dimension = 3
-    trg_at.inputs.input_image_type = 3
-    trg_at.inputs.input_image = trg_map.get_filename()
-    trg_at.inputs.reference_image = source.get_filename()
-    trg_at.inputs.interpolation = 'Linear'
-    trg_at.inputs.transforms = inverse
-    trg_at.inputs.invert_transform_flags = linear
-    trans_inverse = trg_at.run()
+    trg_at = 'antsApplyTransforms --dimensionality 3 --input-image-type 3'
+    trg_at = trg_at+' --input '+trg_map.get_filename()
+    trg_at = trg_at+' --reference-image '+source.get_filename()
+    trg_at = trg_at+' --interpolation Linear'
+    for idx,transform in enumerate(inverse):
+        if linear[idx]: 
+            trg_at = trg_at+' --transform ['+transform+', 1]'
+        else:
+            trg_at = trg_at+' --transform ['+transform+', 0]'
+    trg_at = trg_at+' --output '+inverse_mapping_file
+    
+    print(trg_at)
+    try:
+        subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        raise subprocess.CalledProcessError(msg)
 
     # pad coordinate mapping outside the image? hopefully not needed...
 
-    # collect outputs and potentially save
-    transformed_imgs = []
-    for idx,trans in enumerate(transformed):
-        transformed_imgs.append(nb.Nifti1Image(nb.load(trans.outputs.output_image).get_data(), 
-                                    targets[idx].affine, targets[idx].header))
-    mapping_img = nb.Nifti1Image(nb.load(trans_mapping.outputs.output_image).get_data(), 
-                                    targets[0].affine, targets[0].header)
-    inverse_img = nb.Nifti1Image(nb.load(trans_inverse.outputs.output_image).get_data(), 
-                                    sources[0].affine, sources[0].header)
-
-    outputs = {'transformed_source': transformed_imgs, 'mapping': mapping_img,
-                'inverse': inverse_img}
+    # collect saved outputs 
+    transformed = []
+    for trans_file in transformed_source_files:
+        transformed.append(load_volume(trans_file)) 
+    output = {'transformed_sources': transformed, 
+          'mapping': load_volume(mapping_file), 
+          'inverse': load_volume(inverse_mapping_file)}
 
     # clean-up intermediate files
     if os.path.exists(src_map_file): os.remove(src_map_file)
@@ -1741,18 +1745,12 @@ def embedded_antsreg_multi(source_images, target_images,
         if os.path.exists(name): os.remove(name)
     for name in inverse: 
         if os.path.exists(name): os.remove(name)
-    for trans in transformed:
-        if os.path.exists(trans.outputs.output_image): 
-            os.remove(trans.outputs.output_image)
-    if os.path.exists(trans_mapping.outputs.output_image): 
-        os.remove(trans_mapping.outputs.output_image)
-    if os.path.exists(trans_inverse.outputs.output_image): 
-        os.remove(trans_inverse.outputs.output_image)
 
-    if save_data:
-        for idx,source_image in enumerate(source_images):
-            save_volume(transformed_source_files[idx], transformed_imgs[idx])
-        save_volume(mapping_file, mapping_img)
-        save_volume(inverse_mapping_file, inverse_img)
+    # remove output files if *not* saved 
+    if not save_data:
+        for idx,trans_image in enumerate(transformed_source_files):
+            if os.path.exists(trans_image): os.remove(trans_image)            
+        if os.path.exists(mapping_file): os.remove(mapping_file)
+        if os.path.exists(inverse_mapping_file): os.remove(inverse_mapping_file)
 
-    return outputs
+    return output
