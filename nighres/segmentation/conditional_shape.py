@@ -43,6 +43,10 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         Pre-computed shape atlas from the shape levelsets (replacing them)
     shape_atlas_labels: [niimg]
         Pre-computed shape atlas from the shape levelsets (replacing them)
+    histograms: bool
+        Whether to use complete histograms for intensity priors (default is True)
+    intensity_atlas_hist: [niimg]
+        Pre-computed intensity atlas from the contrast images (replacing them)
     intensity_atlas_mean: [niimg]
         Pre-computed intensity atlas from the contrast images (replacing them)
     intensity_atlas_stdv: [niimg]
@@ -83,6 +87,7 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         * max_label (niimg): Maximum probability labels (_cspmax-label)
         * cond_mean (niimg): Conditional intensity mean (_cspmax-cmean)
         * cond_stdv (niimg): Conditional intensity stdv (_cspmax-cstdv)
+        * cond_hist (niimg): Conditional intensity histograms (_cspmax-chist)
 
     Notes
     ----------
@@ -122,6 +127,7 @@ def conditional_shape(target_images, subjects, structures, contrasts,
                         _fname_4saving(file_name=file_name,
                                    rootfile=target_images[0],
                                    suffix='cspmax-label'))
+
         condmean_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                   rootfile=target_images[0],
@@ -130,7 +136,11 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         condstdv_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=target_images[0],
-                                   suffix='cspmax-cstd'))
+                                   suffix='cspmax-cstdv'))
+        condhist_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
+                                   rootfile=target_images[0],
+                                   suffix='cspmax-chist'))
         if overwrite is False \
             and os.path.isfile(spatial_proba_file) \
             and os.path.isfile(spatial_label_file) \
@@ -138,8 +148,9 @@ def conditional_shape(target_images, subjects, structures, contrasts,
             and os.path.isfile(intensity_label_file) \
             and os.path.isfile(proba_file) \
             and os.path.isfile(label_file) \
-            and os.path.isfile(condmean_file) \
-            and os.path.isfile(condstdv_file) :
+            and ( (histograms and os.path.isfile(condhist_file)) \
+            or (os.path.isfile(condmean_file) \
+            and os.path.isfile(condstdv_file)) ) :
             
             print("skip computation (use existing results)")
             output = {'max_spatial_proba': load_volume(spatial_proba_file), 
@@ -147,9 +158,12 @@ def conditional_shape(target_images, subjects, structures, contrasts,
                       'max_intensity_proba': load_volume(intensity_proba_file), 
                       'max_intensity_label': load_volume(intensity_label_file),
                       'max_proba': load_volume(proba_file), 
-                      'max_label': load_volume(label_file),
-                      'cond_mean': load_volume(condmean_file), 
-                      'cond_stdv': load_volume(condstdv_file)}
+                      'max_label': load_volume(label_file)}
+            if histograms:
+                output.append('cond_hist': load_volume(condhist_file))
+            else:
+                output.append('cond_mean': load_volume(condmean_file)) 
+                output.append('cond_stdv': load_volume(condstdv_file))
             return output
 
 
@@ -214,14 +228,20 @@ def conditional_shape(target_images, subjects, structures, contrasts,
                                     (pdata.flatten('F')).astype(float)),
                                     nighresjava.JArray('int')(
                                     (ldata.flatten('F')).astype(int).tolist()))
-        print("load: "+str(os.path.join(output_dir,intensity_atlas_mean)))
-        data = load_volume(os.path.join(output_dir,intensity_atlas_mean)).get_data()
-        cspmax.setConditionalMean(nighresjava.JArray('float')(
-                                    (data.flatten('F')).astype(float)))
-        print("load: "+str(os.path.join(output_dir,intensity_atlas_stdv)))
-        data = load_volume(os.path.join(output_dir,intensity_atlas_stdv)).get_data()
-        cspmax.setConditionalStdv(nighresjava.JArray('float')(
-                                    (data.flatten('F')).astype(float)))
+        if histograms:
+            print("load: "+str(os.path.join(output_dir,intensity_atlas_hist)))
+            data = load_volume(os.path.join(output_dir,intensity_atlas_hist)).get_data()
+            cspmax.setConditionalHistogram(nighresjava.JArray('float')(
+                                        (data.flatten('F')).astype(float)))
+        else:
+            print("load: "+str(os.path.join(output_dir,intensity_atlas_mean)))
+            data = load_volume(os.path.join(output_dir,intensity_atlas_mean)).get_data()
+            cspmax.setConditionalMean(nighresjava.JArray('float')(
+                                        (data.flatten('F')).astype(float)))
+            print("load: "+str(os.path.join(output_dir,intensity_atlas_stdv)))
+            data = load_volume(os.path.join(output_dir,intensity_atlas_stdv)).get_data()
+            cspmax.setConditionalStdv(nighresjava.JArray('float')(
+                                        (data.flatten('F')).astype(float)))
 
     # execute
     try:
@@ -238,6 +258,8 @@ def conditional_shape(target_images, subjects, structures, contrasts,
     dimensions = (dimensions[0],dimensions[1],dimensions[2],cspmax.getBestDimension())
     
     intens_dims = (structures+1,structures+1,contrasts)
+
+    intens_hist_dims = ((structures+1)*(structures+1),nbcspmax.getNumberOfBins(),contrasts)
 
     spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(),
                                    dtype=np.float32), dimensions, 'F')
@@ -257,11 +279,15 @@ def conditional_shape(target_images, subjects, structures, contrasts,
     label_data = np.reshape(np.array(cspmax.getBestProbabilityLabels(),
                                     dtype=np.int32), dimensions, 'F')
 
-    intens_mean_data = np.reshape(np.array(cspmax.getConditionalMean(),
-                                   dtype=np.float32), intens_dims, 'F')
-
-    intens_stdv_data = np.reshape(np.array(cspmax.getConditionalStdv(),
-                                    dtype=np.float32), intens_dims, 'F')
+    if histograms:
+        intens_hist_data = np.reshape(np.array(cspmax.getConditionalHistogram(),
+                                       dtype=np.float32), intens_hist_dims, 'F')
+    else:
+        intens_mean_data = np.reshape(np.array(cspmax.getConditionalMean(),
+                                       dtype=np.float32), intens_dims, 'F')
+    
+        intens_stdv_data = np.reshape(np.array(cspmax.getConditionalStdv(),
+                                        dtype=np.float32), intens_dims, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -283,9 +309,11 @@ def conditional_shape(target_images, subjects, structures, contrasts,
     header['cal_max'] = np.nanmax(label_data)
     label = nb.Nifti1Image(label_data, affine, header)
 
-    cmean = nb.Nifti1Image(intens_mean_data, None, None)
-
-    cstdv = nb.Nifti1Image(intens_stdv_data, None, None)
+    if histograms:
+        chist = nb.Nifti1Image(intens_hist_data, None, None)
+    else:
+        cmean = nb.Nifti1Image(intens_mean_data, None, None)
+        cstdv = nb.Nifti1Image(intens_stdv_data, None, None)
 
     if save_data:
         save_volume(spatial_proba_file, spatial_proba)
@@ -294,9 +322,18 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         save_volume(intensity_label_file, intensity_label)
         save_volume(proba_file, proba)
         save_volume(label_file, label)
-        save_volume(condmean_file, cmean)
-        save_volume(condstdv_file, cstdv)
+        if histograms:
+            save_volume(condhist_file, chist)
+        else:
+            save_volume(condmean_file, cmean)
+            save_volume(condstdv_file, cstdv)
 
-    return {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 
+    output= {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 
             'max_intensity_proba': intensity_proba, 'max_intensity_label': intensity_label, 
-            'max_proba': proba, 'max_label': label, 'cond_mean': cmean,'cond_stdv': cstdv}
+            'max_proba': proba, 'max_label': label}
+    if histograms:
+        output.append('cond_hist': chist)
+    else:
+        output.append('cond_mean': cmean) 
+        output.append('cond_stdv': cstdv)
+    return output
