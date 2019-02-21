@@ -12,6 +12,7 @@ def conditional_shape(target_images, subjects, structures, contrasts,
                       recompute=True,
                       levelset_images=None, contrast_images=None,
                       shape_atlas_probas=None, shape_atlas_labels=None, 
+                      histograms=True, intensity_atlas_hist=None,
                       intensity_atlas_mean=None, intensity_atlas_stdv=None,
                       cancel_bg=False, cancel_all=False, 
                       sum_proba=False, max_proba=False,
@@ -160,10 +161,10 @@ def conditional_shape(target_images, subjects, structures, contrasts,
                       'max_proba': load_volume(proba_file), 
                       'max_label': load_volume(label_file)}
             if histograms:
-                output.append('cond_hist': load_volume(condhist_file))
+                output.update(cond_hist=load_volume(condhist_file))
             else:
-                output.append('cond_mean': load_volume(condmean_file)) 
-                output.append('cond_stdv': load_volume(condstdv_file))
+                output.update(cond_mean=load_volume(condmean_file)) 
+                output.update(cond_stdv=load_volume(condstdv_file))
             return output
 
 
@@ -332,8 +333,8 @@ def conditional_shape(target_images, subjects, structures, contrasts,
             'max_intensity_proba': intensity_proba, 'max_intensity_label': intensity_label, 
             'max_proba': proba, 'max_label': label}
     if histograms:
-        output.append('cond_hist': chist)
+        output.update(cond_hist=chist)
     else:
-        output.append('cond_mean': cmean) 
-        output.append('cond_stdv': cstdv)
+        output.update(cond_mean=cmean) 
+        output.update(cond_stdv=cstdv)
     return output
