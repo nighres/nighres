@@ -171,11 +171,16 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
     # create the mesh dictionary
     mapped_orig_mesh = {"points": orig_points, "faces": orig_faces,
                         "data": orig_data}
-    mapped_inf_mesh = {"points": inf_points, "faces": inf_faces,
+    if inflated_mesh is not None:
+        mapped_inf_mesh = {"points": inf_points, "faces": inf_faces,
                         "data": inf_data}
 
     if save_data:
         save_mesh(orig_file, mapped_orig_mesh)
-        save_mesh(inf_file, mapped_inf_mesh)
+        if inflated_mesh is not None:
+            save_mesh(inf_file, mapped_inf_mesh)
 
-    return {'original': mapped_orig_mesh, 'inflated': mapped_inf_mesh}
+    if inflated_mesh is not None:
+        return {'original': mapped_orig_mesh, 'inflated': mapped_inf_mesh}
+    else:
+        return {'original': mapped_orig_mesh}
