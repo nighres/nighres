@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import nibabel as nb
 import nighresjava
-from ..io import load_volume, save_volume, load_mesh_geometry, save_mesh_geometry
+from ..io import load_volume, save_volume, load_mesh_geometry, save_mesh
 from ..utils import _output_dir_4saving, _fname_4saving,_check_available_memory
 
 
