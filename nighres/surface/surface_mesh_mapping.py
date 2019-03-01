@@ -59,16 +59,16 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
 
     # make sure that saving related parameters are correct
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, levelset_image)
+        output_dir = _output_dir_4saving(output_dir, intensity_image)
 
         orig_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
-                                       rootfile=levelset_image,
+                                       rootfile=intensity_image,
                                        suffix='map-orig'),"vtk")
 
         inf_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
-                                       rootfile=levelset_image,
+                                       rootfile=intensity_image,
                                        suffix='map-inf'),"vtk")
 
         if overwrite is False \
