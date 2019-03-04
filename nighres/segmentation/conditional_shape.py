@@ -260,7 +260,7 @@ def conditional_shape(target_images, subjects, structures, contrasts,
     
     intens_dims = (structures+1,structures+1,contrasts)
 
-    intens_hist_dims = ((structures+1)*(structures+1),nbcspmax.getNumberOfBins(),contrasts)
+    intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+2,contrasts)
 
     spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(),
                                    dtype=np.float32), dimensions, 'F')
