@@ -99,7 +99,7 @@ def t2s_optimal_combination(image_list, te_list,
     except ValueError:
         pass
     # create algorithm instance
-    qt2scomb = nighresjava.IntensityFlashT2sFitting()
+    qt2scomb = nighresjava.T2sOptimalCombination()
 
     # set algorithm parameters
     qt2scomb.setNumberOfEchoes(len(image_list))
@@ -143,19 +143,19 @@ def t2s_optimal_combination(image_list, te_list,
         return
 
     # reshape output to what nibabel likes
-    comb_data = np.reshape(np.array(qt2fit.getT2sImage(),
+    comb_data = np.reshape(np.array(qt2scomb.getCombinedImage(),
                                     dtype=np.float32), dimensions, 'F')
 
-    t2s_data = np.reshape(np.array(qt2fit.getT2sImage(),
+    t2s_data = np.reshape(np.array(qt2scomb.getT2sImage(),
                                     dtype=np.float32), dim3d, 'F')
 
-    r2s_data = np.reshape(np.array(qt2fit.getR2sImage(),
+    r2s_data = np.reshape(np.array(qt2scomb.getR2sImage(),
                                     dtype=np.float32), dim3d, 'F')
 
-    s0_data = np.reshape(np.array(qt2fit.getS0Image(),
+    s0_data = np.reshape(np.array(qt2scomb.getS0Image(),
                                     dtype=np.float32), dim3d, 'F')
 
-    err_data = np.reshape(np.array(qt2fit.getResidualImage(),
+    err_data = np.reshape(np.array(qt2scomb.getResidualImage(),
                                     dtype=np.float32), dim3d, 'F')
 
     # adapt header max for each image so that correct max is displayed
