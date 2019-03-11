@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def t2s_optimal_combination(image_list, te_list,
+def t2s_optimal_combination(image_list, te_list, depth=None,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ T2*-Optimal Combination
@@ -21,6 +21,8 @@ def t2s_optimal_combination(image_list, te_list,
         List of 4D input images, one per echo time
     te_list: [float]
         List of input echo times (TE)
+    depth: [int]
+        List of echo depth to keep for input time points 
     save_data: bool, optional
         Save output data to file (default is False)
     overwrite: bool, optional
@@ -130,6 +132,9 @@ def t2s_optimal_combination(image_list, te_list,
                                     (data.flatten('F')).astype(float)))
 
         qt2scomb.setEchoTimeAt(idx, te_list[idx])
+
+    if depth is not None:
+        qt2scomb.setImageEchoDepth(nighresjava.JArray('int')(depth))
 
     # execute the algorithm
     try:
