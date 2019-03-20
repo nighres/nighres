@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def lcat_denoising(image_list, phase_list=None, 
+def lcat_denoising(image_list, img_mask,
                     ngb_size=3, ngb_time=3, stdev_cutoff=1.05,
                       min_dimension=0, max_dimension=-1,
                       save_data=False, overwrite=False, output_dir=None,
@@ -21,6 +21,8 @@ def lcat_denoising(image_list, phase_list=None,
     ----------
     image_list: [niimg]
         List of input 4D images to denoise
+    image_mask: niimg
+        3D mask for the input images
     ngb_size: int, optional
         Size of the local PCA neighborhood, to be increased with number of 
         inputs (default is 3)
@@ -58,9 +60,9 @@ def lcat_denoising(image_list, phase_list=None,
 
     Notes
     ----------
-    Original Java module by Pierre-Louis Bazin. Algorithm adapted from [1]_
+    Original Java module by Pierre-Louis Bazin. Algorithm inspired fromby[1]_
     with a different approach to set the adaptive noise threshold and additional
-    processing to handle the phase data.
+    processing to handle the time series properties.
 
     References
     ----------
@@ -136,11 +138,17 @@ def lcat_denoising(image_list, phase_list=None,
     header = img.get_header()
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
+    dims3d = (dimensions[0], dimensions[1], dimensions[2])
 
     lcat.setDimensions(dimensions[0], dimensions[1], dimensions[2], dimensions[3])
     lcat.setResolutions(resolution[0], resolution[1], resolution[2])
 
     # input images
+    # important: set image mask before adding images
+    data = load_volume(image_mask).get_data()
+    lcat.setMaskImage(nighresjava.JArray('int')(
+                        (data.flatten('F')).astype(int).toList()))
+    
     # important: set image number before adding images
     for idx, image in enumerate(image_list):
         #print('\nloading ('+str(idx)+'): '+image)
@@ -184,7 +192,7 @@ def lcat_denoising(image_list, phase_list=None,
                                     dtype=np.float32), dimensions, 'F')
 
     err_data = np.reshape(np.array(lcat.getNoiseFitImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), dims3d, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
