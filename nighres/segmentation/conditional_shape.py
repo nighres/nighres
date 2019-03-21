@@ -236,13 +236,13 @@ def conditional_shape(target_images, subjects, structures, contrasts,
                                         (data.flatten('F')).astype(float)))
         else:
             print("load: "+str(os.path.join(output_dir,intensity_atlas_mean)))
-            data = load_volume(os.path.join(output_dir,intensity_atlas_mean)).get_data()
-            cspmax.setConditionalMean(nighresjava.JArray('float')(
-                                        (data.flatten('F')).astype(float)))
+            mean = load_volume(os.path.join(output_dir,intensity_atlas_mean)).get_data()
             print("load: "+str(os.path.join(output_dir,intensity_atlas_stdv)))
-            data = load_volume(os.path.join(output_dir,intensity_atlas_stdv)).get_data()
-            cspmax.setConditionalStdv(nighresjava.JArray('float')(
-                                        (data.flatten('F')).astype(float)))
+            stdv = load_volume(os.path.join(output_dir,intensity_atlas_stdv)).get_data()
+            cspmax.setConditionalMeanAndStdv(nighresjava.JArray('float')(
+                                                (mean.flatten('F')).astype(float)),
+                                            nighresjava.JArray('float')(
+                                                (stdv.flatten('F')).astype(float)))
 
     # execute
     try:
