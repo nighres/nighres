@@ -221,19 +221,11 @@ def conditional_shape(target_images, subjects, structures, contrasts,
                 cspmax.setContrastImageAt(sub, contrast, nighresjava.JArray('float')(
                                                     (data.flatten('F')).astype(float)))
     else:         
-        print("load: "+str(os.path.join(output_dir,shape_atlas_probas)))
-        pdata = load_volume(os.path.join(output_dir,shape_atlas_probas)).get_data()
-        print("load: "+str(os.path.join(output_dir,shape_atlas_labels)))
-        ldata = load_volume(os.path.join(output_dir,shape_atlas_labels)).get_data()
-        cspmax.setShapeAtlasProbasAndLabels(nighresjava.JArray('float')(
-                                    (pdata.flatten('F')).astype(float)),
-                                    nighresjava.JArray('int')(
-                                    (ldata.flatten('F')).astype(int).tolist()))
         if histograms:
             print("load: "+str(os.path.join(output_dir,intensity_atlas_hist)))
             data = load_volume(os.path.join(output_dir,intensity_atlas_hist)).get_data()
             cspmax.setConditionalHistogram(nighresjava.JArray('float')(
-                                        (data.flatten('F')).astype(float)))
+                                                (data.flatten('F').astype(float))))
         else:
             print("load: "+str(os.path.join(output_dir,intensity_atlas_mean)))
             mean = load_volume(os.path.join(output_dir,intensity_atlas_mean)).get_data()
@@ -243,6 +235,15 @@ def conditional_shape(target_images, subjects, structures, contrasts,
                                                 (mean.flatten('F')).astype(float)),
                                             nighresjava.JArray('float')(
                                                 (stdv.flatten('F')).astype(float)))
+
+        print("load: "+str(os.path.join(output_dir,shape_atlas_probas)))
+        pdata = load_volume(os.path.join(output_dir,shape_atlas_probas)).get_data()
+        print("load: "+str(os.path.join(output_dir,shape_atlas_labels)))
+        ldata = load_volume(os.path.join(output_dir,shape_atlas_labels)).get_data()
+        cspmax.setShapeAtlasProbasAndLabels(nighresjava.JArray('float')(
+                                    (pdata.flatten('F')).astype(float)),
+                                    nighresjava.JArray('int')(
+                                    (ldata.flatten('F')).astype(int).tolist()))
 
     # execute
     try:
