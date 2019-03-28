@@ -89,6 +89,7 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         * cond_mean (niimg): Conditional intensity mean (_cspmax-cmean)
         * cond_stdv (niimg): Conditional intensity stdv (_cspmax-cstdv)
         * cond_hist (niimg): Conditional intensity histograms (_cspmax-chist)
+        * neighbors (niimg): Local neighborhood maps (_cspmax-ngb)
 
     Notes
     ----------
@@ -138,10 +139,16 @@ def conditional_shape(target_images, subjects, structures, contrasts,
                         _fname_4saving(file_name=file_name,
                                    rootfile=target_images[0],
                                    suffix='cspmax-cstdv'))
+        
         condhist_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=target_images[0],
                                    suffix='cspmax-chist'))
+        
+        neighbor_file = os.path.join(output_dir, 
+                        _fname_4saving(file_name=file_name,
+                                   rootfile=target_images[0],
+                                   suffix='cspmax-ngb'))
         if overwrite is False \
             and os.path.isfile(spatial_proba_file) \
             and os.path.isfile(spatial_label_file) \
@@ -149,9 +156,10 @@ def conditional_shape(target_images, subjects, structures, contrasts,
             and os.path.isfile(intensity_label_file) \
             and os.path.isfile(proba_file) \
             and os.path.isfile(label_file) \
+            and os.path.isfile(neighbor_file) \
             and ( (histograms and os.path.isfile(condhist_file)) \
             or (os.path.isfile(condmean_file) \
-            and os.path.isfile(condstdv_file)) ) :
+            and os.path.isfile(condstdv_file)) ):
             
             print("skip computation (use existing results)")
             output = {'max_spatial_proba': load_volume(spatial_proba_file), 
@@ -159,7 +167,8 @@ def conditional_shape(target_images, subjects, structures, contrasts,
                       'max_intensity_proba': load_volume(intensity_proba_file), 
                       'max_intensity_label': load_volume(intensity_label_file),
                       'max_proba': load_volume(proba_file), 
-                      'max_label': load_volume(label_file)}
+                      'max_label': load_volume(label_file),
+                      'neighbors': load_volume(neighbor_file)}
             if histograms:
                 output.update(cond_hist=load_volume(condhist_file))
             else:
@@ -247,7 +256,13 @@ def conditional_shape(target_images, subjects, structures, contrasts,
 
     # execute
     try:
-        cspmax.execute()
+        #cspmax.execute()
+        if recompute: cspmax.computeAtlasPriors()
+        cspmax.estimateTarget()
+        cspmax.similarityDiffusion(6)
+        #cspmax.dissimilarityDiffusion(6)
+        #cspmax.transitionDiffusion()
+        #if not recompute: cspmax.collapseConditionalMaps()
 
     except:
         # if the Java module fails, reraise the error it throws
@@ -258,28 +273,52 @@ def conditional_shape(target_images, subjects, structures, contrasts,
 
     # reshape output to what nibabel likes
     dimensions = (dimensions[0],dimensions[1],dimensions[2],cspmax.getBestDimension())
+    dims3D = (dimensions[0],dimensions[1],dimensions[2])
+    dims_ngb = (dimensions[0],dimensions[1],dimensions[2],6)
     
     intens_dims = (structures+1,structures+1,contrasts)
 
     intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+2,contrasts)
 
-    spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(),
-                                   dtype=np.float32), dimensions, 'F')
+    if recompute:
+        spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(dimensions[3]),
+                                       dtype=np.float32), dimensions, 'F')
+    
+        spatial_label_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityLabels(dimensions[3]),
+                                        dtype=np.int32), dimensions, 'F')    
 
-    spatial_label_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityLabels(),
-                                    dtype=np.int32), dimensions, 'F')
+        intensity_proba_data = np.reshape(np.array(cspmax.getBestIntensityProbabilityMaps(dimensions[3]),
+                                       dtype=np.float32), dimensions, 'F')
+    
+        intensity_label_data = np.reshape(np.array(cspmax.getBestIntensityProbabilityLabels(dimensions[3]),
+                                        dtype=np.int32), dimensions, 'F')
+    
+        proba_data = np.reshape(np.array(cspmax.getBestProbabilityMaps(dimensions[3]),
+                                       dtype=np.float32), dimensions, 'F')
+    
+        label_data = np.reshape(np.array(cspmax.getBestProbabilityLabels(dimensions[3]),
+                                        dtype=np.int32), dimensions, 'F')
+    else:
+        spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(1),
+                                       dtype=np.float32), dims3D, 'F')
+    
+        spatial_label_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityLabels(1),
+                                        dtype=np.int32), dims3D, 'F')    
 
-    intensity_proba_data = np.reshape(np.array(cspmax.getBestIntensityProbabilityMaps(),
-                                   dtype=np.float32), dimensions, 'F')
+        intensity_proba_data = np.reshape(np.array(cspmax.getBestIntensityProbabilityMaps(1),
+                                       dtype=np.float32), dims3D, 'F')
+    
+        intensity_label_data = np.reshape(np.array(cspmax.getBestIntensityProbabilityLabels(1),
+                                        dtype=np.int32), dims3D, 'F')
+    
+        proba_data = np.reshape(np.array(cspmax.getBestProbabilityMaps(1),
+                                       dtype=np.float32), dims3D, 'F')
+    
+        label_data = np.reshape(np.array(cspmax.getBestProbabilityLabels(1),
+                                        dtype=np.int32), dims3D, 'F')
 
-    intensity_label_data = np.reshape(np.array(cspmax.getBestIntensityProbabilityLabels(),
-                                    dtype=np.int32), dimensions, 'F')
-
-    proba_data = np.reshape(np.array(cspmax.getBestProbabilityMaps(),
-                                   dtype=np.float32), dimensions, 'F')
-
-    label_data = np.reshape(np.array(cspmax.getBestProbabilityLabels(),
-                                    dtype=np.int32), dimensions, 'F')
+    neighbor_data = np.reshape(np.array(cspmax.getNeighborhoodMaps(6),
+                                        dtype=np.int32), dims_ngb, 'F')
 
     if histograms:
         intens_hist_data = np.reshape(np.array(cspmax.getConditionalHistogram(),
@@ -311,6 +350,10 @@ def conditional_shape(target_images, subjects, structures, contrasts,
     header['cal_max'] = np.nanmax(label_data)
     label = nb.Nifti1Image(label_data, affine, header)
 
+    header['cal_min'] = np.nanmin(neighbor_data)
+    header['cal_max'] = np.nanmax(neighbor_data)
+    neighbors = nb.Nifti1Image(neighbor_data, affine, header)
+
     if histograms:
         chist = nb.Nifti1Image(intens_hist_data, None, None)
     else:
@@ -324,6 +367,7 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         save_volume(intensity_label_file, intensity_label)
         save_volume(proba_file, proba)
         save_volume(label_file, label)
+        save_volume(neighbor_file, neighbors)
         if histograms:
             save_volume(condhist_file, chist)
         else:
@@ -332,7 +376,7 @@ def conditional_shape(target_images, subjects, structures, contrasts,
 
     output= {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 
             'max_intensity_proba': intensity_proba, 'max_intensity_label': intensity_label, 
-            'max_proba': proba, 'max_label': label}
+            'max_proba': proba, 'max_label': label, 'neighbors': neighbors}
     if histograms:
         output.update(cond_hist=chist)
     else:
