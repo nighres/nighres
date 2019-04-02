@@ -202,7 +202,6 @@ def lcpca_denoising(image_list, phase_list=None,
     lcpca.setMinimumDimension(min_dimension)
     lcpca.setMaximumDimension(max_dimension)
     lcpca.setUnwrapPhase(unwrap) 
-    lcpca.setOutputEigenmaps(eigen) 
 
     # execute the algorithm
     try:

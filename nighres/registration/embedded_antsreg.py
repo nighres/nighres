@@ -140,7 +140,9 @@ def embedded_antsreg_2d(source_image, target_image,
                     medium_iterations=50, fine_iterations=40,
 					cost_function='MutualInformation',
 					interpolation='NearestNeighbor',
+					regularization='High',
 					convergence=1e-6,
+					mask_zero=False,
 					ignore_affine=False, ignore_header=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
@@ -209,31 +211,18 @@ def embedded_antsreg_2d(source_image, target_image,
     Notes
     ----------
     Port of the CBSTools Java module by Pierre-Louis Bazin. The main algorithm
-    is part of the ANTs software by Brian Avants and colleagues [1]_. The
-    interfacing with ANTs is performed through Nipype [2]_. Parameters have been
-    set to values commonly found in neuroimaging scripts online, but not
-    necessarily optimal.
+    is part of the ANTs software by Brian Avants and colleagues [1]_. Parameters 
+    have been set to values commonly found in neuroimaging scripts online, but 
+    not necessarily optimal.
 
     References
     ----------
     .. [1] Avants et al (2008), Symmetric diffeomorphic
        image registration with cross-correlation: evaluating automated labeling
        of elderly and neurodegenerative brain, Med Image Anal. 12(1):26-41
-    .. [2] Gorgolewski et al (2011) Nipype: a flexible, lightweight and
-       extensible neuroimaging data processing framework in python.
-       Front Neuroinform 5. doi:10.3389/fninf.2011.00013
     """
 
-    print('\nEmbedded ANTs Registration')
-
-    # for external tools: nipype
-    try:
-        from nipype.interfaces.ants import Registration
-        from nipype.interfaces.ants import ApplyTransforms
-    except ImportError:
-        print('Error: Nipype and/or ANTS could not be imported, they are required'
-                +' in order to run this module. \n (aborting)')
-        return None
+    print('\nEmbedded ANTs Registration 2D')
 
     # make sure that saving related parameters are correct
     output_dir = _output_dir_4saving(output_dir, source_image) # needed for intermediate results
@@ -404,9 +393,25 @@ def embedded_antsreg_2d(source_image, target_image,
                                                         suffix='tmp_trgcoord'))
     save_volume(trg_map_file, trg_map)
 
-    # run the main ANTS software
-    reg = Registration()
-    reg.inputs.dimension = 2
+    if mask_zero:
+        # create and save temporary masks
+        trg_mask_data = (target.get_data()!=0)
+        trg_mask = nb.Nifti1Image(trg_mask_data, target.affine, target.header)
+        trg_mask_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+                                                            rootfile=source_image,
+                                                            suffix='tmp_trgmask'))
+        save_volume(trg_mask_file, trg_mask)
+        
+        src_mask_data = (source.get_data()!=0)
+        src_mask = nb.Nifti1Image(src_mask_data, source.affine, source.header)
+        src_mask_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+                                                            rootfile=source_image,
+                                                            suffix='tmp_srcmask'))
+        save_volume(src_mask_file, src_mask)
+
+    # run the main ANTS software: here we directly build the command line call
+    reg = 'antsRegistration --collapse-output-transforms 1 --dimensionality 2' \
+            +' --initialize-transforms-per-stage 0 --interpolation Linear'
 
      # add a prefix to avoid multiple names?
     prefix = _fname_4saving(file_name=file_name,
@@ -414,264 +419,204 @@ def embedded_antsreg_2d(source_image, target_image,
                             suffix='tmp_syn')
     prefix = os.path.basename(prefix)
     prefix = prefix.split(".")[0]
-    reg.inputs.output_transform_prefix = prefix
-    reg.inputs.fixed_image = [target.get_filename()]
-    reg.inputs.moving_image = [source.get_filename()]
+    reg = reg+' --output '+prefix
 
-    print("registering "+source.get_filename()+"\n to "+target.get_filename())
+    if mask_zero:
+        reg = reg+' --masks ['+trg_mask_file+', '+src_mask_file+']'
 
-    if run_rigid is True and run_affine is True and run_syn is True:
-        reg.inputs.transforms = ['Rigid','Affine','SyN']
-        reg.inputs.transform_parameters = [(0.1,), (0.1,), (0.2, 3.0, 0.0)]
-        reg.inputs.number_of_iterations = [[rigid_iterations, rigid_iterations,
-                                            rigid_iterations],
-                                           [affine_iterations, affine_iterations,
-                                            affine_iterations],
-                                           [coarse_iterations, coarse_iterations,
-                                            medium_iterations, fine_iterations]]
-        if (cost_function=='CrossCorrelation'):
-            reg.inputs.metric = ['CC', 'CC', 'CC']
-            reg.inputs.metric_weight = [1.0, 1.0, 1.0]
-            reg.inputs.radius_or_number_of_bins = [5, 5, 5]
-        else :
-            reg.inputs.metric = ['MI', 'MI', 'MI']
-            reg.inputs.metric_weight = [1.0, 1.0, 1.0]
-            reg.inputs.radius_or_number_of_bins = [32, 32, 32]
-        reg.inputs.shrink_factors = [[4, 2, 1]] + [[4, 2, 1]] + [[8, 4, 2, 1]]
-        reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[3, 2, 1]] + [[2, 1, 0.5, 0]]
-        reg.inputs.sampling_strategy = ['Random'] + ['Random'] + ['Random']
-        reg.inputs.sampling_percentage = [0.3] + [0.3] + [0.3]
-        reg.inputs.convergence_threshold = [convergence] + [convergence] + [convergence]
-        reg.inputs.convergence_window_size = [10] + [10] + [5]
-        reg.inputs.use_histogram_matching = [False] + [False] + [False]
-        reg.inputs.winsorize_lower_quantile = 0.001
-        reg.inputs.winsorize_upper_quantile = 0.999
+    srcfile = source.get_filename()
+    trgfile = target.get_filename()
 
-    elif run_rigid is True and run_affine is False and run_syn is True:
-        reg.inputs.transforms = ['Rigid','SyN']
-        reg.inputs.transform_parameters = [(0.1,), (0.2, 3.0, 0.0)]
-        reg.inputs.number_of_iterations = [[rigid_iterations, rigid_iterations,
-                                            rigid_iterations],
-                                           [coarse_iterations, coarse_iterations,
-                                            medium_iterations, fine_iterations]]
-        if (cost_function=='CrossCorrelation'):
-            reg.inputs.metric = ['CC', 'CC']
-            reg.inputs.metric_weight = [1.0, 1.0]
-            reg.inputs.radius_or_number_of_bins = [5, 5]
-        else :
-            reg.inputs.metric = ['MI', 'MI']
-            reg.inputs.metric_weight = [1.0, 1.0]
-            reg.inputs.radius_or_number_of_bins = [32, 32]
-        reg.inputs.shrink_factors = [[4, 2, 1]] + [[8, 4, 2, 1]]
-        reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[2, 1, 0.5, 0]]
-        reg.inputs.sampling_strategy = ['Random'] + ['Random']
-        reg.inputs.sampling_percentage = [0.3] + [0.3]
-        reg.inputs.convergence_threshold = [convergence] + [convergence]
-        reg.inputs.convergence_window_size = [10] + [5]
-        reg.inputs.use_histogram_matching = [False] + [False]
-        reg.inputs.winsorize_lower_quantile = 0.001
-        reg.inputs.winsorize_upper_quantile = 0.999
+    # set parameters for all the different types of transformations
+    if run_rigid is True:
+        reg = reg + ' --transform Rigid[0.1]'
+        if (cost_function=='CrossCorrelation'): 
+            reg = reg + ' --metric CC['+trgfile+', '+srcfile \
+                            +', '+'1.0, 5, Random, 0.3 ]'
+        else:
+            reg = reg + ' --metric MI['+trgfile+', '+srcfile \
+                            +', '+'1.0, 32, Random, 0.3 ]'
+            
+        reg = reg + ' --convergence ['+str(rigid_iterations)+'x' \
+                    +str(rigid_iterations)+'x'+str(rigid_iterations)  \
+                    +', '+str(convergence)+', 10 ]'
+                    
+        reg = reg + ' --smoothing-sigmas 3.0x2.0x1.0'
+        reg = reg + ' --shrink-factors 4x2x1'
+        reg = reg + ' --use-histogram-matching 0'
+        reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
-    elif run_rigid is False and run_affine is True and run_syn is True:
-        reg.inputs.transforms = ['Affine','SyN']
-        reg.inputs.transform_parameters = [(0.1,), (0.2, 3.0, 0.0)]
-        reg.inputs.number_of_iterations = [[affine_iterations, affine_iterations,
-                                            affine_iterations],
-                                           [coarse_iterations, coarse_iterations,
-                                            medium_iterations, fine_iterations]]
-        if (cost_function=='CrossCorrelation'):
-            reg.inputs.metric = ['CC', 'CC']
-            reg.inputs.metric_weight = [1.0, 1.0]
-            reg.inputs.radius_or_number_of_bins = [5, 5]
-        else :
-            reg.inputs.metric = ['MI', 'MI']
-            reg.inputs.metric_weight = [1.0, 1.0]
-            reg.inputs.radius_or_number_of_bins = [64, 64]
-        reg.inputs.shrink_factors = [[4, 2, 1]] + [[8, 4, 2, 1]]
-        reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[2, 1, 0.5, 0]]
-        reg.inputs.sampling_strategy = ['Random'] + ['Random']
-        reg.inputs.sampling_percentage = [0.3] + [0.3]
-        reg.inputs.convergence_threshold = [convergence] + [convergence]
-        reg.inputs.convergence_window_size = [10] + [5]
-        reg.inputs.use_histogram_matching = [False] + [False]
-        reg.inputs.winsorize_lower_quantile = 0.001
-        reg.inputs.winsorize_upper_quantile = 0.999
+    if run_affine is True:
+        reg = reg + ' --transform Affine[0.1]'
+        if (cost_function=='CrossCorrelation'): 
+            reg = reg + ' --metric CC['+trgfile+', '+srcfile \
+                            +', '+'1.0, 5, Random, 0.3 ]'
+        else:
+            reg = reg + ' --metric MI['+trgfile+', '+srcfile \
+                            +', '+'1.0, 32, Random, 0.3 ]'
+            
+        reg = reg + ' --convergence ['+str(affine_iterations)+'x' \
+                    +str(affine_iterations)+'x'+str(affine_iterations)  \
+                    +', '+str(convergence)+', 10 ]'
+                    
+        reg = reg + ' --smoothing-sigmas 3.0x2.0x1.0'
+        reg = reg + ' --shrink-factors 4x2x1'
+        reg = reg + ' --use-histogram-matching 0'
+        reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
-    if run_rigid is True and run_affine is True and run_syn is False:
-        reg.inputs.transforms = ['Rigid','Affine']
-        reg.inputs.transform_parameters = [(0.1,), (0.1,)]
-        reg.inputs.number_of_iterations = [[rigid_iterations, rigid_iterations,
-                                            rigid_iterations],
-                                           [affine_iterations, affine_iterations,
-                                            affine_iterations]]
-        if (cost_function=='CrossCorrelation'):
-            reg.inputs.metric = ['CC', 'CC']
-            reg.inputs.metric_weight = [1.0, 1.0]
-            reg.inputs.radius_or_number_of_bins = [5, 5]
-        else :
-            reg.inputs.metric = ['MI', 'MI']
-            reg.inputs.metric_weight = [1.0, 1.0]
-            reg.inputs.radius_or_number_of_bins = [32, 32]
-        reg.inputs.shrink_factors = [[4, 2, 1]] + [[4, 2, 1]]
-        reg.inputs.smoothing_sigmas = [[3, 2, 1]] + [[3, 2, 1]]
-        reg.inputs.sampling_strategy = ['Random'] + ['Random']
-        reg.inputs.sampling_percentage = [0.3] + [0.3]
-        reg.inputs.convergence_threshold = [convergence] + [convergence]
-        reg.inputs.convergence_window_size = [10] + [10]
-        reg.inputs.use_histogram_matching = [False] + [False]
-        reg.inputs.winsorize_lower_quantile = 0.001
-        reg.inputs.winsorize_upper_quantile = 0.999
+    if run_syn is True:
+        if regularization is 'Low': syn_param = [0.2, 1.0, 0.0]
+        elif regularization is 'Medium': syn_param = [0.2, 3.0, 0.0]
+        elif regularization is 'High': syn_param = [0.2, 4.0, 3.0]
+        else: syn_param = [0.2, 3.0, 0.0]
 
-    elif run_rigid is True and run_affine is False and run_syn is False:
-        reg.inputs.transforms = ['Rigid']
-        reg.inputs.transform_parameters = [(0.1,)]
-        reg.inputs.number_of_iterations = [[rigid_iterations, rigid_iterations,
-                                            rigid_iterations]]
-        if (cost_function=='CrossCorrelation'):
-            reg.inputs.metric = ['CC']
-            reg.inputs.metric_weight = [1.0]
-            reg.inputs.radius_or_number_of_bins = [5]
-        else :
-            reg.inputs.metric = ['MI']
-            reg.inputs.metric_weight = [1.0]
-            reg.inputs.radius_or_number_of_bins = [32]
-        reg.inputs.shrink_factors = [[4, 2, 1]]
-        reg.inputs.smoothing_sigmas = [[3, 2, 1]]
-        reg.inputs.sampling_strategy = ['Random']
-        reg.inputs.sampling_percentage = [0.3]
-        reg.inputs.convergence_threshold = [convergence]
-        reg.inputs.convergence_window_size = [10]
-        reg.inputs.use_histogram_matching = [False]
-        reg.inputs.winsorize_lower_quantile = 0.001
-        reg.inputs.winsorize_upper_quantile = 0.999
+        reg = reg + ' --transform SyN'+str(syn_param)
+        if (cost_function=='CrossCorrelation'): 
+            reg = reg + ' --metric CC['+trgfile+', '+srcfile \
+                            +', '+'1.0, 5, Random, 0.3 ]'
+        else:
+            reg = reg + ' --metric MI['+trgfile+', '+srcfile \
+                            +', '+'1.0, 32, Random, 0.3 ]'
+            
+        reg = reg + ' --convergence ['+str(coarse_iterations)+'x' \
+                    +str(coarse_iterations)+'x'+str(medium_iterations)+'x'  \
+                    +str(fine_iterations)+', '+str(convergence)+', 5 ]'
+                    
+        reg = reg + ' --smoothing-sigmas 2.0x1.0x0.5x0.0'
+        reg = reg + ' --shrink-factors 8x4x2x1'
+        reg = reg + ' --use-histogram-matching 0'
+        reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
+        
+    if run_rigid is False and run_affine is False and run_syn is False:
+        reg = reg + ' --transform Rigid[0.1]'
+        reg = reg + ' --metric CC['+trgfile+', '+srcfile \
+                            +', '+'1.0, 5, Random, 0.3 ]'
+        reg = reg + ' --convergence [ 0x0x0, 1.0, 2 ]'   
+        reg = reg + ' --smoothing-sigmas 3.0x2.0x1.0'
+        reg = reg + ' --shrink-factors 4x2x1'
+        reg = reg + ' --use-histogram-matching 0'
+        reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
-    elif run_rigid is False and run_affine is True and run_syn is False:
-        reg.inputs.transforms = ['Affine']
-        reg.inputs.transform_parameters = [(0.1,)]
-        reg.inputs.number_of_iterations = [[affine_iterations, affine_iterations,
-                                            affine_iterations]]
-        if (cost_function=='CrossCorrelation'):
-            reg.inputs.metric = ['CC']
-            reg.inputs.metric_weight = [1.0]
-            reg.inputs.radius_or_number_of_bins = [5]
-        else :
-            reg.inputs.metric = ['MI']
-            reg.inputs.metric_weight = [1.0]
-            reg.inputs.radius_or_number_of_bins = [32]
-        reg.inputs.shrink_factors = [[4, 2, 1]]
-        reg.inputs.smoothing_sigmas = [[3, 2, 1]]
-        reg.inputs.sampling_strategy = ['Random']
-        reg.inputs.sampling_percentage = [0.3]
-        reg.inputs.convergence_threshold = [convergence]
-        reg.inputs.convergence_window_size = [10]
-        reg.inputs.use_histogram_matching = [False]
-        reg.inputs.winsorize_lower_quantile = 0.001
-        reg.inputs.winsorize_upper_quantile = 0.999
+    reg = reg + ' --write-composite-transform 0 --verbose 1'
 
-    elif run_rigid is False and run_affine is False and run_syn is True:
-        reg.inputs.transforms = ['SyN']
-        reg.inputs.transform_parameters = [(0.2, 3.0, 0.0)]
-        reg.inputs.number_of_iterations = [[coarse_iterations, coarse_iterations,
-                                            medium_iterations, fine_iterations]]
-        if (cost_function=='CrossCorrelation'):
-            reg.inputs.metric = ['CC']
-            reg.inputs.metric_weight = [1.0]
-            reg.inputs.radius_or_number_of_bins = [5]
-        else :
-            reg.inputs.metric = ['MI']
-            reg.inputs.metric_weight = [1.0]
-            reg.inputs.radius_or_number_of_bins = [32]
-        reg.inputs.shrink_factors = [[8, 4, 2, 1]]
-        reg.inputs.smoothing_sigmas = [[2, 1, 0.5, 0]]
-        reg.inputs.sampling_strategy = ['Random']
-        reg.inputs.sampling_percentage = [0.3]
-        reg.inputs.convergence_threshold = [convergence]
-        reg.inputs.convergence_window_size = [10]
-        reg.inputs.use_histogram_matching = [False]
-        reg.inputs.winsorize_lower_quantile = 0.001
-        reg.inputs.winsorize_upper_quantile = 0.999
+    # run the ANTs command directly    
+    print(reg)
+    try:
+        subprocess.check_output(reg, shell=True, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        raise subprocess.CalledProcessError(msg)
 
-    elif run_rigid is False and run_affine is False and run_syn is False:
-        reg.inputs.transforms = ['Rigid']
-        reg.inputs.transform_parameters = [(0.1,)]
-        reg.inputs.number_of_iterations = [[0]]
-        reg.inputs.metric = ['CC']
-        reg.inputs.metric_weight = [1.0]
-        reg.inputs.radius_or_number_of_bins = [5]
-        reg.inputs.shrink_factors = [[1]]
-        reg.inputs.smoothing_sigmas = [[1]]
-
-
-
-    print(reg.cmdline)
-    result = reg.run()
-
+    # output file names
+    results = sorted(glob(prefix+'*'))
+    forward = []
+    flag = []
+    for res in results:
+        if res.endswith('GenericAffine.mat'):
+            forward.append(res)
+            flag.append(False)
+        elif res.endswith('Warp.nii.gz') and not res.endswith('InverseWarp.nii.gz'):
+            forward.append(res)
+            flag.append(False)
+        
+    #print('forward transforms: '+str(forward))    
+        
+    inverse = []
+    linear = []
+    for res in results[::-1]:
+        if res.endswith('GenericAffine.mat'):
+            inverse.append(res)
+            linear.append(True)
+        elif res.endswith('InverseWarp.nii.gz'):
+            inverse.append(res)
+            linear.append(False)
+     
+    #print('inverse transforms: '+str(inverse))    
+        
     # Transforms the moving image
-    at = ApplyTransforms()
-    at.inputs.dimension = 2
-    at.inputs.input_image = source.get_filename()
-    at.inputs.reference_image = target.get_filename()
-    at.inputs.interpolation = interpolation
-    at.inputs.transforms = result.outputs.forward_transforms
-    at.inputs.invert_transform_flags = result.outputs.forward_invert_flags
-    print(at.cmdline)
-    transformed = at.run()
+    at = 'antsApplyTransforms --dimensionality 2 --input-image-type 0'
+    at = at+' --input '+source.get_filename()
+    at = at+' --reference-image '+target.get_filename()
+    at = at+' --interpolation '+interpolation
+    for idx,transform in enumerate(forward):
+        if flag[idx]: 
+            at = at+' --transform ['+transform+', 1]'
+        else:
+            at = at+' --transform ['+transform+', 0]'
+    at = at+' --output '+transformed_source_file
+    
+    print(at)
+    try:
+        subprocess.check_output(at, shell=True, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        raise subprocess.CalledProcessError(msg)
 
     # Create coordinate mappings
-    src_at = ApplyTransforms()
-    src_at.inputs.dimension = 2
-    src_at.inputs.input_image_type = 3
-    src_at.inputs.input_image = src_map.get_filename()
-    src_at.inputs.reference_image = target.get_filename()
-    src_at.inputs.interpolation = 'Linear'
-    src_at.inputs.transforms = result.outputs.forward_transforms
-    src_at.inputs.invert_transform_flags = result.outputs.forward_invert_flags
-    mapping = src_at.run()
+    src_at = 'antsApplyTransforms --dimensionality 2 --input-image-type 3'
+    src_at = src_at+' --input '+src_map.get_filename()
+    src_at = src_at+' --reference-image '+target.get_filename()
+    src_at = src_at+' --interpolation Linear'
+    for idx,transform in enumerate(forward):
+        if flag[idx]: 
+            src_at = src_at+' --transform ['+transform+', 1]'
+        else:
+            src_at = src_at+' --transform ['+transform+', 0]'
+    src_at = src_at+' --output '+mapping_file
+    
+    print(src_at)
+    try:
+        subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        raise subprocess.CalledProcessError(msg)
+    trans_mapping = []
 
-    trg_at = ApplyTransforms()
-    trg_at.inputs.dimension = 2
-    trg_at.inputs.input_image_type = 3
-    trg_at.inputs.input_image = trg_map.get_filename()
-    trg_at.inputs.reference_image = source.get_filename()
-    trg_at.inputs.interpolation = 'Linear'
-    trg_at.inputs.transforms = result.outputs.reverse_transforms
-    trg_at.inputs.invert_transform_flags = result.outputs.reverse_invert_flags
-    inverse = trg_at.run()
+    trg_at = 'antsApplyTransforms --dimensionality 2 --input-image-type 3'
+    trg_at = trg_at+' --input '+trg_map.get_filename()
+    trg_at = trg_at+' --reference-image '+source.get_filename()
+    trg_at = trg_at+' --interpolation Linear'
+    for idx,transform in enumerate(inverse):
+        if linear[idx]: 
+            trg_at = trg_at+' --transform ['+transform+', 1]'
+        else:
+            trg_at = trg_at+' --transform ['+transform+', 0]'
+    trg_at = trg_at+' --output '+inverse_mapping_file
+    
+    print(trg_at)
+    try:
+        subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        raise subprocess.CalledProcessError(msg)
 
     # pad coordinate mapping outside the image? hopefully not needed...
 
-    # collect outputs and potentially save
-    transformed_img = nb.Nifti1Image(nb.load(transformed.outputs.output_image).get_data(),
-                                    target.affine, target.header)
-    mapping_img = nb.Nifti1Image(nb.load(mapping.outputs.output_image).get_data(),
-                                    target.affine, target.header)
-    inverse_img = nb.Nifti1Image(nb.load(inverse.outputs.output_image).get_data(),
-                                    source.affine, source.header)
-
-    outputs = {'transformed_source': transformed_img, 'mapping': mapping_img,
-                'inverse': inverse_img}
+    # collect saved outputs 
+    output = {'transformed_sources': load_volume(transformed_source_file), 
+          'mapping': load_volume(mapping_file), 
+          'inverse': load_volume(inverse_mapping_file)}
 
     # clean-up intermediate files
-    os.remove(src_map_file)
-    os.remove(trg_map_file)
-    if ignore_affine or ignore_header:
-        os.remove(src_img_file)
-        os.remove(trg_img_file)
+#    if os.path.exists(src_map_file): os.remove(src_map_file)
+#    if os.path.exists(trg_map_file): os.remove(trg_map_file)
+#    if ignore_affine or ignore_header:
+#        if os.path.exists(src_img_file): os.remove(src_img_file)
+#        if os.path.exists(trg_img_file): os.remove(trg_img_file)
+        
+#    for name in forward: 
+#        if os.path.exists(name): os.remove(name)
+#    for name in inverse: 
+#        if os.path.exists(name): os.remove(name)
 
-    for name in result.outputs.forward_transforms:
-        if os.path.exists(name): os.remove(name)
-    for name in result.outputs.reverse_transforms:
-        if os.path.exists(name): os.remove(name)
-    os.remove(transformed.outputs.output_image)
-    os.remove(mapping.outputs.output_image)
-    os.remove(inverse.outputs.output_image)
+    # remove output files if *not* saved 
+    if not save_data:
+        if os.path.exists(transformed_source_file): os.remove(transformed_source_file)            
+        if os.path.exists(mapping_file): os.remove(mapping_file)
+        if os.path.exists(inverse_mapping_file): os.remove(inverse_mapping_file)
 
-    if save_data:
-        save_volume(transformed_source_file, transformed_img)
-        save_volume(mapping_file, mapping_img)
-        save_volume(inverse_mapping_file, inverse_img)
+    return output
 
-    return outputs
 
 def embedded_antsreg_multi(source_images, target_images, 
                     run_rigid=True, 
@@ -1125,7 +1070,7 @@ def embedded_antsreg_multi(source_images, target_images,
         reg = reg + ' --use-histogram-matching 0'
         reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
-    reg = reg + ' --write-composite-transform 0'
+    reg = reg + ' --write-composite-transform 0 --verbose 1'
         
     # run the ANTs command directly    
     print(reg)

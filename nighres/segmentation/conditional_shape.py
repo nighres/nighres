@@ -16,7 +16,7 @@ def conditional_shape(target_images, subjects, structures, contrasts,
                       intensity_atlas_mean=None, intensity_atlas_stdv=None,
                       cancel_bg=False, cancel_all=False, 
                       sum_proba=False, max_proba=False,
-                      max_iterations=20, max_difference=0.01,
+                      max_iterations=20, max_difference=0.01, ngb_size=4,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Conditioanl Shape Parcellation
@@ -259,10 +259,13 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         #cspmax.execute()
         if recompute: cspmax.computeAtlasPriors()
         cspmax.estimateTarget()
-        cspmax.similarityDiffusion(6)
+        cspmax.strictSimilarityDiffusion(ngb_size)
+        #cspmax.similarityDiffusion(6)
         #cspmax.dissimilarityDiffusion(6)
         #cspmax.transitionDiffusion()
-        #if not recompute: cspmax.collapseConditionalMaps()
+        if not recompute: 
+            cspmax.collapseConditionalMaps()
+            cspmax.optimalVolumeThreshold(1.0, 0.05)
 
     except:
         # if the Java module fails, reraise the error it throws
@@ -274,11 +277,11 @@ def conditional_shape(target_images, subjects, structures, contrasts,
     # reshape output to what nibabel likes
     dimensions = (dimensions[0],dimensions[1],dimensions[2],cspmax.getBestDimension())
     dims3D = (dimensions[0],dimensions[1],dimensions[2])
-    dims_ngb = (dimensions[0],dimensions[1],dimensions[2],6)
+    dims_ngb = (dimensions[0],dimensions[1],dimensions[2],ngb_size)
     
     intens_dims = (structures+1,structures+1,contrasts)
 
-    intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+2,contrasts)
+    intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+4,contrasts)
 
     if recompute:
         spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(dimensions[3]),
@@ -311,14 +314,14 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         intensity_label_data = np.reshape(np.array(cspmax.getBestIntensityProbabilityLabels(1),
                                         dtype=np.int32), dims3D, 'F')
     
-        proba_data = np.reshape(np.array(cspmax.getBestProbabilityMaps(1),
+        proba_data = np.reshape(np.array(cspmax.getCertaintyProbability(),
                                        dtype=np.float32), dims3D, 'F')
     
         label_data = np.reshape(np.array(cspmax.getBestProbabilityLabels(1),
                                         dtype=np.int32), dims3D, 'F')
 
-    neighbor_data = np.reshape(np.array(cspmax.getNeighborhoodMaps(6),
-                                        dtype=np.int32), dims_ngb, 'F')
+    neighbor_data = np.reshape(np.array(cspmax.getNeighborhoodMaps(ngb_size),
+                                        dtype=np.float32), dims_ngb, 'F')
 
     if histograms:
         intens_hist_data = np.reshape(np.array(cspmax.getConditionalHistogram(),
