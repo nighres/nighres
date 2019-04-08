@@ -78,25 +78,30 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         First input image to perform segmentation on
     contrast_type1: str
         Contrast type of first input image, must be listed as a prior in used
-        atlas(specified in atlas_file)
+        atlas(specified in atlas_file). Possible inputs by default are DWIFA3T,
+        DWIMD3T, T1map9T, Mp2rage9T, T1map7T, Mp2rage7T, PV, Filters, T1pv,
+        Mprage3T, T1map3T, Mp2rage3T, HCPT1w, HCPT2w, NormMPRAGE.
     contrast_image2: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type2
     contrast_type2: str, optional
         Contrast type of second input image, must be listed as a prior in used
-        atlas (specified in atlas_file)
+        atlas (specified in atlas_file). Possible inputs by default are the same
+        as with parameter contrast_type1 (see above).
     contrast_image3: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type3
     contrast_type3: str, optional
         Contrast type of third input image, must be listed as a prior in used
-        atlas (specified in atlas_file)
+        atlas (specified in atlas_file). Possible inputs by default are the same
+        as with parameter contrast_type1 (see above).
     contrast_image4: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type4
     contrast_type4: str, optional
         Contrast type of fourth input image, must be listed as a prior in used
-        atlas (specified in atlas_file)
+        atlas (specified in atlas_file). Possible inputs by default are the same
+        as with parameter contrast_type1 (see above).
     n_steps: int, optional
         Number of steps for MGDM (default is 5, set to 0 for quick testing of
         registration of priors, which does not perform true segmentation)
