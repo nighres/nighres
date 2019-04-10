@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+
+  nighres:
+    build: .
+    volumes:
+      - ./notebooks:/home/neuro/notebooks
+      - ./nighres:/home/neuro/nighres/nighres
+    command: jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --allow-root
+    ports:
+      - "8888:8888"   # Jupyter server

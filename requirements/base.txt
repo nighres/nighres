@@ -1,0 +1,9 @@
+jupyter
+matplotlib
+nibabel
+nilearn
+nipype
+nose
+psutil
+scipy
+sklearn
