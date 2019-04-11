@@ -1,0 +1,7 @@
+# list of tools
+tools:
+  porcupine:
+    file:
+      - GIRAFFE/porcupine_pipeline.pork
+    nodes:
+      - notebooks/custom_nodes.json
