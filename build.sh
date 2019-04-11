@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # set -e -x
 
 #
@@ -83,8 +83,8 @@ javac_opts=(
 
 echo "Compiling..."
 cd cbstools-public
-javac -cp ${deps_list} ${javac_opts[@]} de/mpg/cbs/core/*/*.java $cbstools_list
-
+# javac -cp ${deps_list} ${javac_opts[@]} de/mpg/cbs/core/*/*.java $cbstools_list
+javac -cp ${deps_list} ${javac_opts[@]} de/mpg/cbs/core/brain/BrainDefineMultiRegionPriors.java de/mpg/cbs/core/brain/BrainEnhanceRegionContrast.java de/mpg/cbs/core/brain/BrainExtractBrainRegion.java de/mpg/cbs/core/brain/BrainIntensityBasedSkullStripping.java de/mpg/cbs/core/brain/BrainMgdmMultiSegmentation2.java de/mpg/cbs/core/brain/BrainMp2rageDuraEstimation.java de/mpg/cbs/core/brain/BrainMp2rageSkullStripping.java de/mpg/cbs/core/cortex/CortexOptimCRUISE.java de/mpg/cbs/core/cortex/CortexSurfaceMeshMapping.java de/mpg/cbs/core/filter/FilterRecursiveRidgeDiffusion.java de/mpg/cbs/core/filter/FilterRecursiveRidgeDiffusion2D.java de/mpg/cbs/core/filter/FilterRidgeStructures.java de/mpg/cbs/core/intensity/IntensityBackgroundEstimator.java de/mpg/cbs/core/intensity/IntensityBackgroundEstimator2.java de/mpg/cbs/core/intensity/IntensityFastMarchingUnwrapping.java de/mpg/cbs/core/intensity/IntensityFlashT2sFitting.java de/mpg/cbs/core/intensity/IntensityHistogramMatching.java de/mpg/cbs/core/intensity/IntensityMp2rageMasking.java de/mpg/cbs/core/intensity/IntensityMp2rageT1Fitting.java de/mpg/cbs/core/intensity/IntensityPropagate.java de/mpg/cbs/core/intensity/IntensityRangeNormalization.java de/mpg/cbs/core/intensity/IntensitySmoothing.java de/mpg/cbs/core/intensity/IntensitySpatialDiffusion.java de/mpg/cbs/core/laminar/LaminarIterativeSmoothing.java de/mpg/cbs/core/laminar/LaminarProfileGeometry.java de/mpg/cbs/core/laminar/LaminarProfileMeshing.java de/mpg/cbs/core/laminar/LaminarProfileSampling.java de/mpg/cbs/core/laminar/LaminarSmoothContrastMapping.java de/mpg/cbs/core/laminar/LaminarVolumetricLayering.java de/mpg/cbs/core/registration/RegistrationApplyDeformations.java de/mpg/cbs/core/registration/RegistrationSurfaceDataToGroupwiseTemplate.java de/mpg/cbs/core/registration/RegistrationTargetBasedReorientation.java de/mpg/cbs/core/segmentation/SegmentationCellMgdm.java de/mpg/cbs/core/segmentation/SegmentationDistanceBasedProbability.java de/mpg/cbs/core/segmentation/SegmentationLesionExtraction.java de/mpg/cbs/core/segmentation/SegmentationLesionExtraction2.java de/mpg/cbs/core/segmentation/SegmentationSureSeg.java de/mpg/cbs/core/shape/ShapeLevelsetFusion.java de/mpg/cbs/core/shape/ShapeSimpleSkeleton.java de/mpg/cbs/core/shape/ShapeTopologyCorrection.java de/mpg/cbs/core/shape/ShapeTopologyCorrection2.java
 
 echo "Assembling..."
 mkdir -p ../nighresjava/src
@@ -141,7 +141,8 @@ javac_opts=(
 
 echo "Compiling..."
 cd imcn-imaging
-javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java $imcntk_list
+# javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java $imcntk_list
+javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/FastMarchingPhaseUnwrapping.java nl/uva/imcn/algorithms/FastMarchingTopologyCorrection.java nl/uva/imcn/algorithms/LevelsetShapeFusion.java
 
 echo "Assembling..."
 jar uf ../nighresjava/src/nighresjava.jar nl/uva/imcn/algorithms/*.class

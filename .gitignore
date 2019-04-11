@@ -5,6 +5,7 @@ __pycache__/
 *.nt.bz2
 *.tar.gz
 *.tgz
+.ipynb_checkpoints/
 
 env/
 build/
