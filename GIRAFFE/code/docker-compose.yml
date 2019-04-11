@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+
+  workflow:
+    build: .
+    volumes:
+      - .:/code
+      - ./temp:/tmp
+      - ./output:/output
+    command: python /code/workflow.py
