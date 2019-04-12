@@ -2,32 +2,167 @@
   "links": [],
   "nodes": [
     {
-      "name": "wrappers_MGDMSegmentation",
-      "class": "wrappers.MGDMSegmentation",
+      "name": "brain_ExtractBrainRegion",
+      "class": "brain.ExtractBrainRegion",
       "category": [
-        "wrappers"
+        "brain"
       ],
       "ports": [
         {
-          "base": "atlas_file",
-          "editable": true,
-          "id": "c4b97732-9461-4bfd-b7b8-7fb2601b6f18",
-          "input": true,
-          "inputPort": "d5aa895f-d8ea-41c1-bc40-2c615f77a483",
-          "name": "atlas_file",
-          "output": false,
-          "outputPort": false,
+          "base": "inside_proba",
+          "editable": false,
+          "id": "2e162c58-871c-4689-b729-2d3432c9d79c",
+          "input": false,
+          "inputPort": false,
+          "name": "inside_proba",
+          "output": true,
+          "outputPort": "94035c07-4e40-4515-a131-4d7b2519ae3c",
           "value": "",
           "visible": true,
           "iterator": false
         },
         {
-          "base": "contrast_image1",
+          "base": "background_lvl",
+          "editable": false,
+          "id": "fe001037-f909-470c-b619-2f231c06260b",
+          "input": false,
+          "inputPort": false,
+          "name": "background_lvl",
+          "output": true,
+          "outputPort": "d9b06d1b-33cb-48b1-b3e1-6c109c8d6876",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "inside_lvl",
+          "editable": false,
+          "id": "a7cbc29d-bd1d-45c4-a3ee-689fe944a605",
+          "input": false,
+          "inputPort": false,
+          "name": "inside_lvl",
+          "output": true,
+          "outputPort": "c7315b6f-fa0b-45a9-8151-898b06ce1a86",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "inside_mask",
+          "editable": false,
+          "id": "371f98c6-462c-4594-b3f6-a73a104e3077",
+          "input": false,
+          "inputPort": false,
+          "name": "inside_mask",
+          "output": true,
+          "outputPort": "275445ae-45ec-418f-b566-d14457eadd9b",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "region_mask",
+          "editable": false,
+          "id": "388f518c-f937-4e30-9ee0-4359e9a6b1fa",
+          "input": false,
+          "inputPort": false,
+          "name": "region_mask",
+          "output": true,
+          "outputPort": "2951bddd-fc16-45c5-a59b-b77d8d8b9aab",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "region_lvl",
+          "editable": false,
+          "id": "cdeffa2c-00f5-4967-ab25-8ebdef37ef1d",
+          "input": false,
+          "inputPort": false,
+          "name": "region_lvl",
+          "output": true,
+          "outputPort": "b7e552f5-6985-4e5c-85c1-4dae9dd67da6",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "background_mask",
+          "editable": false,
+          "id": "19458565-4d9a-462c-be1f-d626b1cc8c43",
+          "input": false,
+          "inputPort": false,
+          "name": "background_mask",
+          "output": true,
+          "outputPort": "ef00aff0-8383-43fc-8433-40e19d1d596f",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "background_proba",
+          "editable": false,
+          "id": "911788b9-0f7e-4f88-8cea-34e92f252fac",
+          "input": false,
+          "inputPort": false,
+          "name": "background_proba",
+          "output": true,
+          "outputPort": "8b70e4f2-5921-4b43-9b12-cfaf0533092d",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "region_proba",
+          "editable": false,
+          "id": "5f863c5e-7934-438c-bdbb-ba10b86ce737",
+          "input": false,
+          "inputPort": false,
+          "name": "region_proba",
+          "output": true,
+          "outputPort": "f9e7c2b0-9a9f-4c8a-ac0d-f31f3f88f811",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        }
+      ],
+      "position": [
+        -1962.4480017606545,
+        -630.306706991776
+      ],
+      "code": [
+        {
+          "comment": "Inputs::",
+          "argument": {
+            "name": "brain.ExtractBrainRegion()",
+            "import": "import nighres.brain"
+          },
+          "language": "Nipype"
+        },
+        {
+          "argument": {
+            "name": "brain"
+          },
+          "language": "Docker"
+        }
+      ],
+      "web_url": "https://nipype.readthedocs.io/en/latest/interfaces/generated/nighres.brain/brain.html#extractbrainregion",
+      "colour": "#80b649"
+    },
+    {
+      "name": "brain_MGDMSegmentation",
+      "class": "brain.MGDMSegmentation",
+      "category": [
+        "brain"
+      ],
+      "ports": [
+        {
+          "base": "atlas_file",
           "editable": true,
-          "id": "a2c833aa-64e5-486e-8a79-fa73cc23cb35",
+          "id": "04320be1-f399-4a36-a02d-5cd128197960",
           "input": true,
-          "inputPort": "0f057d8c-d520-4522-8d4c-9ba9352b97c2",
-          "name": "contrast_image1",
+          "inputPort": "7d2e22ce-efca-4979-a69f-15bd26157be9",
+          "name": "atlas_file",
           "output": false,
           "outputPort": false,
           "value": "",
@@ -37,10 +172,23 @@
         {
           "base": "output_dir",
           "editable": true,
-          "id": "be0dc0e7-e9b0-4b14-9045-9c1e3eff4aab",
+          "id": "e76f5442-c644-4ac5-b0cc-6b3c8ccf8d99",
           "input": true,
-          "inputPort": "255ff9c5-f48c-4920-92fd-c0344e392718",
+          "inputPort": "c324dd03-dd31-4de5-b6eb-9be600840c55",
           "name": "output_dir",
+          "output": false,
+          "outputPort": false,
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "contrast_image1",
+          "editable": true,
+          "id": "e3c8896d-47d7-45a1-b6d7-a7f180acb24a",
+          "input": true,
+          "inputPort": "b8988bb8-ce4f-4dd5-90f6-0a38bf141431",
+          "name": "contrast_image1",
           "output": false,
           "outputPort": false,
           "value": "",
@@ -50,9 +198,9 @@
         {
           "base": "contrast_type1",
           "editable": true,
-          "id": "4fc88500-8799-432c-a080-e9590c7bba59",
+          "id": "e839ca72-0100-4be7-8c98-6e1b99aca16b",
           "input": true,
-          "inputPort": "45229c19-575c-4bf0-b6f7-6505d5aeaa6e",
+          "inputPort": "7b985b30-4966-4aab-a2ec-a983ddef4fe0",
           "name": "contrast_type1",
           "output": false,
           "outputPort": false,
@@ -61,37 +209,11 @@
           "iterator": false
         },
         {
-          "base": "contrast_type3",
-          "editable": true,
-          "id": "cea3b374-7db1-4635-ae06-369c6c1c46b1",
-          "input": true,
-          "inputPort": "95e63c31-4697-407c-8c5f-f21a8222d2ad",
-          "name": "contrast_type3",
-          "output": false,
-          "outputPort": false,
-          "value": "",
-          "visible": false,
-          "iterator": false
-        },
-        {
-          "base": "save_data",
-          "editable": true,
-          "id": "fe56f24b-236c-4672-893b-ac26fe90a8c3",
-          "input": true,
-          "inputPort": "04fcde2a-d15a-4667-a35b-ac914b73b3a0",
-          "name": "save_data",
-          "output": false,
-          "outputPort": false,
-          "value": "",
-          "visible": false,
-          "iterator": false
-        },
-        {
           "base": "contrast_image3",
           "editable": true,
-          "id": "615b73f6-bcd0-4290-b077-7b05ac626361",
+          "id": "1ece853a-102c-40b2-84c7-c390cc46b65f",
           "input": true,
-          "inputPort": "3e04062e-52c2-4b22-8105-5b500ea29bad",
+          "inputPort": "c2394d0a-df8b-491b-95e1-6c24218b526e",
           "name": "contrast_image3",
           "output": false,
           "outputPort": false,
@@ -102,10 +224,36 @@
         {
           "base": "contrast_image2",
           "editable": true,
-          "id": "29552de5-a77f-492e-843e-af9acf9f0c0d",
+          "id": "e33438de-1268-4097-ab72-29e4b862ffc0",
           "input": true,
-          "inputPort": "07c03216-e507-4bd5-936c-c4dc3eda9057",
+          "inputPort": "ff694f4b-32c1-44b7-967d-eacc2cbb6468",
           "name": "contrast_image2",
+          "output": false,
+          "outputPort": false,
+          "value": "",
+          "visible": false,
+          "iterator": false
+        },
+        {
+          "base": "contrast_type3",
+          "editable": true,
+          "id": "3c0b0631-df9b-408b-92ed-893b18d1c083",
+          "input": true,
+          "inputPort": "4cb7e1e7-10d1-4867-8ce3-5ca46f03181f",
+          "name": "contrast_type3",
+          "output": false,
+          "outputPort": false,
+          "value": "",
+          "visible": false,
+          "iterator": false
+        },
+        {
+          "base": "save_data",
+          "editable": true,
+          "id": "eea648bf-0595-4ea6-bf24-0b2e51656177",
+          "input": true,
+          "inputPort": "a8d4dde8-b7d9-48ef-a7c4-f526a92ce15f",
+          "name": "save_data",
           "output": false,
           "outputPort": false,
           "value": "",
@@ -115,9 +263,9 @@
         {
           "base": "contrast_type2",
           "editable": true,
-          "id": "73b72846-58f3-4b2f-8458-8e1e760fd6b8",
+          "id": "ded94268-c90d-4b02-b271-e251b5ff7b3a",
           "input": true,
-          "inputPort": "1d252609-cc5e-40f9-b434-55fd770ff57b",
+          "inputPort": "6ffa2937-3fb1-4971-a491-2c7b8371f8e4",
           "name": "contrast_type2",
           "output": false,
           "outputPort": false,
@@ -126,14 +274,14 @@
           "iterator": false
         },
         {
-          "base": "segmentation",
+          "base": "memberships",
           "editable": false,
-          "id": "3c71e8a5-ad84-4395-a209-4dfce61fa1f8",
+          "id": "fafb0177-d1db-4c7a-99ff-285e3410bd20",
           "input": false,
           "inputPort": false,
-          "name": "segmentation",
+          "name": "memberships",
           "output": true,
-          "outputPort": "6d726383-689c-4991-a4ee-8811a38a4844",
+          "outputPort": "d8c156ac-e303-4279-9a93-db339e33ab93",
           "value": "",
           "visible": true,
           "iterator": false
@@ -141,12 +289,12 @@
         {
           "base": "labels",
           "editable": false,
-          "id": "2cd82d5f-0a55-4346-9a56-4f9cc24e8fa4",
+          "id": "e102e14e-44cf-433f-930f-19b4e841965d",
           "input": false,
           "inputPort": false,
           "name": "labels",
           "output": true,
-          "outputPort": "11651c69-bc2d-4cef-a63d-1efad994543b",
+          "outputPort": "2946a9ba-467d-47eb-8e69-ede4aa2157d3",
           "value": "",
           "visible": true,
           "iterator": false
@@ -154,66 +302,66 @@
         {
           "base": "distance",
           "editable": false,
-          "id": "9f520cb9-cc61-4cc6-9904-ae7a4cbb4250",
+          "id": "d5962b7b-b02d-420b-9531-b35848890958",
           "input": false,
           "inputPort": false,
           "name": "distance",
           "output": true,
-          "outputPort": "1ca569ca-7b04-4b4f-b532-0b065646e040",
+          "outputPort": "cafe8527-8033-4aef-8271-07c999deff94",
           "value": "",
           "visible": true,
           "iterator": false
         },
         {
-          "base": "memberships",
+          "base": "segmentation",
           "editable": false,
-          "id": "08f8696a-4fd2-4b1f-8079-e45742118973",
+          "id": "d2ebf4ed-ff7c-40ca-bfa5-77609b093967",
           "input": false,
           "inputPort": false,
-          "name": "memberships",
+          "name": "segmentation",
           "output": true,
-          "outputPort": "3427ebc3-9346-4b53-b5f3-de6f4faa8e0c",
+          "outputPort": "45dc7b76-9223-419a-a28f-48555d066f28",
           "value": "",
           "visible": true,
           "iterator": false
         }
       ],
       "position": [
-        -1202.9987245135837,
-        -652.7972982567217
+        -1531.2427185704469,
+        -442.55795438012126
       ],
       "code": [
         {
-          "language": "Nipype",
+          "comment": "Inputs::",
           "argument": {
-            "import": "import nighres.wrappers",
-            "name": "wrappers.MGDMSegmentation()"
+            "name": "brain.MGDMSegmentation()",
+            "import": "import nighres.brain"
           },
-          "comment": "Inputs::"
+          "language": "Nipype"
         },
         {
-          "language": "Docker",
           "argument": {
-            "name": "wrappers"
-          }
+            "name": "brain"
+          },
+          "language": "Docker"
         }
       ],
-      "web_url": "https://nipype.readthedocs.io/en/latest/interfaces/generated/nighres.wrappers/wrappers.html#mgdmsegmentation",
+      "web_url": "https://nipype.readthedocs.io/en/latest/interfaces/generated/nighres.brain/brain.html#mgdmsegmentation",
       "colour": "#80b649"
     },
     {
-      "name": "wrappers_ProbabilityToLevelset",
-      "class": "wrappers.ProbabilityToLevelset",
+      "name": "surface_ProbabilityToLevelset",
+      "class": "surface.ProbabilityToLevelset",
       "category": [
-        "wrappers"
+        "surface"
       ],
       "ports": [
         {
           "base": "output_dir",
           "editable": true,
-          "id": "1da86542-092f-4976-8c37-01e96bb2a076",
+          "id": "68831cfb-b67c-4820-86f6-c5173cf46607",
           "input": true,
-          "inputPort": "ae8f13d3-978d-46b8-9b8f-a473e1de4e1c",
+          "inputPort": "cff4d7ab-9ddd-4f12-9de3-50414742fd81",
           "name": "output_dir",
           "output": false,
           "outputPort": false,
@@ -224,9 +372,9 @@
         {
           "base": "probability_image",
           "editable": true,
-          "id": "701df1ae-7820-428b-8ac7-287f3e7f3f31",
+          "id": "a3e9bb26-9b11-42af-b19b-a7811b01abe8",
           "input": true,
-          "inputPort": "b822cb96-dea4-49c0-bd51-7f580595e3c2",
+          "inputPort": "d37cf5ea-05b5-4ab0-b28e-124204ff62e3",
           "name": "probability_image",
           "output": false,
           "outputPort": false,
@@ -237,9 +385,9 @@
         {
           "base": "save_data",
           "editable": true,
-          "id": "b56097b1-b6d2-47e2-8de1-a3884406a3d9",
+          "id": "e2701d46-e7bf-40ba-bbaa-2f7ae1dea998",
           "input": true,
-          "inputPort": "c3c649ce-4ccf-4877-886a-4e1e5c5e5174",
+          "inputPort": "5aedf7e8-a2ac-4a5e-8ebc-3353283b1bd6",
           "name": "save_data",
           "output": false,
           "outputPort": false,
@@ -250,106 +398,54 @@
         {
           "base": "levelset",
           "editable": false,
-          "id": "2fbc3890-eb48-4644-ab66-df1433ecfaa3",
+          "id": "0a0de297-5c59-4155-900b-f2e863890de9",
           "input": false,
           "inputPort": false,
           "name": "levelset",
           "output": true,
-          "outputPort": "a4caf9c8-86c0-4f0c-8eed-306c11b07d89",
+          "outputPort": "acee19d0-9ee4-4a47-980b-60991f30470a",
           "value": "",
           "visible": true,
           "iterator": false
         }
       ],
       "position": [
-        -985.2565452257793,
-        -250.46428938458357
+        -556.584875480208,
+        -271.54262486841316
       ],
       "code": [
         {
-          "language": "Nipype",
+          "comment": "Inputs::",
           "argument": {
-            "import": "import nighres.wrappers",
-            "name": "wrappers.ProbabilityToLevelset()"
+            "name": "surface.ProbabilityToLevelset()",
+            "import": "import nighres.surface"
           },
-          "comment": "Inputs::"
+          "language": "Nipype"
         },
         {
-          "language": "Docker",
           "argument": {
-            "name": "wrappers"
-          }
+            "name": "surface"
+          },
+          "language": "Docker"
         }
       ],
-      "web_url": "https://nipype.readthedocs.io/en/latest/interfaces/generated/nighres.wrappers/wrappers.html#probabilitytolevelset",
-      "colour": "#80b649"
+      "web_url": "https://nipype.readthedocs.io/en/latest/interfaces/generated/nighres.surface/surface.html#probabilitytolevelset",
+      "colour": "#9142ab"
     },
     {
-      "name": "wrappers_RecursiveRidgeDiffusion",
-      "class": "wrappers.RecursiveRidgeDiffusion",
+      "name": "filtering_RecursiveRidgeDiffusion",
+      "class": "filtering.RecursiveRidgeDiffusion",
       "category": [
-        "wrappers"
+        "filtering"
       ],
       "ports": [
         {
-          "base": "similarity_scale",
+          "base": "output_dir",
           "editable": true,
-          "id": "e47adcfc-0fce-474e-b380-6a96a18d7510",
+          "id": "a490cff7-e506-4936-bec9-aab1a811cd56",
           "input": true,
-          "inputPort": "d1458b01-6366-4251-91ae-36e0ff20dc35",
-          "name": "similarity_scale",
-          "output": false,
-          "outputPort": false,
-          "value": "",
-          "visible": true,
-          "iterator": false
-        },
-        {
-          "base": "max_scale",
-          "editable": true,
-          "id": "2a2de689-86d5-4ebb-9ba0-4c86ba33ace7",
-          "input": true,
-          "inputPort": "8de479d3-ea30-493f-b8e8-94f74d0a1ede",
-          "name": "max_scale",
-          "output": false,
-          "outputPort": false,
-          "value": "",
-          "visible": true,
-          "iterator": false
-        },
-        {
-          "base": "min_scale",
-          "editable": true,
-          "id": "49f650f6-1f56-46a3-9791-e331a537555f",
-          "input": true,
-          "inputPort": "97974bbd-78a0-457c-a958-af7fca1cb63d",
-          "name": "min_scale",
-          "output": false,
-          "outputPort": false,
-          "value": "",
-          "visible": true,
-          "iterator": false
-        },
-        {
-          "base": "orientation",
-          "editable": true,
-          "id": "63a47c45-e49a-4893-8e69-c929c9830d35",
-          "input": true,
-          "inputPort": "d801023a-053f-4541-9926-7b105de28115",
-          "name": "orientation",
-          "output": false,
-          "outputPort": false,
-          "value": "",
-          "visible": true,
-          "iterator": false
-        },
-        {
-          "base": "max_diff",
-          "editable": true,
-          "id": "4e2b9222-e47c-441e-8294-db9ae933e627",
-          "input": true,
-          "inputPort": "8a72d2e5-2a7d-4485-9e7a-411ee09c6e66",
-          "name": "max_diff",
+          "inputPort": "a1c8d9ff-2c73-4db8-8546-d0c1e0b2bee3",
+          "name": "output_dir",
           "output": false,
           "outputPort": false,
           "value": "",
@@ -359,9 +455,9 @@
         {
           "base": "ridge_intensities",
           "editable": true,
-          "id": "e8b3d2c2-f61b-45cf-ab93-893792d1a13b",
+          "id": "fd4ed0dc-c7f6-4416-a119-c2ad95504799",
           "input": true,
-          "inputPort": "91317a36-bdd7-4740-8958-c50105037281",
+          "inputPort": "1fe9f154-8ff9-4710-8fee-d237e2b540f7",
           "name": "ridge_intensities",
           "output": false,
           "outputPort": false,
@@ -370,90 +466,12 @@
           "iterator": false
         },
         {
-          "base": "ridge_filter",
+          "base": "max_diff",
           "editable": true,
-          "id": "68b663fe-7956-4a20-bf0f-1f6803c4c7d8",
+          "id": "30c78bfb-0dc1-40b2-a27c-abe62391dccd",
           "input": true,
-          "inputPort": "bbb1c80c-0bfb-4885-ac53-6fc4e83d4400",
-          "name": "ridge_filter",
-          "output": false,
-          "outputPort": false,
-          "value": "",
-          "visible": true,
-          "iterator": false
-        },
-        {
-          "base": "input_image",
-          "editable": true,
-          "id": "2ed1d6e1-117e-4960-b807-22c296b39cce",
-          "input": true,
-          "inputPort": "0eb162bc-88ca-4566-965d-862096c00871",
-          "name": "input_image",
-          "output": false,
-          "outputPort": false,
-          "value": "",
-          "visible": true,
-          "iterator": false
-        },
-        {
-          "base": "output_dir",
-          "editable": true,
-          "id": "b604d592-8ef5-4d2f-ae00-64ead3e445f0",
-          "input": true,
-          "inputPort": "7e7403be-ee47-4850-80c1-e4e490da387e",
-          "name": "output_dir",
-          "output": false,
-          "outputPort": false,
-          "value": "",
-          "visible": true,
-          "iterator": false
-        },
-        {
-          "base": "ang_factor",
-          "editable": true,
-          "id": "968e1970-8f55-420b-a48a-2353ca6c3aaf",
-          "input": true,
-          "inputPort": "300d3424-d103-424f-97c9-aab162fa5aaf",
-          "name": "ang_factor",
-          "output": false,
-          "outputPort": false,
-          "value": "",
-          "visible": true,
-          "iterator": false
-        },
-        {
-          "base": "neighborhood_size",
-          "editable": true,
-          "id": "cf6ff607-9726-4d15-84ba-f6b2137189b6",
-          "input": true,
-          "inputPort": "540c2041-11e7-4281-b641-9ddc2cfff59f",
-          "name": "neighborhood_size",
-          "output": false,
-          "outputPort": false,
-          "value": "",
-          "visible": true,
-          "iterator": false
-        },
-        {
-          "base": "diffusion_factor",
-          "editable": true,
-          "id": "ba12c11e-e594-4165-b07d-961a31324778",
-          "input": true,
-          "inputPort": "bfb5b2d1-3223-4242-99a3-7d3ca6b837ea",
-          "name": "diffusion_factor",
-          "output": false,
-          "outputPort": false,
-          "value": "",
-          "visible": true,
-          "iterator": false
-        },
-        {
-          "base": "max_iter",
-          "editable": true,
-          "id": "d59066b9-b0af-498b-8896-5750ed7e4f39",
-          "input": true,
-          "inputPort": "36a23ae3-497a-4381-a931-033481c70c0c",
-          "name": "max_iter",
+          "inputPort": "5a2158d0-0399-400a-96e5-d95350895b90",
+          "name": "max_diff",
           "output": false,
           "outputPort": false,
           "value": "",
@@ -463,9 +481,9 @@
         {
           "base": "propagation_model",
           "editable": true,
-          "id": "868ca1f8-1b74-46b8-9612-0e8a8d88df86",
+          "id": "b0643cd6-48c7-4f5f-a4ee-0d8be0f8649b",
           "input": true,
-          "inputPort": "834f72f5-e55d-4785-a338-2b65ef401a38",
+          "inputPort": "dc0b092f-331e-48ab-b24f-55b01beb6abe",
           "name": "propagation_model",
           "output": false,
           "outputPort": false,
@@ -474,12 +492,142 @@
           "iterator": false
         },
         {
-          "base": "save_data",
+          "base": "input_image",
           "editable": true,
-          "id": "0e05067a-0761-4d4f-8187-97f9b363b780",
+          "id": "6610078d-510a-46cc-8961-1f12853e5393",
           "input": true,
-          "inputPort": "1f2f49e3-ad54-4015-a54d-d17de29bb958",
-          "name": "save_data",
+          "inputPort": "2a62096c-996e-4461-9146-e8ccada18204",
+          "name": "input_image",
+          "output": false,
+          "outputPort": false,
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "similarity_scale",
+          "editable": true,
+          "id": "041714a9-4320-46fd-aa79-08e624889776",
+          "input": true,
+          "inputPort": "7053ffc8-0445-4fb5-885e-72dccb0df90e",
+          "name": "similarity_scale",
+          "output": false,
+          "outputPort": false,
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "min_scale",
+          "editable": true,
+          "id": "33502006-0b42-4106-8fa3-738edce9ccce",
+          "input": true,
+          "inputPort": "6a6a643f-2e80-47e7-95aa-9ad22754c720",
+          "name": "min_scale",
+          "output": false,
+          "outputPort": false,
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "neighborhood_size",
+          "editable": true,
+          "id": "6539a300-fb10-4e57-86f1-c34c42dbb083",
+          "input": true,
+          "inputPort": "1d24aa94-d10f-47cb-99ed-7cd008e330b1",
+          "name": "neighborhood_size",
+          "output": false,
+          "outputPort": false,
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "max_iter",
+          "editable": true,
+          "id": "9f37009f-e843-4d33-af8a-a4e05d8ca000",
+          "input": true,
+          "inputPort": "74ebb4d6-857c-47aa-bc82-59b49859a7a3",
+          "name": "max_iter",
+          "output": false,
+          "outputPort": false,
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "max_scale",
+          "editable": true,
+          "id": "95432aa6-db90-48ec-a1c1-50a4ef08cb05",
+          "input": true,
+          "inputPort": "b3f83a41-56f6-47e3-bb25-611878ce578e",
+          "name": "max_scale",
+          "output": false,
+          "outputPort": false,
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "ang_factor",
+          "editable": true,
+          "id": "d38d2ca5-c7ad-4216-84e6-b528e5b29701",
+          "input": true,
+          "inputPort": "ecf35cd1-6cea-4595-80d9-34fe5c9e0c61",
+          "name": "ang_factor",
+          "output": false,
+          "outputPort": false,
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "ridge_filter",
+          "editable": true,
+          "id": "748e34b9-6f62-4d31-97e3-7e65d3ef9af2",
+          "input": true,
+          "inputPort": "ea68d8b8-c87a-4ae6-a9dd-6735df756dc5",
+          "name": "ridge_filter",
+          "output": false,
+          "outputPort": false,
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "orientation",
+          "editable": true,
+          "id": "b7c6ac12-ce82-4dca-9241-451d57e090c9",
+          "input": true,
+          "inputPort": "eed840f1-db23-4b66-8391-0aa6dee95b23",
+          "name": "orientation",
+          "output": false,
+          "outputPort": false,
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "diffusion_factor",
+          "editable": true,
+          "id": "3d3a7b01-4b83-478d-bfa4-476736ceab6b",
+          "input": true,
+          "inputPort": "d63092f5-6dbb-4853-93a1-bf4ef457ef53",
+          "name": "diffusion_factor",
+          "output": false,
+          "outputPort": false,
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "loc_prior",
+          "editable": true,
+          "id": "9a154cef-ba78-4142-801c-dcde13e6e9f9",
+          "input": true,
+          "inputPort": "c1ea98b0-d1a7-49e5-8209-cf86fc6cb384",
+          "name": "loc_prior",
           "output": false,
           "outputPort": false,
           "value": "",
@@ -487,12 +635,12 @@
           "iterator": false
         },
         {
-          "base": "loc_prior",
+          "base": "save_data",
           "editable": true,
-          "id": "9e5afb84-741c-4266-9a36-bda0e1113e58",
+          "id": "56aa0243-d21e-49e3-b830-ec659ed9ddb7",
           "input": true,
-          "inputPort": "e8f55f27-c741-4df0-aa29-eb3d7a2fc879",
-          "name": "loc_prior",
+          "inputPort": "001a15ea-9d72-4658-9ca4-f92f8ea58e71",
+          "name": "save_data",
           "output": false,
           "outputPort": false,
           "value": "",
@@ -502,9 +650,9 @@
         {
           "base": "surface_levelset",
           "editable": true,
-          "id": "efc6bce5-2824-4de3-a79c-7e2b38ba499a",
+          "id": "e4c7014c-57e7-406a-807e-2964f8370f91",
           "input": true,
-          "inputPort": "9cbb92ae-d21c-4bba-af66-21f7f5aa9e28",
+          "inputPort": "8b909389-97a2-45c4-8c7a-a091214b2ae5",
           "name": "surface_levelset",
           "output": false,
           "outputPort": false,
@@ -513,66 +661,14 @@
           "iterator": false
         },
         {
-          "base": "proba",
+          "base": "scale",
           "editable": false,
-          "id": "9920daaf-0249-467d-baab-f05e0c9851c6",
+          "id": "9dc54a90-bcff-404e-a765-a162e8b74a90",
           "input": false,
           "inputPort": false,
-          "name": "proba",
+          "name": "scale",
           "output": true,
-          "outputPort": "707025e4-c4a0-4d26-bac3-d2a7d0a17ea2",
-          "value": "",
-          "visible": true,
-          "iterator": false
-        },
-        {
-          "base": "ridge_size",
-          "editable": false,
-          "id": "c54d4f52-8c47-4a75-9f19-f79e53765337",
-          "input": false,
-          "inputPort": false,
-          "name": "ridge_size",
-          "output": true,
-          "outputPort": "44a7faa3-8f4a-4760-9e55-8ca6b38912f0",
-          "value": "",
-          "visible": true,
-          "iterator": false
-        },
-        {
-          "base": "filter",
-          "editable": false,
-          "id": "18fa1bf8-97d3-44bc-99a9-c743d61924aa",
-          "input": false,
-          "inputPort": false,
-          "name": "filter",
-          "output": true,
-          "outputPort": "362c6ad8-5545-4718-9717-03d749e69d30",
-          "value": "",
-          "visible": true,
-          "iterator": false
-        },
-        {
-          "base": "ridge_pv",
-          "editable": false,
-          "id": "e10a5307-8c2c-402c-a877-26d950c87a1c",
-          "input": false,
-          "inputPort": false,
-          "name": "ridge_pv",
-          "output": true,
-          "outputPort": "839280f4-dc73-4096-91c1-df599ecb8e26",
-          "value": "",
-          "visible": true,
-          "iterator": false
-        },
-        {
-          "base": "propagation",
-          "editable": false,
-          "id": "f0db67ca-8795-4bb3-802c-1c50c76e3ca6",
-          "input": false,
-          "inputPort": false,
-          "name": "propagation",
-          "output": true,
-          "outputPort": "8ff9f7dd-1ab2-4f6b-b8cc-b9937519b265",
+          "outputPort": "027b37ba-cdb0-4195-ae7e-59cb97815c01",
           "value": "",
           "visible": true,
           "iterator": false
@@ -580,12 +676,25 @@
         {
           "base": "correction",
           "editable": false,
-          "id": "6b4bdfe7-a18b-4a9b-9821-a37f55b34b9f",
+          "id": "613c4fbc-f329-44bf-b98e-41289a6b6e0f",
           "input": false,
           "inputPort": false,
           "name": "correction",
           "output": true,
-          "outputPort": "e038f947-7285-4325-ae98-46fd6b88843b",
+          "outputPort": "c530863a-3abb-454d-9d0a-e0f9b7f52eec",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "proba",
+          "editable": false,
+          "id": "edcae377-cb56-4d5a-8294-03339303dae0",
+          "input": false,
+          "inputPort": false,
+          "name": "proba",
+          "output": true,
+          "outputPort": "627a0c49-0f01-4afd-b619-b4a511a69ead",
           "value": "",
           "visible": true,
           "iterator": false
@@ -593,52 +702,91 @@
         {
           "base": "ridge_direction",
           "editable": false,
-          "id": "c6517f88-fc97-4122-b5c7-7424fc50a2aa",
+          "id": "6517e8f5-575a-47c0-b799-6684ad26fb7f",
           "input": false,
           "inputPort": false,
           "name": "ridge_direction",
           "output": true,
-          "outputPort": "eecc1021-795d-4a54-b0e9-c0db20edc839",
+          "outputPort": "db8e21d6-0bf6-4533-ab53-ce3c5822883e",
           "value": "",
           "visible": true,
           "iterator": false
         },
         {
-          "base": "scale",
+          "base": "filter",
           "editable": false,
-          "id": "9f0d599b-7006-47e6-8a7a-373b7266e9e6",
+          "id": "eed86699-6892-4f6f-8e4e-99dd8f4c3e77",
           "input": false,
           "inputPort": false,
-          "name": "scale",
+          "name": "filter",
           "output": true,
-          "outputPort": "4e1869ee-4564-456e-9497-11566a8c2005",
+          "outputPort": "4b4ed97d-1183-4d37-85c9-64a54eb62233",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "ridge_size",
+          "editable": false,
+          "id": "c2317a8d-b600-4c80-9211-d9250b9f711a",
+          "input": false,
+          "inputPort": false,
+          "name": "ridge_size",
+          "output": true,
+          "outputPort": "8a48571d-cdaf-4f54-8d75-7c3971011405",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "propagation",
+          "editable": false,
+          "id": "b2ed392b-eb57-4800-a35b-fe79d568e943",
+          "input": false,
+          "inputPort": false,
+          "name": "propagation",
+          "output": true,
+          "outputPort": "31c80544-6f7d-4b1d-919f-03eaf36b28df",
+          "value": "",
+          "visible": true,
+          "iterator": false
+        },
+        {
+          "base": "ridge_pv",
+          "editable": false,
+          "id": "af560c91-b47b-4776-af42-5dfa13d1d138",
+          "input": false,
+          "inputPort": false,
+          "name": "ridge_pv",
+          "output": true,
+          "outputPort": "95072aca-0718-4112-8f17-57d92479f249",
           "value": "",
           "visible": true,
           "iterator": false
         }
       ],
       "position": [
-        -1774.215269724528,
-        -474.43736297306083
+        -1146.6883781877145,
+        -636.0144081380632
       ],
       "code": [
         {
-          "language": "Nipype",
+          "comment": "Inputs::",
           "argument": {
-            "import": "import nighres.wrappers",
-            "name": "wrappers.RecursiveRidgeDiffusion()"
+            "name": "filtering.RecursiveRidgeDiffusion()",
+            "import": "import nighres.filtering"
           },
-          "comment": "Inputs::"
+          "language": "Nipype"
         },
         {
-          "language": "Docker",
           "argument": {
-            "name": "wrappers"
-          }
+            "name": "filtering"
+          },
+          "language": "Docker"
         }
       ],
-      "web_url": "https://nipype.readthedocs.io/en/latest/interfaces/generated/nighres.wrappers/wrappers.html#recursiveridgediffusion",
-      "colour": "#80b649"
+      "web_url": "https://nipype.readthedocs.io/en/latest/interfaces/generated/nighres.filtering/filtering.html#recursiveridgediffusion",
+      "colour": "#a29c41"
     }
   ],
   "version": "v1"

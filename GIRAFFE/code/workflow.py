@@ -5,16 +5,21 @@ import sys
 import nipype
 import nipype.pipeline as pe
 
-import nighres.wrappers
+import nighres.brain
+import nighres.surface
+import nighres.filtering
 
 #Inputs::
-wrappers_MGDMSegmentation = pe.Node(interface = wrappers.MGDMSegmentation(), name='wrappers_MGDMSegmentation')
+brain_ExtractBrainRegion = pe.Node(interface = brain.ExtractBrainRegion(), name='brain_ExtractBrainRegion')
 
 #Inputs::
-wrappers_ProbabilityToLevelset = pe.Node(interface = wrappers.ProbabilityToLevelset(), name='wrappers_ProbabilityToLevelset')
+brain_MGDMSegmentation = pe.Node(interface = brain.MGDMSegmentation(), name='brain_MGDMSegmentation')
 
 #Inputs::
-wrappers_RecursiveRidgeDiffusion = pe.Node(interface = wrappers.RecursiveRidgeDiffusion(), name='wrappers_RecursiveRidgeDiffusion')
+surface_ProbabilityToLevelset = pe.Node(interface = surface.ProbabilityToLevelset(), name='surface_ProbabilityToLevelset')
+
+#Inputs::
+filtering_RecursiveRidgeDiffusion = pe.Node(interface = filtering.RecursiveRidgeDiffusion(), name='filtering_RecursiveRidgeDiffusion')
 
 #Create a workflow to connect all those nodes
 analysisflow = nipype.Workflow('MyWorkflow')
