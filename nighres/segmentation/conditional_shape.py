@@ -14,6 +14,7 @@ def conditional_shape(target_images, subjects, structures, contrasts,
                       shape_atlas_probas=None, shape_atlas_labels=None, 
                       histograms=True, intensity_atlas_hist=None,
                       intensity_atlas_mean=None, intensity_atlas_stdv=None,
+                      map_to_atlas=None, map_to_target=None,
                       cancel_bg=False, cancel_all=False, 
                       sum_proba=False, max_proba=False,
                       max_iterations=20, max_difference=0.01, ngb_size=4,
@@ -52,6 +53,10 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         Pre-computed intensity atlas from the contrast images (replacing them)
     intensity_atlas_stdv: [niimg]
         Pre-computed intensity atlas from the contrast images (replacing them)
+    map_to_atlas: niimg
+        Coordinate mapping from the target to the atlas (opt)
+    map_to_target: niimg
+        Coordinate mapping from the atlas to the target (opt)
     cancel_bg: bool
         Cancel the main background class (default is False)
     cancel_all: bool
@@ -200,8 +205,8 @@ def conditional_shape(target_images, subjects, structures, contrasts,
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 
-    cspmax.setDimensions(dimensions[0], dimensions[1], dimensions[2])
-    cspmax.setResolutions(resolution[0], resolution[1], resolution[2])
+    cspmax.setTargetDimensions(dimensions[0], dimensions[1], dimensions[2])
+    cspmax.setTargetResolutions(resolution[0], resolution[1], resolution[2])
 
     # target image 1
     cspmax.setTargetImageAt(0, nighresjava.JArray('float')(
@@ -216,6 +221,17 @@ def conditional_shape(target_images, subjects, structures, contrasts,
 
     # load the shape and intensity atlases, if existing
     if recompute:
+        
+        # load a first image for dim, res
+        img = load_volume(contrast_images[sub][contrast])
+        data = img.get_data()
+        header = img.get_header()
+        resolution = [x.item() for x in header.get_zooms()]
+        dimensions = data.shape
+        
+        cspmax.setAtlasDimensions(dimensions[0], dimensions[1], dimensions[2])
+        cspmax.setAtlasResolutions(resolution[0], resolution[1], resolution[2])
+        
         # load the atlas structures and contrasts, if needed
         for sub in range(subjects):
             for struct in range(structures):
@@ -246,13 +262,32 @@ def conditional_shape(target_images, subjects, structures, contrasts,
                                                 (stdv.flatten('F')).astype(float)))
 
         print("load: "+str(os.path.join(output_dir,shape_atlas_probas)))
-        pdata = load_volume(os.path.join(output_dir,shape_atlas_probas)).get_data()
+        
+        # load a first image for dim, res
+        img = load_volume(os.path.join(output_dir,shape_atlas_probas))
+        pdata = img.get_data()
+        header = img.get_header()
+        resolution = [x.item() for x in header.get_zooms()]
+        dimensions = data.shape
+        
+        cspmax.setAtlasDimensions(dimensions[0], dimensions[1], dimensions[2])
+        cspmax.setAtlasResolutions(resolution[0], resolution[1], resolution[2])
+   
         print("load: "+str(os.path.join(output_dir,shape_atlas_labels)))
         ldata = load_volume(os.path.join(output_dir,shape_atlas_labels)).get_data()
+        
         cspmax.setShapeAtlasProbasAndLabels(nighresjava.JArray('float')(
                                     (pdata.flatten('F')).astype(float)),
                                     nighresjava.JArray('int')(
                                     (ldata.flatten('F')).astype(int).tolist()))
+
+    if map_to_atlas is not None and map_to_target is not None:
+        mdata =  load_volume(map_to_atlas).get_data()
+        cspmax.setMappingToAtlas(nighresjava.JArray('float')(
+                                            (mdata.flatten('F')).astype(float)))
+        mdata =  load_volume(map_to_target).get_data()
+        cspmax.setMappingToTarget(nighresjava.JArray('float')(
+                                            (mdata.flatten('F')).astype(float)))
 
     # execute
     try:
@@ -265,7 +300,10 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         #cspmax.transitionDiffusion()
         if not recompute: 
             cspmax.collapseConditionalMaps()
-            cspmax.optimalVolumeThreshold(1.0, 0.05, true)
+            if map_to_atlas is not None and map_to_target is not None:
+                cspmax.mappedOptimalVolumeThreshold(1.0, 0.05, True)
+            else:    
+                cspmax.optimalVolumeThreshold(1.0, 0.05, True)
 
     except:
         # if the Java module fails, reraise the error it throws
@@ -314,10 +352,10 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         intensity_label_data = np.reshape(np.array(cspmax.getBestIntensityProbabilityLabels(1),
                                         dtype=np.int32), dims3D, 'F')
     
-        proba_data = np.reshape(np.array(cspmax.getCertaintyProbability(),
+        proba_data = np.reshape(np.array(cspmax.getFinalProba(),
                                        dtype=np.float32), dims3D, 'F')
     
-        label_data = np.reshape(np.array(cspmax.getBestProbabilityLabels(1),
+        label_data = np.reshape(np.array(cspmax.getFinalLabel(),
                                         dtype=np.int32), dims3D, 'F')
 
     neighbor_data = np.reshape(np.array(cspmax.getNeighborhoodMaps(ngb_size),
