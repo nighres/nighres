@@ -265,7 +265,7 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         #cspmax.transitionDiffusion()
         if not recompute: 
             cspmax.collapseConditionalMaps()
-            cspmax.optimalVolumeThreshold(1.0, 0.05, true)
+            cspmax.optimalVolumeThreshold(1.0, 0.05, True)
 
     except:
         # if the Java module fails, reraise the error it throws

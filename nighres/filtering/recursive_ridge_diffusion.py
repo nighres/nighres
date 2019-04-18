@@ -215,7 +215,13 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     scale_data = np.reshape(np.array(rrd.getDetectionScaleImage(),
                                    dtype=np.int32), dimensions, 'F')
 
-    ridge_direction_data = np.reshape(np.array(rrd.getRidgeDirectionImage(),
+    if dimensions[2] is 1:
+        ridge_direction_data = np.reshape(np.array(rrd.getRidgeDirectionImage(),
+                                    dtype=np.float32),
+                                    (dimensions[0],dimensions[1],2),
+                                    'F')
+    else:
+        ridge_direction_data = np.reshape(np.array(rrd.getRidgeDirectionImage(),
                                     dtype=np.float32),
                                     (dimensions[0],dimensions[1],dimensions[2],3),
                                     'F')
