@@ -128,9 +128,9 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
         inf_mesh = load_mesh_geometry(inflated_mesh)
 
         algorithm.setInflatedSurfacePoints(nighresjava.JArray('float')(
-                            (orig_mesh['points'].flatten('C')).astype(float)))
+                            (inf_mesh['points'].flatten('C')).astype(float)))
         algorithm.setInflatedSurfaceTriangles(nighresjava.JArray('int')(
-                            (orig_mesh['faces'].flatten('C')).astype(int).tolist()))
+                            (inf_mesh['faces'].flatten('C')).astype(int).tolist()))
 
 
     algorithm.setSurfaceConvention("voxels")
