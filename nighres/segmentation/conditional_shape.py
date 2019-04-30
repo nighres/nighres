@@ -200,13 +200,13 @@ def conditional_shape(target_images, subjects, structures, contrasts,
     print("load: "+str(target_images[0]))
     img = load_volume(target_images[0])
     data = img.get_data()
-    affine = img.get_affine()
-    header = img.get_header()
-    resolution = [x.item() for x in header.get_zooms()]
-    dimensions = data.shape
+    trg_affine = img.get_affine()
+    trg_header = img.get_header()
+    trg_resolution = [x.item() for x in trg_header.get_zooms()]
+    trg_dimensions = data.shape
 
-    cspmax.setTargetDimensions(dimensions[0], dimensions[1], dimensions[2])
-    cspmax.setTargetResolutions(resolution[0], resolution[1], resolution[2])
+    cspmax.setTargetDimensions(trg_dimensions[0], trg_dimensions[1], trg_dimensions[2])
+    cspmax.setTargetResolutions(trg_resolution[0], trg_resolution[1], trg_resolution[2])
 
     # target image 1
     cspmax.setTargetImageAt(0, nighresjava.JArray('float')(
@@ -316,6 +316,7 @@ def conditional_shape(target_images, subjects, structures, contrasts,
     dimensions = (dimensions[0],dimensions[1],dimensions[2],cspmax.getBestDimension())
     dims3D = (dimensions[0],dimensions[1],dimensions[2])
     dims_ngb = (dimensions[0],dimensions[1],dimensions[2],ngb_size)
+    dims3Dtrg = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2])
     
     intens_dims = (structures+1,structures+1,contrasts)
 
@@ -353,10 +354,10 @@ def conditional_shape(target_images, subjects, structures, contrasts,
                                         dtype=np.int32), dims3D, 'F')
     
         proba_data = np.reshape(np.array(cspmax.getFinalProba(),
-                                       dtype=np.float32), dims3D, 'F')
+                                       dtype=np.float32), dims3Dtrg, 'F')
     
         label_data = np.reshape(np.array(cspmax.getFinalLabel(),
-                                        dtype=np.int32), dims3D, 'F')
+                                        dtype=np.int32), dims3Dtrg, 'F')
 
     neighbor_data = np.reshape(np.array(cspmax.getNeighborhoodMaps(ngb_size),
                                         dtype=np.float32), dims_ngb, 'F')
@@ -385,11 +386,11 @@ def conditional_shape(target_images, subjects, structures, contrasts,
     header['cal_max'] = np.nanmax(intensity_label_data)
     intensity_label = nb.Nifti1Image(intensity_label_data, affine, header)
 
-    header['cal_max'] = np.nanmax(proba_data)
-    proba = nb.Nifti1Image(proba_data, affine, header)
+    trg_header['cal_max'] = np.nanmax(proba_data)
+    proba = nb.Nifti1Image(proba_data, trg_affine, trg_header)
 
-    header['cal_max'] = np.nanmax(label_data)
-    label = nb.Nifti1Image(label_data, affine, header)
+    trg_header['cal_max'] = np.nanmax(label_data)
+    label = nb.Nifti1Image(label_data, trg_affine, trg_header)
 
     header['cal_min'] = np.nanmin(neighbor_data)
     header['cal_max'] = np.nanmax(neighbor_data)

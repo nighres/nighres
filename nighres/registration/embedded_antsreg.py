@@ -479,11 +479,14 @@ def embedded_antsreg_2d(source_image, target_image,
                             +', '+'1.0, 32, Random, 0.3 ]'
             
         reg = reg + ' --convergence ['+str(coarse_iterations)+'x' \
-                    +str(coarse_iterations)+'x'+str(medium_iterations)+'x'  \
+                    +str(coarse_iterations)+'x'+str(coarse_iterations)+'x' \
+                    +str(coarse_iterations)+'x' \
+                    +str(medium_iterations)+'x'  \
                     +str(fine_iterations)+', '+str(convergence)+', 5 ]'
                     
-        reg = reg + ' --smoothing-sigmas 2.0x1.0x0.5x0.0'
-        reg = reg + ' --shrink-factors 8x4x2x1'
+#        reg = reg + ' --smoothing-sigmas 4.0x2.0x1.0x0.5x0.0'
+        reg = reg + ' --smoothing-sigmas 16.0x8.0x4.0x2.0x1.0x0.5'
+        reg = reg + ' --shrink-factors 32x16x8x4x2x1'
         reg = reg + ' --use-histogram-matching 0'
         reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
         
@@ -491,9 +494,9 @@ def embedded_antsreg_2d(source_image, target_image,
         reg = reg + ' --transform Rigid[0.1]'
         reg = reg + ' --metric CC['+trgfile+', '+srcfile \
                             +', '+'1.0, 5, Random, 0.3 ]'
-        reg = reg + ' --convergence [ 0x0x0, 1.0, 2 ]'   
-        reg = reg + ' --smoothing-sigmas 3.0x2.0x1.0'
-        reg = reg + ' --shrink-factors 4x2x1'
+        reg = reg + ' --convergence [ 0, 1.0, 2 ]'   
+        reg = reg + ' --smoothing-sigmas 1.0'
+        reg = reg + ' --shrink-factors 1'
         reg = reg + ' --use-histogram-matching 0'
         reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
@@ -598,16 +601,16 @@ def embedded_antsreg_2d(source_image, target_image,
           'inverse': load_volume(inverse_mapping_file)}
 
     # clean-up intermediate files
-#    if os.path.exists(src_map_file): os.remove(src_map_file)
-#    if os.path.exists(trg_map_file): os.remove(trg_map_file)
-#    if ignore_affine or ignore_header:
-#        if os.path.exists(src_img_file): os.remove(src_img_file)
-#        if os.path.exists(trg_img_file): os.remove(trg_img_file)
+    if os.path.exists(src_map_file): os.remove(src_map_file)
+    if os.path.exists(trg_map_file): os.remove(trg_map_file)
+    if ignore_affine or ignore_header:
+        if os.path.exists(src_img_file): os.remove(src_img_file)
+        if os.path.exists(trg_img_file): os.remove(trg_img_file)
         
-#    for name in forward: 
-#        if os.path.exists(name): os.remove(name)
-#    for name in inverse: 
-#        if os.path.exists(name): os.remove(name)
+    for name in forward: 
+        if os.path.exists(name): os.remove(name)
+    for name in inverse: 
+        if os.path.exists(name): os.remove(name)
 
     # remove output files if *not* saved 
     if not save_data:
