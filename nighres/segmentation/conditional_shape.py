@@ -14,6 +14,7 @@ def conditional_shape(target_images, subjects, structures, contrasts,
                       shape_atlas_probas=None, shape_atlas_labels=None, 
                       histograms=True, intensity_atlas_hist=None,
                       intensity_atlas_mean=None, intensity_atlas_stdv=None,
+                      atlas_space=False,
                       map_to_atlas=None, map_to_target=None,
                       cancel_bg=False, cancel_all=False, 
                       sum_proba=False, max_proba=False,
@@ -53,6 +54,8 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         Pre-computed intensity atlas from the contrast images (replacing them)
     intensity_atlas_stdv: [niimg]
         Pre-computed intensity atlas from the contrast images (replacing them)
+    atlas_space: bool
+        Whether to estimate the labeling in atlas space (default is False)
     map_to_atlas: niimg
         Coordinate mapping from the target to the atlas (opt)
     map_to_target: niimg
@@ -278,12 +281,24 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         print("load: "+str(os.path.join(output_dir,shape_atlas_labels)))
         ldata = load_volume(os.path.join(output_dir,shape_atlas_labels)).get_data()
         
+        if atlas_space is False and map_to_target is not None:
+            print("map atlas to subject")
+            print("load: "+str(map_to_atlas))
+            mdata =  load_volume(map_to_atlas).get_data()
+            cspmax.setMappingToAtlas(nighresjava.JArray('float')(
+                                            (mdata.flatten('F')).astype(float)))
+            
+        print("load: "+str(map_to_target))
+        mdata =  load_volume(map_to_target).get_data()
+        cspmax.setMappingToTarget(nighresjava.JArray('float')(
+                                            (mdata.flatten('F')).astype(float)))
         cspmax.setShapeAtlasProbasAndLabels(nighresjava.JArray('float')(
                                     (pdata.flatten('F')).astype(float)),
                                     nighresjava.JArray('int')(
                                     (ldata.flatten('F')).astype(int).tolist()))
 
-    if map_to_atlas is not None and map_to_target is not None:
+    if atlas_space is True and map_to_atlas is not None and map_to_target is not None:
+        print("map subject to atlas")
         print("load: "+str(map_to_atlas))
         mdata =  load_volume(map_to_atlas).get_data()
         cspmax.setMappingToAtlas(nighresjava.JArray('float')(
@@ -304,7 +319,7 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         #cspmax.transitionDiffusion()
         if not recompute: 
             cspmax.collapseConditionalMaps()
-            if map_to_atlas is not None and map_to_target is not None:
+            if atlas_space is True and map_to_atlas is not None and map_to_target is not None:
                 cspmax.mappedOptimalVolumeThreshold(1.0, 0.05, True)
             else:    
                 cspmax.optimalVolumeThreshold(1.0, 0.05, True)
