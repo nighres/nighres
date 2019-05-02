@@ -69,7 +69,7 @@ def stack_intensity_regularisation(image, ratio=50,
     except ValueError:
         pass
     # create instance
-    sir = nighresjava.StakIntensityRegularisation()
+    sir = nighresjava.StackIntensityRegularisation()
 
     # set parameters
     
@@ -87,7 +87,7 @@ def stack_intensity_regularisation(image, ratio=50,
                                     (data.flatten('F')).astype(float)))
     
     # set algorithm parameters
-    sir.setVariationRatio(ratio)
+    sir.setVariationRatio(float(ratio))
     
     # execute the algorithm
     try:

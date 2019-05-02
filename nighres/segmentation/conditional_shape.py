@@ -223,9 +223,10 @@ def conditional_shape(target_images, subjects, structures, contrasts,
     if recompute:
         
         # load a first image for dim, res
-        img = load_volume(contrast_images[sub][contrast])
+        img = load_volume(contrast_images[0][0])
         data = img.get_data()
         header = img.get_header()
+        affine = img.get_affine()
         resolution = [x.item() for x in header.get_zooms()]
         dimensions = data.shape
         
@@ -267,8 +268,9 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         img = load_volume(os.path.join(output_dir,shape_atlas_probas))
         pdata = img.get_data()
         header = img.get_header()
+        affine = img.get_affine()
         resolution = [x.item() for x in header.get_zooms()]
-        dimensions = data.shape
+        dimensions = pdata.shape
         
         cspmax.setAtlasDimensions(dimensions[0], dimensions[1], dimensions[2])
         cspmax.setAtlasResolutions(resolution[0], resolution[1], resolution[2])
@@ -282,9 +284,11 @@ def conditional_shape(target_images, subjects, structures, contrasts,
                                     (ldata.flatten('F')).astype(int).tolist()))
 
     if map_to_atlas is not None and map_to_target is not None:
+        print("load: "+str(map_to_atlas))
         mdata =  load_volume(map_to_atlas).get_data()
         cspmax.setMappingToAtlas(nighresjava.JArray('float')(
                                             (mdata.flatten('F')).astype(float)))
+        print("load: "+str(map_to_target))
         mdata =  load_volume(map_to_target).get_data()
         cspmax.setMappingToTarget(nighresjava.JArray('float')(
                                             (mdata.flatten('F')).astype(float)))
