@@ -8,12 +8,12 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def lcpca_denoising(image_list, phase_list=None,
+def lcpca_denoising(image_list, phase_list=None, 
                     ngb_size=4, stdev_cutoff=1.05,
-                      min_dimension=0, max_dimension=-1,
-                      unwrap=True, eigen=False, process_2d=False,
-                      save_data=False, overwrite=False, output_dir=None,
-                      file_names=None):
+                    min_dimension=0, max_dimension=-1,
+                    coil_number=-1, unwrap=True, eigen=False, process_2d=False,
+                    save_data=False, overwrite=False, output_dir=None,
+                    file_names=None):
     """ LCPCA denoising
 
     Denoise multi-contrast data with a local complex-valued PCA-based method
@@ -36,6 +36,8 @@ def lcpca_denoising(image_list, phase_list=None,
     max_dimension: int, optional
         Maximum number of kept PCA components
         (default is -1 for all components)
+    coil_number: int, optional
+        Number of coils in the case of complex coil denoising (default is -1)
     unwrap: bool, optional
         Whether to unwrap the phase data of keep it as is, assuming radians
         (default is True)
@@ -160,15 +162,6 @@ def lcpca_denoising(image_list, phase_list=None,
     # create lcpca instance
     lcpca = nighresjava.LocalComplexPCADenoising()
 
-    # set lcpca parameters
-    lcpca.setImageNumber(len(image_list))
-    eigdim = len(image_list)
-    if (phase_list!=None): 
-        eigdim = 2*eigdim
-        if (len(phase_list)!=len(image_list)):
-            print('\nmismatch of magnitude and phase images: abort')
-            return
-
     # load first image and use it to set dimensions and resolution
     img = load_volume(image_list[0])
     data = img.get_data()
@@ -177,18 +170,34 @@ def lcpca_denoising(image_list, phase_list=None,
     header = img.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
+    dim3D = (dimensions[0],dimensions[1],dimensions[2])
+    
+    # set lcpca parameters
+    lcpca.setImageNumber(len(image_list))
+    eigdim = len(image_list)
+    if (phase_list!=None): 
+        if len(dimensions)>3:
+            eigdim = 2*eigdim*dimensions[3]
+        else:
+            eigdim = 2*eigdim
+        if (len(phase_list)!=len(image_list)):
+            print('\nmismatch of magnitude and phase images: abort')
+            return
 
-    lcpca.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+    if len(dimensions)>3:
+        lcpca.setDimensions(dimensions[0], dimensions[1], dimensions[2], dimensions[3])
+    else:
+        lcpca.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     lcpca.setResolutions(resolution[0], resolution[1], resolution[2])
 
     # input images
     # important: set image number before adding images
     for idx, image in enumerate(image_list):
-        #print('\nloading ('+str(idx)+'): '+image)
-        data = load_volume(image).get_data()
-        #data = data[0:10,0:10,0:10]
-        lcpca.setMagnitudeImageAt(idx, nighresjava.JArray('float')(
-                                    (data.flatten('F')).astype(float)))
+            #print('\nloading ('+str(idx)+'): '+image)
+            data = load_volume(image).get_data()
+            #data = data[0:10,0:10,0:10]
+            lcpca.setMagnitudeImageAt(idx, nighresjava.JArray('float')(
+                                        (data.flatten('F')).astype(float)))
 
     # input phase, if specified
     if (phase_list!=None):
@@ -244,10 +253,10 @@ def lcpca_denoising(image_list, phase_list=None,
                 save_volume(den_files[idx+len(image_list)], denoised)
 
     dim_data = np.reshape(np.array(lcpca.getLocalDimensionImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), dim3D, 'F')
 
     err_data = np.reshape(np.array(lcpca.getNoiseFitImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), dim3D, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -266,7 +275,7 @@ def lcpca_denoising(image_list, phase_list=None,
     output = {'denoised': denoised_list, 'dimensions': dim, 'residuals': err}
 
     if eigen:
-        dimensions = dimensions + (eigdim,)
+        dimensions = dim3D + (eigdim,)
         vec_data = np.reshape(np.array(lcpca.getEigenvectorImage(),
                                     dtype=np.float32), dimensions, 'F')
 
