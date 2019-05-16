@@ -95,29 +95,35 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, input_image)
 
-        filter_file = _fname_4saving(file_name=file_name,
+        filter_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='rrd-filter')
+                                  suffix='rrd-filter'))
 
-        propagation_file = _fname_4saving(file_name=file_name,
+        propagation_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
                                    rootfile=input_image,
-                                   suffix='rrd-propag')
+                                   suffix='rrd-propag'))
 
-        scale_file = _fname_4saving(file_name=file_name,
+        scale_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
                                    rootfile=input_image,
-                                   suffix='rrd-scale')
+                                   suffix='rrd-scale'))
 
-        ridge_direction_file = _fname_4saving(file_name=file_name,
+        ridge_direction_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='rrd-dir')
+                                  suffix='rrd-dir'))
 
-        ridge_pv_file = _fname_4saving(file_name=file_name,
+        ridge_pv_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='rrd-pv')
+                                  suffix='rrd-pv'))
 
-        ridge_size_file = _fname_4saving(file_name=file_name,
+        ridge_size_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='rrd-size')
+                                  suffix='rrd-size'))
 
         if overwrite is False \
             and os.path.isfile(filter_file) \

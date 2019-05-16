@@ -64,7 +64,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                       atlas_file=None, topology_lut_dir=None,
                       normalize_qmaps=False,
                       adjust_intensity_priors=False,
-                      compute_posterior=False,
+                      compute_posterior=False, posterior_scale=5.0,
                       diffuse_probabilities=False,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
@@ -121,6 +121,9 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     compute_posterior: bool
         Compute posterior probabilities for segmented structures
         (default is False)
+    posterior_scale: float
+        Posterior distance scale from segmented structures to compute posteriors
+        (default is 5.0 mm)
     diffuse_probabilities: bool
         Regularize probability distribution with a non-linear diffusion scheme
         (default is False)
@@ -243,6 +246,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     mgdm.setOutputImages('label_memberships')
     mgdm.setAdjustIntensityPriors(adjust_intensity_priors)
     mgdm.setComputePosterior(compute_posterior)
+    mgdm.setPosteriorScale_mm(posterior_scale)
     mgdm.setDiffuseProbabilities(diffuse_probabilities)
     mgdm.setSteps(n_steps)
     mgdm.setMaxIterations(max_iterations)

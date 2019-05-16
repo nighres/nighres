@@ -283,15 +283,11 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         
         if atlas_space is False and map_to_target is not None:
             print("map atlas to subject")
-            print("load: "+str(map_to_atlas))
-            mdata =  load_volume(map_to_atlas).get_data()
-            cspmax.setMappingToAtlas(nighresjava.JArray('float')(
-                                            (mdata.flatten('F')).astype(float)))
+            print("load: "+str(map_to_target))
+            mdata =  load_volume(map_to_target).get_data()
+            cspmax.setMappingToTarget(nighresjava.JArray('float')(
+                                                (mdata.flatten('F')).astype(float)))
             
-        print("load: "+str(map_to_target))
-        mdata =  load_volume(map_to_target).get_data()
-        cspmax.setMappingToTarget(nighresjava.JArray('float')(
-                                            (mdata.flatten('F')).astype(float)))
         cspmax.setShapeAtlasProbasAndLabels(nighresjava.JArray('float')(
                                     (pdata.flatten('F')).astype(float)),
                                     nighresjava.JArray('int')(
@@ -314,9 +310,6 @@ def conditional_shape(target_images, subjects, structures, contrasts,
         if recompute: cspmax.computeAtlasPriors()
         cspmax.estimateTarget()
         cspmax.strictSimilarityDiffusion(ngb_size)
-        #cspmax.similarityDiffusion(6)
-        #cspmax.dissimilarityDiffusion(6)
-        #cspmax.transitionDiffusion()
         if not recompute: 
             cspmax.collapseConditionalMaps()
             if atlas_space is True and map_to_atlas is not None and map_to_target is not None:
@@ -336,7 +329,11 @@ def conditional_shape(target_images, subjects, structures, contrasts,
     dims3D = (dimensions[0],dimensions[1],dimensions[2])
     dims_ngb = (dimensions[0],dimensions[1],dimensions[2],ngb_size)
     dims3Dtrg = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2])
-    
+
+    if recompute is False and (atlas_space is False or (map_to_atlas is None and map_to_target is None) ):
+        dims3D = dims3Dtrg
+        dims_ngb = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2],ngb_size)
+
     intens_dims = (structures+1,structures+1,contrasts)
 
     intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+4,contrasts)
