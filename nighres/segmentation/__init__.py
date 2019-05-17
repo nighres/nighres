@@ -1,1 +1,2 @@
 from nighres.segmentation.conditional_shape import conditional_shape
+from nighres.segmentation.conditional_shape import conditional_shape_atlasing
