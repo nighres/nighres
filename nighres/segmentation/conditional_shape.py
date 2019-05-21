@@ -237,9 +237,11 @@ def conditional_shape(target_images, structures, contrasts,
         if not recompute: 
             cspmax.collapseConditionalMaps()
             if atlas_space is True and map_to_atlas is not None and map_to_target is not None:
-                cspmax.mappedOptimalVolumeThreshold(1.0, 0.05, True)
+                #cspmax.mappedOptimalVolumeThreshold(1.0, 0.05, True)
+                cspmax.mappedOptimalVolumeCertaintyThreshold(1.0)
             else:    
-                cspmax.optimalVolumeThreshold(1.0, 0.05, True)
+                #cspmax.optimalVolumeThreshold(1.0, 0.05, True)
+                cspmax.optimalVolumeCertaintyThreshold(1.0)
 
     except:
         # if the Java module fails, reraise the error it throws
