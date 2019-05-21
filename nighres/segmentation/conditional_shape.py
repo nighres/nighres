@@ -234,14 +234,13 @@ def conditional_shape(target_images, structures, contrasts,
     try:
         cspmax.estimateTarget()
         cspmax.strictSimilarityDiffusion(ngb_size)
-        if not recompute: 
-            cspmax.collapseConditionalMaps()
-            if atlas_space is True and map_to_atlas is not None and map_to_target is not None:
-                #cspmax.mappedOptimalVolumeThreshold(1.0, 0.05, True)
-                cspmax.mappedOptimalVolumeCertaintyThreshold(1.0)
-            else:    
-                #cspmax.optimalVolumeThreshold(1.0, 0.05, True)
-                cspmax.optimalVolumeCertaintyThreshold(1.0)
+        cspmax.collapseConditionalMaps()
+        if atlas_space is True and map_to_atlas is not None and map_to_target is not None:
+            #cspmax.mappedOptimalVolumeThreshold(1.0, 0.05, True)
+            cspmax.mappedOptimalVolumeCertaintyThreshold(1.0)
+        else:    
+            #cspmax.optimalVolumeThreshold(1.0, 0.05, True)
+            cspmax.optimalVolumeCertaintyThreshold(1.0)
 
     except:
         # if the Java module fails, reraise the error it throws
@@ -377,35 +376,35 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
     Original Java module by Pierre-Louis Bazin.
     """
 
-    print('\nConditional Shape Parcellation')
+    print('\nConditional Shape Atlasing')
 
     # make sure that saving related parameters are correct
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, target_images[0])
+        output_dir = _output_dir_4saving(output_dir, contrast_images[0][0])
 
         spatial_proba_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
-                                  rootfile=target_images[0],
+                                  rootfile=contrast_images[0][0],
                                   suffix='cspmax-sproba', ))
 
         spatial_label_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
-                                   rootfile=target_images[0],
+                                   rootfile=contrast_images[0][0],
                                    suffix='cspmax-slabel'))
 
         condmean_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
-                                  rootfile=target_images[0],
+                                  rootfile=contrast_images[0][0],
                                   suffix='cspmax-cmean', ))
 
         condstdv_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
-                                   rootfile=target_images[0],
+                                   rootfile=contrast_images[0][0],
                                    suffix='cspmax-cstdv'))
         
         condhist_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
-                                   rootfile=target_images[0],
+                                   rootfile=contrast_images[0][0],
                                    suffix='cspmax-chist'))
         
         if overwrite is False \
@@ -486,7 +485,7 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
         print("map subjects to atlas")
         for sub in range(subjects):
             print("load: "+str(map_to_atlas[sub]))
-            mdata =  load_volume(map_to_atlas).get_data()
+            mdata =  load_volume(map_to_atlas[sub]).get_data()
             cspmax.setMappingImageAt(sub, nighresjava.JArray('float')(
                                             (mdata.flatten('F')).astype(float)))
 
@@ -507,12 +506,9 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
 
     # reshape output to what nibabel likes
     dimensions = (dimensions[0],dimensions[1],dimensions[2],cspmax.getBestDimension())
-    dims3D = (dimensions[0],dimensions[1],dimensions[2])
-    dims_ngb = (dimensions[0],dimensions[1],dimensions[2],ngb_size)
     dims3Dtrg = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2])
 
     intens_dims = (structures+1,structures+1,contrasts)
-
     intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+4,contrasts)
 
     spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(dimensions[3]),
