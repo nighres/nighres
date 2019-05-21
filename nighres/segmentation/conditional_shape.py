@@ -11,8 +11,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def conditional_shape(target_images, structures, contrasts,
                       shape_atlas_probas=None, shape_atlas_labels=None, 
                       histograms=True, intensity_atlas_hist=None,
-                      intensity_atlas_mean=None, intensity_atlas_stdv=None,
-                      atlas_space=False,
+                      atlas_space=False, adjust_volume=False,
                       map_to_atlas=None, map_to_target=None,
                       max_iterations=20, max_difference=0.01, ngb_size=4,
                       save_data=False, overwrite=False, output_dir=None,
@@ -37,12 +36,11 @@ def conditional_shape(target_images, structures, contrasts,
         Whether to use complete histograms for intensity priors (default is True)
     intensity_atlas_hist: niimg
         Pre-computed intensity atlas from the contrast images (replacing them)
-    intensity_atlas_mean: niimg
-        Pre-computed intensity atlas from the contrast images (replacing them)
-    intensity_atlas_stdv: niimg
-        Pre-computed intensity atlas from the contrast images (replacing them)
     atlas_space: bool
         Whether to estimate the labeling in atlas space (default is False)
+    adjust_volume: bool
+        Whether to estimate the final segmentation based on volume optimization
+        (default is False)
     map_to_atlas: niimg
         Coordinate mapping from the target to the atlas (opt)
     map_to_target: niimg
@@ -235,11 +233,13 @@ def conditional_shape(target_images, structures, contrasts,
         cspmax.estimateTarget()
         cspmax.strictSimilarityDiffusion(ngb_size)
         cspmax.collapseConditionalMaps()
-        if atlas_space is True and map_to_atlas is not None and map_to_target is not None:
-            cspmax.mappedOptimalVolumeThreshold(1.0, 0.05, True)
-        else:    
-            cspmax.optimalVolumeThreshold(1.0, 0.05, True)
-
+        if adjust_volume:
+            if atlas_space is True and map_to_atlas is not None and map_to_target is not None:
+                cspmax.mappedOptimalVolumeThreshold(1.0, 0.05, True)
+            else:    
+                cspmax.optimalVolumeThreshold(1.0, 0.05, True)
+        else:
+            cspmax.maximumPosteriorThreshold()
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")

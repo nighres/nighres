@@ -104,7 +104,7 @@ def profile_averaging(profile_surface_image, intensity_image, roi_image,
     sampler.setProfileSurfaceImage(nighresjava.JArray('float')(
                                    (surface_data.flatten('F')).astype(float)))
     sampler.setRoiMask(nighresjava.JArray('int')(
-                                   (surface_data.flatten('F')).astype(int).to_list()))
+                                   (surface_data.flatten('F')).astype(int).tolist()))
     sampler.setResolutions(resolution[0], resolution[1], resolution[2])
     sampler.setDimensions(dimensions[0], dimensions[1],
                           dimensions[2], dimensions[3])
