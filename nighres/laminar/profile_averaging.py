@@ -1,7 +1,7 @@
 import os
 import sys
-import numpy as np
-import nibabel as nb
+import numpy
+import nibabel
 import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, _check_available_memory
@@ -40,6 +40,7 @@ def profile_averaging(profile_surface_image, intensity_image, roi_image,
 
         * weights (niimg): weight image , representing the weighting of profiles
         in the estimation (_lpa-weight)
+        * best ([float]): the estimated best profile
         * median ([float]): the estimated median profile
         * iqr ([float]): the estimated IQR profile
 
@@ -58,6 +59,10 @@ def profile_averaging(profile_surface_image, intensity_image, roi_image,
                         _fname_4saving(file_name=file_name,
                                       rootfile=intensity_image,
                                       suffix='lpa-weight'))
+        sample_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
+                                      rootfile=intensity_image,
+                                      suffix='lpa-best',ext='txt'))
         median_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
                                       rootfile=intensity_image,
@@ -67,11 +72,12 @@ def profile_averaging(profile_surface_image, intensity_image, roi_image,
                                       rootfile=intensity_image,
                                       suffix='lpa-iqr',ext='txt'))
         if overwrite is False \
-            and os.path.isfile(weight_file) and os.path.isfile(median_file) \
-            and os.path.isfile(iqr_file) :
+            and os.path.isfile(weight_file) and os.path.isfile(sample_file) \
+            and os.path.isfile(median_file) and os.path.isfile(iqr_file) :
 
             print("skip computation (use existing results)")
             output = {'weights': load_volume(weight_file), 
+                      'best': numpy.loadtxt(sample_file),
                       'median': numpy.loadtxt(median_file),
                       'iqr': numpy.loadtxt(iqr_file)}
             return output
@@ -104,7 +110,7 @@ def profile_averaging(profile_surface_image, intensity_image, roi_image,
     sampler.setProfileSurfaceImage(nighresjava.JArray('float')(
                                    (surface_data.flatten('F')).astype(float)))
     sampler.setRoiMask(nighresjava.JArray('int')(
-                                   (surface_data.flatten('F')).astype(int).tolist()))
+                                   (roi_data.flatten('F')).astype(int).tolist()))
     sampler.setResolutions(resolution[0], resolution[1], resolution[2])
     sampler.setDimensions(dimensions[0], dimensions[1],
                           dimensions[2], dimensions[3])
@@ -121,18 +127,20 @@ def profile_averaging(profile_surface_image, intensity_image, roi_image,
         return
 
     # collecting outputs
-    weight_data = np.reshape(np.array(
-                                sampler.getProfileMappedIntensityImage(),
-                                dtype=np.float32), (dimensions[0],dimensions[1],dimensions[2]), 'F')
+    weight_data = numpy.reshape(numpy.array(
+                                sampler.getProfileWeights(),
+                                dtype=numpy.float32), (dimensions[0],dimensions[1],dimensions[2]), 'F')
     
-    median = np.array(sampler.getMedianProfile(), dtype=np.float32)
-    iqr = np.array(sampler.getIqrProfile(), dtype=np.float32)
+    sample = numpy.array(sampler.getSampleProfile(), dtype=numpy.float32)
+    median = numpy.array(sampler.getMedianProfile(), dtype=numpy.float32)
+    iqr = numpy.array(sampler.getIqrProfile(), dtype=numpy.float32)
 
-    hdr['cal_max'] = np.nanmax(weight_data)
-    weights = nb.Nifti1Image(weight_data, aff, hdr)
+    hdr['cal_max'] = numpy.nanmax(weight_data)
+    weights = nibabel.Nifti1Image(weight_data, aff, hdr)
 
     if save_data:
         save_volume(weight_file, weights)
+        numpy.savetxt(sample_file, sample)
         numpy.savetxt(median_file, median)
         numpy.savetxt(iqr_file, iqr)
 
