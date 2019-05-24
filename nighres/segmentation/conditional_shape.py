@@ -10,7 +10,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def conditional_shape(target_images, structures, contrasts,
                       shape_atlas_probas=None, shape_atlas_labels=None, 
-                      histograms=True, intensity_atlas_hist=None,
+                      intensity_atlas_hist=None,
                       atlas_space=False, adjust_volume=False,
                       map_to_atlas=None, map_to_target=None,
                       max_iterations=20, max_difference=0.01, ngb_size=4,
@@ -32,8 +32,6 @@ def conditional_shape(target_images, structures, contrasts,
         Pre-computed shape atlas from the shape levelsets (replacing them)
     shape_atlas_labels: niimg
         Pre-computed shape atlas from the shape levelsets (replacing them)
-    histograms: bool
-        Whether to use complete histograms for intensity priors (default is True)
     intensity_atlas_hist: niimg
         Pre-computed intensity atlas from the contrast images (replacing them)
     atlas_space: bool
@@ -67,8 +65,8 @@ def conditional_shape(target_images, structures, contrasts,
 
         * max_spatial_proba (niimg): Maximum spatial probability map (_cspmax-sproba)
         * max_spatial_label (niimg): Maximum spatial probability labels (_cspmax-slabel)
-        * max_intensity_proba (niimg): Maximum intensity probability map (_cspmax-iproba)
-        * max_intensity_label (niimg): Maximum intensity probability labels (_cspmax-ilabel)
+        * max_combined_proba (niimg): Maximum spatial and intensity combined probability map (_cspmax-cproba)
+        * max_combined_label (niimg): Maximum spatial and intensity combined probability labels (_cspmax-clabel)
         * max_proba (niimg): Maximum probability map (_cspmax-proba)
         * max_label (niimg): Maximum probability labels (_cspmax-label)
         * neighbors (niimg): Local neighborhood maps (_cspmax-ngb)
@@ -93,15 +91,15 @@ def conditional_shape(target_images, structures, contrasts,
                         _fname_4saving(file_name=file_name,
                                    rootfile=target_images[0],
                                    suffix='cspmax-slabel'))
-        intensity_proba_file = os.path.join(output_dir, 
+        combined_proba_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                   rootfile=target_images[0],
-                                  suffix='cspmax-iproba', ))
+                                  suffix='cspmax-cproba', ))
 
-        intensity_label_file = os.path.join(output_dir, 
+        combined_label_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=target_images[0],
-                                   suffix='cspmax-ilabel'))
+                                   suffix='cspmax-clabel'))
         proba_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                   rootfile=target_images[0],
@@ -119,8 +117,8 @@ def conditional_shape(target_images, structures, contrasts,
         if overwrite is False \
             and os.path.isfile(spatial_proba_file) \
             and os.path.isfile(spatial_label_file) \
-            and os.path.isfile(intensity_proba_file) \
-            and os.path.isfile(intensity_label_file) \
+            and os.path.isfile(combined_proba_file) \
+            and os.path.isfile(combined_label_file) \
             and os.path.isfile(proba_file) \
             and os.path.isfile(label_file) \
             and os.path.isfile(neighbor_file):
@@ -128,8 +126,8 @@ def conditional_shape(target_images, structures, contrasts,
             print("skip computation (use existing results)")
             output = {'max_spatial_proba': load_volume(spatial_proba_file), 
                       'max_spatial_label': load_volume(spatial_label_file),
-                      'max_intensity_proba': load_volume(intensity_proba_file), 
-                      'max_intensity_label': load_volume(intensity_label_file),
+                      'max_combined_proba': load_volume(combined_proba_file), 
+                      'max_combined_label': load_volume(combined_label_file),
                       'max_proba': load_volume(proba_file), 
                       'max_label': load_volume(label_file),
                       'neighbors': load_volume(neighbor_file)}
@@ -174,20 +172,10 @@ def conditional_shape(target_images, structures, contrasts,
                                             (data.flatten('F')).astype(float)))
 
     # load the shape and intensity atlases
-    if histograms:
-        print("load: "+str(os.path.join(output_dir,intensity_atlas_hist)))
-        data = load_volume(os.path.join(output_dir,intensity_atlas_hist)).get_data()
-        cspmax.setConditionalHistogram(nighresjava.JArray('float')(
-                                            (data.flatten('F').astype(float))))
-    else:
-        print("load: "+str(os.path.join(output_dir,intensity_atlas_mean)))
-        mean = load_volume(os.path.join(output_dir,intensity_atlas_mean)).get_data()
-        print("load: "+str(os.path.join(output_dir,intensity_atlas_stdv)))
-        stdv = load_volume(os.path.join(output_dir,intensity_atlas_stdv)).get_data()
-        cspmax.setConditionalMeanAndStdv(nighresjava.JArray('float')(
-                                            (mean.flatten('F')).astype(float)),
-                                        nighresjava.JArray('float')(
-                                            (stdv.flatten('F')).astype(float)))
+    print("load: "+str(os.path.join(output_dir,intensity_atlas_hist)))
+    hist = load_volume(os.path.join(output_dir,intensity_atlas_hist)).get_data()
+    cspmax.setConditionalHistogram(nighresjava.JArray('float')(
+                                        (hist.flatten('F')).astype(float)))
 
     print("load: "+str(os.path.join(output_dir,shape_atlas_probas)))
     
@@ -241,7 +229,11 @@ def conditional_shape(target_images, structures, contrasts,
                 #cspmax.optimalVolumeThreshold(1.0, 0.05, True)
                 cspmax.optimalVolumeCertaintyThreshold(2.0)
         else:
-            cspmax.maximumPosteriorThreshold()
+            if atlas_space is True and map_to_atlas is not None and map_to_target is not None:
+                cspmax.mappedOptimalCertaintyThreshold()
+            else:    
+                #cspmax.optimalVolumeThreshold(1.0, 0.05, True)
+                cspmax.optimalCertaintyThreshold()
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")
@@ -269,10 +261,10 @@ def conditional_shape(target_images, structures, contrasts,
     spatial_label_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityLabels(1),
                                     dtype=np.int32), dims3D, 'F')    
 
-    intensity_proba_data = np.reshape(np.array(cspmax.getBestIntensityProbabilityMaps(1),
+    combined_proba_data = np.reshape(np.array(cspmax.getBestProbabilityMaps(1),
                                    dtype=np.float32), dims3D, 'F')
 
-    intensity_label_data = np.reshape(np.array(cspmax.getBestIntensityProbabilityLabels(1),
+    combined_label_data = np.reshape(np.array(cspmax.getBestProbabilityLabels(1),
                                     dtype=np.int32), dims3D, 'F')
 
     proba_data = np.reshape(np.array(cspmax.getFinalProba(),
@@ -292,11 +284,11 @@ def conditional_shape(target_images, structures, contrasts,
     header['cal_max'] = np.nanmax(spatial_label_data)
     spatial_label = nb.Nifti1Image(spatial_label_data, affine, header)
 
-    header['cal_max'] = np.nanmax(intensity_proba_data)
-    intensity_proba = nb.Nifti1Image(intensity_proba_data, affine, header)
+    header['cal_max'] = np.nanmax(combined_proba_data)
+    combined_proba = nb.Nifti1Image(combined_proba_data, affine, header)
 
-    header['cal_max'] = np.nanmax(intensity_label_data)
-    intensity_label = nb.Nifti1Image(intensity_label_data, affine, header)
+    header['cal_max'] = np.nanmax(combined_label_data)
+    combined_label = nb.Nifti1Image(combined_label_data, affine, header)
 
     trg_header['cal_max'] = np.nanmax(proba_data)
     proba = nb.Nifti1Image(proba_data, trg_affine, trg_header)
@@ -311,14 +303,14 @@ def conditional_shape(target_images, structures, contrasts,
     if save_data:
         save_volume(spatial_proba_file, spatial_proba)
         save_volume(spatial_label_file, spatial_label)
-        save_volume(intensity_proba_file, intensity_proba)
-        save_volume(intensity_label_file, intensity_label)
+        save_volume(combined_proba_file, combined_proba)
+        save_volume(combined_label_file, combined_label)
         save_volume(proba_file, proba)
         save_volume(label_file, label)
         save_volume(neighbor_file, neighbors)
 
     output= {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 
-            'max_intensity_proba': intensity_proba, 'max_intensity_label': intensity_label, 
+            'max_combined_proba': combined_proba, 'max_combined_label': combined_label, 
             'max_proba': proba, 'max_label': label, 'neighbors': neighbors}
 
     return output
