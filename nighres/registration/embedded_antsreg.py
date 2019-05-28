@@ -372,26 +372,39 @@ def embedded_antsreg_2d(source_image, target_image,
         trg_header = target.header
 
     # build coordinate mapping matrices and save them to disk
-    src_coord = np.zeros((nsx,nsy,2))
-    trg_coord = np.zeros((ntx,nty,2))
+    src_coordX = np.zeros((nsx,nsy))
+    src_coordY = np.zeros((nsx,nsy))
+    trg_coordX = np.zeros((ntx,nty))
+    trg_coordY = np.zeros((ntx,nty))
     for x in range(nsx):
         for y in range(nsy):
-            src_coord[x,y,X] = x
-            src_coord[x,y,Y] = y
-    src_map = nb.Nifti1Image(src_coord, source.affine, source.header)
-    src_map_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+            src_coordX[x,y] = x
+            src_coordY[x,y] = y
+    src_mapX = nb.Nifti1Image(src_coordX, source.affine, source.header)
+    src_mapX_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
                                                         rootfile=source_image,
-                                                        suffix='tmp_srccoord'))
-    save_volume(src_map_file, src_map)
+                                                        suffix='tmp_srccoordX'))
+    save_volume(src_mapX_file, src_mapX)
+    src_mapY = nb.Nifti1Image(src_coordY, source.affine, source.header)
+    src_mapY_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+                                                        rootfile=source_image,
+                                                        suffix='tmp_srccoordY'))
+    save_volume(src_mapY_file, src_mapY)
+    
     for x in range(ntx):
         for y in range(nty):
-            trg_coord[x,y,X] = x
-            trg_coord[x,y,Y] = y
-    trg_map = nb.Nifti1Image(trg_coord, target.affine, target.header)
-    trg_map_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+            trg_coordX[x,y] = x
+            trg_coordY[x,y] = y
+    trg_mapX = nb.Nifti1Image(trg_coordX, target.affine, target.header)
+    trg_mapX_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
                                                         rootfile=source_image,
-                                                        suffix='tmp_trgcoord'))
-    save_volume(trg_map_file, trg_map)
+                                                        suffix='tmp_trgcoordX'))
+    save_volume(trg_mapX_file, trg_mapX)
+    trg_mapY = nb.Nifti1Image(trg_coordY, target.affine, target.header)
+    trg_mapY_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+                                                        rootfile=source_image,
+                                                        suffix='tmp_trgcoordY'))
+    save_volume(trg_mapY_file, trg_mapY)
 
     if mask_zero:
         # create and save temporary masks
@@ -556,8 +569,8 @@ def embedded_antsreg_2d(source_image, target_image,
         raise subprocess.CalledProcessError(msg)
 
     # Create coordinate mappings
-    src_at = 'antsApplyTransforms --dimensionality 2 --input-image-type 3'
-    src_at = src_at+' --input '+src_map.get_filename()
+    src_at = 'antsApplyTransforms --dimensionality 2 --input-image-type 0'
+    src_at = src_at+' --input '+src_mapX.get_filename()
     src_at = src_at+' --reference-image '+target.get_filename()
     src_at = src_at+' --interpolation Linear'
     for idx,transform in enumerate(forward):
@@ -565,7 +578,11 @@ def embedded_antsreg_2d(source_image, target_image,
             src_at = src_at+' --transform ['+transform+', 1]'
         else:
             src_at = src_at+' --transform ['+transform+', 0]'
-    src_at = src_at+' --output '+mapping_file
+#    src_at = src_at+' --output '+mapping_file
+    src_mapX_trans = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+                                                        rootfile=source_image,
+                                                        suffix='tmp_srccoordX_map'))
+    src_at = src_at+' --output '+src_mapX_trans
     
     print(src_at)
     try:
@@ -573,10 +590,41 @@ def embedded_antsreg_2d(source_image, target_image,
     except subprocess.CalledProcessError as e:
         msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
         raise subprocess.CalledProcessError(msg)
+    
+    src_at = 'antsApplyTransforms --dimensionality 2 --input-image-type 0'
+    src_at = src_at+' --input '+src_mapY.get_filename()
+    src_at = src_at+' --reference-image '+target.get_filename()
+    src_at = src_at+' --interpolation Linear'
+    for idx,transform in enumerate(forward):
+        if flag[idx]: 
+            src_at = src_at+' --transform ['+transform+', 1]'
+        else:
+            src_at = src_at+' --transform ['+transform+', 0]'
+#    src_at = src_at+' --output '+mapping_file
+    src_mapY_trans = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+                                                        rootfile=source_image,
+                                                        suffix='tmp_srccoordY_map'))
+    src_at = src_at+' --output '+src_mapY_trans
+    
+    print(src_at)
+    try:
+        subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        raise subprocess.CalledProcessError(msg)
+
+    # combine X,Y mappings
+    mapX = load_volume(src_mapX_trans).get_data()
+    mapY = load_volume(src_mapY_trans).get_data()
+    src_map = numpy.stack(mapX,mapY,axis=-1)
+    mapping = nb.Nifti1Image(src_map, target.affine, target.header)
+    save_volume(mapping_file, mapping)
+    
+
     trans_mapping = []
 
-    trg_at = 'antsApplyTransforms --dimensionality 2 --input-image-type 3'
-    trg_at = trg_at+' --input '+trg_map.get_filename()
+    trg_at = 'antsApplyTransforms --dimensionality 2 --input-image-type 0'
+    trg_at = trg_at+' --input '+trg_mapX.get_filename()
     trg_at = trg_at+' --reference-image '+source.get_filename()
     trg_at = trg_at+' --interpolation Linear'
     for idx,transform in enumerate(inverse):
@@ -584,7 +632,11 @@ def embedded_antsreg_2d(source_image, target_image,
             trg_at = trg_at+' --transform ['+transform+', 1]'
         else:
             trg_at = trg_at+' --transform ['+transform+', 0]'
-    trg_at = trg_at+' --output '+inverse_mapping_file
+#    trg_at = trg_at+' --output '+inverse_mapping_file
+    trg_mapX_trans = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+                                                        rootfile=source_image,
+                                                        suffix='tmp_srccoordX_map'))
+    trg_at = trg_at+' --output '+trg_mapX_trans
     
     print(trg_at)
     try:
@@ -593,6 +645,35 @@ def embedded_antsreg_2d(source_image, target_image,
         msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
         raise subprocess.CalledProcessError(msg)
 
+    trg_at = 'antsApplyTransforms --dimensionality 2 --input-image-type 0'
+    trg_at = trg_at+' --input '+trg_mapY.get_filename()
+    trg_at = trg_at+' --reference-image '+source.get_filename()
+    trg_at = trg_at+' --interpolation Linear'
+    for idx,transform in enumerate(inverse):
+        if linear[idx]: 
+            trg_at = trg_at+' --transform ['+transform+', 1]'
+        else:
+            trg_at = trg_at+' --transform ['+transform+', 0]'
+#    trg_at = trg_at+' --output '+inverse_mapping_file
+    trg_mapY_trans = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+                                                        rootfile=source_image,
+                                                        suffix='tmp_srccoordY_map'))
+    trg_at = trg_at+' --output '+trg_mapY_trans
+    
+    print(trg_at)
+    try:
+        subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        raise subprocess.CalledProcessError(msg)
+
+    # combine X,Y mappings
+    mapX = load_volume(trg_mapX_trans).get_data()
+    mapY = load_volume(trg_mapY_trans).get_data()
+    trg_map = numpy.stack(mapX,mapY,axis=-1)
+    inverse_mapping = nb.Nifti1Image(trg_map, source.affine, source.header)
+    save_volume(inverse_mapping_file, inverse_mapping)
+    
     # pad coordinate mapping outside the image? hopefully not needed...
 
     # collect saved outputs 
