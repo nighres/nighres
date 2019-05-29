@@ -616,7 +616,7 @@ def embedded_antsreg_2d(source_image, target_image,
     # combine X,Y mappings
     mapX = load_volume(src_mapX_trans).get_data()
     mapY = load_volume(src_mapY_trans).get_data()
-    src_map = numpy.stack(mapX,mapY,axis=-1)
+    src_map = np.stack((mapX,mapY),axis=-1)
     mapping = nb.Nifti1Image(src_map, target.affine, target.header)
     save_volume(mapping_file, mapping)
     
@@ -670,7 +670,7 @@ def embedded_antsreg_2d(source_image, target_image,
     # combine X,Y mappings
     mapX = load_volume(trg_mapX_trans).get_data()
     mapY = load_volume(trg_mapY_trans).get_data()
-    trg_map = numpy.stack(mapX,mapY,axis=-1)
+    trg_map = np.stack((mapX,mapY),axis=-1)
     inverse_mapping = nb.Nifti1Image(trg_map, source.affine, source.header)
     save_volume(inverse_mapping_file, inverse_mapping)
     
@@ -682,8 +682,14 @@ def embedded_antsreg_2d(source_image, target_image,
           'inverse': load_volume(inverse_mapping_file)}
 
     # clean-up intermediate files
-    if os.path.exists(src_map_file): os.remove(src_map_file)
-    if os.path.exists(trg_map_file): os.remove(trg_map_file)
+    if os.path.exists(src_mapX_file): os.remove(src_mapX_file)
+    if os.path.exists(src_mapY_file): os.remove(src_mapY_file)
+    if os.path.exists(trg_mapX_file): os.remove(trg_mapX_file)
+    if os.path.exists(trg_mapY_file): os.remove(trg_mapY_file)
+    if os.path.exists(src_mapX_trans): os.remove(src_mapX_trans)
+    if os.path.exists(src_mapY_trans): os.remove(src_mapY_trans)
+    if os.path.exists(trg_mapX_trans): os.remove(trg_mapX_trans)
+    if os.path.exists(trg_mapY_trans): os.remove(trg_mapY_trans)
     if ignore_affine or ignore_header:
         if os.path.exists(src_img_file): os.remove(src_img_file)
         if os.path.exists(trg_img_file): os.remove(trg_img_file)

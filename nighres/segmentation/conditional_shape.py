@@ -453,7 +453,7 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
         cspmax.setAtlasDimensions(dimensions[0], dimensions[1], dimensions[2])
         cspmax.setAtlasResolutions(resolution[0], resolution[1], resolution[2])
     else:
-        resoultion = trg_resolution
+        resolution = trg_resolution
         dimensions = trg_dimensions
         
         cspmax.setAtlasDimensions(dimensions[0], dimensions[1], dimensions[2])
