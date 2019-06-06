@@ -63,6 +63,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                       n_steps=5, max_iterations=800, topology='wcs',
                       atlas_file=None, topology_lut_dir=None,
                       adjust_intensity_priors=False,
+                      normalize_qmaps=True,
                       compute_posterior=False,
                       diffuse_probabilities=False,
                       save_data=False, overwrite=False, output_dir=None,
@@ -120,6 +121,9 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         in TOPOLOGY_LUT_DIR)
     adjust_intensity_priors: bool
         Adjust intensity priors based on dataset (default is False)
+    normalize_qmaps: bool
+        Normalize quantitative maps in [0,1] (default in True, change this if using
+        one of the -quant atlas text files in ATLAS_DIR) 
     compute_posterior: bool
         Compute posterior probabilities for segmented structures
         (default is False)
@@ -249,7 +253,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     mgdm.setSteps(n_steps)
     mgdm.setMaxIterations(max_iterations)
     mgdm.setTopology(topology)
-    mgdm.setNormalizeQuantitativeMaps(True)
+    mgdm.setNormalizeQuantitativeMaps(normalize_qmaps)
     # set to False for "quantitative" brain prior atlases
     # (version quant-3.0.5 and above)
 
