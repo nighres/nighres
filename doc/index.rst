@@ -19,9 +19,8 @@ Welcome to Nighres!
 Nighres is a Python package for processing of high-resolution neuroimaging data.
 It developed out of `CBS High-Res Brain Processing Tools
 <https://www.cbs.mpg.de/institute/software/cbs-tools>`_ and aims to make those
-tools easier to install, use and extend.
-
-.. warning:: Nighres is currently still in beta stage
+tools easier to install, use and extend. Nighres now includes new functions from
+the `IMCN imaging toolkit <https://github.com/IMCN-UvA/imcn-imaging>`_.
 
 .. toctree::
    :maxdepth: 1
@@ -36,10 +35,18 @@ tools easier to install, use and extend.
 
    brain/index
    cortex/index
-   surface/index
-   laminar/index
    data/index
+   filtering/index
+   intensity/index
    io/index
+   laminar/index
+   microscopy/index
+   registration/index
+   shape/index
+   statistics/index
+   surface/index
+
+
 
 .. toctree::
    :maxdepth: 2
@@ -63,17 +70,14 @@ tools easier to install, use and extend.
 
 |
 
+.. admonition:: Reference
+
+   Huntenburg, Steele \& Bazin (2018). Nighres: processing tools for high-resolution neuroimaging. GigaScience, 7(7). `https://doi.org/10.1093/gigascience/giy082 <https://doi.org/10.1093/gigascience/giy082>`_
+
+
+   Make sure to also cite the references indicated for the particular functions you use!
+
+
 .. admonition:: Credit
 
-   Nighres is a community-developed project made possible by these `contributors <https://github.com/nighres/nighres/graphs/contributors>`_. The project was born and continues to evolve at `brainhack <http://www.brainhack.org/>`_.
-
-   We thank the `Google Summer of Code 2017 <https://summerofcode.withgoogle.com/archive/>`_ and `INCF <https://www.incf.org/>`_ as a mentoring organization, for supporting the initial development phase of Nighres. See also the `development blog <https://juhuntenburg.github.io/gsoc2017/>`_.
-
-   When using Nighres in your research, please make sure to cite the references mentioned in the documentation of the particular functions you use. We are also preparing a dedicated Nighres paper. For now, we suggest you cite:
-
-   * Bazin et al. (2014) A computational framework for ultra-high resolution
-     cortical segmentation at 7Tesla. `DOI: 10.1016/j.neuroimage.2013.03.077
-     <http://www.sciencedirect.com/science/article/pii/S1053811913003327?via%3Dihub>`_
-   * Huntenburg et al. (2017) Laminar Python: Tools for cortical
-     depth-resolved analysis of high-resolution brain imaging data in
-     Python. `DOI: 10.3897/rio.3.e12346 <https://riojournal.com/article/12346/>`_
+   Nighres is a community-developed project made possible by its `contributors <https://github.com/nighres/nighres/graphs/contributors>`_. The project was born and continues to evolve at `brainhack <http://www.brainhack.org/>`_. We thank the `Google Summer of Code 2017 <https://summerofcode.withgoogle.com/archive/>`_ and `INCF <https://www.incf.org/>`_ as a mentoring organization, for supporting the initial development phase of Nighres. See also the `development blog <https://juhuntenburg.github.io/gsoc2017/>`_.
