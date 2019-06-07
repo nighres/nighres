@@ -20,7 +20,7 @@ release="release-1.1.0b"
 hash wget tar javac jar python3 pip 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3 pip"
 
 # Check for setuptools and wheels
-pip_modules=$(python3 -m pip list --format columns | tr -s ' ' | cut -f 1 -d ' ')
+pip_modules=$(python3 -m pip list | tr -s ' ' | cut -f 1 -d ' ')
 echo "${pip_modules}" | grep setuptools > /dev/null || fatal 'This script requires setuptools.\nInstall with `python3 -m pip install --upgrade setuptools`'
 echo "${pip_modules}" | grep wheel > /dev/null || fatal 'This script requires wheel.\nInstall with `python3 -m pip install --upgrade wheel`'
 

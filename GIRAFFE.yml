@@ -2,6 +2,7 @@
 tools:
   porcupine:
     file:
-      - GIRAFFE/porcupine_pipeline.pork
-    nodes:
-      - notebooks/custom_nodes.json
+      - giraffe/example_01_pipeline.pork
+nodes:
+- giraffe/notebooks/custom_nodes.json
+

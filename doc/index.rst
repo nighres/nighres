@@ -75,7 +75,7 @@ the `IMCN imaging toolkit <https://github.com/IMCN-UvA/imcn-imaging>`_.
    Huntenburg, Steele \& Bazin (2018). Nighres: processing tools for high-resolution neuroimaging. GigaScience, 7(7). `https://doi.org/10.1093/gigascience/giy082 <https://doi.org/10.1093/gigascience/giy082>`_
 
 
-   Mke sure to also cite the references indicated for the particular functions you use!
+   Make sure to also cite the references indicated for the particular functions you use!
 
 
 .. admonition:: Credit

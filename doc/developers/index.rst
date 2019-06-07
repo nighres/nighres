@@ -19,7 +19,7 @@ To contribute you will need to know some basics about git and Github, which are 
 
 **Questions?**
 
-For specifics about code you want to contribute :ref:`make-pr` is a great way to start a discussion and get input. Otherwise, you can post a question on `neurostars.org <neurostars.org>`_. Please use the tag **nighres** for your question.
+For specifics about code you want to contribute :ref:`make-pr` is a great way to start a discussion and get input. Otherwise, you can post a question on `neurostars.org <https://neurostars.org>`_. Please use the tag **nighres** for your question.
 
 **Ready to go?**
 
