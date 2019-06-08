@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import nibabel as nb
 import nighresjava
-from ..io import load_volume, save_volume, load_mesh_geometry, save_mesh
+from ..io import load_volume, save_volume, load_mesh_geometry, save_mesh, save_mesh_geometry
 from ..utils import _output_dir_4saving, _fname_4saving,_check_available_memory
 
 
@@ -57,17 +57,17 @@ def profile_meshing(profile_surface_image, starting_surface_mesh,
 
     # make sure that saving related parameters are correct
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, levelset_image)
+        output_dir = _output_dir_4saving(output_dir, profile_surface_image)
 
         mesh_files = []
         for n in range(nlayers):
             mesh_files.append(os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
-                                       rootfile=levelset_image,
-                                       suffix='mesh-p'+str(n)),"vtk"))
+                                       rootfile=profile_surface_image,
+                                       suffix='mesh-p'+str(n),ext="vtk")))
 
         if overwrite is False :
-            bool missing = False
+            missing = False
             for n in range(nlayers):
                 if not os.path.isfile(mesh_files[n]):
                     missing = True
@@ -75,7 +75,7 @@ def profile_meshing(profile_surface_image, starting_surface_mesh,
             if not missing:
                 print("skip computation (use existing results)")
                 output = {'profile': mesh_files}
-            return output
+                return output
 
     # start virtual machine if not running
     try:
@@ -122,8 +122,8 @@ def profile_meshing(profile_surface_image, starting_surface_mesh,
         return
 
     # collect outputs
-    npt = int(orig_mesh['points'].shape[0]/3)
-    nfc = int(orig_mesh['faces'].shape[0]/3)
+    npt = int(orig_mesh['points'].shape[0])
+    nfc = int(orig_mesh['faces'].shape[0])
 
     meshes = []
     for n in range(nlayers):
@@ -132,11 +132,9 @@ def profile_meshing(profile_surface_image, starting_surface_mesh,
         faces = np.reshape(np.array(algorithm.getSampledSurfaceTriangles(n),
                                dtype=np.int32), (nfc,3), 'C')
         # create the mesh dictionary
-        mesh = {"points": points, "faces": faces}
+        meshes.append({"points": points, "faces": faces})
 
-        meshes.append(mesh)
-        
         if save_data:
-            save_mesh(mesh_files[n], mesh)
+            save_mesh_geometry(mesh_files[n], meshes[n])
  
     return {'profile': meshes}
