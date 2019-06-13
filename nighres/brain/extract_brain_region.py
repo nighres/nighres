@@ -15,7 +15,7 @@ def extract_brain_region(segmentation, levelset_boundary,
                          estimate_tissue_densities=False,
                          partial_volume_distance=1.0,
                          save_data=False, overwrite=False, output_dir=None,
-                         file_name=None):
+                         file_name=None, return_filename=False):
     """ Extract Brain Region
 
     Extracts masks, probability maps and levelset surfaces for specific brain
@@ -57,6 +57,8 @@ def extract_brain_region(segmentation, levelset_boundary,
     file_name: str, optional
         Desired base name for output files with file extension
         (suffixes will be added)
+    return_filename: bool, optional
+        Return filename instead of object
 
     Returns
     ----------
@@ -91,6 +93,10 @@ def extract_brain_region(segmentation, levelset_boundary,
     """
 
     print('\nExtract Brain Region')
+
+    # Check data file parameters
+    if not save_data and return_filename:
+        raise ValueError('save_data must be True if return_filename is True ')
 
     # check atlas_file and set default if not given
     atlas_file = _check_atlas_file(atlas_file)
@@ -173,15 +179,26 @@ def extract_brain_region(segmentation, levelset_boundary,
             and os.path.isfile(bg_lvl_file) :
 
             print("skip computation (use existing results)")
-            output = {'inside_mask': load_volume(ins_mask_file),
-                      'inside_proba': load_volume(ins_proba_file),
-                      'inside_lvl': load_volume(ins_lvl_file),
-                      'region_mask': load_volume(reg_mask_file),
-                      'region_proba': load_volume(reg_proba_file),
-                      'region_lvl': load_volume(reg_lvl_file),
-                      'background_mask': load_volume(bg_mask_file),
-                      'background_proba': load_volume(bg_proba_file),
-                      'background_lvl': load_volume(bg_lvl_file)}
+            if not return_filename:
+                output = {'inside_mask': ins_mask_file,
+                          'inside_proba': ins_proba_file,
+                          'inside_lvl': ins_lvl_file,
+                          'region_mask': reg_mask_file,
+                          'region_proba': reg_proba_file,
+                          'region_lvl': reg_lvl_file,
+                          'background_mask': bg_mask_file,
+                          'background_proba': bg_proba_file,
+                          'background_lvl': bg_lvl_file}
+            else:
+                output = {'inside_mask': load_volume(ins_mask_file),
+                          'inside_proba': load_volume(ins_proba_file),
+                          'inside_lvl': load_volume(ins_lvl_file),
+                          'region_mask': load_volume(reg_mask_file),
+                          'region_proba': load_volume(reg_proba_file),
+                          'region_lvl': load_volume(reg_lvl_file),
+                          'background_mask': load_volume(bg_mask_file),
+                          'background_proba': load_volume(bg_proba_file),
+                          'background_lvl': load_volume(bg_lvl_file)}
             return output
 
     # load images and set dimensions and resolution
@@ -308,9 +325,29 @@ def extract_brain_region(segmentation, levelset_boundary,
         save_volume(bg_proba_file, background_proba)
         save_volume(bg_lvl_file, background_lvl)
 
-    return {'inside_mask': inside_mask, 'inside_proba': inside_proba,
-            'inside_lvl': inside_lvl, 'region_mask': region_mask,
-            'region_proba': region_proba, 'inside_lvl': region_lvl,
+    if return_filename:
+        output = {
+            'inside_mask': ins_mask_file,
+            'inside_proba': ins_proba_file,
+            'inside_lvl': ins_lvl_file,
+            'region_mask': reg_mask_file,
+            'region_proba': reg_proba_file,
+            'region_lvl': reg_lvl_file,
+            'background_mask': bg_mask_file,
+            'background_proba': bg_proba_file,
+            'background_lvl': bg_lvl_file
+        }
+    else:
+        output = {
+            'inside_mask': inside_mask,
+            'inside_proba': inside_proba,
+            'inside_lvl': inside_lvl,
+            'region_mask': region_mask,
+            'region_proba': region_proba,
+            'inside_lvl': region_lvl,
             'background_mask': background_mask,
             'background_proba': background_proba,
-            'background_lvl': background_lvl}
+            'background_lvl': background_lvl
+        }
+
+    return output
