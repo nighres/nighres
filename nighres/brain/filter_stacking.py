@@ -67,7 +67,7 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
 
     # make sure that saving related parameters are correct
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, second_inversion)
+        output_dir = _output_dir_4saving(output_dir, img)
 
         filter_file = os.path.join(output_dir,
                         _fname_4saving(file_name=file_name,
