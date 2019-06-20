@@ -54,21 +54,6 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
 
     print('\nFilter stacking')
 
-    # make sure that saving related parameters are correct
-    if save_data:
-        output_dir = _output_dir_4saving(output_dir, second_inversion)
-
-        filter_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
-                                   rootfile=second_inversion,
-                                   suffix='bfs-img'))
-        if overwrite is False \
-            and os.path.isfile(filter_file) :
-
-            print("skip computation (use existing results)")
-            output = {"result": load_volume(filter_file)}
-            return output
-
     # check if there's inputs
     if (dura_img is None and pvcsf_img is None and arteries_img is None):
         raise ValueError('You must specify at least one of '
@@ -79,6 +64,21 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
     if (dura_img != None): img = dura_img
     elif (pvcsf_img != None): img = pvcsf_img
     elif (arteries_img != None): img = artereis_img
+
+    # make sure that saving related parameters are correct
+    if save_data:
+        output_dir = _output_dir_4saving(output_dir, second_inversion)
+
+        filter_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
+                                   rootfile=img,
+                                   suffix='bfs-img'))
+        if overwrite is False \
+            and os.path.isfile(filter_file) :
+
+            print("skip computation (use existing results)")
+            output = {"result": load_volume(filter_file)}
+            return output
 
     affine = load_volume(img).affine
     header = load_volume(img).header
