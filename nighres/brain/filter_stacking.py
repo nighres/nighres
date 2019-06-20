@@ -63,7 +63,7 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
     img = None
     if (dura_img != None): img = dura_img
     elif (pvcsf_img != None): img = pvcsf_img
-    elif (arteries_img != None): img = artereis_img
+    elif (arteries_img != None): img = arteries_img
 
     # make sure that saving related parameters are correct
     if save_data:
