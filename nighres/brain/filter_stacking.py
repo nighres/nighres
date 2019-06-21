@@ -129,7 +129,7 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
         arteries_img = None
 
     header['cal_max'] = np.nanmax(filter_data)
-    filter_img = nb.Nifti1Image(fliter_data, affine, header)
+    filter_img = nb.Nifti1Image(filter_data, affine, header)
 
     if save_data:
         save_volume(filter_file, filter_img)
