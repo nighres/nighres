@@ -60,21 +60,6 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
     if not save_data and return_filename:
         raise ValueError('save_data must be True if return_filename is True ')
 
-    # make sure that saving related parameters are correct
-    if save_data:
-        output_dir = _output_dir_4saving(output_dir, second_inversion)
-
-        filter_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
-                                   rootfile=second_inversion,
-                                   suffix='bfs-img'))
-        if overwrite is False \
-            and os.path.isfile(filter_file) :
-
-            print("skip computation (use existing results)")
-            output = {"result": load_volume(filter_file) if not return_filename else filter_file}
-            return output
-
     # check if there's inputs
     if (dura_img is None and pvcsf_img is None and arteries_img is None):
         raise ValueError('You must specify at least one of '
@@ -84,12 +69,27 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
     img = None
     if (dura_img != None): img = dura_img
     elif (pvcsf_img != None): img = pvcsf_img
-    elif (arteries_img != None): img = artereis_img
+    elif (arteries_img != None): img = arteries_img
+
+    # make sure that saving related parameters are correct
+    if save_data:
+        output_dir = _output_dir_4saving(output_dir, img)
+
+        filter_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
+                                   rootfile=img,
+                                   suffix='bfs-img'))
+        if overwrite is False \
+            and os.path.isfile(filter_file) :
+
+            print("skip computation (use existing results)")
+            output = {"result": load_volume(filter_file) if not return_filename else filter_file}
+            return output
 
     affine = load_volume(img).affine
     header = load_volume(img).header
     resolution = [x.item() for x in header.get_zooms()]
-    dimensions = header.get_shape()
+    dimensions = header.get_data_shape()
     nx = dimensions[0];
     ny = dimensions[1];
     nz = dimensions[2];
@@ -135,7 +135,7 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
         arteries_img = None
 
     header['cal_max'] = np.nanmax(filter_data)
-    filter_img = nb.Nifti1Image(fliter_data, affine, header)
+    filter_img = nb.Nifti1Image(filter_data, affine, header)
 
     if save_data:
         save_volume(filter_file, filter_img)
