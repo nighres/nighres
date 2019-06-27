@@ -180,7 +180,7 @@ def apply_coordinate_mappings(image, mapping1,
 
     return {'result': deformed}
 
-def apply_coordinate_mappings2d(image, mapping1,
+def apply_coordinate_mappings_2d(image, mapping1,
                         mapping2=None, mapping3=None, mapping4=None,
                         interpolation="nearest", padding="closest",
                         save_data=False, overwrite=False, output_dir=None,
@@ -229,7 +229,7 @@ def apply_coordinate_mappings2d(image, mapping1,
 
     '''
 
-    print('\nApply coordinate mappings')
+    print('\nApply coordinate mappings (2D)')
 
     # make sure that saving related parameters are correct
     if save_data:
@@ -265,11 +265,11 @@ def apply_coordinate_mappings2d(image, mapping1,
     imgdim = data.shape
 
     # set parameters from input images
-    if len(imgdim) is 4:
-        applydef.setImageDimensions(imgdim[0], imgdim[1], imgdim[2], imgdim[3])
-    else:
+    if len(imgdim) is 3:
         applydef.setImageDimensions(imgdim[0], imgdim[1], imgdim[2])
-    applydef.setImageResolutions(imgres[0], imgres[1], imgres[2])
+    else:
+        applydef.setImageDimensions(imgdim[0], imgdim[1])
+    applydef.setImageResolutions(imgres[0], imgres[1])
 
     applydef.setImageToDeform(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
@@ -282,7 +282,7 @@ def apply_coordinate_mappings2d(image, mapping1,
     applydef.setDeformationMapping1(nighresjava.JArray('float')(
                                     (def1data.flatten('F')).astype(float)))
     applydef.setDeformation1Dimensions(def1data.shape[0],
-                                        def1data.shape[1],def1data.shape[2])
+                                        def1data.shape[1])
     applydef.setDeformationType1("mapping(voxels)")
 
     if not (mapping2==None):
@@ -294,7 +294,7 @@ def apply_coordinate_mappings2d(image, mapping1,
         applydef.setDeformationMapping2(nighresjava.JArray('float')(
                                         (def2data.flatten('F')).astype(float)))
         applydef.setDeformation2Dimensions(def2data.shape[0],
-                                        def2data.shape[1],def2data.shape[2])
+                                        def2data.shape[1])
         applydef.setDeformationType2("mapping(voxels)")
 
         if not (mapping3==None):
@@ -306,7 +306,7 @@ def apply_coordinate_mappings2d(image, mapping1,
             applydef.setDeformationMapping3(nighresjava.JArray('float')(
                                             (def3data.flatten('F')).astype(float)))
             applydef.setDeformation3Dimensions(def3data.shape[0],
-                                            def3data.shape[1],def3data.shape[2])
+                                            def3data.shape[1])
             applydef.setDeformationType3("mapping(voxels)")
 
             if not (mapping4==None):
@@ -318,7 +318,7 @@ def apply_coordinate_mappings2d(image, mapping1,
                 applydef.setDeformationMapping4(nighresjava.JArray('float')(
                                         (def4data.flatten('F')).astype(float)))
                 applydef.setDeformation4Dimensions(def4data.shape[0],
-                                            def4data.shape[1],def4data.shape[2])
+                                            def4data.shape[1])
                 applydef.setDeformationType4("mapping(voxels)")
 
     applydef.setInterpolationType(interpolation)
@@ -336,10 +336,10 @@ def apply_coordinate_mappings2d(image, mapping1,
         return
 
     # collect data
-    if len(imgdim) is 4:
-        trgdim = [trgdim[0],trgdim[1],trgdim[2],imgdim[3]]
+    if len(imgdim) is 3:
+        trgdim = [trgdim[0],trgdim[1],imgdim[2]]
     else:
-        trgdim = [trgdim[0],trgdim[1],trgdim[2]]
+        trgdim = [trgdim[0],trgdim[1]]
     deformed_data = np.reshape(np.array(
                                 applydef.getDeformedImage(),
                                 dtype=np.float32), trgdim, 'F')

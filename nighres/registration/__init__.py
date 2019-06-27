@@ -1,4 +1,5 @@
 from nighres.registration.apply_coordinate_mappings import apply_coordinate_mappings
+from nighres.registration.apply_coordinate_mappings import apply_coordinate_mappings_2d
 from nighres.registration.embedded_antsreg import embedded_antsreg
 from nighres.registration.embedded_antsreg import embedded_antsreg_2d
 from nighres.registration.embedded_antsreg import embedded_antsreg_multi
