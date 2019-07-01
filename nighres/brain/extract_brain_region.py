@@ -179,7 +179,7 @@ def extract_brain_region(segmentation, levelset_boundary,
             and os.path.isfile(bg_lvl_file) :
 
             print("skip computation (use existing results)")
-            if not return_filename:
+            if return_filename:
                 output = {'inside_mask': ins_mask_file,
                           'inside_proba': ins_proba_file,
                           'inside_lvl': ins_lvl_file,
