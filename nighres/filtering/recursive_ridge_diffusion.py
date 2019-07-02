@@ -260,12 +260,12 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     ridge_size_img = nb.Nifti1Image(ridge_size_data, affine, header)
 
     if save_data:
-        save_volume(os.path.join(output_dir, filter_file), filter_img)
-        save_volume(os.path.join(output_dir, propagation_file), propag_img)
-        save_volume(os.path.join(output_dir, scale_file), scale_img)
-        save_volume(os.path.join(output_dir, ridge_direction_file), ridge_dir_img)
-        save_volume(os.path.join(output_dir, ridge_pv_file), ridge_pv_img)
-        save_volume(os.path.join(output_dir, ridge_size_file), ridge_size_img)
+        save_volume(filter_file, filter_img)
+        save_volume(propagation_file, propag_img)
+        save_volume(scale_file, scale_img)
+        save_volume(ridge_direction_file, ridge_dir_img)
+        save_volume(ridge_pv_file, ridge_pv_img)
+        save_volume(ridge_size_file, ridge_size_img)
 
     return {'filter': filter_img, 'propagation': propag_img, 'scale': scale_img,
             'ridge_dir': ridge_dir_img, 'ridge_pv': ridge_pv_img,
