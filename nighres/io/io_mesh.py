@@ -454,15 +454,15 @@ def _read_obj(file):
         if i == 0:
             # Number of vertices
             n_vert = int(line.split()[6])
-            XYZ = np.zeros([n_vert, 3])
+            XYZ = np.zeros((n_vert, 3))
         elif i <= n_vert:
-            XYZ[i - 1] = map(float, line.split())
+            XYZ[i - 1] = [float(num) for num in line.split()]
         elif i > 2 * n_vert + 5:
             if not line.strip():
                 k = 1
             elif k == 1:
                 Polys.extend(line.split())
-    Polys = map(int, Polys)
+    Polys = [int(num) for num in Polys]
     npPolys = np.array(Polys)
     triangles = np.array(list(chunks(Polys, 3)))
     return XYZ, triangles
