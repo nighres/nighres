@@ -221,7 +221,7 @@ def conditional_shape(target_images, structures, contrasts,
         cspmax.estimateTarget()
         cspmax.strictSimilarityDiffusion(ngb_size)
         #cspmax.fastSimilarityDiffusion(ngb_size)
-        cspmax.collapseConditionalMaps()
+        #cspmax.collapseConditionalMaps()
         #if adjust_volume:
         if atlas_space is True and map_to_atlas is not None and map_to_target is not None:
             #cspmax.mappedOptimalVolumeThreshold(2.0, 0.01, True)
@@ -232,13 +232,15 @@ def conditional_shape(target_images, structures, contrasts,
             #cspmax.optimalVolumeThreshold(2.0, 0.01, True)
             #cspmax.optimalVolumeThreshold(1.0, 0.5, True)
             # definitely too flat? or not enough?? cspmax.optimalVolumeThreshold(2.0, 0.1, True)
-            cspmax.optimalVolumeCertaintyThreshold(1.0)
+            cspmax.conditionalVolumeCertaintyThreshold(1.0)
         #else:
         #    if atlas_space is True and map_to_atlas is not None and map_to_target is not None:
         #        cspmax.mappedOptimalCertaintyThreshold()
         #    else:    
         #        #cspmax.optimalVolumeThreshold(1.0, 0.05, True)
         #        cspmax.optimalCertaintyThreshold()
+        cspmax.collapseConditionalMaps()
+
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")
