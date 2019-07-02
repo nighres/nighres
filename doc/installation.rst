@@ -85,7 +85,7 @@ To run the Docker container::
 
     docker run --rm -p 8888:8888 nighres
 
-Now go with your browser to https://localhost:8888 to start a notebook. You should be able
+Now go with your browser to http://localhost:8888 to start a notebook. You should be able
 to import nighres by entering::
 
     import nighres
