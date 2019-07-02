@@ -16,6 +16,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
                               diffusion_factor=1.0,
                               similarity_scale=0.1,
                               max_iter=100, max_diff=1e-3,
+                              threshold=0.5,
                               save_data=False, overwrite=False, output_dir=None,
                               file_name=None):
 
@@ -51,6 +52,8 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
         Maximum number of diffusion iterations
     max_diff: int
         Maximum difference to stop the diffusion
+    threshold: float
+        Detection threshold for the structures to keep (default is 0.5)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -175,6 +178,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     if max_iter>0: rrd.setPropagationModel("diffusion")
     rrd.setMaxIterations(max_iter)
     rrd.setMaxDifference(max_diff)
+    rrd.setDetectionThreshold(threshold)
 
     rrd.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     rrd.setResolutions(resolution[0], resolution[1], resolution[2])
