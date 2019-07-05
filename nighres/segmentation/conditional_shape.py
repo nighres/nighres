@@ -240,6 +240,7 @@ def conditional_shape(target_images, structures, contrasts,
         #    else:    
         #        #cspmax.optimalVolumeThreshold(1.0, 0.05, True)
         #        cspmax.optimalCertaintyThreshold()
+        cspmax.collapseSpatialPriorMaps()
         cspmax.collapseConditionalMaps()
 
     except:
