@@ -149,13 +149,21 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     qpdmap.setResolutions(resolution[0], resolution[1], resolution[2])
 
     # input images
-    qpdmap.setFirstInversion(nighresjava.JArray('float')(
+    qpdmap.setFirstInversionMagnitude(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
-    data = load_volume(second_inversion).get_data()
-    qpdmap.setSecondInversion(nighresjava.JArray('float')(
+    data = load_volume(first_inversion[1]).get_data()
+    qpdmap.setFirstInversionPhase(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
+    data = load_volume(second_inversion[0]).get_data()
+    qpdmap.setSecondInversionMagnitude(nighresjava.JArray('float')(
+                                    (data.flatten('F')).astype(float)))
+    
+    data = load_volume(second_inversion[1]).get_data()
+    qpdmap.setSecondInversionPhase(nighresjava.JArray('float')(
+                                    (data.flatten('F')).astype(float)))
+ 
     data = load_volume(t1map).get_data()
     qpdmap.setT1mapImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
