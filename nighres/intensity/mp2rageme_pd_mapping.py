@@ -12,7 +12,7 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
                       t1map, r2smap, echo_times,
                       inversion_times, flip_angles, inversion_TR,
                       excitation_TR, N_excitations, efficiency=0.96,
-                      B1_map=None, s0img=None,
+                      b1map=None, s0img=None,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ MP2RAGEME PD mapping
@@ -46,7 +46,7 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
         Inversion efficiency (default is 0.96)
     correct_B1: bool
         Whether to correct for B1 inhomogeneities (default is False)
-    B1_map: niimg
+    b1map: niimg
         Computed B1 map (optional)
     s0map: niimg
         Computed S0 map (optional)
@@ -121,7 +121,7 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     except ValueError:
         pass
     # create algorithm instance
-    qpdmap = nighresjava.IntensityMp2rageT1Fitting()
+    qpdmap = nighresjava.IntensityMp2ragemePDmapping()
 
     # set algorithm parameters
     qpdmap.setFirstEchoTime(echo_times[0])
@@ -134,7 +134,7 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     qpdmap.setSecondExcitationRepetitionTime(excitation_TR[1])
     qpdmap.setNumberExcitations(N_excitations)
     qpdmap.setInversionEfficiency(efficiency)
-    qpdmap.setCorrectB1inhomogeneities(B1_map!=None)
+    qpdmap.setCorrectB1inhomogeneities(b1map!=None)
      
     # load first image and use it to set dimensions and resolution
     img = load_volume(first_inversion)
@@ -149,11 +149,11 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     qpdmap.setResolutions(resolution[0], resolution[1], resolution[2])
 
     # input images
-    qpdmap.setFirstInversion(nighresjava.JArray('float')(
+    qpdmap.setFirstInversionImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
     data = load_volume(second_inversion).get_data()
-    qpdmap.setSecondInversion(nighresjava.JArray('float')(
+    qpdmap.setSecondInversionImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
     data = load_volume(t1map).get_data()
@@ -164,13 +164,13 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     qpdmap.setR2smapImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
-    if (s0map!=None):
-        data = load_volume(s0map).get_data()
+    if (s0img!=None):
+        data = load_volume(s0img).get_data()
         qpdmap.setS0Image(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
  
-    if (correct_B1):
-        data = load_volume(B1_map).get_data()
+    if (b1map!=None):
+        data = load_volume(b1map).get_data()
         qpdmap.setB1mapImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
  

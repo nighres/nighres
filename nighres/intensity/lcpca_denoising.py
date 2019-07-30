@@ -11,7 +11,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def lcpca_denoising(image_list, phase_list=None, 
                     ngb_size=4, stdev_cutoff=1.05,
                     min_dimension=0, max_dimension=-1,
-                    unwrap=True, process_2d=False,
+                    unwrap=True, process_2d=False, use_rmt=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_names=None):
     """ LCPCA denoising
@@ -42,6 +42,9 @@ def lcpca_denoising(image_list, phase_list=None,
     process_2d: bool, optional
         Whether to denoise in 2D, for instance when acquiring a thin slab of 
         data (default is False)
+    use_rmt: bool, optional
+        Whether to use random matrix theory rather than noise fitting to
+        estimate the noise threshold (default is False)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -194,6 +197,7 @@ def lcpca_denoising(image_list, phase_list=None,
     lcpca.setMaximumDimension(max_dimension)
     lcpca.setUnwrapPhase(unwrap) 
     lcpca.setProcessSlabIn2D(process_2d)
+    lcpca.setRandomMatrixTheory(use_rmt)
 
     # execute the algorithm
     try:
