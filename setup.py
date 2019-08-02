@@ -38,7 +38,7 @@ setup(
                  'Topic :: Scientific/Engineering',
                  'Intended Audience :: Science/Research',
                  'License :: OSI Approved :: Apache Software License',
-                 'Programming Language :: Python :: 3.5',
+                 'Programming Language :: Python :: 3',
                  ],
     # cmdclass={
     #           'develop': PostDevelopCommand,
@@ -48,5 +48,5 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=['numpy', 'nibabel', 'psutil'],
-    python_requires='>=3.5'
+    python_requires='>=3'
 )
