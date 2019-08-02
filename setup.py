@@ -38,7 +38,7 @@ setup(
                  'Topic :: Scientific/Engineering',
                  'Intended Audience :: Science/Research',
                  'License :: OSI Approved :: Apache Software License',
-                 'Programming Language :: Python :: 3',
+                 'Programming Language :: Python :: 3.5',
                  ],
     # cmdclass={
     #           'develop': PostDevelopCommand,
@@ -47,6 +47,6 @@ setup(
     keywords='MRI high-resolution laminar subcortex',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['numpy', 'nibabel', 'psutil'],
+    install_requires=['numpy<=1.16.*', 'nibabel', 'psutil'],
     python_requires='>=3'
 )
