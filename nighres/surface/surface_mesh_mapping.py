@@ -64,12 +64,12 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
         orig_file = os.path.join(output_dir,
                                  _fname_4saving(file_name=file_name,
                                                 rootfile=intensity_image,
-                                                suffix='map-orig'), ext="vtk")
+                                                suffix='map-orig', ext="vtk"))
 
         inf_file = os.path.join(output_dir,
                                 _fname_4saving(file_name=file_name,
                                                rootfile=intensity_image,
-                                               suffix='map-inf'), ext="vtk")
+                                               suffix='map-inf', ext="vtk"))
 
         if (overwrite is False and os.path.isfile(orig_file) and
                 os.path.isfile(inf_file)):
