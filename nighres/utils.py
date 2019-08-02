@@ -93,7 +93,7 @@ def _fname_4saving_prev(file_name=None, rootfile=None, suffix=None):
     return fullname
 
 
-def _fname_4saving(file_name=None, rootfile=None, suffix=None, ext="nii.gz"):
+def _fname_4saving(file_name=None, rootfile=None, suffix=None, ext=None):
 
     # if a file_name is given, use that
     if file_name is None:
@@ -128,10 +128,8 @@ def _fname_4saving(file_name=None, rootfile=None, suffix=None, ext="nii.gz"):
     # extension it will think bello is the extension)
     if len(split_name) == 1:
         base = split_name[0]
-        #ext = 'nii.gz'
     else:
         # pop file extension
-        #ext = split_name.pop(-1)
         file_ext = split_name.pop(-1)
         # file extension could have two parts if compressed
         if file_ext == 'gz':
@@ -141,6 +139,10 @@ def _fname_4saving(file_name=None, rootfile=None, suffix=None, ext="nii.gz"):
         base = split_name.pop(0)
         while split_name:
             base += '.'+split_name.pop(0)
+
+    # check if extention is given otherwise use the one from input file
+    if ext is None:
+        ext = file_ext
 
     # insert suffix if given
     if suffix is not None:
@@ -182,8 +184,8 @@ def _check_atlas_file(atlas_file):
     return atlas_file
 
 def _check_available_memory():
-    
+
     init_memory = str(int(round(0.25*psutil.virtual_memory()[1])))
     max_memory = str(int(round(0.95*psutil.virtual_memory()[1])))
-     
+
     return {"init": init_memory, "max": max_memory}
