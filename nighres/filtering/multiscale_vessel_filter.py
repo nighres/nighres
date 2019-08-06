@@ -82,6 +82,7 @@ def multiscale_vessel_filter_prior(input_image,
    length
    pv
    label
+   direction
 
     Notes
     ----------
@@ -123,6 +124,10 @@ def multiscale_vessel_filter_prior(input_image,
                                   rootfile=input_image,
                                   suffix='label')
 
+        directionImage_file = _fname_4saving(file_name=file_name,
+                                  rootfile=input_image,
+                                  suffix='direction')
+
         if overwrite is False \
             and os.path.isfile(vesselImage_file) \
             and os.path.isfile(filterImage_file) \
@@ -131,7 +136,8 @@ def multiscale_vessel_filter_prior(input_image,
             and os.path.isfile(diameterImage_file) \
             and os.path.isfile(pvImage_file) \
             and os.path.isfile(lengthImage_file) \
-            and os.path.isfile(labelImage_file) :
+            and os.path.isfile(labelImage_file) \
+	    and os.path.isfile(directionImage_file) :
                 output = {'segmentation': load_volume(vesselImage_file),
                           'filtered': load_volume(filterImage_file),
                           'probability': load_volume(probaImage_file),
@@ -139,7 +145,8 @@ def multiscale_vessel_filter_prior(input_image,
                           'diameter': load_volume(diameterImage_file),
                           'pv': load_volume(pvImage_file),
                           'length':load_volume(lengthImage_file),
-                          'label':load_volume(labelImage_file)}
+                          'label':load_volume(labelImage_file),
+			  'diection':load_volume(directionImage_file)}
                 return output
 
        
@@ -174,7 +181,9 @@ def multiscale_vessel_filter_prior(input_image,
     header = input_image.get_header()
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = input_image.shape
-
+    
+    # direction output has a 4th dimension, set to 3
+    dimensions4d = [dimensions[0], dimensions[1], dimensions[2], 3] 
 
     vessel_filter.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     vessel_filter.setResolutions(resolution[0], resolution[1], resolution[2])
@@ -225,6 +234,9 @@ def multiscale_vessel_filter_prior(input_image,
     labelImage_data = np.reshape(np.array(
                                     vessel_filter.getLabelImage(),
                                     dtype=np.float32), dimensions, 'F')
+    directionImage_data = np.reshape(np.array(
+                                    vessel_filter.getDirectionImage(),
+                                    dtype=np.float32), dimensions4d, 'F')
 
 
     # adapt header max for each image so that correct max is displayed
@@ -253,6 +265,9 @@ def multiscale_vessel_filter_prior(input_image,
     header['cal_max'] = np.nanmax(labelImage_data)
     labelImage = nb.Nifti1Image(labelImage_data, affine, header)
 
+    header['cal_max'] = np.nanmax(directionImage_data)
+    directionImage = nb.Nifti1Image(directionImage_data, affine, header)
+
     if save_data:
         save_volume(os.path.join(output_dir, vesselImage_file), vesselImage)
         save_volume(os.path.join(output_dir, filterImage_file), filterImage)
@@ -262,11 +277,12 @@ def multiscale_vessel_filter_prior(input_image,
         save_volume(os.path.join(output_dir, pvImage_file), pvImage)
         save_volume(os.path.join(output_dir, lengthImage_file), lengthImage)
         save_volume(os.path.join(output_dir, labelImage_file), labelImage)
+        save_volume(os.path.join(output_dir, directionImage_file), directionImage)
 
     return {'segmentation': vesselImage, 'filtered': filterImage,
             'probability': probaImage, 'scale': scaleImage,
             'diameter': diameterImage, 'pv': pvImage, 
-	    'length':lengthImage, 'label':labelImage}
+	    'length':lengthImage, 'label':labelImage, 'direction':directionImage}
 
 
 def multiscale_vessel_filter(input_image,
@@ -332,7 +348,7 @@ def multiscale_vessel_filter(input_image,
    length
    pv
    label
-
+   direction
     Notes
     ----------
     Original Java module by Pierre-Louis Bazin and Julia Huck.
@@ -372,6 +388,9 @@ def multiscale_vessel_filter(input_image,
         labelImage_file = _fname_4saving(file_name=file_name,
                                   rootfile=input_image,
                                   suffix='label')
+        directionImage_file = _fname_4saving(file_name=file_name,
+                                  rootfile=input_image,
+                                  suffix='direction')
 
         if overwrite is False \
             and os.path.isfile(vesselImage_file) \
@@ -381,7 +400,8 @@ def multiscale_vessel_filter(input_image,
             and os.path.isfile(diameterImage_file) \
             and os.path.isfile(pvImage_file) \
             and os.path.isfile(lengthImage_file) \
-            and os.path.isfile(labelImage_file) :
+            and os.path.isfile(labelImage_file) \
+	    and os.path.isfile(directionImage_file) :
                 output = {'segmentation': load_volume(vesselImage_file),
                           'filtered': load_volume(filterImage_file),
                           'probability': load_volume(probaImage_file),
@@ -389,7 +409,8 @@ def multiscale_vessel_filter(input_image,
                           'diameter': load_volume(diameterImage_file),
                           'pv': load_volume(pvImage_file),
                           'length':load_volume(lengthImage_file),
-                          'label':load_volume(labelImage_file)}
+                          'label':load_volume(labelImage_file),
+			  'diection':load_volume(directionImage_file)}
                 return output
 
 
@@ -421,7 +442,9 @@ def multiscale_vessel_filter(input_image,
     header = input_image.get_header()
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = input_image.shape
-
+    
+    # direction output has a 4th dimension, set to 3
+    dimensions4d = [dimensions[0], dimensions[1], dimensions[2], 3] 
 
     vessel_filter.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     vessel_filter.setResolutions(resolution[0], resolution[1], resolution[2])
@@ -442,7 +465,7 @@ def multiscale_vessel_filter(input_image,
         raise
         return
 
-    # Collect output
+   # Collect output
     vesselImage_data = np.reshape(np.array(
                                     vessel_filter.getSegmentedVesselImage(),
                                     dtype=np.float32), dimensions, 'F')
@@ -467,6 +490,10 @@ def multiscale_vessel_filter(input_image,
     labelImage_data = np.reshape(np.array(
                                     vessel_filter.getLabelImage(),
                                     dtype=np.float32), dimensions, 'F')
+    directionImage_data = np.reshape(np.array(
+                                    vessel_filter.getDirectionImage(),
+                                    dtype=np.float32), dimensions4d, 'F')
+
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -494,6 +521,9 @@ def multiscale_vessel_filter(input_image,
     header['cal_max'] = np.nanmax(labelImage_data)
     labelImage = nb.Nifti1Image(labelImage_data, affine, header)
 
+    header['cal_max'] = np.nanmax(directionImage_data)
+    directionImage = nb.Nifti1Image(directionImage_data, affine, header)
+
     if save_data:
         save_volume(os.path.join(output_dir, vesselImage_file), vesselImage)
         save_volume(os.path.join(output_dir, filterImage_file), filterImage)
@@ -503,8 +533,10 @@ def multiscale_vessel_filter(input_image,
         save_volume(os.path.join(output_dir, pvImage_file), pvImage)
         save_volume(os.path.join(output_dir, lengthImage_file), lengthImage)
         save_volume(os.path.join(output_dir, labelImage_file), labelImage)
+        save_volume(os.path.join(output_dir, directionImage_file), directionImage)
 
     return {'segmentation': vesselImage, 'filtered': filterImage,
             'probability': probaImage, 'scale': scaleImage,
             'diameter': diameterImage, 'pv': pvImage, 
-	    'length':lengthImage, 'label':labelImage}
+	    'length':lengthImage, 'label':labelImage, 'direction':directionImage}
+
