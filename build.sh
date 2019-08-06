@@ -92,7 +92,7 @@ mkdir -p ../nighresjava/src
 mkdir -p ../nighresjava/lib
 
 #jar cf cbstools.jar     de/mpg/cbs/core/*/*.class
-jar cf $nighres_local/nighresjava/src/nighresjava.jar de/mpg/cbs/core/*/*.class de/concordia/qpi/*/*.class
+jar cf ../nighresjava/src/nighresjava.jar de/mpg/cbs/core/*/*.class de/concordia/qpi/*/*.class
 jar cf ../nighresjava/src/cbstools-lib.jar de/mpg/cbs/*/*.class
 
 cp lib/*.jar ../nighresjava/lib/
