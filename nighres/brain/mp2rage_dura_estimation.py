@@ -11,7 +11,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
                            background_distance=5.0, output_type='dura_region',
                            save_data=False, overwrite=False, output_dir=None,
-                           file_name=None):
+                           file_name=None, return_filename=False):
     """ MP2RAGE dura estimation
 
     Filters a MP2RAGE brain image to obtain a probability map of dura matter.
@@ -36,6 +36,8 @@ def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
     file_name: str, optional
         Desired base name for output files with file extension
         (suffixes will be added)
+    return_filename: bool, optional
+        Return filename instead of object
 
     Returns
     ----------
@@ -62,6 +64,10 @@ def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
 
     print('\nMP2RAGE Dura Estimation')
 
+    # Check data file parameters
+    if not save_data and return_filename:
+        raise ValueError('save_data must be True if return_filename is True ')
+
     # make sure that saving related parameters are correct
     if save_data:
         output_dir = _output_dir_4saving(output_dir, second_inversion)
@@ -75,7 +81,7 @@ def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
             and os.path.isfile(result_file) :
 
             print("skip computation (use existing results)")
-            output = {'result': load_volume(result_file)}
+            output = {'result': load_volume(result_file) if not return_filename else result_file}
             return output
 
     # start virtual machine, if not already running
@@ -126,7 +132,7 @@ def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
     inv2_hdr['cal_max'] = np.nanmax(result_data)
     result_img = nb.Nifti1Image(result_data, inv2_affine, inv2_hdr)
 
-    outputs = {'result': result_img}
+    outputs = {'result': result_img if not return_filename else result_file}
 
     if save_data:
         save_volume(result_file, result_img)
