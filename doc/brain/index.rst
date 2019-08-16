@@ -9,3 +9,4 @@ Brain
    mgdm_segmentation
    extract_brain_region
    filter_stacking
+   dots_segmentation
