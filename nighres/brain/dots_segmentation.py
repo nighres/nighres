@@ -470,7 +470,7 @@ def dots_segmentation(tensorimg, mask, wm_atlas = 1, max_iter = 25,
         N_t = 23
         N_o = 50        
         print('N_t, N_o = '+str(N_t)+', '+str(N_o))
-        atlas_path = os.path.join(ATLAS_DIR, 'DOTS_atlas')
+        atlas_path = os.path.join(ATLAS_DIR, 'dots_atlas')
         fiber_p = nb.load(os.path.join(atlas_path,'fiber_p.nii.gz')).get_data()
         max_p = np.nanmax(fiber_p[:,:,:,2::], axis = 3)
         fiber_dir = nb.load(os.path.join(atlas_path, 'fiber_dir.nii.gz')
@@ -501,7 +501,7 @@ def dots_segmentation(tensorimg, mask, wm_atlas = 1, max_iter = 25,
         # 41-224 for overlapping tracts
         N_t = 41
         N_o = 185
-        atlas_path = os.path.join(ATLAS_DIR, 'DOTS_atlas')
+        atlas_path = os.path.join(ATLAS_DIR, 'dots_atlas')
         fiber_p = nb.load(os.path.join(atlas_path,'fiber_p.nii.gz')).get_data()
         max_p = np.nanmax(fiber_p[:,:,:,2::], axis = 3)
         fiber_dir = nb.load(os.path.join(atlas_path, 'fiber_dir.nii.gz')
