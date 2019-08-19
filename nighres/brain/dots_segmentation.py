@@ -4,11 +4,7 @@ import time
 import numpy as np
 import nibabel as nb
 from ..io import load_volume, save_volume
-from dipy.core.gradients import gradient_table
-from dipy.align.transforms import AffineTransform3D
-from dipy.align.imaffine import MutualInformationMetric, AffineRegistration
 from nighres.global_settings import ATLAS_DIR
-
 
 atlas_labels_1 = ['isotropic', 'other_WM', 'ATR_L', 'ATR_R', 'CC_front', 
                   'CC_post', 'CC_sup', 'CG_L', 'CG_R', 'CST_L', 'CST_R', 
@@ -386,6 +382,16 @@ def dots_segmentation(tensorimg, mask, wm_atlas = 1, max_iter = 25,
        matter tracts using an overlapping fiber model." Proceedings of the 
        International Workshop on Diffusion Modelling and Fiber Cup (2009)
     """
+    
+    # For external tools: dipy
+    try:
+        from dipy.core.gradients import gradient_table
+        from dipy.align.transforms import AffineTransform3D
+        from dipy.align.imaffine import MutualInformationMetric, AffineRegistration
+    except ImportError:
+        print('Error: Dipy could not be imported, it is required'
+                +' in order to run this module. \n (aborting)')
+        return None
     
     # Ignore runtime warnings that arise from trying to divide by 0/nan
     # and all nan slices
