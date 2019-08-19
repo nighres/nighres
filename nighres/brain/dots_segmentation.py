@@ -318,7 +318,7 @@ def calc_posterior_probability(l, U, wm_atlas, tract_pair_sets, g0 = None):
     return posterior_l
     
 
-def dots_segmentation(tensorimg, mask, wm_atlas = 1, max_iter = 25,
+def dots_segmentation(tensor_image, mask, wm_atlas = 1, max_iter = 25,
                       convergence_threshold = 0.002, g0 = 1/42, s_I = 1/42,
                       save_data = False, overwrite = False, output_dir = None, 
                       file_name = None):
@@ -329,7 +329,7 @@ def dots_segmentation(tensorimg, mask, wm_atlas = 1, max_iter = 25,
     
     Parameters
     ----------
-    tensorimg: niimg
+    tensor_image: niimg
         Input image containing the diffusion tensor coefficients in the
         following order: volumes 0-5: D11, D22, D33, D12, D13, D23
     mask: niimg
@@ -419,7 +419,7 @@ def dots_segmentation(tensorimg, mask, wm_atlas = 1, max_iter = 25,
     
     
     # Load tensor image
-    tensor_volume = load_volume(tensorimg).get_data()
+    tensor_volume = load_volume(tensor_image).get_data()
     
     
     # Load brain mask
@@ -428,7 +428,7 @@ def dots_segmentation(tensorimg, mask, wm_atlas = 1, max_iter = 25,
     
     # Get dimensions of diffusion data
     xs, ys, zs, _ = tensor_volume.shape
-    DWI_affine = load_volume(tensorimg).affine
+    DWI_affine = load_volume(tensor_image).affine
     
     
     # Calculate diffusion tensor eigenvalues and eigenvectors
