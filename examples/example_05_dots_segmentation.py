@@ -31,7 +31,7 @@ import nighres
 in_dir = os.path.join(os.getcwd(), 'nighres_examples/data_sets')
 out_dir = os.path.join(os.getcwd(), 'nighres_examples/dots_segmentation')
 nighres.data.download_DOTS_atlas()
-DTI_data, DTI_mask = nighres.data.download_DTI_2mm(in_dir)
+dataset = nighres.data.download_DTI_2mm(in_dir)
 
 ############################################################################
 # White matter segmentation
@@ -41,8 +41,8 @@ DTI_data, DTI_mask = nighres.data.download_DTI_2mm(in_dir)
 # to the full atlas by changing the value of the parameter 'wm_atlas' to 2. 
 # Please see documentation for details.
 
-dots_results = nighres.brain.dots_segmentation(tensorimg=DTI_data,
-                                               mask=DTI_mask,
+dots_results = nighres.brain.dots_segmentation(tensorimg=dataset['dti'],
+                                               mask=dataset['mask'],
                                                save_data=True,
                                                output_dir=out_dir,
                                                file_name='DOTS_results.nii.gz')
