@@ -41,7 +41,7 @@ dataset = nighres.data.download_DTI_2mm(in_dir)
 # to the full atlas by changing the value of the parameter 'wm_atlas' to 2. 
 # Please see documentation for details.
 
-dots_results = nighres.brain.dots_segmentation(tensorimg=dataset['dti'],
+dots_results = nighres.brain.dots_segmentation(tensor_image=dataset['dti'],
                                                mask=dataset['mask'],
                                                save_data=True,
                                                output_dir=out_dir,
