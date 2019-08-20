@@ -321,7 +321,7 @@ def calc_posterior_probability(l, U, wm_atlas, tract_pair_sets, g0 = None):
 def dots_segmentation(tensor_image, mask, wm_atlas = 1, max_iter = 25,
                       convergence_threshold = 0.002, g0 = 1/42, s_I = 1/42,
                       save_data = False, overwrite = False, output_dir = None, 
-                      file_name = None):
+                      file_name = None, atlas_file = None):
     """DOTS segmentation
 
     Segment major white matter tracts in diffusion tensor images using Diffusion
@@ -359,6 +359,8 @@ def dots_segmentation(tensor_image, mask, wm_atlas = 1, max_iter = 25,
     file_name: str, optional
         Desired base name for output files with file extension, suffixes will 
         be added.
+    atlas_file: str, optional
+        Path to atlas directory (default is stored in ATLAS_DIR)
 
     Returns
     ----------
@@ -383,6 +385,7 @@ def dots_segmentation(tensor_image, mask, wm_atlas = 1, max_iter = 25,
        International Workshop on Diffusion Modelling and Fiber Cup (2009)
     """
     
+    
     # For external tools: dipy
     try:
         from dipy.core.gradients import gradient_table
@@ -393,9 +396,16 @@ def dots_segmentation(tensor_image, mask, wm_atlas = 1, max_iter = 25,
                 +' in order to run this module. \n (aborting)')
         return None
     
+    
+    # In case of non-default atlas location
+    if atlas_file is not None:
+      ATLAS_DIR = atlas_file
+    
+    
     # Ignore runtime warnings that arise from trying to divide by 0/nan
     # and all nan slices
     np.seterr(divide = 'ignore', invalid = 'ignore')
+    
     
     # Define the scalar constant c_I
     c_I = 1/2    
