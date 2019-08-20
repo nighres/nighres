@@ -94,7 +94,7 @@ newcolors[N_t::,:] = np.ones(newcolors[N_t::,:].shape)
 newcmp = ListedColormap(newcolors)
 
 # Calculate FA
-tensor_volume = nb.load(in_dir + 'DTI_2mm.nii.gz').get_data()
+tensor_volume = nb.load(os.path.join(in_dir, 'DTI_2mm/DTI_2mm.nii.gz')).get_data()
 xs, ys, zs, _ = tensor_volume.shape
 tenfit = np.zeros((xs, ys, zs, 3, 3))
 tenfit[:,:,:,0,0] = tensor_volume[:,:,:,0]
@@ -124,7 +124,7 @@ for i in range(3):
     ax[i].set_xticks([])
     ax[i].set_yticks([])
 fig.tight_layout()
-fig.savefig('CST_posterior11.png')
+fig.savefig('CST_posterior.png')
 plt.show()
 
 ############################################################################
