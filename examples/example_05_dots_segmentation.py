@@ -124,7 +124,7 @@ for i in range(3):
     ax[i].set_xticks([])
     ax[i].set_yticks([])
 fig.tight_layout()
-fig.savefig('CST_posterior.png')
+fig.savefig('segmentation.png')
 plt.show()
 
 ############################################################################
