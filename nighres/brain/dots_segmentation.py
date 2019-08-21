@@ -4,7 +4,7 @@ import time
 import numpy as np
 import nibabel as nb
 from ..io import load_volume, save_volume
-from nighres.global_settings import ATLAS_DIR
+
 
 atlas_labels_1 = ['isotropic', 'other_WM', 'ATR_L', 'ATR_R', 'CC_front', 
                   'CC_post', 'CC_sup', 'CG_L', 'CG_R', 'CST_L', 'CST_R', 
@@ -398,8 +398,9 @@ def dots_segmentation(tensor_image, mask, wm_atlas = 1, max_iter = 25,
     
     
     # In case of non-default atlas location
-    if atlas_file is not None:
-      ATLAS_DIR = atlas_file
+    from nighres.global_settings import ATLAS_DIR
+    if atlas_file is None:
+        atlas_file = ATLAS_DIR
     
     
     # Ignore runtime warnings that arise from trying to divide by 0/nan
@@ -480,7 +481,7 @@ def dots_segmentation(tensor_image, mask, wm_atlas = 1, max_iter = 25,
         N_t = 23
         N_o = 50        
         print('N_t, N_o = '+str(N_t)+', '+str(N_o))
-        atlas_path = os.path.join(ATLAS_DIR, 'dots_atlas')
+        atlas_path = os.path.join(atlas_file, 'dots_atlas')
         fiber_p = nb.load(os.path.join(atlas_path,'fiber_p.nii.gz')).get_data()
         max_p = np.nanmax(fiber_p[:,:,:,2::], axis = 3)
         fiber_dir = nb.load(os.path.join(atlas_path, 'fiber_dir.nii.gz')
@@ -511,7 +512,7 @@ def dots_segmentation(tensor_image, mask, wm_atlas = 1, max_iter = 25,
         # 41-224 for overlapping tracts
         N_t = 41
         N_o = 185
-        atlas_path = os.path.join(ATLAS_DIR, 'dots_atlas')
+        atlas_path = os.path.join(atlas_file, 'dots_atlas')
         fiber_p = nb.load(os.path.join(atlas_path,'fiber_p.nii.gz')).get_data()
         max_p = np.nanmax(fiber_p[:,:,:,2::], axis = 3)
         fiber_dir = nb.load(os.path.join(atlas_path, 'fiber_dir.nii.gz')
