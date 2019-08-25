@@ -455,14 +455,16 @@ def dots_segmentation(tensor_image, mask, wm_atlas = 1, max_iter = 25,
     tenfit[:,:,:,2,1] = tensor_volume[:,:,:,5]
     tenfit[np.isnan(tenfit)] = 0
     evals, evecs = np.linalg.eig(tenfit)
-    idx = np.flip(np.argsort(evals, axis = 3), axis = 3)
-    evals = np.flip(np.sort(evals, axis = 3), axis = 3)
+    evals, evecs = np.real(evals), np.real(evecs)
     for i in range(xs):
         for j in range(ys):
             for k in range(zs):
-                evecs[i,j,k,:,:] = evecs[i,j,k,:,idx[i,j,k,:]]
+                idx = np.argsort(evals[i,j,k,:])[::-1]
+                evecs[i,j,k,:,:] = evecs[i,j,k,:,idx]
+                evals[i,j,k,:] = evals[i,j,k,idx]           
     evals[~brain_mask] = 0
     evecs[~brain_mask] = 0
+
 
     # Calculate FA
     R = tenfit / np.trace(tenfit, axis1=3, axis2=4)[:,:,:,np.newaxis,np.newaxis]
