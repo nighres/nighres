@@ -460,7 +460,7 @@ def dots_segmentation(tensor_image, mask, wm_atlas = 1, max_iter = 25,
         for j in range(ys):
             for k in range(zs):
                 idx = np.argsort(evals[i,j,k,:])[::-1]
-                evecs[i,j,k,:,:] = evecs[i,j,k,:,idx]
+                evecs[i,j,k,:,:] = evecs[i,j,k,:,idx].T
                 evals[i,j,k,:] = evals[i,j,k,idx]           
     evals[~brain_mask] = 0
     evecs[~brain_mask] = 0
