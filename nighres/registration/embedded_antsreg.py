@@ -3,6 +3,7 @@ import os
 import sys
 import subprocess
 from glob import glob
+import math
 
 # main dependencies: numpy, nibabel
 import numpy as np
@@ -138,6 +139,7 @@ def embedded_antsreg_2d(source_image, target_image,
                     run_syn=True,
                     coarse_iterations=40,
                     medium_iterations=50, fine_iterations=40,
+                    scaling_factor=32,
 					cost_function='MutualInformation',
 					interpolation='NearestNeighbor',
 					regularization='High',
@@ -440,6 +442,22 @@ def embedded_antsreg_2d(source_image, target_image,
     srcfile = source.get_filename()
     trgfile = target.get_filename()
 
+    # figure out the number of scales, going with a factor of two
+    n_scales = math.ceil(math.log(scaling_factor)/math.log(2.0))
+    iter_rigid = str(rigid_iterations)
+    iter_affine = str(affine_iterations)
+    iter_syn = str(coarse_iterations)
+    smooth = str(scaling_factor)
+    shrink = str(scaling_factor)
+    for n in range(n_scales):
+        iter_rigid = iter_rigid+'x'+str(rigid_iterations)
+        iter_affine = iter_affine+'x'+str(affine_iterations)
+        if n<n_scales/2: iter_syn = iter_syn+'x'+str(coarse_iterations)
+        elif n<n_scales-1: iter_syn = iter_syn+'x'+str(medium_iterations)
+        else: iter_syn = iter_syn+'x'+str(fine_iterations)
+        smooth = smooth+'x'+str(scaling_factor/math.pow(2.0,n+1))
+        shrink = shrink+'x'+str(math.ceil(scaling_factor/math.pow(2.0,n+1)))
+
     # set parameters for all the different types of transformations
     if run_rigid is True:
         reg = reg + ' --transform Rigid[0.1]'
@@ -450,12 +468,10 @@ def embedded_antsreg_2d(source_image, target_image,
             reg = reg + ' --metric MI['+trgfile+', '+srcfile \
                             +', '+'1.0, 32, Random, 0.3 ]'
             
-        reg = reg + ' --convergence ['+str(rigid_iterations)+'x' \
-                    +str(rigid_iterations)+'x'+str(rigid_iterations)  \
-                    +', '+str(convergence)+', 10 ]'
+        reg = reg + ' --convergence ['+iter_rigid+', '+str(convergence)+', 10 ]'
                     
-        reg = reg + ' --smoothing-sigmas 3.0x2.0x1.0'
-        reg = reg + ' --shrink-factors 4x2x1'
+        reg = reg + ' --smoothing-sigmas '+smooth
+        reg = reg + ' --shrink-factors '+shrink
         reg = reg + ' --use-histogram-matching 0'
         reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
@@ -468,12 +484,10 @@ def embedded_antsreg_2d(source_image, target_image,
             reg = reg + ' --metric MI['+trgfile+', '+srcfile \
                             +', '+'1.0, 32, Random, 0.3 ]'
             
-        reg = reg + ' --convergence ['+str(affine_iterations)+'x' \
-                    +str(affine_iterations)+'x'+str(affine_iterations)  \
-                    +', '+str(convergence)+', 10 ]'
+        reg = reg + ' --convergence ['+iter_affine+', '+str(convergence)+', 10 ]'
                     
-        reg = reg + ' --smoothing-sigmas 3.0x2.0x1.0'
-        reg = reg + ' --shrink-factors 4x2x1'
+        reg = reg + ' --smoothing-sigmas '+smooth
+        reg = reg + ' --shrink-factors '+shrink
         reg = reg + ' --use-histogram-matching 0'
         reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
@@ -491,15 +505,10 @@ def embedded_antsreg_2d(source_image, target_image,
             reg = reg + ' --metric MI['+trgfile+', '+srcfile \
                             +', '+'1.0, 32, Random, 0.3 ]'
             
-        reg = reg + ' --convergence ['+str(coarse_iterations)+'x' \
-                    +str(coarse_iterations)+'x'+str(coarse_iterations)+'x' \
-                    +str(coarse_iterations)+'x' \
-                    +str(medium_iterations)+'x'  \
-                    +str(fine_iterations)+', '+str(convergence)+', 5 ]'
+        reg = reg + ' --convergence ['+iter_syn+', '+str(convergence)+', 5 ]'
                     
-#        reg = reg + ' --smoothing-sigmas 4.0x2.0x1.0x0.5x0.0'
-        reg = reg + ' --smoothing-sigmas 16.0x8.0x4.0x2.0x1.0x0.5'
-        reg = reg + ' --shrink-factors 32x16x8x4x2x1'
+        reg = reg + ' --smoothing-sigmas '+smooth
+        reg = reg + ' --shrink-factors '+shrink
         reg = reg + ' --use-histogram-matching 0'
         reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
         
@@ -1261,6 +1270,7 @@ def embedded_antsreg_multi(source_images, target_images,
     for trans_file in transformed_source_files:
         transformed.append(load_volume(trans_file)) 
     output = {'transformed_sources': transformed, 
+          'transformed_source': transformed[0], 
           'mapping': load_volume(mapping_file), 
           'inverse': load_volume(inverse_mapping_file)}
 

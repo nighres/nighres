@@ -227,12 +227,12 @@ def conditional_shape(target_images, structures, contrasts,
             #cspmax.mappedOptimalVolumeThreshold(2.0, 0.01, True)
             #cspmax.mappedOptimalVolumeThreshold(1.0, 0.5, True)
             # definitely too flat? or not enough?? cspmax.mappedOptimalVolumeThreshold(2.0, 0.1, True)
-            cspmax.mappedOptimalVolumeCertaintyThreshold(1.0)
+            cspmax.mappedOptimalVolumeCertaintyThreshold(3.0)
         else:    
             #cspmax.optimalVolumeThreshold(2.0, 0.01, True)
             #cspmax.optimalVolumeThreshold(1.0, 0.5, True)
             # definitely too flat? or not enough?? cspmax.optimalVolumeThreshold(2.0, 0.1, True)
-            cspmax.conditionalVolumeCertaintyThreshold(2.0)
+            cspmax.conditionalVolumeCertaintyThreshold(3.0)
             #cspmax.conditionalVolumeCertaintyGrowth(1.0)
         #else:
         #    if atlas_space is True and map_to_atlas is not None and map_to_target is not None:

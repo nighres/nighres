@@ -22,10 +22,10 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
 
     Parameters
     ----------
-    first_inversion: niimg
-        Magnitude image for the first inversion
-    second_inversion: niimg
-        Magnitude image for the second inversion, first echo
+    first_inversion: [niimg]
+        List of {magnitude, phase} images for the first inversion
+    second_inversion: [niimg]
+        List of {magnitude, phase} images for the second inversion
     t1map: niimg
         Quantitative T1 map image, in milliseconds
     r2smap: niimg
@@ -88,21 +88,21 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
 
     # make sure that saving related parameters are correct
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, first_inversion)
+        output_dir = _output_dir_4saving(output_dir, first_inversion[0])
 
         pd1_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
-                                   rootfile=first_inversion,
+                                   rootfile=first_inversion[0],
                                    suffix='qpd-inv1'))
 
         pd2_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
-                                   rootfile=first_inversion,
+                                   rootfile=first_inversion[0],
                                    suffix='qpd-inv2'))
 
         pd_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
-                                   rootfile=first_inversion,
+                                   rootfile=first_inversion[0],
                                    suffix='qpd-avg'))
 
         if overwrite is False \
@@ -137,7 +137,7 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     qpdmap.setCorrectB1inhomogeneities(b1map!=None)
      
     # load first image and use it to set dimensions and resolution
-    img = load_volume(first_inversion)
+    img = load_volume(first_inversion[0])
     data = img.get_data()
     #data = data[0:10,0:10,0:10]
     affine = img.affine
