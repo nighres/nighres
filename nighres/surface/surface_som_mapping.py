@@ -133,12 +133,12 @@ def surface_som_mapping(surface_mesh, mask_zeros=False,
     orig_data = np.reshape(np.array(algorithm.getMappedSurfaceValues(),
                                dtype=np.float32), (npt,2), 'F')
  
-#    som_points = np.reshape(np.array(algorithm.getMappedSurfacePoints(),
-#                               dtype=np.float32), (npt,3), 'C')
-#    som_faces = np.reshape(np.array(algorithm.getMappedSurfaceTriangles(),
-#                               dtype=np.int32), (nfc,3), 'C')
-#    som_data = np.reshape(np.array(algorithm.getMappedSurfaceValues(),
-#                               dtype=np.float32), (npt,2), 'C')
+    #    som_points = np.reshape(np.array(algorithm.getMappedSurfacePoints(),
+    #                               dtype=np.float32), (npt,3), 'C')
+    #    som_faces = np.reshape(np.array(algorithm.getMappedSurfaceTriangles(),
+    #                               dtype=np.int32), (nfc,3), 'C')
+    #    som_data = np.reshape(np.array(algorithm.getMappedSurfaceValues(),
+    #                               dtype=np.float32), (npt,2), 'C')
  
     npt2 = int(np.array(algorithm.getMappedSomPoints(), 
                 dtype=np.float32).shape[0]/3)

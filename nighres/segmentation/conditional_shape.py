@@ -11,7 +11,6 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def conditional_shape(target_images, structures, contrasts,
                       shape_atlas_probas=None, shape_atlas_labels=None, 
                       intensity_atlas_hist=None,
-                      atlas_space=False, adjust_volume=False,
                       map_to_atlas=None, map_to_target=None,
                       max_iterations=20, max_difference=0.01, ngb_size=4,
                       save_data=False, overwrite=False, output_dir=None,
@@ -34,11 +33,6 @@ def conditional_shape(target_images, structures, contrasts,
         Pre-computed shape atlas from the shape levelsets (replacing them)
     intensity_atlas_hist: niimg
         Pre-computed intensity atlas from the contrast images (replacing them)
-    atlas_space: bool
-        Whether to estimate the labeling in atlas space (default is False)
-    adjust_volume: bool
-        Whether to estimate the final segmentation based on volume optimization
-        (default is False)
     map_to_atlas: niimg
         Coordinate mapping from the target to the atlas (opt)
     map_to_target: niimg
@@ -193,7 +187,7 @@ def conditional_shape(target_images, structures, contrasts,
     print("load: "+str(os.path.join(output_dir,shape_atlas_labels)))
     ldata = load_volume(os.path.join(output_dir,shape_atlas_labels)).get_data()
     
-    if atlas_space is False and map_to_target is not None:
+    if map_to_target is not None:
         print("map atlas to subject")
         print("load: "+str(map_to_target))
         mdata =  load_volume(map_to_target).get_data()
@@ -205,41 +199,14 @@ def conditional_shape(target_images, structures, contrasts,
                                 nighresjava.JArray('int')(
                                 (ldata.flatten('F')).astype(int).tolist()))
 
-    if atlas_space is True and map_to_atlas is not None and map_to_target is not None:
-        print("map subject to atlas")
-        print("load: "+str(map_to_atlas))
-        mdata =  load_volume(map_to_atlas).get_data()
-        cspmax.setMappingToAtlas(nighresjava.JArray('float')(
-                                            (mdata.flatten('F')).astype(float)))
-        print("load: "+str(map_to_target))
-        mdata =  load_volume(map_to_target).get_data()
-        cspmax.setMappingToTarget(nighresjava.JArray('float')(
-                                            (mdata.flatten('F')).astype(float)))
-
     # execute
     try:
         cspmax.estimateTarget()
         cspmax.strictSimilarityDiffusion(ngb_size)
         #cspmax.fastSimilarityDiffusion(ngb_size)
-        #cspmax.collapseConditionalMaps()
-        #if adjust_volume:
-        if atlas_space is True and map_to_atlas is not None and map_to_target is not None:
-            #cspmax.mappedOptimalVolumeThreshold(2.0, 0.01, True)
-            #cspmax.mappedOptimalVolumeThreshold(1.0, 0.5, True)
-            # definitely too flat? or not enough?? cspmax.mappedOptimalVolumeThreshold(2.0, 0.1, True)
-            cspmax.mappedOptimalVolumeCertaintyThreshold(3.0)
-        else:    
-            #cspmax.optimalVolumeThreshold(2.0, 0.01, True)
-            #cspmax.optimalVolumeThreshold(1.0, 0.5, True)
-            # definitely too flat? or not enough?? cspmax.optimalVolumeThreshold(2.0, 0.1, True)
-            cspmax.conditionalVolumeCertaintyThreshold(3.0)
-            #cspmax.conditionalVolumeCertaintyGrowth(1.0)
-        #else:
-        #    if atlas_space is True and map_to_atlas is not None and map_to_target is not None:
-        #        cspmax.mappedOptimalCertaintyThreshold()
-        #    else:    
-        #        #cspmax.optimalVolumeThreshold(1.0, 0.05, True)
-        #        cspmax.optimalCertaintyThreshold()
+        
+        cspmax.conditionalVolumeCertaintyThreshold(3.0)
+        
         cspmax.collapseSpatialPriorMaps()
         cspmax.collapseConditionalMaps()
 
@@ -256,9 +223,8 @@ def conditional_shape(target_images, structures, contrasts,
     dims_ngb = (dimensions[0],dimensions[1],dimensions[2],ngb_size)
     dims3Dtrg = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2])
 
-    if atlas_space is False or (map_to_atlas is None and map_to_target is None):
-        dims3D = dims3Dtrg
-        dims_ngb = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2],ngb_size)
+    dims3D = dims3Dtrg
+    dims_ngb = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2],ngb_size)
 
     intens_dims = (structures+1,structures+1,contrasts)
 
@@ -327,7 +293,6 @@ def conditional_shape(target_images, structures, contrasts,
 
 def conditional_shape_atlasing(subjects, structures, contrasts,
                       levelset_images=None, contrast_images=None,
-                      histograms=True, map_to_atlas=None,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Conditioanl Shape Parcellation Atlasing
@@ -346,10 +311,6 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
         Atlas shape levelsets indexed by (subjects,structures)
     contrast_images: [niimg]
         Atlas images to use in the parcellation, indexed by (subjects, contrasts)
-    histograms: bool
-        Whether to use complete histograms for intensity priors (default is True)
-    map_to_atlas: niimg
-        Coordinate mapping from the target to the atlas (opt)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -418,11 +379,8 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
             print("skip computation (use existing results)")
             output = {'max_spatial_proba': load_volume(spatial_proba_file), 
                       'max_spatial_label': load_volume(spatial_label_file)}
-            if histograms:
-                output.update(cond_hist=load_volume(condhist_file))
-            else:
-                output.update(cond_mean=load_volume(condmean_file)) 
-                output.update(cond_stdv=load_volume(condstdv_file))
+            output.update(cond_hist=load_volume(condhist_file))
+
             return output
 
 
@@ -451,23 +409,11 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
     cspmax.setTargetDimensions(trg_dimensions[0], trg_dimensions[1], trg_dimensions[2])
     cspmax.setTargetResolutions(trg_resolution[0], trg_resolution[1], trg_resolution[2])
 
-    if map_to_atlas is not None:
-        img = load_volume(map_to_atlas[0])
-        data = img.get_data()
-        header = img.get_header()
-        affine = img.get_affine()
-        resolution = [x.item() for x in header.get_zooms()]
-        dimensions = data.shape
+    resolution = trg_resolution
+    dimensions = trg_dimensions
         
-        cspmax.setAtlasDimensions(dimensions[0], dimensions[1], dimensions[2])
-        cspmax.setAtlasResolutions(resolution[0], resolution[1], resolution[2])
-    else:
-        resolution = trg_resolution
-        dimensions = trg_dimensions
-        
-        cspmax.setAtlasDimensions(dimensions[0], dimensions[1], dimensions[2])
-        cspmax.setAtlasResolutions(resolution[0], resolution[1], resolution[2])
-        
+    cspmax.setAtlasDimensions(dimensions[0], dimensions[1], dimensions[2])
+    cspmax.setAtlasResolutions(resolution[0], resolution[1], resolution[2])
     
     # load the atlas structures and contrasts, if needed
     for sub in range(subjects):
@@ -482,21 +428,9 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
             data = load_volume(contrast_images[sub][contrast]).get_data()
             cspmax.setContrastImageAt(sub, contrast, nighresjava.JArray('float')(
                                                 (data.flatten('F')).astype(float)))
-    if map_to_atlas is not None:
-        print("map subjects to atlas")
-        for sub in range(subjects):
-            print("load: "+str(map_to_atlas[sub]))
-            mdata =  load_volume(map_to_atlas[sub]).get_data()
-            cspmax.setMappingImageAt(sub, nighresjava.JArray('float')(
-                                            (mdata.flatten('F')).astype(float)))
-
     # execute
     try:
-        #cspmax.execute()
-        if map_to_atlas is not None: 
-            cspmax.computeMappedAtlasPriors()
-        else:
-            cspmax.computeAtlasPriors()
+        cspmax.computeAtlasPriors()
  
     except:
         # if the Java module fails, reraise the error it throws
@@ -518,15 +452,8 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
     spatial_label_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityLabels(dimensions[3]),
                                     dtype=np.int32), dimensions, 'F')    
 
-    if histograms:
-        intens_hist_data = np.reshape(np.array(cspmax.getConditionalHistogram(),
+    intens_hist_data = np.reshape(np.array(cspmax.getConditionalHistogram(),
                                        dtype=np.float32), intens_hist_dims, 'F')
-    else:
-        intens_mean_data = np.reshape(np.array(cspmax.getConditionalMean(),
-                                       dtype=np.float32), intens_dims, 'F')
-    
-        intens_stdv_data = np.reshape(np.array(cspmax.getConditionalStdv(),
-                                        dtype=np.float32), intens_dims, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -536,25 +463,14 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
     header['cal_max'] = np.nanmax(spatial_label_data)
     spatial_label = nb.Nifti1Image(spatial_label_data, affine, header)
 
-    if histograms:
-        chist = nb.Nifti1Image(intens_hist_data, None, None)
-    else:
-        cmean = nb.Nifti1Image(intens_mean_data, None, None)
-        cstdv = nb.Nifti1Image(intens_stdv_data, None, None)
+    chist = nb.Nifti1Image(intens_hist_data, None, None)
 
     if save_data:
         save_volume(spatial_proba_file, spatial_proba)
         save_volume(spatial_label_file, spatial_label)
-        if histograms:
-            save_volume(condhist_file, chist)
-        else:
-            save_volume(condmean_file, cmean)
-            save_volume(condstdv_file, cstdv)
+        save_volume(condhist_file, chist)
 
     output= {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label}
-    if histograms:
-        output.update(cond_hist=chist)
-    else:
-        output.update(cond_mean=cmean) 
-        output.update(cond_stdv=cstdv)
+    output.update(cond_hist=chist)
+
     return output
