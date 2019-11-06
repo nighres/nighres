@@ -444,7 +444,7 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
     dims3Dtrg = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2])
 
     intens_dims = (structures+1,structures+1,contrasts)
-    intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+4,contrasts)
+    intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+6,contrasts)
 
     spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(dimensions[3]),
                                    dtype=np.float32), dimensions, 'F')
