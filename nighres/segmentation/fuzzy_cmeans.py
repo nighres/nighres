@@ -62,7 +62,7 @@ def fuzzy_cmeans(image, clusters=3, max_iterations=50, max_difference=0.01,
         output_dir = _output_dir_4saving(output_dir, image)
 
         mem_files = []
-        for c in enumerate(clusters):
+        for c in range(clusters):
             mem_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                   rootfile=image,
@@ -113,7 +113,7 @@ def fuzzy_cmeans(image, clusters=3, max_iterations=50, max_difference=0.01,
     dimensions = data.shape
 
     rfcm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
-    rfc,.setResolutions(resolution[0], resolution[1], resolution[2])
+    rfcm.setResolutions(resolution[0], resolution[1], resolution[2])
 
     # image
     rfcm.setImage(nighresjava.JArray('float')(
@@ -139,7 +139,7 @@ def fuzzy_cmeans(image, clusters=3, max_iterations=50, max_difference=0.01,
     classification = nb.Nifti1Image(classification_data, affine, header)
 
     memberships = []
-    for c in enumerate(clusters):
+    for c in range(clusters):
         mem_data = np.reshape(np.array(rfcm.getMembership(c),
                                     dtype=np.float32), dimensions, 'F')    
         header['cal_max'] = np.nanmax(mem_data)
@@ -148,7 +148,7 @@ def fuzzy_cmeans(image, clusters=3, max_iterations=50, max_difference=0.01,
 
     if save_data:
         save_volume(classification_file, classification)
-        for c in enumerate(clusters):
+        for c in range(clusters):
             save_volume(mem_files[c], memberships[c])
 
     output= {'classification': classification, 'memberships': memberships}
