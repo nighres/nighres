@@ -205,7 +205,8 @@ def conditional_shape(target_images, structures, contrasts,
         cspmax.strictSimilarityDiffusion(ngb_size)
         #cspmax.fastSimilarityDiffusion(ngb_size)
         
-        cspmax.conditionalVolumeCertaintyThreshold(3.0)
+        #cspmax.conditionalVolumeCertaintyThreshold(3.0)
+        cspmax.conditionalBoundaryGrowth(3.0)
         
         cspmax.collapseSpatialPriorMaps()
         cspmax.collapseConditionalMaps()
@@ -329,8 +330,6 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
 
         * max_spatial_proba (niimg): Maximum spatial probability map (_cspmax-sproba)
         * max_spatial_label (niimg): Maximum spatial probability labels (_cspmax-slabel)
-        * cond_mean (niimg): Conditional intensity mean (_cspmax-cmean)
-        * cond_stdv (niimg): Conditional intensity stdv (_cspmax-cstdv)
         * cond_hist (niimg): Conditional intensity histograms (_cspmax-chist)
 
     Notes
@@ -372,14 +371,12 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
         if overwrite is False \
             and os.path.isfile(spatial_proba_file) \
             and os.path.isfile(spatial_label_file) \
-            and ( (histograms and os.path.isfile(condhist_file)) \
-            or (os.path.isfile(condmean_file) \
-            and os.path.isfile(condstdv_file)) ):
+            and os.path.isfile(condhist_file):
             
             print("skip computation (use existing results)")
             output = {'max_spatial_proba': load_volume(spatial_proba_file), 
-                      'max_spatial_label': load_volume(spatial_label_file)}
-            output.update(cond_hist=load_volume(condhist_file))
+                      'max_spatial_label': load_volume(spatial_label_file),
+                      'cond_hist': load_volume(condhist_file)}
 
             return output
 
@@ -470,7 +467,6 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
         save_volume(spatial_label_file, spatial_label)
         save_volume(condhist_file, chist)
 
-    output= {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label}
-    output.update(cond_hist=chist)
-
+    output= {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 'cond_hist': chist}
+    
     return output
