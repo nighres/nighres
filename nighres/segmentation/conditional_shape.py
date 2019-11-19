@@ -206,7 +206,8 @@ def conditional_shape(target_images, structures, contrasts,
         #cspmax.fastSimilarityDiffusion(ngb_size)
         
         #cspmax.conditionalVolumeCertaintyThreshold(3.0)
-        cspmax.conditionalBoundaryGrowth(3.0)
+        #cspmax.conditionalBoundaryGrowth(3.0)
+        cspmax.conditionalObjectBoundaryGrowth(3.0)
         
         cspmax.collapseSpatialPriorMaps()
         cspmax.collapseConditionalMaps()
