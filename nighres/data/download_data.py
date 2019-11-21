@@ -116,15 +116,18 @@ def download_DTI_2mm(data_dir, overwrite=False):
             'mask': file_targets[1]} 
            
            
-def download_DOTS_atlas(overwrite=False):
+def download_DOTS_atlas(data_dir, overwrite=False):
     """
     Downloads the statistical atlas presented in [1]_
 
     Parameters
     ----------
+    data_dir: str
+        Writeable directory in which downloaded atlas files should be stored. A
+        subdirectory called 'DOTS_atlas' will be created in this location.
     overwrite: bool
         Overwrite existing files in the same exact path (default is False)
-
+        
     Returns
     ----------
     dict
@@ -140,7 +143,8 @@ def download_DOTS_atlas(overwrite=False):
            DOI: 10.1016/j.neuroimage.2011.06.020
     """
 
-    data_dir = os.path.join(ATLAS_DIR, 'dots_atlas')
+    data_dir = os.path.join(data_dir, 'DOTS_atlas')
+    
     if not os.path.isdir(data_dir):
         os.makedirs(data_dir)
 
