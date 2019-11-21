@@ -134,7 +134,7 @@ def download_DOTS_atlas(data_dir, overwrite=False):
         Dictionary with keys pointing to the location of the downloaded files
 
         * fiber_p : path to atlas probability image
-        * fiber_dir : path to atlas direction mask
+        * fiber_dir : path to atlas direction image
 
     References
     ----------
