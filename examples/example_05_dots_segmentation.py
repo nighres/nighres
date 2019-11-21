@@ -30,7 +30,8 @@ import nighres
 
 in_dir = os.path.join(os.getcwd(), 'nighres_examples/data_sets')
 out_dir = os.path.join(os.getcwd(), 'nighres_examples/dots_segmentation')
-nighres.data.download_DOTS_atlas()
+atlas_dir = os.path.join(os.getcwd(), 'nighres_examples')
+nighres.data.download_DOTS_atlas(atlas_dir)
 dataset = nighres.data.download_DTI_2mm(in_dir)
 
 ############################################################################
@@ -43,23 +44,25 @@ dataset = nighres.data.download_DTI_2mm(in_dir)
 
 dots_results = nighres.brain.dots_segmentation(tensor_image=dataset['dti'],
                                                mask=dataset['mask'],
+                                               atlas_dir=atlas_dir,
                                                save_data=True,
                                                output_dir=out_dir,
-                                               file_name='DOTS_results.nii.gz')
+                                               file_name='example')
 segmentation = dots_results['segmentation']
+posterior = dots_results['posterior']
 energy = dots_results['energy']
 
 ############################################################################
-# .. tip:: the parameter s_I controls how isotropic label energies propagate 
-#    to their neighborhood and can have a significant effect on tract volume.
-#    Similarly, the value of the parameter convergence_threshold has an effect
-#    on the results. Experiment with changin their values.
+# .. tip:: the parameter values of the DOTS algorithm can have a significant 
+#    effect on segmentation results. Experiment with changing their values to
+#    obtain optimal results.
 
 #############################################################################
 # Interpretation of results
 # -------------------------
-# The integers in the segmentation array correspond to the tracts specified in
-# atlas_labels_1 (in case of using wm_atlas 1) which can be imported as follows
+# The integers in the segmentation array and the fourth dimension of the 
+# posterior array correspond to the tracts specified in atlas_labels_1 (in 
+# case of using wm_atlas 1) which can be imported as follows
 
 from nighres.brain.dots_segmentation import atlas_labels_1
 
@@ -69,7 +72,7 @@ from nighres.brain.dots_segmentation import atlas_labels_1
 # We can visualize the segmented tracts overlaid on top of a fractional 
 # anisotropy map. Let's first import the necessary modules and define a
 # colormap. Then, we calculate the FA map and show the tracts. Let's also
-# calculate a posterior probability and show an individual tract.
+# show the posterior probability distribution of an individual tract.
 
 import numpy as np
 import nibabel as nb
@@ -79,12 +82,12 @@ from matplotlib.colors import ListedColormap
 
 # This defines the following colormap
 # transparent = isotropic
-# semi-transparent red = other white matter
+# semi-transparent red = unclassified white matter
 # opaque colours = individual tracts
 # white = overlapping tracts
 
-N_t = 23
-N_o = 50
+N_t = 23 # 41 if using atlas 2
+N_o = 50 # 185 is using atlas 2
 newcolors = np.zeros((N_t + N_o, 4))
 newcolors[0,:] = np.array([.2, .2, .2, 0])
 newcolors[1,:] = np.array([1, 0, 0, .25])
@@ -114,8 +117,8 @@ FA[np.isnan(FA)] = 0
 
 # Show segmentation
 fig, ax = plt.subplots(1, 3, figsize=(28,5))
-ax[0].imshow(np.rot90(FA[:,55,:]), cmap = 'gray', vmin = 0, vmax = 1)
-ax[0].imshow(np.rot90(segmentation[:,55,:]), cmap=newcmp, alpha=.9)
+ax[0].imshow(np.rot90(FA[:,60,:]), cmap = 'gray', vmin = 0, vmax = 1)
+ax[0].imshow(np.rot90(segmentation[:,60,:]), cmap=newcmp, alpha=.9)
 ax[1].imshow(np.rot90(FA[:,:,30]), cmap = 'gray', vmin = 0, vmax = 1)
 ax[1].imshow(np.rot90(segmentation[:,:,30]), cmap=newcmp, alpha=.9)
 ax[2].imshow(np.rot90(FA[60,:,:]), cmap = 'gray', vmin = 0, vmax = 1)
@@ -131,32 +134,15 @@ plt.show()
 # .. image:: ../_static/dots_hard_segmentation.png
 #############################################################################
 
-#############################################################################
-# Visualization of posterior probabilities
-# ----------------------------------------
-# We can visualize the posterior probability of a tract of interest in the 
-# following way. First, let's import the array tract_pair_sets_1 (or 2 in case
-# of using wm_atlas 2). Then, let's import and run the function 
-# calc_posterior_probability
-
-from nighres.brain.dots_segmentation import tract_pair_sets_1
-from nighres.brain.dots_segmentation import calc_posterior_probability
-
-# Select the corticospinal tract in the right hemisphere
-tract_idx = 10
-
-# Calculate posterior probability 
-p_l = calc_posterior_probability(tract_idx, energy, 1, tract_pair_sets_1)
-
-# Show results
-p_l[p_l == 0] = np.nan
+# Show posterior probability of the left corticospinal tract
+tract_idx = 9
 fig, ax = plt.subplots(1, 3, figsize=(28,5))
-ax[0].imshow(np.rot90(FA[:,55,:]), cmap = 'gray', vmin = 0, vmax = 1)
-ax[0].imshow(np.rot90(p_l[:,55,:]), alpha = .75)
+ax[0].imshow(np.rot90(FA[:,60,:]), cmap = 'gray', vmin = 0, vmax = 1)
+ax[0].imshow(np.rot90(posterior[:,60,:,tract_idx]), alpha = .75)
 ax[1].imshow(np.rot90(FA[:,:,30]), cmap = 'gray', vmin = 0, vmax = 1)
-ax[1].imshow(np.rot90(p_l[:,:,30]), alpha=.75)
-ax[2].imshow(np.rot90(FA[60,:,:]), cmap = 'gray', vmin = 0, vmax = 1)
-ax[2].imshow(np.rot90(p_l[60,:,:]), alpha=.75)
+ax[1].imshow(np.rot90(posterior[:,:,30,tract_idx]), alpha=.75)
+ax[2].imshow(np.rot90(FA[75,:,:]), cmap = 'gray', vmin = 0, vmax = 1)
+ax[2].imshow(np.rot90(posterior[75,:,:,tract_idx]), alpha=.75)
 for i in range(3):
     ax[i].set_xticks([])
     ax[i].set_yticks([])
