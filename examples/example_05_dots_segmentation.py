@@ -53,7 +53,7 @@ posterior = dots_results['posterior']
 energy = dots_results['energy']
 
 ############################################################################
-# .. tip:: the parameter values of the DOTS algorithm can have a significant 
+# .. tip:: The parameter values of the DOTS algorithm can have a significant 
 #    effect on segmentation results. Experiment with changing their values to
 #    obtain optimal results.
 
