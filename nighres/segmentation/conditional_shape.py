@@ -72,6 +72,9 @@ def conditional_shape(target_images, structures, contrasts,
 
     print('\nConditional Shape Parcellation')
 
+    # check topology_lut_dir and set default if not given
+    topology_lut_dir = _check_topology_lut_dir(None)
+
     # make sure that saving related parameters are correct
     if save_data:
         output_dir = _output_dir_4saving(output_dir, target_images[0])
@@ -206,11 +209,12 @@ def conditional_shape(target_images, structures, contrasts,
         #cspmax.fastSimilarityDiffusion(ngb_size)
         
         #cspmax.conditionalVolumeCertaintyThreshold(3.0)
-        #cspmax.conditionalBoundaryGrowth(3.0)
-        cspmax.conditionalObjectBoundaryGrowth(3.0)
         
         cspmax.collapseSpatialPriorMaps()
         cspmax.collapseConditionalMaps()
+        
+        cspmax.topologyObjectDefinition("18/6", topology_lut_dir)
+        cspmax.conditionalCollapsedVolumeGrowth(3.0)
 
     except:
         # if the Java module fails, reraise the error it throws
