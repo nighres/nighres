@@ -208,13 +208,13 @@ def conditional_shape(target_images, structures, contrasts,
         cspmax.strictSimilarityDiffusion(ngb_size)
         #cspmax.fastSimilarityDiffusion(ngb_size)
         
-        #cspmax.conditionalVolumeCertaintyThreshold(3.0)
+        cspmax.conditionalVolumeCertaintyThreshold(3.0)
         
         cspmax.collapseSpatialPriorMaps()
         cspmax.collapseConditionalMaps()
         
-        cspmax.topologyObjectDefinition("18/6", topology_lut_dir)
-        cspmax.conditionalCollapsedVolumeGrowth(3.0)
+        #cspmax.topologyObjectDefinition("26/6", topology_lut_dir)
+        #cspmax.conditionalCollapsedVolumeGrowth(3.0)
 
     except:
         # if the Java module fails, reraise the error it throws
