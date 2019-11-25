@@ -208,15 +208,17 @@ def conditional_shape(target_images, structures, contrasts,
         cspmax.strictSimilarityDiffusion(ngb_size)
         #cspmax.fastSimilarityDiffusion(ngb_size)
         
+        cspmax.collapseToJointMaps()
+        
         cspmax.precomputeStoppingStatistics(3.0)
         
-        cspmax.topologyBoundaryDefinition("26/6", topology_lut_dir)
+        cspmax.topologyBoundaryDefinition("wcs", topology_lut_dir)
         
         #cspmax.conditionalVolumeCertaintyThreshold(3.0)
         cspmax.conditionalPrecomputedVolumeGrowth(3.0)
         
         cspmax.collapseSpatialPriorMaps()
-        cspmax.collapseConditionalMaps()
+        #cspmax.collapseConditionalMaps()
         
         #cspmax.topologyObjectDefinition("26/6", topology_lut_dir)
         #cspmax.conditionalCollapsedVolumeGrowth(3.0)
@@ -242,16 +244,22 @@ def conditional_shape(target_images, structures, contrasts,
     intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+4,contrasts)
 
     spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(1),
-                                   dtype=np.float32), dims3D, 'F')
+                                   dtype=np.float32), dims3Dtrg, 'F')
 
     spatial_label_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityLabels(1),
-                                    dtype=np.int32), dims3D, 'F')    
+                                    dtype=np.int32), dims3Dtrg, 'F')    
 
-    combined_proba_data = np.reshape(np.array(cspmax.getBestProbabilityMaps(1),
-                                   dtype=np.float32), dims3D, 'F')
+#    combined_proba_data = np.reshape(np.array(cspmax.getBestProbabilityMaps(1),
+#                                   dtype=np.float32), dims3Dtrg, 'F')
+#
+#    combined_label_data = np.reshape(np.array(cspmax.getBestProbabilityLabels(1),
+#                                    dtype=np.int32), dims3Dtrg, 'F')
 
-    combined_label_data = np.reshape(np.array(cspmax.getBestProbabilityLabels(1),
-                                    dtype=np.int32), dims3D, 'F')
+    combined_proba_data = np.reshape(np.array(cspmax.getJointProbabilityMaps(1),
+                                   dtype=np.float32), dims3Dtrg, 'F')
+
+    combined_label_data = np.reshape(np.array(cspmax.getJointProbabilityLabels(1),
+                                    dtype=np.int32), dims3Dtrg, 'F')
 
     proba_data = np.reshape(np.array(cspmax.getFinalProba(),
                                    dtype=np.float32), dims3Dtrg, 'F')
@@ -265,16 +273,16 @@ def conditional_shape(target_images, structures, contrasts,
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
     header['cal_max'] = np.nanmax(spatial_proba_data)
-    spatial_proba = nb.Nifti1Image(spatial_proba_data, affine, header)
+    spatial_proba = nb.Nifti1Image(spatial_proba_data, trg_affine, trg_header)
 
     header['cal_max'] = np.nanmax(spatial_label_data)
-    spatial_label = nb.Nifti1Image(spatial_label_data, affine, header)
+    spatial_label = nb.Nifti1Image(spatial_label_data, trg_affine, trg_header)
 
     header['cal_max'] = np.nanmax(combined_proba_data)
-    combined_proba = nb.Nifti1Image(combined_proba_data, affine, header)
+    combined_proba = nb.Nifti1Image(combined_proba_data, trg_affine, trg_header)
 
     header['cal_max'] = np.nanmax(combined_label_data)
-    combined_label = nb.Nifti1Image(combined_label_data, affine, header)
+    combined_label = nb.Nifti1Image(combined_label_data, trg_affine, trg_header)
 
     trg_header['cal_max'] = np.nanmax(proba_data)
     proba = nb.Nifti1Image(proba_data, trg_affine, trg_header)
@@ -284,7 +292,7 @@ def conditional_shape(target_images, structures, contrasts,
 
     header['cal_min'] = np.nanmin(neighbor_data)
     header['cal_max'] = np.nanmax(neighbor_data)
-    neighbors = nb.Nifti1Image(neighbor_data, affine, header)
+    neighbors = nb.Nifti1Image(neighbor_data, trg_affine, trg_header)
 
     if save_data:
         save_volume(spatial_proba_file, spatial_proba)
@@ -302,8 +310,8 @@ def conditional_shape(target_images, structures, contrasts,
     return output
 
 
-def conditional_shape_atlasing(subjects, structures, contrasts,
-                      levelset_images=None, contrast_images=None,
+def conditional_shape_atlasing(subjects, structures, contrasts, 
+                      levelset_images=None, contrast_images=None, 
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Conditioanl Shape Parcellation Atlasing
