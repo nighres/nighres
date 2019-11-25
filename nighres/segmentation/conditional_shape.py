@@ -208,7 +208,12 @@ def conditional_shape(target_images, structures, contrasts,
         cspmax.strictSimilarityDiffusion(ngb_size)
         #cspmax.fastSimilarityDiffusion(ngb_size)
         
-        cspmax.conditionalVolumeCertaintyThreshold(3.0)
+        cspmax.precomputeStoppingStatistics(3.0)
+        
+        cspmax.topologyBoundaryDefinition("26/6", topology_lut_dir)
+        
+        #cspmax.conditionalVolumeCertaintyThreshold(3.0)
+        cspmax.conditionalPrecomputedVolumeGrowth(3.0)
         
         cspmax.collapseSpatialPriorMaps()
         cspmax.collapseConditionalMaps()
