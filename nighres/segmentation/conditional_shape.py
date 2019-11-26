@@ -238,6 +238,7 @@ def conditional_shape(target_images, structures, contrasts,
 
     dims3D = dims3Dtrg
     dims_ngb = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2],ngb_size)
+    dims_extra = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2],4)
 
     intens_dims = (structures+1,structures+1,contrasts)
 
@@ -251,7 +252,7 @@ def conditional_shape(target_images, structures, contrasts,
 
 #    combined_proba_data = np.reshape(np.array(cspmax.getBestProbabilityMaps(1),
 #                                   dtype=np.float32), dims3Dtrg, 'F')
-#
+
 #    combined_label_data = np.reshape(np.array(cspmax.getBestProbabilityLabels(1),
 #                                    dtype=np.int32), dims3Dtrg, 'F')
 
