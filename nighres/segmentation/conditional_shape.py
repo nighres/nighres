@@ -208,7 +208,7 @@ def conditional_shape(target_images, structures, contrasts,
         cspmax.strictSimilarityDiffusion(ngb_size)
         #cspmax.fastSimilarityDiffusion(ngb_size)
         
-        cspmax.collapseToJointMaps()
+        #cspmax.collapseToJointMaps()
         
         cspmax.precomputeStoppingStatistics(3.0)
         
@@ -219,6 +219,7 @@ def conditional_shape(target_images, structures, contrasts,
         
         cspmax.collapseSpatialPriorMaps()
         #cspmax.collapseConditionalMaps()
+        cspmax.collapseToJointMaps()
         
         #cspmax.topologyObjectDefinition("26/6", topology_lut_dir)
         #cspmax.conditionalCollapsedVolumeGrowth(3.0)
