@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def lcat_denoising(image_list, img_mask,
+def lcat_denoising(image_list, img_mask, phase_list=None,
                     ngb_size=3, ngb_time=3, stdev_cutoff=1.05,
                       min_dimension=0, max_dimension=-1,
                       save_data=False, overwrite=False, output_dir=None,
@@ -20,9 +20,11 @@ def lcat_denoising(image_list, img_mask,
     Parameters
     ----------
     image_list: [niimg]
-        List of input 4D images to denoise
+        List of input 4D magnitude images to denoise
     image_mask: niimg
         3D mask for the input images
+    phase_list: [niimg]
+        List of input 4D phase images to denoise (optional)
     ngb_size: int, optional
         Size of the local PCA neighborhood, to be increased with number of 
         inputs (default is 3)
@@ -86,6 +88,16 @@ def lcat_denoising(image_list, img_mask,
                                       rootfile=image,
                                       suffix='lcat-den'))
             den_files.append(den_file)
+        
+        if phase_list is not None:
+            for idx,image in enumerate(phase_list):
+                if file_names is None: name=None
+                else: name=file_names[idx]
+                den_file = os.path.join(output_dir, 
+                            _fname_4saving(file_name=name,
+                                          rootfile=image,
+                                          suffix='lcat-den'))
+                den_files.append(den_file)            
 
         if file_names is None: name=None
         else: name=file_names[0]
@@ -154,9 +166,17 @@ def lcat_denoising(image_list, img_mask,
         #print('\nloading ('+str(idx)+'): '+image)
         data = load_volume(image).get_data()
         #data = data[0:10,0:10,0:10]
-        lcat.setTimeSerieImageAt(idx, nighresjava.JArray('float')(
+        lcat.setTimeSerieagnitudeImageAt(idx, nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
-    
+
+    if phase_list is not None:
+        for idx,image in enumerate(phase_list):
+            #print('\nloading ('+str(idx)+'): '+image)
+            data = load_volume(image).get_data()
+            #data = data[0:10,0:10,0:10]
+            lcat.setTimeSeriePhaseImageAt(idx, nighresjava.JArray('float')(
+                                        (data.flatten('F')).astype(float)))
+
     # set algorithm parameters
     lcat.setPatchSize(ngb_size)
     lcat.setWindowSize(ngb_time)
@@ -178,7 +198,7 @@ def lcat_denoising(image_list, img_mask,
     # reshape output to what nibabel likes
     denoised_list = []
     for idx, image in enumerate(image_list):
-        den_data = np.reshape(np.array(lcat.getDenoisedImageAt(idx),
+        den_data = np.reshape(np.array(lcat.getDenoisedMagnitudeImageAt(idx),
                                    dtype=np.float32), dimensions, 'F')
         header['cal_min'] = np.nanmin(den_data)
         header['cal_max'] = np.nanmax(den_data)
@@ -187,6 +207,18 @@ def lcat_denoising(image_list, img_mask,
 
         if save_data:
             save_volume(den_files[idx], denoised)
+
+    if phase_list is not None:
+        for idx,image in enumerate(phase_list):
+            den_data = np.reshape(np.array(lcat.getDenoisedPhaseImageAt(idx),
+                                       dtype=np.float32), dimensions, 'F')
+            header['cal_min'] = np.nanmin(den_data)
+            header['cal_max'] = np.nanmax(den_data)
+            denoised = nb.Nifti1Image(den_data, affine, header)
+            denoised_list.append(denoised)
+    
+            if save_data:
+                save_volume(den_files[idx], denoised)
 
     dim_data = np.reshape(np.array(lcat.getLocalDimensionImage(),
                                     dtype=np.float32), dimensions, 'F')
