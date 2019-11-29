@@ -12,7 +12,7 @@ def conditional_shape(target_images, structures, contrasts,
                       shape_atlas_probas=None, shape_atlas_labels=None, 
                       intensity_atlas_hist=None,
                       map_to_atlas=None, map_to_target=None,
-                      max_iterations=20, max_difference=0.01, ngb_size=4,
+                      max_iterations=80, max_difference=0.1, ngb_size=4,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Conditioanl Shape Parcellation
@@ -205,8 +205,9 @@ def conditional_shape(target_images, structures, contrasts,
     # execute
     try:
         cspmax.estimateTarget()
-        cspmax.strictSimilarityDiffusion(ngb_size)
+        #cspmax.strictSimilarityDiffusion(ngb_size)
         #cspmax.fastSimilarityDiffusion(ngb_size)
+        cspmax.fastJointSimilarityDiffusion(ngb_size)
         
         #cspmax.collapseToJointMaps()
         
