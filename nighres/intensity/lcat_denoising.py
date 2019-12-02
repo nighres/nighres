@@ -218,7 +218,7 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
             denoised_list.append(denoised)
     
             if save_data:
-                save_volume(den_files[idx], denoised)
+                save_volume(den_files[len(image_list)+idx], denoised)
 
     dim_data = np.reshape(np.array(lcat.getLocalDimensionImage(),
                                     dtype=np.float32), dimensions, 'F')
