@@ -207,7 +207,8 @@ def conditional_shape(target_images, structures, contrasts,
         cspmax.estimateTarget()
         #cspmax.strictSimilarityDiffusion(ngb_size)
         #cspmax.fastSimilarityDiffusion(ngb_size)
-        cspmax.fastJointSimilarityDiffusion(ngb_size)
+        #cspmax.fastJointSimilarityDiffusion(ngb_size)
+        cspmax.fastCombinedSimilarityDiffusion(ngb_size)
         
         #cspmax.collapseToJointMaps()
         
@@ -220,7 +221,7 @@ def conditional_shape(target_images, structures, contrasts,
         
         cspmax.collapseSpatialPriorMaps()
         #cspmax.collapseConditionalMaps()
-        cspmax.collapseToJointMaps()
+        #cspmax.collapseToJointMaps()
         
         #cspmax.topologyObjectDefinition("26/6", topology_lut_dir)
         #cspmax.conditionalCollapsedVolumeGrowth(3.0)
@@ -252,17 +253,17 @@ def conditional_shape(target_images, structures, contrasts,
     spatial_label_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityLabels(1),
                                     dtype=np.int32), dims3Dtrg, 'F')    
 
-#    combined_proba_data = np.reshape(np.array(cspmax.getBestProbabilityMaps(1),
-#                                   dtype=np.float32), dims3Dtrg, 'F')
-
-#    combined_label_data = np.reshape(np.array(cspmax.getBestProbabilityLabels(1),
-#                                    dtype=np.int32), dims3Dtrg, 'F')
-
-    combined_proba_data = np.reshape(np.array(cspmax.getJointProbabilityMaps(1),
+    combined_proba_data = np.reshape(np.array(cspmax.getBestProbabilityMaps(1),
                                    dtype=np.float32), dims3Dtrg, 'F')
 
-    combined_label_data = np.reshape(np.array(cspmax.getJointProbabilityLabels(1),
+    combined_label_data = np.reshape(np.array(cspmax.getBestProbabilityLabels(1),
                                     dtype=np.int32), dims3Dtrg, 'F')
+
+#    combined_proba_data = np.reshape(np.array(cspmax.getJointProbabilityMaps(1),
+#                                   dtype=np.float32), dims3Dtrg, 'F')
+
+#    combined_label_data = np.reshape(np.array(cspmax.getJointProbabilityLabels(1),
+#                                    dtype=np.int32), dims3Dtrg, 'F')
 
     proba_data = np.reshape(np.array(cspmax.getFinalProba(),
                                    dtype=np.float32), dims3Dtrg, 'F')

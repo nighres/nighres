@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def lcat_denoising(image_list, img_mask, phase_list=None,
+def lcat_denoising(image_list, image_mask, phase_list=None,
                     ngb_size=3, ngb_time=3, stdev_cutoff=1.05,
                       min_dimension=0, max_dimension=-1,
                       save_data=False, overwrite=False, output_dir=None,
@@ -159,14 +159,14 @@ def lcat_denoising(image_list, img_mask, phase_list=None,
     # important: set image mask before adding images
     data = load_volume(image_mask).get_data()
     lcat.setMaskImage(nighresjava.JArray('int')(
-                        (data.flatten('F')).astype(int).toList()))
-    
+                    (data.flatten('F')).astype(int).tolist()))
+           
     # important: set image number before adding images
     for idx, image in enumerate(image_list):
         #print('\nloading ('+str(idx)+'): '+image)
         data = load_volume(image).get_data()
         #data = data[0:10,0:10,0:10]
-        lcat.setTimeSerieagnitudeImageAt(idx, nighresjava.JArray('float')(
+        lcat.setTimeSerieMagnitudeAt(idx, nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
 
     if phase_list is not None:
@@ -174,7 +174,7 @@ def lcat_denoising(image_list, img_mask, phase_list=None,
             #print('\nloading ('+str(idx)+'): '+image)
             data = load_volume(image).get_data()
             #data = data[0:10,0:10,0:10]
-            lcat.setTimeSeriePhaseImageAt(idx, nighresjava.JArray('float')(
+            lcat.setTimeSeriePhaseAt(idx, nighresjava.JArray('float')(
                                         (data.flatten('F')).astype(float)))
 
     # set algorithm parameters
@@ -198,7 +198,7 @@ def lcat_denoising(image_list, img_mask, phase_list=None,
     # reshape output to what nibabel likes
     denoised_list = []
     for idx, image in enumerate(image_list):
-        den_data = np.reshape(np.array(lcat.getDenoisedMagnitudeImageAt(idx),
+        den_data = np.reshape(np.array(lcat.getDenoisedMagnitudeAt(idx),
                                    dtype=np.float32), dimensions, 'F')
         header['cal_min'] = np.nanmin(den_data)
         header['cal_max'] = np.nanmax(den_data)
@@ -210,7 +210,7 @@ def lcat_denoising(image_list, img_mask, phase_list=None,
 
     if phase_list is not None:
         for idx,image in enumerate(phase_list):
-            den_data = np.reshape(np.array(lcat.getDenoisedPhaseImageAt(idx),
+            den_data = np.reshape(np.array(lcat.getDenoisedPhaseAt(idx),
                                        dtype=np.float32), dimensions, 'F')
             header['cal_min'] = np.nanmin(den_data)
             header['cal_max'] = np.nanmax(den_data)
