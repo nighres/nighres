@@ -95,12 +95,13 @@ def phase_unwrapping(image, mask=None, nquadrants=3,
     header = img.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
+    dimensions3D = (dimensions[0], dimensions[1], dimensions[2])
 
     unwrap.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     unwrap.setResolutions(resolution[0], resolution[1], resolution[2])
 
     unwrap.setPhaseImage(nighresjava.JArray('float')(
-                                    (data.flatten('F')).astype(float)))
+                                    (data.flatten('F')).astype(float)[0:dimensions[0]*dimensions[1]*dimensions[2]]))
     
     
     if mask is not None:
@@ -125,7 +126,7 @@ def phase_unwrapping(image, mask=None, nquadrants=3,
 
     # reshape output to what nibabel likes
     unwrap_data = np.reshape(np.array(unwrap.getCorrectedImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), dimensions3D, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
