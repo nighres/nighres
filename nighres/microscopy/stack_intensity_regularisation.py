@@ -8,29 +8,19 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
-                      target='zero', scaling=1.0,
-                      save_data=False, overwrite=False, output_dir=None,
-                      file_name=None):
-    """ Intensity Propogation
+def stack_intensity_regularisation(image, ratio=50,
+                            save_data=False, overwrite=False, output_dir=None,
+                            file_name=None):
+    """ Stack intensity regularisation
 
-    Propagates the values inside the mask (or non-zero) into the neighboring voxels
+    Estimates an image-to-image linear intensity scaling for a stack of 2D images
 
     Parameters
     ----------
     image: niimg
-        Input image
-    mask: niimg, optional
-        Data mask to specify acceptable seeding regions
-    combine: {'min','mean','max'}, optional
-        Propagate using the mean (default), max or min data from neighboring voxels
-    distance_mm: float, optional 
-        Distance for the propagation (note: this algorithm will be slow for 
-        large distances)
-    target: {'zero','mask','lower','higher'}, optional
-        Propagate into zero (default), masked out, lower or higher neighboring voxels
-    scaling: float, optional
-        Multiply the propagated values by a factor <=1 (default is 1)
+        Input 2D images, stacked in the Z dimension
+    ratio: float, optional 
+        Ratio of image differences to keep (default is 50%)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -47,7 +37,7 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * result (niimg): The propagated intensity image
+        * result (niimg): The intensity regularised input
 
     Notes
     ----------
@@ -55,21 +45,21 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
 
     """
 
-    print('\nIntensity Propagation')
+    print('\nStack Intensity Regularisation')
 
     # make sure that saving related parameters are correct
     if save_data:
         output_dir = _output_dir_4saving(output_dir, image)
 
-        out_file = os.path.join(output_dir, 
+        regularised_file = os.path.join(output_dir, 
                         _fname_4saving(file_name=file_name,
                                    rootfile=image,
-                                   suffix='ppag-img'))
+                                   suffix='sir-img'))
 
         if overwrite is False \
-            and os.path.isfile(out_file) :
+            and os.path.isfile(regularised_file) :
                 print("skip computation (use existing results)")
-                output = {'result': load_volume(out_file)}
+                output = {'result': load_volume(regularised_file)}
                 return output
 
     # start virtual machine, if not already running
@@ -79,7 +69,7 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
     except ValueError:
         pass
     # create instance
-    propag = nighresjava.IntensityPropagate()
+    sir = nighresjava.StackIntensityRegularisation()
 
     # set parameters
     
@@ -91,26 +81,17 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 
-    propag.setDimensions(dimensions[0], dimensions[1], dimensions[2])
-    propag.setResolutions(resolution[0], resolution[1], resolution[2])
-
-    propag.setInputImage(nighresjava.JArray('float')(
+    sir.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+       
+    sir.setInputImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
-    
-    if mask is not None:
-        propag.setMaskImage(idx, nighresjava.JArray('int')(
-                (load_volume(mask).get_data().flatten('F')).astype(int).tolist()))
-    
     # set algorithm parameters
-    propag.setCombinationMethod(combine)
-    propag.setPropagationDistance(distance_mm)
-    propag.setTargetVoxels(target)
-    propag.setPropogationScalingFactor(scaling)
+    sir.setVariationRatio(float(ratio))
     
     # execute the algorithm
     try:
-        propag.execute()
+        sir.execute()
 
     except:
         # if the Java module fails, reraise the error it throws
@@ -120,16 +101,16 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
         return
 
     # reshape output to what nibabel likes
-    propag_data = np.reshape(np.array(propag.getResultImage(),
+    regularised_data = np.reshape(np.array(sir.getRegularisedImage(),
                                     dtype=np.float32), dimensions, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
-    header['cal_min'] = np.nanmin(propag_data)
-    header['cal_max'] = np.nanmax(propag_data)
-    out = nb.Nifti1Image(propag_data, affine, header)
+    header['cal_min'] = np.nanmin(regularised_data)
+    header['cal_max'] = np.nanmax(regularised_data)
+    regularised = nb.Nifti1Image(regularised_data, affine, header)
 
     if save_data:
-        save_volume(out_file, out)
+        save_volume(regularised_file, regularised)
 
-    return {'result': out}
+    return {'result': regularised}
