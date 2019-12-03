@@ -206,9 +206,10 @@ def conditional_shape(target_images, structures, contrasts,
     try:
         cspmax.estimateTarget()
         #cspmax.strictSimilarityDiffusion(ngb_size)
-        cspmax.fastSimilarityDiffusion(ngb_size)
+        #cspmax.fastSimilarityDiffusion(ngb_size)
         #cspmax.fastJointSimilarityDiffusion(ngb_size)
         #cspmax.fastCombinedSimilarityDiffusion(ngb_size)
+        cspmax.globalSmoothing()
         
         cspmax.collapseToJointMaps()
         
