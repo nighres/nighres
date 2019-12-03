@@ -62,8 +62,8 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                       contrast_image4=None, contrast_type4=None,
                       n_steps=5, max_iterations=800, topology='wcs',
                       atlas_file=None, topology_lut_dir=None,
-                      normalize_qmaps=False,
                       adjust_intensity_priors=False,
+                      normalize_qmaps=True,
                       compute_posterior=False, posterior_scale=5.0,
                       diffuse_probabilities=False,
                       save_data=False, overwrite=False, output_dir=None,
@@ -79,25 +79,30 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         First input image to perform segmentation on
     contrast_type1: str
         Contrast type of first input image, must be listed as a prior in used
-        atlas(specified in atlas_file)
+        atlas(specified in atlas_file). Possible inputs by default are DWIFA3T,
+        DWIMD3T, T1map9T, Mp2rage9T, T1map7T, Mp2rage7T, PV, Filters, T1pv,
+        Mprage3T, T1map3T, Mp2rage3T, HCPT1w, HCPT2w, NormMPRAGE.
     contrast_image2: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type2
     contrast_type2: str, optional
         Contrast type of second input image, must be listed as a prior in used
-        atlas (specified in atlas_file)
+        atlas (specified in atlas_file). Possible inputs by default are the same
+        as with parameter contrast_type1 (see above).
     contrast_image3: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type3
     contrast_type3: str, optional
         Contrast type of third input image, must be listed as a prior in used
-        atlas (specified in atlas_file)
+        atlas (specified in atlas_file). Possible inputs by default are the same
+        as with parameter contrast_type1 (see above).
     contrast_image4: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type4
     contrast_type4: str, optional
         Contrast type of fourth input image, must be listed as a prior in used
-        atlas (specified in atlas_file)
+        atlas (specified in atlas_file). Possible inputs by default are the same
+        as with parameter contrast_type1 (see above).
     n_steps: int, optional
         Number of steps for MGDM (default is 5, set to 0 for quick testing of
         registration of priors, which does not perform true segmentation)
@@ -118,6 +123,9 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         Normalize quantitative maps into [0,1] (default is False)
     adjust_intensity_priors: bool
         Adjust intensity priors based on dataset (default is False)
+    normalize_qmaps: bool
+        Normalize quantitative maps in [0,1] (default in True, change this if using
+        one of the -quant atlas text files in ATLAS_DIR) 
     compute_posterior: bool
         Compute posterior probabilities for segmented structures
         (default is False)
