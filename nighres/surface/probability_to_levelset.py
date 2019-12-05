@@ -7,7 +7,7 @@ from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, _check_available_memory
 
 
-def probability_to_levelset(probability_image,
+def probability_to_levelset(probability_image, mask_image=None,
                             save_data=False, overwrite=False, output_dir=None,
                             file_name=None):
 
@@ -23,6 +23,9 @@ def probability_to_levelset(probability_image,
     probability_image: niimg
         Probability image to be turned into levelset. Values should be in
         [0, 1], either a binary mask or defining the boundary at 0.5.
+    mask_image: niimg, optional
+        Mask image defining the region in which to compute the levelset. Values
+        equal to zero are set to maximum distance.
     save_data: bool, optional
         Save output data to file (default is False)
     overwrite: bool, optional
@@ -85,6 +88,12 @@ def probability_to_levelset(probability_image,
     # set parameters from input data
     prob2level.setProbabilityImage(nighresjava.JArray('float')(
                                     (prob_data.flatten('F')).astype(float)))
+    
+    if (mask_image is not None)
+        mask_data = load_volume(mask_image).get_data()
+        prob2level.setMaskImage(nighresjava.JArray('int')(
+                                    (mask_data.flatten('F')).astype(int).tolist()))
+        
     if len(dimensions)>2:
         prob2level.setResolutions(resolution[0], resolution[1], resolution[2])
         prob2level.setDimensions(dimensions[0], dimensions[1], dimensions[2])
