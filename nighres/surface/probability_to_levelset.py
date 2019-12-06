@@ -89,7 +89,7 @@ def probability_to_levelset(probability_image, mask_image=None,
     prob2level.setProbabilityImage(nighresjava.JArray('float')(
                                     (prob_data.flatten('F')).astype(float)))
     
-    if (mask_image is not None)
+    if (mask_image is not None):
         mask_data = load_volume(mask_image).get_data()
         prob2level.setMaskImage(nighresjava.JArray('int')(
                                     (mask_data.flatten('F')).astype(int).tolist()))
