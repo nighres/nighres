@@ -126,7 +126,7 @@ def profile_meshing(profile_surface_image, starting_surface_mesh,
     nfc = int(orig_mesh['faces'].shape[0])
 
     meshes = []
-    #lines = np.zeros((nlayers,npt,3))
+    lines = np.zeros((nlayers,npt,3))
     for n in range(nlayers):
         points = np.reshape(np.array(algorithm.getSampledSurfacePoints(n),
                                dtype=np.float32), (npt,3), 'C')
@@ -135,13 +135,13 @@ def profile_meshing(profile_surface_image, starting_surface_mesh,
         # create the mesh dictionary
         meshes.append({"points": points, "faces": faces})
 
-        #lines[n,:,:] = points
+        lines[n,:,:] = points
         
         if save_data:
             save_mesh_geometry(mesh_files[n], meshes[n])
  
-#    if save_data:
-#        _write_profiles_vtk("mesh_lines.vtk",lines)
+    if save_data:
+        _write_profiles_vtk("mesh_lines.vtk",lines)
  
     return {'profile': meshes}
 
@@ -167,10 +167,10 @@ def _write_profiles_vtk(filename, vertices):
               'None',
               'ASCII',
               'DATASET POLYDATA',
-              'POINTS %i float' % number_vertices
+              'POINTS %i float' % (number_vertices*number_vertices)
               ]
     header_df = pd.DataFrame(header)
-    sub_header = ['LINES %i %i' % (number_vertices, number_profiles * number_vertices)]
+    sub_header = ['LINES %i %i' % (number_vertices, (number_profiles+1) * number_vertices)]
     sub_header_df = pd.DataFrame(sub_header)
     # make dataframe from vertices
     vertex_df = pd.DataFrame(np.reshape(vertices, (number_profiles*number_vertices,3)))
@@ -179,7 +179,9 @@ def _write_profiles_vtk(filename, vertices):
     lines = np.reshape(number_profiles * (np.ones(number_vertices)), (number_vertices, 1))
     lines = lines.astype(int)
     print("lines: "+str(lines.shape))
-    indices = np.matmul(np.reshape(range(0,number_vertices), (number_vertices, 1)), np.reshape(range(1,number_profiles+1), (1,number_profiles)))
+    indices = np.zeros((number_vertices, number_profiles))
+    for p in range(number_profiles):
+        indices[:,p] = range(p*number_vertices,p*number_vertices+number_vertices)
     print("indices: "+str(indices.shape))
     lines_df = pd.DataFrame(np.concatenate((lines, indices), axis=1))
     print("lines: "+str(lines_df.shape))
@@ -188,8 +190,8 @@ def _write_profiles_vtk(filename, vertices):
     with open(filename, 'a') as f:
         vertex_df.to_csv(f, header=False, index=False, float_format='%.3f',
                          sep=' ')
-#    with open(filename, 'a') as f:
-#        sub_header_df.to_csv(f, header=False, index=False)
-#    with open(filename, 'a') as f:
-#        lines_df.to_csv(f, header=False, index=False, float_format='%.0f',
-#                        sep=' ')
+    with open(filename, 'a') as f:
+        sub_header_df.to_csv(f, header=False, index=False)
+    with open(filename, 'a') as f:
+        lines_df.to_csv(f, header=False, index=False, float_format='%.0f',
+                        sep=' ')
