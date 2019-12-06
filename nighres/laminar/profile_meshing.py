@@ -145,7 +145,7 @@ def profile_meshing(profile_surface_image, starting_surface_mesh,
  
     return {'profile': meshes}
 
-def _write_profiles_vtk(filename, vertices):
+def _write_profiles_vtk(filename, vertices, decimation=10):
     '''
     Creates ASCII coded vtk file from numpy arrays using pandas.
     Inputs:
@@ -157,6 +157,8 @@ def _write_profiles_vtk(filename, vertices):
     ---------------------
     _write_vtk('/path/to/vtk/file.vtk', v_array)
     '''
+
+    vertices = vertices[:,0:-1:decimation,:]
 
     import pandas as pd
     # infer number of vertices and faces
