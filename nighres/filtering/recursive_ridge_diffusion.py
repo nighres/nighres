@@ -16,6 +16,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
                               diffusion_factor=1.0,
                               similarity_scale=0.1,
                               max_iter=100, max_diff=1e-3,
+                              threshold=0.5,
                               save_data=False, overwrite=False, output_dir=None,
                               file_name=None):
 
@@ -51,6 +52,8 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
         Maximum number of diffusion iterations
     max_diff: int
         Maximum difference to stop the diffusion
+    threshold: float
+        Detection threshold for the structures to keep (default is 0.5)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -95,29 +98,35 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, input_image)
 
-        filter_file = _fname_4saving(file_name=file_name,
+        filter_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='rrd-filter')
+                                  suffix='rrd-filter'))
 
-        propagation_file = _fname_4saving(file_name=file_name,
+        propagation_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
                                    rootfile=input_image,
-                                   suffix='rrd-propag')
+                                   suffix='rrd-propag'))
 
-        scale_file = _fname_4saving(file_name=file_name,
+        scale_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
                                    rootfile=input_image,
-                                   suffix='rrd-scale')
+                                   suffix='rrd-scale'))
 
-        ridge_direction_file = _fname_4saving(file_name=file_name,
+        ridge_direction_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='rrd-dir')
+                                  suffix='rrd-dir'))
 
-        ridge_pv_file = _fname_4saving(file_name=file_name,
+        ridge_pv_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='rrd-pv')
+                                  suffix='rrd-pv'))
 
-        ridge_size_file = _fname_4saving(file_name=file_name,
+        ridge_size_file = os.path.join(output_dir,
+                        _fname_4saving(file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='rrd-size')
+                                  suffix='rrd-size'))
 
         if overwrite is False \
             and os.path.isfile(filter_file) \
@@ -169,6 +178,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     if max_iter>0: rrd.setPropagationModel("diffusion")
     rrd.setMaxIterations(max_iter)
     rrd.setMaxDifference(max_diff)
+    rrd.setDetectionThreshold(threshold)
 
     rrd.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     rrd.setResolutions(resolution[0], resolution[1], resolution[2])
@@ -215,7 +225,13 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     scale_data = np.reshape(np.array(rrd.getDetectionScaleImage(),
                                    dtype=np.int32), dimensions, 'F')
 
-    ridge_direction_data = np.reshape(np.array(rrd.getRidgeDirectionImage(),
+    if dimensions[2] is 1:
+        ridge_direction_data = np.reshape(np.array(rrd.getRidgeDirectionImage(),
+                                    dtype=np.float32),
+                                    (dimensions[0],dimensions[1],2),
+                                    'F')
+    else:
+        ridge_direction_data = np.reshape(np.array(rrd.getRidgeDirectionImage(),
                                     dtype=np.float32),
                                     (dimensions[0],dimensions[1],dimensions[2],3),
                                     'F')
@@ -248,12 +264,12 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     ridge_size_img = nb.Nifti1Image(ridge_size_data, affine, header)
 
     if save_data:
-        save_volume(os.path.join(output_dir, filter_file), filter_img)
-        save_volume(os.path.join(output_dir, propagation_file), propag_img)
-        save_volume(os.path.join(output_dir, scale_file), scale_img)
-        save_volume(os.path.join(output_dir, ridge_direction_file), ridge_dir_img)
-        save_volume(os.path.join(output_dir, ridge_pv_file), ridge_pv_img)
-        save_volume(os.path.join(output_dir, ridge_size_file), ridge_size_img)
+        save_volume(filter_file, filter_img)
+        save_volume(propagation_file, propag_img)
+        save_volume(scale_file, scale_img)
+        save_volume(ridge_direction_file, ridge_dir_img)
+        save_volume(ridge_pv_file, ridge_pv_img)
+        save_volume(ridge_size_file, ridge_size_img)
 
     return {'filter': filter_img, 'propagation': propag_img, 'scale': scale_img,
             'ridge_dir': ridge_dir_img, 'ridge_pv': ridge_pv_img,

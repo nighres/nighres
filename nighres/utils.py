@@ -36,7 +36,7 @@ def _output_dir_4saving(output_dir=None, rootfile=None):
     return output_dir
 
 ## preferred: use given extension (see below)
-def _fname_4saving_prev(file_name=None, rootfile=None, suffix=None):
+def _fname_4saving_prev(file_name=None, rootfile=None, suffix=None, ext=None):
 
     # if a file_name is given, use that
     if file_name is None:
@@ -71,13 +71,14 @@ def _fname_4saving_prev(file_name=None, rootfile=None, suffix=None):
     # extension it will think bello is the extension)
     if len(split_name) == 1:
         base = split_name[0]
-        ext = 'nii.gz'
+        if ext is None: ext = 'nii.gz'
     else:
         # pop file extension
-        ext = split_name.pop(-1)
-        # file extension could have two parts if compressed
-        if ext == 'gz':
-            ext = split_name.pop(-1)+'.gz'
+        if ext is None: 
+            ext = split_name.pop(-1)
+            # file extension could have two parts if compressed
+            if ext == 'gz':
+                ext = split_name.pop(-1)+'.gz'
         # now that the extension has been popped out of the list
         # what's left is the basename, put back together
         base = split_name.pop(0)

@@ -110,7 +110,7 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
 
     if mask is not None:
         algo.setMaskImage(idx, nighresjava.JArray('int')(
-                (load_volume(mask).get_data().flatten('F')).astype(int)))
+                (load_volume(mask).get_data().flatten('F')).astype(int).tolist()))
 
     # set algorithm parameters
     algo.setLambdaScale(lambda_scale)

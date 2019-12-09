@@ -2,9 +2,8 @@ import os
 import sys
 import numpy as np
 import nighresjava
-from ..io import load_volume, load_mesh, save_mesh
-from ..utils import _output_dir_4saving, _fname_4saving, \
-                    _check_available_memory
+from ..io import load_volume, save_volume, load_mesh_geometry, load_mesh, save_mesh
+from ..utils import _output_dir_4saving, _fname_4saving,_check_available_memory
 
 
 def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,

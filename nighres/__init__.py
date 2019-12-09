@@ -5,12 +5,13 @@ import nighres.data
 import nighres.filtering
 import nighres.intensity
 import nighres.laminar
-import nighres.registration
 import nighres.microscopy
+import nighres.registration
+import nighres.segmentation
 import nighres.shape
 import nighres.surface
 import nighres.statistics
 from nighres.global_settings import ATLAS_DIR, TOPOLOGY_LUT_DIR, DEFAULT_ATLAS
 
 __all__ = ['io', 'brain', 'cortex', 'data', 'filtering', 'intensity', 'laminar',
-'microscopy', 'registration', 'shape', 'surface', '__version__']
+'microscopy', 'registration', 'segmentation', 'shape', 'surface', 'statistics', '__version__']

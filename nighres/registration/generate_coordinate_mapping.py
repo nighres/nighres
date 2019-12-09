@@ -3,8 +3,8 @@ import os
 import sys
 
 # main dependencies: numpy, nibabel
-import numpy as np
-import nibabel as nb
+import numpy
+import nibabel
 
 # nighresjava and nighres functions
 import nighresjava
@@ -96,7 +96,7 @@ def generate_coordinate_mapping(reference_image,
     rsx = rtx
     rsy = rty
     rsz = rtz
-    if source is not None:
+    if source_image is not None:
         source = load_volume(source_image)
         rsx = source.header.get_zooms()[X]
         rsy = source.header.get_zooms()[Y]
@@ -117,10 +117,10 @@ def generate_coordinate_mapping(reference_image,
         transform = numpy.eye(4,4)
         
     if not invert_matrix:
-        transform.invert()
+        transform = numpy.linalg.inv(transform)
         
     # build coordinate mapping matrices and save them to disk
-    coord = np.zeros((nx,ny,nz,3))
+    coord = numpy.zeros((nx,ny,nz,3))
     for x in range(nx):
         for y in range(ny):
             for z in range(nz):
@@ -137,12 +137,11 @@ def generate_coordinate_mapping(reference_image,
                                 + transform[Z,Z]*z*rtz \
                                 + transform[Z,T])/rsz
                 
-    mapping_img = nb.Nifti1Image(coord, ref_affine, ref_header)
+    mapping_img = nibabel.Nifti1Image(coord, ref_affine, ref_header)
 
-    if save:
+    if save_data:
         save_volume(mapping_file, mapping_img)
  
     outputs = {'result': mapping_img}
 
     return outputs
-

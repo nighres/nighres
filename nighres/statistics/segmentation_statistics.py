@@ -25,9 +25,23 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
         Input intensity image for intensity-based statistics
     template: niimg, optional
         Input template segmentation for comparisons
-    statistics: {"Voxels", "Volume", "Mean_intensity", "Std_intensity", "10_intensity", "25_intensity", "50_intensity", "75_intensity", "90_intensity", "Volumes", "Dice_overlap", "Jaccard_overlap", "Volume_difference", "False_positives", "False_negatives", "Dilated_Dice_overlap", "Dilated_false_positive", "Dilated_false_negative", "Dilated_false_negative_volume", "Dilated_false_positive_volume", "Detected_clusters", "False_detections", "Cluster_numbers", "Mean_cluster_sizes", "Cluster_maps", "Average_surface_distance", "Average_surface_difference", "Average_squared_surface_distance", "Hausdorff_distance"}
-         Statistics to compute
-    output_csv: str, optional
+    statistics: [str] 
+        Statistics to compute. Available options include:
+        "Voxels", "Volume", "Center_of_mass",
+        "Mean_intensity", "Std_intensity",
+        "10_intensity","25_intensity","50_intensity","75_intensity","90_intensity",
+        "Median_intensity","IQR_intensity",
+        "SNR_intensity","rSNR_intensity",
+		"Volumes", "Dice_overlap", "Jaccard_overlap", "Volume_difference",
+        "False_positives","False_negatives",
+        "Dilated_Dice_overlap","Dilated_false_positive","Dilated_false_negative",
+        "Dilated_false_negative_volume","Dilated_false_positive_volume",
+        "Center_distance",
+        "Detected_clusters", "False_detections",
+        "Cluster_numbers", "Mean_cluster_sizes", "Cluster_maps",
+        "Average_surface_distance", "Average_surface_difference", 
+        "Average_squared_surface_distance", "Hausdorff_distance"
+    output_csv: str
         File name of the statistics file to generate or expand
     atlas: str, optional
         File name of an atlas file defining the segmentation labels
@@ -128,10 +142,9 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
 
     stats.setSkipFirstLabel(skip_first)
     stats.setIgnoreZeroIntensities(ignore_zero)
-
-    if len(statistics)>0: stats.setStatistic1(statistics[0])
-    if len(statistics)>1: stats.setStatistic2(statistics[1])
-    if len(statistics)>2: stats.setStatistic3(statistics[2])
+    
+    stats.setStatisticNumber(len(statistics))
+    for idx,stat in enumerate(statistics): stats.setStatisticAt(idx, stat)
 
     stats.setSpreadsheetFile(csv_file)
 
