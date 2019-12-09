@@ -84,6 +84,7 @@ javac_opts=(
 echo "Compiling..."
 cd cbstools-public
 javac -cp ${deps_list} ${javac_opts[@]} de/mpg/cbs/core/*/*.java $cbstools_list
+javac -cp ${deps_list} ${javac_opts[@]} de/concordia/qpi/*/*.java $cbstools_list
 
 
 echo "Assembling..."
@@ -91,7 +92,7 @@ mkdir -p ../nighresjava/src
 mkdir -p ../nighresjava/lib
 
 #jar cf cbstools.jar     de/mpg/cbs/core/*/*.class
-jar cf ../nighresjava/src/nighresjava.jar de/mpg/cbs/core/*/*.class
+jar cf ../nighresjava/src/nighresjava.jar de/mpg/cbs/core/*/*.class de/concordia/qpi/*/*.class
 jar cf ../nighresjava/src/cbstools-lib.jar de/mpg/cbs/*/*.class
 
 cp lib/*.jar ../nighresjava/lib/
