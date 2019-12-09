@@ -1,6 +1,7 @@
 matrix:
   include:
-  - language: java
+  - dist: trusty
+    language: java
     jdk: openjdk7
     before_install:
     - sudo apt-get update

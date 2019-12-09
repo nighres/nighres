@@ -10,6 +10,8 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def volumetric_layering(inner_levelset, outer_levelset,
                         n_layers=4, topology_lut_dir=None,
+                        method="volume-preserving", layer_dir="outward",
+                        curv_scale=3,
                         save_data=False, overwrite=False, output_dir=None,
                         file_name=None):
 
@@ -19,13 +21,22 @@ def volumetric_layering(inner_levelset, outer_levelset,
     ----------
     inner_levelset: niimg
         Levelset representation of the inner surface, typically GM/WM surface
-    outer_levelset : niimg
+    outer_levelset: niimg
         Levelset representation of the outer surface, typically GM/CSF surface
     n_layers : int, optional
         Number of layers to be created (default is 10)
     topology_lut_dir: str, optional
         Path to directory in which topology files are stored (default is stored
         in TOPOLOGY_LUT_DIR)
+    method: str
+        Which model to use, either "volume-preserving" or "distance-preserving"
+        (default is "volume-preserving")
+    layer_dir: str
+        Direction to perform the layering, either "outward" or "inward" 
+        (default is "outward")
+    curv_scale: int
+        Scale of the curvature approximation window in voxels (default is 3,
+        computation may become very slow for higher values)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -123,6 +134,11 @@ def volumetric_layering(inner_levelset, outer_levelset,
                                     (outer_data.flatten('F')).astype(float)))
     lamination.setNumberOfLayers(n_layers)
     lamination.setTopologyLUTdirectory(topology_lut_dir)
+
+    # advanced parameters
+    lamination.setLayeringDirection(layer_dir)
+    lamination.setLayeringMethod(method)
+    lamination.setCurvatureApproximationScale(curv_scale)
 
     # execute class
     try:

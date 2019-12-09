@@ -67,7 +67,8 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                       compute_posterior=False, posterior_scale=5.0,
                       diffuse_probabilities=False,
                       save_data=False, overwrite=False, output_dir=None,
-                      file_name=None):
+                      file_name=None,
+                      return_filename=False):
     """ MGDM segmentation
 
     Estimates brain structures from an atlas for MRI data using
@@ -144,6 +145,8 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     file_name: str, optional
         Desired base name for output files with file extension
         (suffixes will be added)
+    return_filename: bool, optional
+        Return filename instead of object
 
     Returns
     ----------
@@ -177,6 +180,10 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     """
 
     print('\nMGDM Segmentation')
+
+    # Check data file parameters
+    if not save_data and return_filename:
+        raise ValueError('save_data must be True if return_filename is True ')
 
     # check atlas_file and set default if not given
     atlas_file = _check_atlas_file(atlas_file)
@@ -233,10 +240,20 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
             and os.path.isfile(dist_file) :
             
             print("skip computation (use existing results)")
-            output = {'segmentation': load_volume(seg_file), 
-                      'labels': load_volume(lbl_file), 
-                      'memberships': load_volume(mems_file), 
-                      'distance': load_volume(dist_file)}
+            if return_filename:
+                output = {
+                    'segmentation': seg_file,
+                    'labels': lbl_file,
+                    'memberships': mems_file,
+                    'distance': dist_file
+                }
+            else:
+                output = {
+                    'segmentation': load_volume(seg_file),
+                    'labels': load_volume(lbl_file),
+                    'memberships': load_volume(mems_file),
+                    'distance': load_volume(dist_file)
+                }
             return output
 
     # start virtual machine, if not already running
@@ -347,5 +364,19 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         save_volume(lbl_file, lbls)
         save_volume(mems_file, mems)
 
-    return {'segmentation': seg, 'labels': lbls,
-            'memberships': mems, 'distance': dist}
+    if return_filename:
+        output = {
+            'segmentation': seg_file,
+            'labels': lbl_file,
+            'memberships': mems_file,
+            'distance': dist_file
+        }
+    else:
+        output = {
+            'segmentation': seg,
+            'labels': lbls,
+            'memberships': mems,
+            'distance': dist
+        }
+
+    return output
