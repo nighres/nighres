@@ -64,17 +64,17 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
         output_dir = _output_dir_4saving(output_dir, image)
 
         masked_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image,
                                    suffix='bge-masked'))
 
         proba_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image,
                                    suffix='bge-proba'))
 
         mask_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image,
                                    suffix='bge-mask'))
 

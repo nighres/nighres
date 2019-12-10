@@ -120,12 +120,12 @@ def mgdm_cells(contrast_image1, contrast_type1,
         output_dir = _output_dir_4saving(output_dir, contrast_image1)
 
         seg_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=contrast_image1,
                                   suffix='mgdmc-seg', ))
 
         dist_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=contrast_image1,
                                    suffix='mgdmc-dist'))
         if overwrite is False \

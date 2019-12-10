@@ -91,17 +91,17 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
         output_dir = _output_dir_4saving(output_dir, first_inversion[0])
 
         pd1_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=first_inversion[0],
                                    suffix='qpd-inv1'))
 
         pd2_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=first_inversion[0],
                                    suffix='qpd-inv2'))
 
         pd_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=first_inversion[0],
                                    suffix='qpd-avg'))
 

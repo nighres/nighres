@@ -36,7 +36,7 @@ def _output_dir_4saving(output_dir=None, rootfile=None):
     return output_dir
 
 ## preferred: use given extension (see below)
-def _fname_4saving_prev(file_name=None, rootfile=None, suffix=None, ext=None):
+def _fname_4saving_prev(file_name=None, rootfile=None, suffix=None, ext=None, module='output'):
 
     # if a file_name is given, use that
     if file_name is None:
@@ -54,9 +54,10 @@ def _fname_4saving_prev(file_name=None, rootfile=None, suffix=None, ext=None):
 
         # if nothing is given, raise error
         else:
-            raise ValueError("You have not specified a file_name, and we "
-                             "cannot determine a name from your input, wich "
-                             "is a data object. Please specify a file_name.")
+            file_name = module+'.nii.gz'
+#            raise ValueError("You have not specified a file_name, and we "
+#                             "cannot determine a name from your input, wich "
+#                             "is a data object. Please specify a file_name.")
 
     # avoid empty strings
     if len(file_name) <= 1:
@@ -94,7 +95,7 @@ def _fname_4saving_prev(file_name=None, rootfile=None, suffix=None, ext=None):
     return fullname
 
 
-def _fname_4saving(file_name=None, rootfile=None, suffix=None, ext=None):
+def _fname_4saving(module=__name__,file_name=None, rootfile=None, suffix=None, ext=None, module='output'):
 
     # default extension if not given
     file_ext = 'nii.gz'
@@ -114,9 +115,10 @@ def _fname_4saving(file_name=None, rootfile=None, suffix=None, ext=None):
 
         # if nothing is given, raise error
         else:
-            raise ValueError("You have not specified a file_name, and we "
-                             "cannot determine a name from your input, wich "
-                             "is a data object. Please specify a file_name.")
+            file_name = module+'.nii.gz'
+#            raise ValueError("You have not specified a file_name, and we "
+#                             "cannot determine a name from your input, wich "
+#                             "is a data object. Please specify a file_name.")
 
     # avoid empty strings
     if len(file_name) <= 1:

@@ -76,7 +76,7 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
         output_dir = _output_dir_4saving(output_dir, img)
 
         filter_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=img,
                                    suffix='bfs-img'))
         if overwrite is False \

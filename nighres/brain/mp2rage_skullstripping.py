@@ -85,16 +85,16 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         output_dir = _output_dir_4saving(output_dir, second_inversion)
 
         inv2_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=second_inversion,
                                    suffix='strip-inv2'))
         mask_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=second_inversion,
                                    suffix='strip-mask'))
         if t1_weighted is not None:
             t1w_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                       rootfile=t1_weighted,
                                       suffix='strip-t1w'))
         else:
@@ -102,7 +102,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
         if t1_map is not None:
             t1map_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                         rootfile=t1_map,
                                         suffix='strip-t1map'))
         else:

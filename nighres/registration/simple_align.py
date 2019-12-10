@@ -81,7 +81,7 @@ def simple_align(source_image, target_image,
     output_dir = _output_dir_4saving(output_dir, source_image) # needed for intermediate results
     if save_data:
         result_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=source_image,
                                    suffix='al-img'))
 

@@ -73,7 +73,7 @@ def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
         output_dir = _output_dir_4saving(output_dir, second_inversion)
 
         result_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=second_inversion,
                                    suffix='dura-proba'))
 

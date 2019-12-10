@@ -51,7 +51,7 @@ def levelset_to_probability(levelset_image, distance_mm=5,
         output_dir = _output_dir_4saving(output_dir, levelset_image)
 
         proba_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=levelset_image,
                                        suffix='l2p-proba'))
 

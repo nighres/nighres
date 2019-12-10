@@ -230,17 +230,17 @@ def embedded_antsreg_2d(source_image, target_image,
     output_dir = _output_dir_4saving(output_dir, source_image) # needed for intermediate results
     if save_data:
         transformed_source_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=source_image,
                                    suffix='ants-def'))
 
         mapping_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=source_image,
                                    suffix='ants-map'))
 
         inverse_mapping_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=source_image,
                                    suffix='ants-invmap'))
         if overwrite is False \
@@ -317,7 +317,7 @@ def embedded_antsreg_2d(source_image, target_image,
 
         src_img = nb.Nifti1Image(source.get_data(), new_affine, source.header)
         src_img.update_header()
-        src_img_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+        src_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_srcimg'))
         save_volume(src_img_file, src_img)
@@ -365,7 +365,7 @@ def embedded_antsreg_2d(source_image, target_image,
 
         trg_img = nb.Nifti1Image(target.get_data(), new_affine, target.header)
         trg_img.update_header()
-        trg_img_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+        trg_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_trgimg'))
         save_volume(trg_img_file, trg_img)
@@ -383,12 +383,12 @@ def embedded_antsreg_2d(source_image, target_image,
             src_coordX[x,y] = x
             src_coordY[x,y] = y
     src_mapX = nb.Nifti1Image(src_coordX, source.affine, source.header)
-    src_mapX_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+    src_mapX_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordX'))
     save_volume(src_mapX_file, src_mapX)
     src_mapY = nb.Nifti1Image(src_coordY, source.affine, source.header)
-    src_mapY_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+    src_mapY_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordY'))
     save_volume(src_mapY_file, src_mapY)
@@ -398,12 +398,12 @@ def embedded_antsreg_2d(source_image, target_image,
             trg_coordX[x,y] = x
             trg_coordY[x,y] = y
     trg_mapX = nb.Nifti1Image(trg_coordX, target.affine, target.header)
-    trg_mapX_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+    trg_mapX_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_trgcoordX'))
     save_volume(trg_mapX_file, trg_mapX)
     trg_mapY = nb.Nifti1Image(trg_coordY, target.affine, target.header)
-    trg_mapY_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+    trg_mapY_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_trgcoordY'))
     save_volume(trg_mapY_file, trg_mapY)
@@ -412,14 +412,14 @@ def embedded_antsreg_2d(source_image, target_image,
         # create and save temporary masks
         trg_mask_data = (target.get_data()!=0)
         trg_mask = nb.Nifti1Image(trg_mask_data, target.affine, target.header)
-        trg_mask_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+        trg_mask_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_image,
                                                             suffix='tmp_trgmask'))
         save_volume(trg_mask_file, trg_mask)
         
         src_mask_data = (source.get_data()!=0)
         src_mask = nb.Nifti1Image(src_mask_data, source.affine, source.header)
-        src_mask_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+        src_mask_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_image,
                                                             suffix='tmp_srcmask'))
         save_volume(src_mask_file, src_mask)
@@ -429,7 +429,7 @@ def embedded_antsreg_2d(source_image, target_image,
             +' --initialize-transforms-per-stage 0 --interpolation Linear'
 
      # add a prefix to avoid multiple names?
-    prefix = _fname_4saving(file_name=file_name,
+    prefix = _fname_4saving(module=__name__,file_name=file_name,
                             rootfile=source_image,
                             suffix='tmp_syn')
     prefix = os.path.basename(prefix)
@@ -588,7 +588,7 @@ def embedded_antsreg_2d(source_image, target_image,
         else:
             src_at = src_at+' --transform ['+transform+', 0]'
 #    src_at = src_at+' --output '+mapping_file
-    src_mapX_trans = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+    src_mapX_trans = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordX_map'))
     src_at = src_at+' --output '+src_mapX_trans
@@ -610,7 +610,7 @@ def embedded_antsreg_2d(source_image, target_image,
         else:
             src_at = src_at+' --transform ['+transform+', 0]'
 #    src_at = src_at+' --output '+mapping_file
-    src_mapY_trans = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+    src_mapY_trans = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordY_map'))
     src_at = src_at+' --output '+src_mapY_trans
@@ -642,7 +642,7 @@ def embedded_antsreg_2d(source_image, target_image,
         else:
             trg_at = trg_at+' --transform ['+transform+', 0]'
 #    trg_at = trg_at+' --output '+inverse_mapping_file
-    trg_mapX_trans = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+    trg_mapX_trans = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordX_map'))
     trg_at = trg_at+' --output '+trg_mapX_trans
@@ -664,7 +664,7 @@ def embedded_antsreg_2d(source_image, target_image,
         else:
             trg_at = trg_at+' --transform ['+transform+', 0]'
 #    trg_at = trg_at+' --output '+inverse_mapping_file
-    trg_mapY_trans = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+    trg_mapY_trans = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordY_map'))
     trg_at = trg_at+' --output '+trg_mapY_trans
@@ -824,17 +824,17 @@ def embedded_antsreg_multi(source_images, target_images,
         transformed_source_files = []
         for idx,source_image in enumerate(source_images):
             transformed_source_files.append(os.path.join(output_dir, 
-                                        _fname_4saving(file_name=file_name,
+                                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=source_image,
                                        suffix='ants-def'+str(idx))))
 
         mapping_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=source_images[0],
                                    suffix='ants-map'))
 
         inverse_mapping_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=source_images[0],
                                    suffix='ants-invmap'))
         if overwrite is False \
@@ -943,7 +943,7 @@ def embedded_antsreg_multi(source_images, target_images,
             
             src_img = nb.Nifti1Image(source.get_data(), new_affine, source.header)
             src_img.update_header()
-            src_img_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+            src_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_images[0],
                                                             suffix='tmp_srcimg'+str(idx)))
             save_volume(src_img_file, src_img)
@@ -1014,7 +1014,7 @@ def embedded_antsreg_multi(source_images, target_images,
             #print("\nafter: "+str(new_affine))
             trg_img = nb.Nifti1Image(target.get_data(), new_affine, target.header)
             trg_img.update_header()
-            trg_img_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+            trg_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_images[0],
                                                             suffix='tmp_trgimg'+str(idx)))
             save_volume(trg_img_file, trg_img)
@@ -1035,7 +1035,7 @@ def embedded_antsreg_multi(source_images, target_images,
                 src_coord[x,y,z,Y] = y
                 src_coord[x,y,z,Z] = z
     src_map = nb.Nifti1Image(src_coord, source.affine, source.header)
-    src_map_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+    src_map_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_images[0],
                                                         suffix='tmp_srccoord'))
     save_volume(src_map_file, src_map)
@@ -1046,7 +1046,7 @@ def embedded_antsreg_multi(source_images, target_images,
                 trg_coord[x,y,z,Y] = y
                 trg_coord[x,y,z,Z] = z
     trg_map = nb.Nifti1Image(trg_coord, target.affine, target.header)
-    trg_map_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+    trg_map_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_images[0],
                                                         suffix='tmp_trgcoord'))
     save_volume(trg_map_file, trg_map)
@@ -1055,14 +1055,14 @@ def embedded_antsreg_multi(source_images, target_images,
         # create and save temporary masks
         trg_mask_data = (target.get_data()!=0)
         trg_mask = nb.Nifti1Image(trg_mask_data, target.affine, target.header)
-        trg_mask_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+        trg_mask_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_image,
                                                             suffix='tmp_trgmask'))
         save_volume(trg_mask_file, trg_mask)
         
         src_mask_data = (source.get_data()!=0)
         src_mask = nb.Nifti1Image(src_mask_data, source.affine, source.header)
-        src_mask_file = os.path.join(output_dir, _fname_4saving(file_name=file_name,
+        src_mask_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_image,
                                                             suffix='tmp_srcmask'))
         save_volume(src_mask_file, src_mask)
@@ -1072,7 +1072,7 @@ def embedded_antsreg_multi(source_images, target_images,
             +' --initialize-transforms-per-stage 0 --interpolation Linear'
     
      # add a prefix to avoid multiple names?
-    prefix = _fname_4saving(file_name=file_name,
+    prefix = _fname_4saving(module=__name__,file_name=file_name,
                             rootfile=source_images[0],
                             suffix='tmp_syn')
     prefix = os.path.basename(prefix)

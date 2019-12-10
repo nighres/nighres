@@ -62,7 +62,7 @@ def profile_meshing(profile_surface_image, starting_surface_mesh,
         mesh_files = []
         for n in range(nlayers):
             mesh_files.append(os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=profile_surface_image,
                                        suffix='mesh-p'+str(n),ext="vtk")))
 

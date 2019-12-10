@@ -57,27 +57,27 @@ def t2s_optimal_combination(image_list, te_list, depth=None,
         output_dir = _output_dir_4saving(output_dir, image_list[0])
 
         comb_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2scomb-combined'))
 
         t2s_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2scomb-t2s'))
 
         r2s_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2scomb-r2s'))
 
         s0_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2scomb-s0'))
 
         err_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2scomb-err'))
 

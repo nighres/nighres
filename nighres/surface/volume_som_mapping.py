@@ -59,12 +59,12 @@ def volume_som_mapping(proba_image,
         output_dir = _output_dir_4saving(output_dir, proba_image)
 
         map_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=proba_image,
                                        suffix='som-orig'))
 
         som_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=proba_image,
                                        suffix='som-grid',ext='vtk'))
 

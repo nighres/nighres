@@ -80,35 +80,35 @@ def conditional_shape(target_images, structures, contrasts,
         output_dir = _output_dir_4saving(output_dir, target_images[0])
 
         spatial_proba_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=target_images[0],
                                   suffix='cspmax-sproba', ))
 
         spatial_label_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=target_images[0],
                                    suffix='cspmax-slabel'))
         combined_proba_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=target_images[0],
                                   suffix='cspmax-cproba', ))
 
         combined_label_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=target_images[0],
                                    suffix='cspmax-clabel'))
         proba_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=target_images[0],
                                   suffix='cspmax-proba', ))
 
         label_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=target_images[0],
                                    suffix='cspmax-label'))
 
         neighbor_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=target_images[0],
                                    suffix='cspmax-ngb'))
         if overwrite is False \
@@ -367,27 +367,27 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
         output_dir = _output_dir_4saving(output_dir, contrast_images[0][0])
 
         spatial_proba_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=contrast_images[0][0],
                                   suffix='cspmax-sproba', ))
 
         spatial_label_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=contrast_images[0][0],
                                    suffix='cspmax-slabel'))
 
         condmean_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=contrast_images[0][0],
                                   suffix='cspmax-cmean', ))
 
         condstdv_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=contrast_images[0][0],
                                    suffix='cspmax-cstdv'))
         
         condhist_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=contrast_images[0][0],
                                    suffix='cspmax-chist'))
         

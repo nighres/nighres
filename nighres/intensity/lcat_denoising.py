@@ -84,7 +84,7 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
             if file_names is None: name=None
             else: name=file_names[idx]
             den_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=name,
+                        _fname_4saving(module=__name__,file_name=name,
                                       rootfile=image,
                                       suffix='lcat-den'))
             den_files.append(den_file)
@@ -94,7 +94,7 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
                 if file_names is None: name=None
                 else: name=file_names[idx]
                 den_file = os.path.join(output_dir, 
-                            _fname_4saving(file_name=name,
+                            _fname_4saving(module=__name__,file_name=name,
                                           rootfile=image,
                                           suffix='lcat-den'))
                 den_files.append(den_file)            
@@ -102,12 +102,12 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
         if file_names is None: name=None
         else: name=file_names[0]
         dim_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=name,
+                        _fname_4saving(module=__name__,file_name=name,
                                    rootfile=image_list[0],
                                    suffix='lcat-dim'))
 
         err_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=name,
+                        _fname_4saving(module=__name__,file_name=name,
                                    rootfile=image_list[0],
                                    suffix='lcat-res'))
         

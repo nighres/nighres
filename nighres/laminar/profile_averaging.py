@@ -56,19 +56,19 @@ def profile_averaging(profile_surface_image, intensity_image, roi_image,
         output_dir = _output_dir_4saving(output_dir, intensity_image)
 
         weight_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                       rootfile=intensity_image,
                                       suffix='lpa-weight'))
         sample_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                       rootfile=intensity_image,
                                       suffix='lpa-best',ext='txt'))
         median_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                       rootfile=intensity_image,
                                       suffix='lpa-med',ext='txt'))
         iqr_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                       rootfile=intensity_image,
                                       suffix='lpa-iqr',ext='txt'))
         if overwrite is False \

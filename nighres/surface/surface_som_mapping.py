@@ -62,12 +62,12 @@ def surface_som_mapping(surface_mesh, mask_zeros=False,
         output_dir = _output_dir_4saving(output_dir, surface_mesh)
 
         orig_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=surface_mesh,
                                        suffix='som-orig',ext='vtk'))
 
         som_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=surface_mesh,
                                        suffix='som-grid',ext='vtk'))
 

@@ -54,22 +54,22 @@ def flash_t2s_fitting(image_list, te_list,
         output_dir = _output_dir_4saving(output_dir, image_list[0])
 
         t2s_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2fit-t2s'))
 
         r2s_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2fit-r2s'))
 
         s0_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2fit-s0'))
 
         err_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2fit-err'))
 

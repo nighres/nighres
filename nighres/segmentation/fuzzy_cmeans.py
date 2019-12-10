@@ -64,13 +64,13 @@ def fuzzy_cmeans(image, clusters=3, max_iterations=50, max_difference=0.01,
         mem_files = []
         for c in range(clusters):
             mem_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=image,
                                   suffix='rfcm-mem'+str(c+1), ))
             mem_files.append(mem_file)
 
         classification_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image,
                                    suffix='rfcm-class'))
         if overwrite is False \

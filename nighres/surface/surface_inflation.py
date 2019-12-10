@@ -58,7 +58,7 @@ def surface_inflation(surface_mesh, step_size=0.75, max_iter=2000, max_curv=10.0
         output_dir = _output_dir_4saving(output_dir, surface_mesh)
 
         infl_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=surface_mesh,
                                        suffix='infl-mesh',ext='vtk'))
 

@@ -81,17 +81,17 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
         output_dir = _output_dir_4saving(output_dir, first_inversion[0])
 
         t1_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=first_inversion[0],
                                    suffix='qt1map-t1'))
 
         r1_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=first_inversion[0],
                                    suffix='qt1map-r1'))
 
         uni_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=first_inversion[0],
                                    suffix='qt1map-uni'))
 

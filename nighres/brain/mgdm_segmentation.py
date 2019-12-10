@@ -215,22 +215,22 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         output_dir = _output_dir_4saving(output_dir, contrast_image1)
 
         seg_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=contrast_image1,
                                   suffix='mgdm-seg', ))
 
         lbl_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=contrast_image1,
                                   suffix='mgdm-lbls'))
 
         mems_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=contrast_image1,
                                    suffix='mgdm-mems'))
 
         dist_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=contrast_image1,
                                    suffix='mgdm-dist'))
         if overwrite is False \

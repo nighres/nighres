@@ -124,47 +124,47 @@ def extract_brain_region(segmentation, levelset_boundary,
 	# build names for saving after setting the parameters to get the proper names
     if save_data:
         reg_mask_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=segmentation,
                                        suffix='xmask-'+xbr.getStructureName(), ))
 
         ins_mask_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=segmentation,
                                        suffix='xmask-'+xbr.getInsideName(), ))
 
         bg_mask_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                       rootfile=segmentation,
                                       suffix='xmask-'+xbr.getBackgroundName(), ))
 
         reg_proba_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                         rootfile=segmentation,
                                         suffix='xproba-'+xbr.getStructureName(), ))
 
         ins_proba_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                         rootfile=segmentation,
                                         suffix='xproba-'+xbr.getInsideName(), ))
 
         bg_proba_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=segmentation,
                                        suffix='xproba-'+xbr.getBackgroundName(), ))
 
         reg_lvl_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                       rootfile=segmentation,
                                       suffix='xlvl-'+xbr.getStructureName(), ))
 
         ins_lvl_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                       rootfile=segmentation,
                                       suffix='xlvl-'+xbr.getInsideName(), ))
 
         bg_lvl_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                      rootfile=segmentation,
                                      suffix='xlvl-'+xbr.getBackgroundName(), ))
         if overwrite is False \

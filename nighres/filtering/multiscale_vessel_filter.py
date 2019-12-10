@@ -96,39 +96,39 @@ def multiscale_vessel_filter(input_image,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, input_image)
 
-        vesselImage_file = _fname_4saving(file_name=file_name,
+        vesselImage_file = _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
                                   suffix='seg', )
 
-        filterImage_file = _fname_4saving(file_name=file_name,
+        filterImage_file = _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
                                   suffix='filtered')
 
-        probaImage_file = _fname_4saving(file_name=file_name,
+        probaImage_file = _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=input_image,
                                    suffix='proba')
 
-        scaleImage_file = _fname_4saving(file_name=file_name,
+        scaleImage_file = _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=input_image,
                                    suffix='scale')
 
-        diameterImage_file = _fname_4saving(file_name=file_name,
+        diameterImage_file = _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
                                   suffix='dia', )
 
-        lengthImage_file = _fname_4saving(file_name=file_name,
+        lengthImage_file = _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
                                   suffix='length')
 
-        pvImage_file = _fname_4saving(file_name=file_name,
+        pvImage_file = _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=input_image,
                                    suffix='pv')
 
-        labelImage_file = _fname_4saving(file_name=file_name,
+        labelImage_file = _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
                                   suffix='label')
 
-        directionImage_file = _fname_4saving(file_name=file_name,
+        directionImage_file = _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
                                   suffix='direction')
 

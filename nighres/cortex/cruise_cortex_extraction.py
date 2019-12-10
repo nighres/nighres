@@ -123,42 +123,42 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
         output_dir = _output_dir_4saving(output_dir, gm_image)
 
         cortex_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                      rootfile=gm_image,
                                      suffix='cruise-cortex', ))
 
         gwb_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=gm_image,
                                   suffix='cruise-gwb', ))
 
         cgb_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=gm_image,
                                   suffix='cruise-cgb', ))
 
         avg_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=gm_image,
                                   suffix='cruise-avg', ))
 
         thick_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                     rootfile=gm_image,
                                     suffix='cruise-thick', ))
 
         pwm_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=gm_image,
                                   suffix='cruise-pwm', ))
 
         pgm_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=gm_image,
                                   suffix='cruise-pgm', ))
 
         pcsf_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=gm_image,
                                    suffix='cruise-pcsf', ))
         if overwrite is False \

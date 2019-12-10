@@ -51,7 +51,7 @@ def profile_sampling(profile_surface_image, intensity_image,
         output_dir = _output_dir_4saving(output_dir, intensity_image)
 
         profile_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                       rootfile=intensity_image,
                                       suffix='lps-data'))
         if overwrite is False \
