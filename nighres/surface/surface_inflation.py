@@ -126,5 +126,6 @@ def surface_inflation(surface_mesh, step_size=0.75, max_iter=2000, max_curv=10.0
     if save_data:
         print("saving...")
         save_mesh(infl_file, inflated_orig_mesh)
- 
-    return {'result': inflated_orig_mesh}
+        return {'result': infl_file}
+    else:
+        return {'result': inflated_orig_mesh}

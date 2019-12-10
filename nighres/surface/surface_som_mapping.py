@@ -163,5 +163,6 @@ def surface_som_mapping(surface_mesh, mask_zeros=False,
         print("saving...")
         save_mesh(orig_file, mapped_orig_mesh)
         save_mesh(som_file, mapped_som_mesh)
-
-    return {'original': mapped_orig_mesh, 'som': mapped_som_mesh}
+        return {'original': orig_file, 'som': som_file}
+    else:
+        return {'original': mapped_orig_mesh, 'som': mapped_som_mesh}

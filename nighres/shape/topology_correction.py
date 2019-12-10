@@ -155,4 +155,6 @@ def topology_correction(image, shape_type,
         save_volume(corrected_file, corrected)
         save_volume(corrected_obj_file, corrected_obj)
 
-    return {'corrected': corrected, 'object':corrected_obj}
+        return {'corrected': corrected_file, 'object': corrected_obj_file}
+    else:
+        return {'corrected': corrected, 'object': corrected_obj}

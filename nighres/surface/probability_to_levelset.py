@@ -121,5 +121,6 @@ def probability_to_levelset(probability_image, mask_image=None,
 
     if save_data:
         save_volume(levelset_file, levelset)
-
-    return {'result': levelset}
+        return {'result': levelset_file}
+    else:
+        return {'result': levelset}

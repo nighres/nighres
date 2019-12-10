@@ -136,5 +136,6 @@ def phase_unwrapping(image, mask=None, nquadrants=3,
 
     if save_data:
         save_volume(out_file, out)
-
-    return {'result': out}
+        return {'result': out_file}
+    else:
+        return {'result': out}

@@ -111,5 +111,6 @@ def profile_sampling(profile_surface_image, intensity_image,
 
     if save_data:
         save_volume(profile_file, profiles)
-
-    return {'result': profiles}
+        return {'result': profile_file}
+    else:
+        return {'result': profiles}

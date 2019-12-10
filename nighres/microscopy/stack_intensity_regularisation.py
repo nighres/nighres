@@ -112,5 +112,6 @@ def stack_intensity_regularisation(image, ratio=50,
 
     if save_data:
         save_volume(regularised_file, regularised)
-
-    return {'result': regularised}
+        return {'result': regularised_file}
+    else:
+        return {'result': regularised}

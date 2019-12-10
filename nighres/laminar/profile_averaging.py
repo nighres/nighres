@@ -144,4 +144,6 @@ def profile_averaging(profile_surface_image, intensity_image, roi_image,
         numpy.savetxt(median_file, median)
         numpy.savetxt(iqr_file, iqr)
 
-    return {'weights': weights}
+        return {'weights': weight_file}
+    else:
+        return {'weights': weights}

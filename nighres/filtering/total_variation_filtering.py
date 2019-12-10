@@ -153,4 +153,6 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
         save_volume(out_file, out)
         save_volume(res_file, res)
 
-    return {'filtered': out, 'residual': res}
+        return {'filtered': out_file, 'residual': res_file}
+    else:
+        return {'filtered': out, 'residual': res}

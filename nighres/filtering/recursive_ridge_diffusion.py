@@ -271,6 +271,10 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
         save_volume(ridge_pv_file, ridge_pv_img)
         save_volume(ridge_size_file, ridge_size_img)
 
-    return {'filter': filter_img, 'propagation': propag_img, 'scale': scale_img,
-            'ridge_dir': ridge_dir_img, 'ridge_pv': ridge_pv_img,
-            'ridge_size': ridge_size_img}
+        return {'filter': filter_file, 'propagation': propagation_file, 'scale': scale_file,
+                'ridge_dir': ridge_direction_file, 'ridge_pv': ridge_pv_file,
+                'ridge_size': ridge_size_file}
+    else:
+        return {'filter': filter_img, 'propagation': propag_img, 'scale': scale_img,
+                'ridge_dir': ridge_dir_img, 'ridge_pv': ridge_pv_img,
+                'ridge_size': ridge_size_img}

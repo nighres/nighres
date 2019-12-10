@@ -176,4 +176,6 @@ def volumetric_layering(inner_levelset, outer_levelset,
         save_volume(layer_file, layers)
         save_volume(boundary_file, boundaries)
 
-    return {'depth': depth, 'layers': layers, 'boundaries': boundaries}
+        return {'depth': depth_file, 'layers': layer_file, 'boundaries': boundary_file}
+    else:
+        return {'depth': depth, 'layers': layers, 'boundaries': boundaries}

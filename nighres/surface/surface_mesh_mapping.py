@@ -185,7 +185,12 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
         if inflated_mesh is not None:
             save_mesh(inf_file, mapped_inf_mesh)
 
-    if inflated_mesh is not None:
-        return {'original': mapped_orig_mesh, 'inflated': mapped_inf_mesh}
+        if inflated_mesh is not None:
+            return {'original': orig_file, 'inflated': inf_file}
+        else:
+            return {'original': orig_file}
     else:
-        return {'original': mapped_orig_mesh}
+        if inflated_mesh is not None:
+            return {'original': mapped_orig_mesh, 'inflated': mapped_inf_mesh}
+        else:
+            return {'original': mapped_orig_mesh}

@@ -294,9 +294,10 @@ def simple_align(source_image, target_image,
         result = nb.Nifti1Image(source.get_data(), source.affine, source.header)
         result.update_header()
 
-    outputs = {'result': result}
-
     if save_data:
         save_volume(result_file, result)
+        outputs = {'result': result_file}
+    else:
+        outputs = {'result': result}
 
     return outputs

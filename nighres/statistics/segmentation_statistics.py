@@ -178,6 +178,9 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
     csv_file = stats.getOutputFile()
 
     if output:
-        return {'csv': csv_file, 'map': output}
+        if save_data:
+            return {'csv': csv_file, 'map': map_file}
+        else:
+            return {'csv': csv_file, 'map': output}
     else:
         return {'csv': csv_file}

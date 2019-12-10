@@ -149,4 +149,6 @@ def volume_som_mapping(proba_image,
         save_volume(map_file, mapped_img)
         save_mesh(som_file, mapped_som_mesh)
 
-    return {'map': mapped_img, 'som': mapped_som_mesh}
+        return {'map': map_file, 'som': som_file}
+    else:
+        return {'map': mapped_img, 'som': mapped_som_mesh}

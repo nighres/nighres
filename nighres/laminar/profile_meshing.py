@@ -143,7 +143,10 @@ def profile_meshing(profile_surface_image, starting_surface_mesh,
     if save_data:
         _write_profiles_vtk("mesh_lines.vtk",lines)
  
-    return {'profile': meshes}
+    if save_data:
+        return {'profile': mesh_files}
+    else:
+        return {'profile': meshes}
 
 def _write_profiles_vtk(filename, vertices, decimation=10):
     '''

@@ -192,4 +192,6 @@ def t2s_optimal_combination(image_list, te_list, depth=None,
         save_volume(s0_file, s0)
         save_volume(err_file, err)
 
-    return {'combined': comb, 't2s': t2s, 'r2s': r2s, 's0': s0, 'residuals': err}
+        return {'combined': comb_file, 't2s': t2s_file, 'r2s': r2s_file, 's0': s0_file, 'residuals': err_file}
+    else:
+        return {'combined': comb, 't2s': t2s, 'r2s': r2s, 's0': s0, 'residuals': err}
