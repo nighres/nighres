@@ -96,6 +96,8 @@ def _fname_4saving_prev(file_name=None, rootfile=None, suffix=None, ext=None):
 
 def _fname_4saving(file_name=None, rootfile=None, suffix=None, ext=None):
 
+    # default extension if not given
+    file_ext = 'nii.gz'
     # if a file_name is given, use that
     if file_name is None:
         # if a rootfile is given (which is a file_name and not a data object)

@@ -14,16 +14,16 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 
 def multiscale_vessel_filter(input_image,
-			prior_image=None,
-                        structure_intensity='bright',
+			            structure_intensity='bright',
                         filterType = 'RRF',
-			propagationtype = 'diffusion',
-			threshold = 0.5,
-			factor = 0.5,
-			max_diff = 0.001,
-			max_itr = 100,
-			scale_step = 1.0,
-			scale = 4,
+                        propagationtype = 'diffusion',
+                        threshold = 0.5,
+                        factor = 0.5,
+                        max_diff = 0.001,
+                        max_itr = 100,
+                        scale_step = 1.0,
+                        scale = 4,
+                        prior_image=None,
                         invert_prior=False,
                         save_data=False, 
                         overwrite=False, 
@@ -41,27 +41,31 @@ def multiscale_vessel_filter(input_image,
     input_image: niimg
         Image containing structure-of-interest
     structure_intensity: str
-        Image intensity of structure-of-interest 'bright', 'dark', or 'both'.
+        Image intensity of structure-of-interest 'bright', 'dark', or 'both' 
+        (default is 'bright').
     filterType: str
-	Decide for a filter type: either RRF or Hessian
+	    Decide for a filter type: either RRF or Hessian (default is 'RRF')
     propagationtype: str
-	Set the diffusion model of the filter: ither diffusion or believ propagation model
+	    Set the diffusion model of the filter: either 'diffusion' or 'belief' 
+	    propagation model (default is 'diffusion')
     threshold: float
-	Set the propability treshold to decide at what probability the detected structure should be seen as a vessel, standard value is 0.5
+	    Set the propability treshold to decide at what probability the detected 
+	    structure should be seen as a vessel (default is 0.5)
     factor: float
-	Diffusion factor between 0 and 100, standard value is 0.5
+	    Diffusion factor between 0 and 100 (default is 0.5)
     max_diff: float
-	maximal difference between 0 and 1, standard value is 0.001
+	    maximal difference for stopping (default is 0.001)
     max_itr: int
-	maximale iteration number between 0 and 100, standard value is 100
+	    maximale iteration number (default is 100)
     scale_step: float
-	scale step is between 0.25 and 2, stanard value is 1
+	    Scaling step between diameters (default is 1)
     scale: int
-	Scale number between 1 and 10, standard value is 4
+	    Number of scales to use (default is 4)
+    prior_image: niimg (opt)
+        Image prior for the region to include (positive) or exclude (negative)
     invert_prior: boolean, optional (default is False)
- 	In case there is a prior, the prior can be considered as negative prior (False) or as positive prior (True)
-    prior_image: niiimg, optional
-	prior image, has to be a binary mask
+ 	    In case there is a prior, the prior can be considered as negative prior 
+ 	    (False) or as positive prior (True)
     save_data: bool, optional
         Save output data to file (default is False)
     overwrite: bool

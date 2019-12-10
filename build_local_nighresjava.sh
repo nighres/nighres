@@ -72,14 +72,14 @@ echo "Compiling..."
 #cd cbstools-public
 cd $cbstools_local
 #mkdir -p build
-javac -cp ${deps_list} ${javac_opts[@]} de/mpg/cbs/core/*/*.java $cbstools_list
+javac -cp ${deps_list} ${javac_opts[@]} ca/concordia/qpi/*/*.java de/mpg/cbs/core/*/*.java $cbstools_list
 
 echo "Assembling..."
 mkdir -p $nighres_local/nighresjava/src
 mkdir -p $nighres_local/nighresjava/lib
 
 #jar cf cbstools.jar     de/mpg/cbs/core/*/*.class
-jar cf $nighres_local/nighresjava/src/nighresjava.jar de/mpg/cbs/core/*/*.class
+jar cf $nighres_local/nighresjava/src/nighresjava.jar ca/concordia/qpi/*/*.class de/mpg/cbs/core/*/*.class
 jar cf $nighres_local/nighresjava/src/cbstools-lib.jar de/mpg/cbs/*/*.class
 
 cp lib/*.jar $nighres_local/nighresjava/lib/

@@ -66,3 +66,4 @@ def download_7T_TRT(data_dir, overwrite=False, subject_id='sub001_sess1'):
     return {'inv2': file_targets[0],
             't1map': file_targets[1],
             't1w': file_targets[2]}
+
