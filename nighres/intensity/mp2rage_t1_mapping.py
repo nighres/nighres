@@ -197,5 +197,6 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
         save_volume(t1_file, t1)
         save_volume(r1_file, r1)
         save_volume(uni_file, uni)
-       
-    return {'t1': t1, 'r1': r1, 'uni': uni}
+        return {'t1': t1_file, 'r1': r1_file, 'uni': uni_file}
+    else:
+        return {'t1': t1, 'r1': r1, 'uni': uni}

@@ -254,7 +254,8 @@ def lcpca_denoising(image_list, phase_list=None,
     if save_data:
         save_volume(dim_file, dim)
         save_volume(err_file, err)
-
-    output = {'denoised': denoised_list, 'dimensions': dim, 'residuals': err}
+        output = {'denoised': den_files, 'dimensions': dim_file, 'residuals': err_file}
+    else:
+        output = {'denoised': denoised_list, 'dimensions': dim, 'residuals': err}
 
     return output

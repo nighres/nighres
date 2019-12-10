@@ -81,5 +81,6 @@ def levelset_to_probability(levelset_image, distance_mm=5,
 
     if save_data:
         save_volume(proba_file, proba)
-
-    return {'result': proba}
+        return {'result': proba_file}
+    else:
+        return {'result': proba}

@@ -126,9 +126,9 @@ def filter_ridge_structures(input_image,
 
     ridge_structure_image = nb.Nifti1Image(ridge_structure_image_data, affine,
                                            header)
-    outputs = {'result': ridge_structure_image}
-
     if save_data:
         save_volume(ridge_file, ridge_structure_image)
-
+        outputs = {'result': ridge_file}
+    else:
+        outputs = {'result': ridge_structure_image}
     return outputs

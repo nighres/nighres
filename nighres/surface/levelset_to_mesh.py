@@ -132,5 +132,6 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
 
     if save_data:
         save_mesh_geometry(mesh_file, mesh)
-
-    return {'result': mesh}
+        return {'result': mesh_file}
+    else:
+        return {'result': mesh}

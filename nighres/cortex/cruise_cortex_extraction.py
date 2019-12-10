@@ -303,5 +303,8 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
         save_volume(pgm_file, pgm)
         save_volume(pcsf_file, pcsf)
 
-    return {'cortex': cortex, 'gwb': gwb, 'cgb': cgb, 'avg': avg,
-            'thickness': thickness, 'pwm': pwm, 'pgm': pgm, 'pcsf': pcsf}
+        return {'cortex': cortex_file, 'gwb': gwb_file, 'cgb': cgb_file, 'avg': avg_file,
+                'thickness': thick_file, 'pwm': pwm_file, 'pgm': pgm_file, 'pcsf': pcsf_file}
+    else:
+        return {'cortex': cortex, 'gwb': gwb, 'cgb': cgb, 'avg': avg,
+                'thickness': thickness, 'pwm': pwm, 'pgm': pgm, 'pcsf': pcsf}

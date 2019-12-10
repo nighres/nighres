@@ -239,5 +239,6 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
     if save_data:
         save_volume(dim_file, dim)
         save_volume(err_file, err)
-
-    return {'denoised': denoised_list, 'dimensions': dim, 'residuals': err}
+        return {'denoised': den_files, 'dimensions': dim_file, 'residuals': err_file}
+    else:
+        return {'denoised': denoised_list, 'dimensions': dim, 'residuals': err}

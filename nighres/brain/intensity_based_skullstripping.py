@@ -182,22 +182,24 @@ def intensity_based_skullstripping(main_image, extra_image=None,
     main_hdr['cal_max'] = np.nanmax(proba_data)
     proba = nb.Nifti1Image(proba_data, main_affine, main_hdr)
 
-    outputs = {'brain_mask': mask, 'brain_proba': proba, 'main_masked': main_masked}
-
-    if save_data:
-        save_volume(main_file, main_masked)
-        save_volume(mask_file, mask)
-        save_volume(proba_file, proba)
-
     if extra_image is not None:
         extra_data = np.reshape(np.array(
                                 algo.getMaskedExtraImage(),
                                 dtype=np.float32), dimensions, 'F')
         extra_hdr['cal_max'] = np.nanmax(extra_data)
         extra_masked = nb.Nifti1Image(extra_data, extra_affine, extra_hdr)
-        outputs['extra_masked'] = extra_masked
 
-        if save_data:
+    if save_data:
+        save_volume(main_file, main_masked)
+        save_volume(mask_file, mask)
+        save_volume(proba_file, proba)
+        outputs = {'brain_mask': mask_file, 'brain_proba': proba_file, 'main_masked': main_file}
+        if extra_image is not None:
             save_volume(extra_file, extra_masked)
+            outputs['extra_masked'] = extra_file
+    else:
+        outputs = {'brain_mask': mask, 'brain_proba': proba, 'main_masked': main_masked}
+        if extra_image is not None:
+            outputs['extra_masked'] = extra_masked
             
     return outputs

@@ -685,11 +685,6 @@ def embedded_antsreg_2d(source_image, target_image,
     
     # pad coordinate mapping outside the image? hopefully not needed...
 
-    # collect saved outputs 
-    output = {'transformed_sources': load_volume(transformed_source_file), 
-          'mapping': load_volume(mapping_file), 
-          'inverse': load_volume(inverse_mapping_file)}
-
     # clean-up intermediate files
     if os.path.exists(src_mapX_file): os.remove(src_mapX_file)
     if os.path.exists(src_mapY_file): os.remove(src_mapY_file)
@@ -708,14 +703,25 @@ def embedded_antsreg_2d(source_image, target_image,
     for name in inverse: 
         if os.path.exists(name): os.remove(name)
 
-    # remove output files if *not* saved 
     if not save_data:
+        # collect saved outputs 
+        output = {'transformed_sources': load_volume(transformed_source_file), 
+              'mapping': load_volume(mapping_file), 
+              'inverse': load_volume(inverse_mapping_file)}
+    
+        # remove output files if *not* saved 
         if os.path.exists(transformed_source_file): os.remove(transformed_source_file)            
         if os.path.exists(mapping_file): os.remove(mapping_file)
         if os.path.exists(inverse_mapping_file): os.remove(inverse_mapping_file)
 
-    return output
-
+        return output
+    else:
+        # collect saved outputs 
+        output = {'transformed_sources': transformed_source_file, 
+              'mapping': mapping_file, 
+              'inverse': inverse_mapping_file}
+    
+        return output
 
 def embedded_antsreg_multi(source_images, target_images, 
                     run_rigid=True, 
@@ -1265,15 +1271,6 @@ def embedded_antsreg_multi(source_images, target_images,
 
     # pad coordinate mapping outside the image? hopefully not needed...
 
-    # collect saved outputs 
-    transformed = []
-    for trans_file in transformed_source_files:
-        transformed.append(load_volume(trans_file)) 
-    output = {'transformed_sources': transformed, 
-          'transformed_source': transformed[0], 
-          'mapping': load_volume(mapping_file), 
-          'inverse': load_volume(inverse_mapping_file)}
-
     # clean-up intermediate files
     if os.path.exists(src_map_file): os.remove(src_map_file)
     if os.path.exists(trg_map_file): os.remove(trg_map_file)
@@ -1286,11 +1283,32 @@ def embedded_antsreg_multi(source_images, target_images,
     for name in inverse: 
         if os.path.exists(name): os.remove(name)
 
-    # remove output files if *not* saved 
     if not save_data:
+        # collect saved outputs 
+        transformed = []
+        for trans_file in transformed_source_files:
+            transformed.append(load_volume(trans_file)) 
+        output = {'transformed_sources': transformed, 
+              'transformed_source': transformed[0], 
+              'mapping': load_volume(mapping_file), 
+              'inverse': load_volume(inverse_mapping_file)}
+
+        # remove output files if *not* saved 
         for idx,trans_image in enumerate(transformed_source_files):
             if os.path.exists(trans_image): os.remove(trans_image)            
         if os.path.exists(mapping_file): os.remove(mapping_file)
         if os.path.exists(inverse_mapping_file): os.remove(inverse_mapping_file)
 
-    return output
+        return output
+    else:
+        # collect saved outputs 
+        transformed = []
+        for trans_file in transformed_source_files:
+            transformed.append(trans_file) 
+        output = {'transformed_sources': transformed, 
+              'transformed_source': transformed[0], 
+              'mapping': mapping_file, 
+              'inverse': inverse_mapping_file}
+
+        return output
+        

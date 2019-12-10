@@ -167,5 +167,6 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
         save_volume(masked_file, masked)
         save_volume(proba_file, proba)
         save_volume(mask_file, mask)
-
-    return {'masked': masked, 'proba': proba, 'mask': mask}
+        return {'masked': masked_file, 'proba': proba_file, 'mask': mask_file}
+    else:
+        return {'masked': masked, 'proba': proba, 'mask': mask}

@@ -11,7 +11,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
                            skip_zero_values=True, topology_lut_dir=None,
                            save_data=False, overwrite=False, output_dir=None,
-                           file_name=None, return_filename=False):
+                           file_name=None):
     """ MP2RAGE skull stripping
 
     Estimates a brain mask from MRI data acquired with the MP2RAGE sequence.
@@ -42,8 +42,6 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
     file_name: str, optional
         Desired base name for output files with file extension
         (suffixes will be added)
-    return_filename: bool, optional
-        Return filename instead of object
 
     Returns
     ----------
@@ -198,14 +196,12 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
     inv2_hdr['cal_max'] = np.nanmax(mask_data)
     mask = nb.Nifti1Image(mask_data, inv2_affine, inv2_hdr)
 
-    if return_filename:
-        outputs = {'brain_mask': mask_file, 'inv2_masked': inv2_file}
-    else:
-        outputs = {'brain_mask': mask, 'inv2_masked': inv2_masked}
-
     if save_data:
         save_volume(inv2_file, inv2_masked)
         save_volume(mask_file, mask)
+        outputs = {'brain_mask': mask_file, 'inv2_masked': inv2_file}
+    else:
+        outputs = {'brain_mask': mask, 'inv2_masked': inv2_masked}
 
     if t1_weighted is not None:
         t1w_masked_data = np.reshape(np.array(
@@ -214,13 +210,11 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         t1w_hdr['cal_max'] = np.nanmax(t1w_masked_data)
         t1w_masked = nb.Nifti1Image(t1w_masked_data, t1w_affine, t1w_hdr)
 
-        if return_filename:
+        if save_data:
+            save_volume(t1w_file, t1w_masked)
             outputs['t1w_masked'] = t1w_file
         else:
             outputs['t1w_masked'] = t1w_masked
-
-        if save_data:
-            save_volume(t1w_file, t1w_masked)
 
     if t1_map is not None:
         t1map_masked_data = np.reshape(np.array(
@@ -230,12 +224,10 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
         t1map_masked = nb.Nifti1Image(t1map_masked_data, t1map_affine,
                                       t1map_hdr)
 
-        if return_filename:
+        if save_data:
+            save_volume(t1map_file, t1map_masked)
             outputs['t1map_masked'] = t1map_file
         else:
             outputs['t1map_masked'] = t1map_masked
-
-        if save_data:
-            save_volume(t1map_file, t1map_masked)
 
     return outputs

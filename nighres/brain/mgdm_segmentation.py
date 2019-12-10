@@ -67,8 +67,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                       compute_posterior=False, posterior_scale=5.0,
                       diffuse_probabilities=False,
                       save_data=False, overwrite=False, output_dir=None,
-                      file_name=None,
-                      return_filename=False):
+                      file_name=None):
     """ MGDM segmentation
 
     Estimates brain structures from an atlas for MRI data using
@@ -145,8 +144,6 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     file_name: str, optional
         Desired base name for output files with file extension
         (suffixes will be added)
-    return_filename: bool, optional
-        Return filename instead of object
 
     Returns
     ----------
@@ -363,8 +360,6 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         save_volume(dist_file, dist)
         save_volume(lbl_file, lbls)
         save_volume(mems_file, mems)
-
-    if return_filename:
         output = {
             'segmentation': seg_file,
             'labels': lbl_file,

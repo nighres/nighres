@@ -131,5 +131,6 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
 
     if save_data:
         save_volume(out_file, out)
-
-    return {'result': out}
+        return {'result': out_file}
+    else:
+        return {'result': out}

@@ -308,11 +308,15 @@ def conditional_shape(target_images, structures, contrasts,
         save_volume(label_file, label)
         save_volume(neighbor_file, neighbors)
 
-    output= {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 
-            'max_combined_proba': combined_proba, 'max_combined_label': combined_label, 
-            'max_proba': proba, 'max_label': label, 'neighbors': neighbors}
-
-    return output
+        output= {'max_spatial_proba': spatial_proba_file, 'max_spatial_label': spatial_label_file, 
+                'max_combined_proba': combined_proba_file, 'max_combined_label': combined_label_file, 
+                'max_proba': proba_file, 'max_label': label_file, 'neighbors': neighbors_file}
+        return output
+    else:
+        output= {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 
+                'max_combined_proba': combined_proba, 'max_combined_label': combined_label, 
+                'max_proba': proba, 'max_label': label, 'neighbors': neighbors}
+        return output
 
 
 def conditional_shape_atlasing(subjects, structures, contrasts, 
@@ -489,7 +493,8 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
         save_volume(spatial_proba_file, spatial_proba)
         save_volume(spatial_label_file, spatial_label)
         save_volume(condhist_file, chist)
-
-    output= {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 'cond_hist': chist}
-    
-    return output
+        output= {'max_spatial_proba': spatial_proba_file, 'max_spatial_label': spatial_label_file, 'cond_hist': condhist_file}
+        return output
+    else:
+        output= {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 'cond_hist': chist}
+        return output

@@ -178,8 +178,9 @@ def apply_coordinate_mappings(image, mapping1,
 
     if save_data:
         save_volume(deformed_file, deformed)
-
-    return {'result': deformed}
+        return {'result': deformed_file}
+    else:
+        return {'result': deformed}
 
 def apply_coordinate_mappings_2d(image, mapping1,
                         mapping2=None, mapping3=None, mapping4=None,
@@ -350,5 +351,6 @@ def apply_coordinate_mappings_2d(image, mapping1,
 
     if save_data:
         save_volume(deformed_file, deformed)
-
-    return {'result': deformed}
+        return {'result': deformed_file}
+    else:
+        return {'result': deformed}

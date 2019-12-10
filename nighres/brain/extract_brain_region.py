@@ -15,7 +15,7 @@ def extract_brain_region(segmentation, levelset_boundary,
                          estimate_tissue_densities=False,
                          partial_volume_distance=1.0,
                          save_data=False, overwrite=False, output_dir=None,
-                         file_name=None, return_filename=False):
+                         file_name=None):
     """ Extract Brain Region
 
     Extracts masks, probability maps and levelset surfaces for specific brain
@@ -57,8 +57,6 @@ def extract_brain_region(segmentation, levelset_boundary,
     file_name: str, optional
         Desired base name for output files with file extension
         (suffixes will be added)
-    return_filename: bool, optional
-        Return filename instead of object
 
     Returns
     ----------
@@ -325,7 +323,6 @@ def extract_brain_region(segmentation, levelset_boundary,
         save_volume(bg_proba_file, background_proba)
         save_volume(bg_lvl_file, background_lvl)
 
-    if return_filename:
         output = {
             'inside_mask': ins_mask_file,
             'inside_proba': ins_proba_file,

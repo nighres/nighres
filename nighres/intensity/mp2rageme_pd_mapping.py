@@ -221,5 +221,6 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
         save_volume(pd1_file, pd1)
         save_volume(pd2_file, pd2)
         save_volume(pd_file, pd)
-       
-    return {'pd1': pd1, 'pd2': pd2, 'pd': pd}
+        return {'pd1': pd1_file, 'pd2': pd2_file, 'pd': pd_file}
+    else:
+        return {'pd1': pd1, 'pd2': pd2, 'pd': pd}

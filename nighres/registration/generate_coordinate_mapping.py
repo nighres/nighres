@@ -141,7 +141,8 @@ def generate_coordinate_mapping(reference_image,
 
     if save_data:
         save_volume(mapping_file, mapping_img)
- 
-    outputs = {'result': mapping_img}
+        outputs = {'result': mapping_file}
+    else:
+        outputs = {'result': mapping_img}
 
     return outputs

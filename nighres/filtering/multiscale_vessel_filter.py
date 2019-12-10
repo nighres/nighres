@@ -282,7 +282,12 @@ def multiscale_vessel_filter(input_image,
         save_volume(os.path.join(output_dir, labelImage_file), labelImage)
         save_volume(os.path.join(output_dir, directionImage_file), directionImage)
 
-    return {'segmentation': vesselImage, 'filtered': filterImage,
-            'probability': probaImage, 'scale': scaleImage,
-            'diameter': diameterImage, 'pv': pvImage, 
-	    'length':lengthImage, 'label':labelImage, 'direction':directionImage}
+        return {'segmentation': vesselImage_file, 'filtered': filterImage_file,
+                'probability': probaImage_file, 'scale': scaleImage_file,
+                'diameter': diameterImage_file, 'pv': pvImage_file, 
+            'length':lengthImage_file, 'label':labelImage_file, 'direction':directionImage_file}
+	else:
+        return {'segmentation': vesselImage, 'filtered': filterImage,
+                'probability': probaImage, 'scale': scaleImage,
+                'diameter': diameterImage, 'pv': pvImage, 
+            'length':lengthImage, 'label':labelImage, 'direction':directionImage}

@@ -216,5 +216,6 @@ def mgdm_cells(contrast_image1, contrast_type1,
     if save_data:
         save_volume(seg_file, seg)
         save_volume(dist_file, dist)
-
-    return {'segmentation': seg, 'distance': dist}
+        return {'segmentation': seg_file, 'distance': dist_file}
+    else:
+        return {'segmentation': seg, 'distance': dist}

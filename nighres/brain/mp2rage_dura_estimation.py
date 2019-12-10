@@ -11,7 +11,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
                            background_distance=5.0, output_type='dura_region',
                            save_data=False, overwrite=False, output_dir=None,
-                           file_name=None, return_filename=False):
+                           file_name=None):
     """ MP2RAGE dura estimation
 
     Filters a MP2RAGE brain image to obtain a probability map of dura matter.
@@ -132,9 +132,10 @@ def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
     inv2_hdr['cal_max'] = np.nanmax(result_data)
     result_img = nb.Nifti1Image(result_data, inv2_affine, inv2_hdr)
 
-    outputs = {'result': result_img if not return_filename else result_file}
-
     if save_data:
         save_volume(result_file, result_img)
-
+        outputs = {'result': result_file}
+    else:
+        outputs = {'result': result_img}
+        
     return outputs

@@ -151,6 +151,8 @@ def fuzzy_cmeans(image, clusters=3, max_iterations=50, max_difference=0.01,
         for c in range(clusters):
             save_volume(mem_files[c], memberships[c])
 
-    output= {'classification': classification, 'memberships': memberships}
+        output= {'classification': classification_file, 'memberships': mem_files}
+    else:
+        output= {'classification': classification, 'memberships': memberships}
 
     return output

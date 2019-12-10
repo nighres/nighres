@@ -132,5 +132,6 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
 
     if save_data:
         save_volume(smoothed_file, smoothed)
-
-    return {"result": smoothed}
+        return {"result": smoothed_file}
+    else:
+        return {"result": smoothed}

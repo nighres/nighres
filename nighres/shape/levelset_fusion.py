@@ -126,5 +126,6 @@ def levelset_fusion(levelset_images,
 
     if save_data:
         save_volume(levelset_file, levelset)
-
-    return {'result': levelset}
+        return {'result': levelset_file}
+    else:
+        return {'result': levelset}
