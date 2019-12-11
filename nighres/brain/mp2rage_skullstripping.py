@@ -111,22 +111,14 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
             and os.path.isfile(inv2_file) :
             
             print("skip computation (use existing results)")
-            if return_filename:
-                output = {
-                    'brain_mask': mask_file,
-                    'inv2_masked': inv2_file,
-                    't1w_masked': t1w_file,
-                    't1map_masked': t1map_file
-                    }
-            else:
-                output = {'brain_mask': load_volume(mask_file),
-                        'inv2_masked': load_volume(inv2_file)}
-                if t1w_file is not None:
-                    if os.path.isfile(t1w_file) :
-                        output['t1w_masked'] = load_volume(t1w_file)
-                if t1map_file is not None:
-                    if os.path.isfile(t1map_file) :
-                        output['t1map_masked'] = load_volume(t1map_file)
+            output = {'brain_mask': mask_file,
+                    'inv2_masked': inv2_file}
+            if t1w_file is not None:
+                if os.path.isfile(t1w_file) :
+                    output['t1w_masked'] = t1w_file
+            if t1map_file is not None:
+                if os.path.isfile(t1map_file) :
+                    output['t1map_masked'] = t1map_file
             return output
 
     # start virtual machine, if not already running

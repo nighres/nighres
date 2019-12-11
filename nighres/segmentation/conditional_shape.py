@@ -121,13 +121,13 @@ def conditional_shape(target_images, structures, contrasts,
             and os.path.isfile(neighbor_file):
             
             print("skip computation (use existing results)")
-            output = {'max_spatial_proba': load_volume(spatial_proba_file), 
-                      'max_spatial_label': load_volume(spatial_label_file),
-                      'max_combined_proba': load_volume(combined_proba_file), 
-                      'max_combined_label': load_volume(combined_label_file),
-                      'max_proba': load_volume(proba_file), 
-                      'max_label': load_volume(label_file),
-                      'neighbors': load_volume(neighbor_file)}
+            output = {'max_spatial_proba': spatial_proba_file, 
+                      'max_spatial_label': spatial_label_file,
+                      'max_combined_proba': combined_proba_file, 
+                      'max_combined_label': combined_label_file,
+                      'max_proba': proba_file, 
+                      'max_label': label_file,
+                      'neighbors': neighbor_file}
             return output
 
 
@@ -401,9 +401,9 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
             and os.path.isfile(condhist_file):
             
             print("skip computation (use existing results)")
-            output = {'max_spatial_proba': load_volume(spatial_proba_file), 
-                      'max_spatial_label': load_volume(spatial_label_file),
-                      'cond_hist': load_volume(condhist_file)}
+            output = {'max_spatial_proba': spatial_proba_file, 
+                      'max_spatial_label': spatial_label_file,
+                      'cond_hist': condhist_file}
 
             return output
 

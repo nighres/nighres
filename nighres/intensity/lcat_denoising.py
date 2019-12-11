@@ -123,10 +123,10 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
                     print("skip computation (use existing results)")
                     denoised = []
                     for den_file in den_files:
-                        denoised.append(load_volume(den_file))        
+                        denoised.append(den_file)        
                     output = {'denoised': denoised,
-                              'dimensions': load_volume(dim_file), 
-                              'residuals': load_volume(err_file)}
+                              'dimensions': dim_file, 
+                              'residuals': err_file}
                     
                     return output
 

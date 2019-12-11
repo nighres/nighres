@@ -75,8 +75,8 @@ def surface_som_mapping(surface_mesh, mask_zeros=False,
             and os.path.isfile(orig_file) and os.path.isfile(som_file) :
             
             print("skip computation (use existing results)")
-            output = {'original': load_mesh(orig_file), 
-                      'som': load_mesh(som_file)}
+            output = {'original': orig_file, 
+                      'som': som_file}
             return output
                         
     # start virtual machine if not running

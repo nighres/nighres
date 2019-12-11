@@ -108,12 +108,12 @@ def intensity_based_skullstripping(main_image, extra_image=None,
             and os.path.isfile(main_file) :
             
             print("skip computation (use existing results)")
-            output = {'brain_mask': load_volume(mask_file), 
-                    'brain_proba': load_volume(proba_file), 
-                    'main_masked': load_volume(main_file)}
+            output = {'brain_mask': mask_file, 
+                    'brain_proba': proba_file, 
+                    'main_masked': main_file}
             if extra_file is not None:
                 if os.path.isfile(extra_file) :     
-                    output['extra_masked'] = load_volume(extra_file)
+                    output['extra_masked'] = extra_file
             return output
 
     # start virtual machine, if not already running

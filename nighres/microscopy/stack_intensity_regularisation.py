@@ -59,7 +59,7 @@ def stack_intensity_regularisation(image, ratio=50,
         if overwrite is False \
             and os.path.isfile(regularised_file) :
                 print("skip computation (use existing results)")
-                output = {'result': load_volume(regularised_file)}
+                output = {'result': regularised_file}
                 return output
 
     # start virtual machine, if not already running

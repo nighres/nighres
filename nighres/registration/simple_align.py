@@ -89,7 +89,7 @@ def simple_align(source_image, target_image,
             and os.path.isfile(result_file) :
             
             print("skip computation (use existing results)")
-            output = {'result': load_volume(result_file)}
+            output = {'result': result_file}
             return output
 
 

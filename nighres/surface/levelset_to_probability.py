@@ -59,7 +59,7 @@ def levelset_to_probability(levelset_image, distance_mm=5,
             and os.path.isfile(proba_file) :
 
             print("skip computation (use existing results)")
-            output = {'result': load_volume(proba_file)}
+            output = {'result': proba_file}
             return output
 
     # load the data

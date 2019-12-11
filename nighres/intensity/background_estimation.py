@@ -82,9 +82,9 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
             and os.path.isfile(masked_file) and os.path.isfile(proba_file) \
             and os.path.isfile(mask_file) :
                 print("skip computation (use existing results)")
-                output = {'masked': load_volume(masked_file), 
-                          'proba': load_volume(proba_file), 
-                          'mask': load_volume(mask_file)}
+                output = {'masked': masked_file, 
+                          'proba': proba_file, 
+                          'mask': mask_file}
                 return output
 
     # start virtual machine, if not already running

@@ -99,9 +99,9 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
             and os.path.isfile(t1_file) \
             and os.path.isfile(r1_file) \
             and os.path.isfile(uni_file) :
-                output = {'t1': load_volume(t1_file),
-                          'r1': load_volume(r1_file), 
-                          'uni': load_volume(uni_file)}
+                output = {'t1': t1_file,
+                          'r1': r1_file, 
+                          'uni': uni_file}
                 return output
 
     # start virtual machine, if not already running

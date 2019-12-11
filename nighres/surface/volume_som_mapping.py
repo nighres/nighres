@@ -72,8 +72,8 @@ def volume_som_mapping(proba_image,
             and os.path.isfile(map_file) and os.path.isfile(som_file) :
             
             print("skip computation (use existing results)")
-            output = {'map': load_volume(map_file), 
-                      'som': load_mesh(som_file)}
+            output = {'map': map_file, 
+                      'som': som_file}
             return output
                         
     # start virtual machine if not running

@@ -81,7 +81,7 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
             and os.path.isfile(filter_file) :
 
             print("skip computation (use existing results)")
-            output = {"result": load_volume(filter_file) if not return_filename else filter_file}
+            output = {"result": filter_file}
             return output
 
     affine = load_volume(img).affine

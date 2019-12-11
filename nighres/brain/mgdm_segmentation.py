@@ -237,20 +237,12 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
             and os.path.isfile(dist_file) :
             
             print("skip computation (use existing results)")
-            if return_filename:
-                output = {
-                    'segmentation': seg_file,
-                    'labels': lbl_file,
-                    'memberships': mems_file,
-                    'distance': dist_file
-                }
-            else:
-                output = {
-                    'segmentation': load_volume(seg_file),
-                    'labels': load_volume(lbl_file),
-                    'memberships': load_volume(mems_file),
-                    'distance': load_volume(dist_file)
-                }
+            output = {
+                'segmentation': seg_file,
+                'labels': lbl_file,
+                'memberships': mems_file,
+                'distance': dist_file
+            }
             return output
 
     # start virtual machine, if not already running

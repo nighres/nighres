@@ -249,9 +249,9 @@ def embedded_antsreg_2d(source_image, target_image,
             and os.path.isfile(inverse_mapping_file) :
 
             print("skip computation (use existing results)")
-            output = {'transformed_source': load_volume(transformed_source_file),
-                      'mapping': load_volume(mapping_file),
-                      'inverse': load_volume(inverse_mapping_file)}
+            output = {'transformed_source': transformed_source_file,
+                      'mapping': mapping_file,
+                      'inverse': inverse_mapping_file}
             return output
 
 
@@ -522,14 +522,14 @@ def embedded_antsreg_2d(source_image, target_image,
         reg = reg + ' --use-histogram-matching 0'
         reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
-    reg = reg + ' --write-composite-transform 0 --verbose 1'
+    reg = reg + ' --write-composite-transform 0'
 
     # run the ANTs command directly    
     print(reg)
     try:
         subprocess.check_output(reg, shell=True, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
         raise subprocess.CalledProcessError(msg)
 
     # output file names
@@ -856,10 +856,10 @@ def embedded_antsreg_multi(source_images, target_images,
                 print("skip computation (use existing results)")
                 transformed = []
                 for trans_file in transformed_source_files:
-                    transformed.append(load_volume(trans_file)) 
+                    transformed.append(trans_file)
                 output = {'transformed_sources': transformed, 
-                      'mapping': load_volume(mapping_file), 
-                      'inverse': load_volume(inverse_mapping_file)}
+                      'mapping': mapping_file, 
+                      'inverse': inverse_mapping_file}
             return output
 
 
@@ -1175,14 +1175,14 @@ def embedded_antsreg_multi(source_images, target_images,
         reg = reg + ' --use-histogram-matching 0'
         reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
-    reg = reg + ' --write-composite-transform 0 --verbose 1'
+    reg = reg + ' --write-composite-transform 0'
         
     # run the ANTs command directly    
     print(reg)
     try:
         subprocess.check_output(reg, shell=True, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
         raise subprocess.CalledProcessError(msg)
 
     # output file names

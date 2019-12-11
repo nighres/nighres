@@ -109,9 +109,9 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
             and os.path.isfile(pd1_file) \
             and os.path.isfile(pd2_file) \
             and os.path.isfile(pd_file) :
-                output = {'pd1': load_volume(pd1_file),
-                          'pd2': load_volume(pd2_file), 
-                          'pd': load_volume(pd_file)}
+                output = {'pd1': pd1_file,
+                          'pd2': pd2_file, 
+                          'pd': pd_file}
                 return output
 
     # start virtual machine, if not already running

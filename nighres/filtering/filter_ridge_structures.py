@@ -66,7 +66,7 @@ def filter_ridge_structures(input_image,
             and os.path.isfile(ridge_file) :
 
             print("skip computation (use existing results)")
-            output = {'result': load_volume(ridge_file)}
+            output = {'result': ridge_file}
             return output
 
     # start virtual machine, if not already running

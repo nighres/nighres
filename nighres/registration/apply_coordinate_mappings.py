@@ -72,7 +72,7 @@ def apply_coordinate_mappings(image, mapping1,
             and os.path.isfile(deformed_file) :
 
             print("skip computation (use existing results)")
-            output = {'result': load_volume(deformed_file)}
+            output = {'result': deformed_file}
             return output
 
     # start virutal machine if not already running

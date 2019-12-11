@@ -64,7 +64,7 @@ def probability_to_levelset(probability_image, mask_image=None,
             and os.path.isfile(levelset_file) :
 
             print("skip computation (use existing results)")
-            output = {'result': load_volume(levelset_file)}
+            output = {'result': levelset_file}
             return output
 
     # start virtual machine if not running

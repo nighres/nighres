@@ -142,15 +142,15 @@ def multiscale_vessel_filter(input_image,
             and os.path.isfile(lengthImage_file) \
             and os.path.isfile(labelImage_file) \
 	    and os.path.isfile(directionImage_file) :
-                output = {'segmentation': load_volume(vesselImage_file),
-                          'filtered': load_volume(filterImage_file),
-                          'probability': load_volume(probaImage_file),
-                          'scale': load_volume(scaleImage_file),
-                          'diameter': load_volume(diameterImage_file),
-                          'pv': load_volume(pvImage_file),
-                          'length':load_volume(lengthImage_file),
-                          'label':load_volume(labelImage_file),
-			  'diection':load_volume(directionImage_file)}
+                output = {'segmentation': vesselImage_file,
+                          'filtered': filterImage_file,
+                          'probability': probaImage_file,
+                          'scale': scaleImage_file,
+                          'diameter': diameterImage_file,
+                          'pv': pvImage_file,
+                          'length': lengthImage_file,
+                          'label': labelImage_file,
+                          'direction': directionImage_file}
                 return output
 
        
@@ -286,7 +286,7 @@ def multiscale_vessel_filter(input_image,
                 'probability': probaImage_file, 'scale': scaleImage_file,
                 'diameter': diameterImage_file, 'pv': pvImage_file, 
             'length':lengthImage_file, 'label':labelImage_file, 'direction':directionImage_file}
-	else:
+    else:
         return {'segmentation': vesselImage, 'filtered': filterImage,
                 'probability': probaImage, 'scale': scaleImage,
                 'diameter': diameterImage, 'pv': pvImage, 

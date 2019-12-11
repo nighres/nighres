@@ -172,14 +172,14 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
             and os.path.isfile(pcsf_file) :
 
             print("skip computation (use existing results)")
-            output = {'cortex': load_volume(cortex_file),
-                      'gwb': load_volume(gwb_file),
-                      'cgb': load_volume(cgb_file),
-                      'avg': load_volume(avg_file),
-                      'thickness': load_volume(thick_file),
-                      'pwm': load_volume(pwm_file),
-                      'pgm': load_volume(pgm_file),
-                      'pcsf': load_volume(pcsf_file)}
+            output = {'cortex': cortex_file,
+                      'gwb': gwb_file,
+                      'cgb': cgb_file,
+                      'avg': avg_file,
+                      'thickness': thick_file,
+                      'pwm': pwm_file,
+                      'pgm': pgm_file,
+                      'pcsf': pcsf_file}
             return output
 
     # start virtual machine, if not already running

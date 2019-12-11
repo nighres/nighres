@@ -78,7 +78,7 @@ def generate_coordinate_mapping(reference_image,
             and os.path.isfile(mapping_file) :
             
             print("skip computation (use existing results)")
-            output = {'result': load_volume(mapping_file)}
+            output = {'result': mapping_file}
             return output
 
 

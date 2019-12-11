@@ -177,26 +177,15 @@ def extract_brain_region(segmentation, levelset_boundary,
             and os.path.isfile(bg_lvl_file) :
 
             print("skip computation (use existing results)")
-            if return_filename:
-                output = {'inside_mask': ins_mask_file,
-                          'inside_proba': ins_proba_file,
-                          'inside_lvl': ins_lvl_file,
-                          'region_mask': reg_mask_file,
-                          'region_proba': reg_proba_file,
-                          'region_lvl': reg_lvl_file,
-                          'background_mask': bg_mask_file,
-                          'background_proba': bg_proba_file,
-                          'background_lvl': bg_lvl_file}
-            else:
-                output = {'inside_mask': load_volume(ins_mask_file),
-                          'inside_proba': load_volume(ins_proba_file),
-                          'inside_lvl': load_volume(ins_lvl_file),
-                          'region_mask': load_volume(reg_mask_file),
-                          'region_proba': load_volume(reg_proba_file),
-                          'region_lvl': load_volume(reg_lvl_file),
-                          'background_mask': load_volume(bg_mask_file),
-                          'background_proba': load_volume(bg_proba_file),
-                          'background_lvl': load_volume(bg_lvl_file)}
+            output = {'inside_mask': ins_mask_file,
+                  'inside_proba': ins_proba_file,
+                  'inside_lvl': ins_lvl_file,
+                  'region_mask': reg_mask_file,
+                  'region_proba': reg_proba_file,
+                  'region_lvl': reg_lvl_file,
+                  'background_mask': bg_mask_file,
+                  'background_proba': bg_proba_file,
+                  'background_lvl': bg_lvl_file}
             return output
 
     # load images and set dimensions and resolution

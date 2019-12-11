@@ -78,8 +78,8 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
         if overwrite is False \
             and os.path.isfile(out_file) and os.path.isfile(res_file) :
                 print("skip computation (use existing results)")
-                output = {'filtered': load_volume(out_file),
-                          'residual': load_volume(res_file)}
+                output = {'filtered': out_file,
+                          'residual': res_file}
                 return output
 
     # start virtual machine, if not already running

@@ -69,7 +69,7 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
         if overwrite is False \
             and os.path.isfile(out_file) :
                 print("skip computation (use existing results)")
-                output = {'result': load_volume(out_file)}
+                output = {'result': out_file}
                 return output
 
     # start virtual machine, if not already running

@@ -133,8 +133,8 @@ def mgdm_cells(contrast_image1, contrast_type1,
             and os.path.isfile(dist_file) :
 
             print("skip computation (use existing results)")
-            output = {'segmentation': load_volume(seg_file),
-                      'distance': load_volume(dist_file)}
+            output = {'segmentation': seg_file,
+                      'distance': dist_file}
             return output
 
 

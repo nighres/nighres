@@ -88,8 +88,8 @@ def topology_correction(image, shape_type,
             and os.path.isfile(corrected_obj_file) :
 
             print("skip computation (use existing results)")
-            output = {'corrected': load_volume(corrected_file),
-                      'object': load_volume(corrected_obj_file)}
+            output = {'corrected': corrected_file,
+                      'object': corrected_obj_file}
             return output
 
     # start virtual machine if not running

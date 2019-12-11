@@ -74,15 +74,15 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
                 os.path.isfile(inf_file)):
 
             print("skip computation (use existing results)")
-            output = {'original': load_mesh(orig_file),
-                      'inflated': load_mesh(inf_file)}
+            output = {'original': orig_file,
+                      'inflated': inf_file}
             return output
 
         elif (overwrite is False and os.path.isfile(orig_file) and
                 inflated_mesh is None):
 
             print("skip computation (use existing results)")
-            output = {'original': load_mesh(orig_file),
+            output = {'original': orig_file,
                       'inflated': None}
             return output
 

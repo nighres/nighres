@@ -66,7 +66,7 @@ def surface_inflation(surface_mesh, step_size=0.75, max_iter=2000, max_curv=10.0
             and os.path.isfile(infl_file) :
             
             print("skip computation (use existing results)")
-            output = {'result': load_mesh(infl_file)}
+            output = {'result': infl_file}
             return output
                         
     # start virtual machine if not running

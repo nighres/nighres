@@ -95,7 +95,7 @@ def _fname_4saving_prev(file_name=None, rootfile=None, suffix=None, ext=None, mo
     return fullname
 
 
-def _fname_4saving(module=__name__,file_name=None, rootfile=None, suffix=None, ext=None, module='output'):
+def _fname_4saving(file_name=None, rootfile=None, suffix=None, ext=None, module='output'):
 
     # default extension if not given
     file_ext = 'nii.gz'

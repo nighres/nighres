@@ -81,7 +81,7 @@ def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
             and os.path.isfile(result_file) :
 
             print("skip computation (use existing results)")
-            output = {'result': load_volume(result_file) if not return_filename else result_file}
+            output = {'result': result_file}
             return output
 
     # start virtual machine, if not already running

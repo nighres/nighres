@@ -76,7 +76,7 @@ def profile_averaging(profile_surface_image, intensity_image, roi_image,
             and os.path.isfile(median_file) and os.path.isfile(iqr_file) :
 
             print("skip computation (use existing results)")
-            output = {'weights': load_volume(weight_file), 
+            output = {'weights': weight_file, 
                       'best': numpy.loadtxt(sample_file),
                       'median': numpy.loadtxt(median_file),
                       'iqr': numpy.loadtxt(iqr_file)}

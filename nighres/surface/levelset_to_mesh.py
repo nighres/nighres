@@ -76,7 +76,7 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
             and os.path.isfile(mesh_file) :
 
             print("skip computation (use existing results)")
-            output = {'result': load_mesh_geometry(mesh_file)}
+            output = {'result': mesh_file}
             return output
 
     # start virtual machine if not running

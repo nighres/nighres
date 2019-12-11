@@ -74,7 +74,7 @@ def phase_unwrapping(image, mask=None, nquadrants=3,
         if overwrite is False \
             and os.path.isfile(out_file) :
                 print("skip computation (use existing results)")
-                output = {'result': load_volume(out_file)}
+                output = {'result': out_file}
                 return output
 
     # start virtual machine, if not already running

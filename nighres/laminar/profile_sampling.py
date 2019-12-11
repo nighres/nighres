@@ -58,7 +58,7 @@ def profile_sampling(profile_surface_image, intensity_image,
             and os.path.isfile(profile_file) :
 
             print("skip computation (use existing results)")
-            output = {'result': load_volume(profile_file)}
+            output = {'result': profile_file}
             return output
 
     # start VM if not already running

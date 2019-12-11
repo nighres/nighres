@@ -87,11 +87,11 @@ def t2s_optimal_combination(image_list, te_list, depth=None,
             and os.path.isfile(r2s_file) \
             and os.path.isfile(s0_file) \
             and os.path.isfile(err_file) :
-                output = {'combined': load_volume(comb_file),
-                          't2s': load_volume(t2s_file),
-                          'r2s': load_volume(r2s_file),
-                          's0': load_volume(s0_file),
-                          'residuals': load_volume(err_file)}
+                output = {'combined': comb_file,
+                          't2s': t2s_file,
+                          'r2s': r2s_file,
+                          's0': s0_file,
+                          'residuals': err_file}
                 return output
 
     # start virtual machine, if not already running

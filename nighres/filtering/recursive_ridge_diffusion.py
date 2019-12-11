@@ -137,12 +137,12 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
             and os.path.isfile(ridge_size_file) :
 
             print("skip computation (use existing results)")
-            output = {'filter': load_volume(filter_file),
-                      'propagation': load_volume(propagation_file),
-                      'scale': load_volume(scale_file),
-                      'ridge_dir': load_volume(ridge_direction_file),
-                      'ridge_pv': load_volume(ridge_pv_file),
-                      'ridge_size': load_volume(ridge_size_file)}
+            output = {'filter': filter_file,
+                      'propagation': propagation_file,
+                      'scale': scale_file,
+                      'ridge_dir': ridge_direction_file,
+                      'ridge_pv': ridge_pv_file,
+                      'ridge_size': ridge_size_file}
             return output
 
 
