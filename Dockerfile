@@ -1,28 +1,50 @@
-FROM ubuntu:14.04
-RUN sudo apt-get update -qq && apt-get install -y python python-pip python-dev build-essential software-properties-common
-RUN sudo add-apt-repository ppa:openjdk-r/ppa && apt-get update -qq && apt-get install -y openjdk-8-jdk
+FROM ubuntu:16.04
+
+RUN apt-get update && \
+    apt-get -y install sudo && \
+    sudo apt-get update -qq && \
+    apt-get install -y python3 \
+                       python3-pip \
+                       python3-dev \
+                       build-essential \
+                       software-properties-common \
+                       openjdk-8-jdk \
+                       git \
+                       wget && \
+    sudo add-apt-repository ppa:openjdk-r/ppa && \
+         apt-get update -qq && \
+         apt-get install -y openjdk-8-jdk
+
 RUN ln -svT "/usr/lib/jvm/java-8-openjdk-$(dpkg --print-architecture)" /docker-java-home
-ENV JAVA_HOME /docker-java-home
-ENV JCC_JDK /docker-java-home
+ENV JAVA_HOME=/docker-java-home \
+    JCC_JDK=/docker-java-home
 
-RUN sudo apt-get install -y git python-pip python-dev wget jcc
+RUN sudo apt-get install -y jcc && \
+    python3 -m pip install --upgrade pip \
+                                     wheel \
+                                     JCC \
+                                     twine \
+                                     urllib3 && \
+    python3 -m pip install jupyter \
+                           nilearn \
+                           sklearn \
+                           nose \
+                           matplotlib \
+                           scipy \
+                           psutil
 
-RUN useradd -g root --create-home --shell /bin/bash neuro \
-    && usermod -aG sudo neuro \
-    && usermod -aG users neuro
-
-RUN pip install --upgrade wheel JCC twine urllib3 pip 
-RUN mkdir /home/neuro/nighres
-COPY build.sh cbstools-lib-files.sh setup.py MANIFEST.in README.rst LICENSE /home/neuro/nighres/
+RUN useradd --no-user-group --create-home --shell /bin/bash neuro && \
+    mkdir /home/neuro/nighres
+COPY build.sh cbstools-lib-files.sh setup.py MANIFEST.in README.rst LICENSE imcntk-lib-files.sh /home/neuro/nighres/
 COPY nighres /home/neuro/nighres/nighres
-RUN cd /home/neuro/nighres && ./build.sh
-RUN cd /home/neuro/nighres && pip install .
 
-RUN pip install jupyter nilearn sklearn nose matplotlib
+RUN cd /home/neuro/nighres && \
+    ./build.sh && \
+    cd /home/neuro/nighres && python3 -m pip install . && \
+    mkdir /home/neuro/notebooks && \
+    chown -R neuro /home/neuro
+
 COPY docker/jupyter_notebook_config.py /etc/jupyter/
-
-RUN mkdir /home/neuro/notebooks
-RUN chown -R neuro /home/neuro
 
 EXPOSE 8888
 

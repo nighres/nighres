@@ -2,10 +2,11 @@ import numpy as np
 import nibabel as nb
 import os
 import sys
-import cbstools
+import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
-                    _check_topology_lut_dir, _check_atlas_file
+                    _check_topology_lut_dir, _check_atlas_file, \
+                    _check_available_memory
 
 
 def _get_mgdm_orientation(affine, mgdm):
@@ -49,7 +50,7 @@ def _get_mgdm_intensity_priors(atlas_file):
         for i, line in enumerate(fp):
             if "Structures:" in line:  # this is the beginning of the LUT
                 lut_idx = i
-                lut_rows = map(int, [line.split()[1]])[0]
+                lut_rows = list(map(int, [line.split()[1]]))[0]
             if "Intensity Prior:" in line:
                 priors.append(line.split()[-1])
     return priors
@@ -62,9 +63,10 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                       n_steps=5, max_iterations=800, topology='wcs',
                       atlas_file=None, topology_lut_dir=None,
                       adjust_intensity_priors=False,
-                      compute_posterior=False,
+                      normalize_qmaps=True,
+                      compute_posterior=False, posterior_scale=5.0,
                       diffuse_probabilities=False,
-                      save_data=False, output_dir=None,
+                      save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ MGDM segmentation
 
@@ -77,25 +79,30 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         First input image to perform segmentation on
     contrast_type1: str
         Contrast type of first input image, must be listed as a prior in used
-        atlas(specified in atlas_file)
+        atlas(specified in atlas_file). Possible inputs by default are DWIFA3T,
+        DWIMD3T, T1map9T, Mp2rage9T, T1map7T, Mp2rage7T, PV, Filters, T1pv,
+        Mprage3T, T1map3T, Mp2rage3T, HCPT1w, HCPT2w, NormMPRAGE.
     contrast_image2: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type2
     contrast_type2: str, optional
         Contrast type of second input image, must be listed as a prior in used
-        atlas (specified in atlas_file)
+        atlas (specified in atlas_file). Possible inputs by default are the same
+        as with parameter contrast_type1 (see above).
     contrast_image3: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type3
     contrast_type3: str, optional
         Contrast type of third input image, must be listed as a prior in used
-        atlas (specified in atlas_file)
+        atlas (specified in atlas_file). Possible inputs by default are the same
+        as with parameter contrast_type1 (see above).
     contrast_image4: niimg, optional
         Additional input image to inform segmentation, must be in the same
         space as constrast_image1, requires contrast_type4
     contrast_type4: str, optional
         Contrast type of fourth input image, must be listed as a prior in used
-        atlas (specified in atlas_file)
+        atlas (specified in atlas_file). Possible inputs by default are the same
+        as with parameter contrast_type1 (see above).
     n_steps: int, optional
         Number of steps for MGDM (default is 5, set to 0 for quick testing of
         registration of priors, which does not perform true segmentation)
@@ -112,16 +119,26 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     topology_lut_dir: str, optional
         Path to directory in which topology files are stored (default is stored
         in TOPOLOGY_LUT_DIR)
+    normalize_qmaps: bool
+        Normalize quantitative maps into [0,1] (default is False)
     adjust_intensity_priors: bool
         Adjust intensity priors based on dataset (default is False)
+    normalize_qmaps: bool
+        Normalize quantitative maps in [0,1] (default in True, change this if using
+        one of the -quant atlas text files in ATLAS_DIR) 
     compute_posterior: bool
         Compute posterior probabilities for segmented structures
         (default is False)
+    posterior_scale: float
+        Posterior distance scale from segmented structures to compute posteriors
+        (default is 5.0 mm)
     diffuse_probabilities: bool
         Regularize probability distribution with a non-linear diffusion scheme
         (default is False)
     save_data: bool
         Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
     output_dir: str, optional
         Path to desired output directory, will be created if it doesn't exist
     file_name: str, optional
@@ -151,14 +168,19 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     References
     ----------
-    .. [1] Bogovic, Prince and Bazin (2013). A multiple object geometric
-       deformable model for image segmentation.
+    .. [1] Bazin et al. (2014). A computational framework for ultra-high 
+       resolution cortical segmentation at 7 Tesla.
+       doi: 10.1016/j.neuroimage.2013.03.077
+    .. [2] Bogovic et al. (2013). A multiple object geometric deformable model 
+       for image segmentation.
        doi:10.1016/j.cviu.2012.10.006.A
-    .. [2] Fan, Bazin and Prince (2008). A multi-compartment segmentation
-       framework with homeomorphic level sets. DOI: 10.1109/CVPR.2008.4587475
     """
 
     print('\nMGDM Segmentation')
+
+    # Check data file parameters
+    if not save_data and return_filename:
+        raise ValueError('save_data must be True if return_filename is True ')
 
     # check atlas_file and set default if not given
     atlas_file = _check_atlas_file(atlas_file)
@@ -189,29 +211,48 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, contrast_image1)
 
-        seg_file = _fname_4saving(file_name=file_name,
+        seg_file = os.path.join(output_dir, 
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=contrast_image1,
-                                  suffix='mgdm_seg', )
+                                  suffix='mgdm-seg', ))
 
-        lbl_file = _fname_4saving(file_name=file_name,
+        lbl_file = os.path.join(output_dir, 
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=contrast_image1,
-                                  suffix='mgdm_lbls')
+                                  suffix='mgdm-lbls'))
 
-        mems_file = _fname_4saving(file_name=file_name,
+        mems_file = os.path.join(output_dir, 
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=contrast_image1,
-                                   suffix='mgdm_mems')
+                                   suffix='mgdm-mems'))
 
-        dist_file = _fname_4saving(file_name=file_name,
+        dist_file = os.path.join(output_dir, 
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=contrast_image1,
-                                   suffix='mgdm_dist')
+                                   suffix='mgdm-dist'))
+        if overwrite is False \
+            and os.path.isfile(seg_file) \
+            and os.path.isfile(lbl_file) \
+            and os.path.isfile(mems_file) \
+            and os.path.isfile(dist_file) :
+            
+            print("skip computation (use existing results)")
+            output = {
+                'segmentation': seg_file,
+                'labels': lbl_file,
+                'memberships': mems_file,
+                'distance': dist_file
+            }
+            return output
 
     # start virtual machine, if not already running
     try:
-        cbstools.initVM(initialheap='6000m', maxheap='6000m')
+        mem = _check_available_memory()
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
     except ValueError:
         pass
     # create mgdm instance
-    mgdm = cbstools.BrainMgdmMultiSegmentation2()
+    mgdm = nighresjava.BrainMgdmMultiSegmentation2()
 
     # set mgdm parameters
     mgdm.setAtlasFile(atlas_file)
@@ -219,19 +260,20 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     mgdm.setOutputImages('label_memberships')
     mgdm.setAdjustIntensityPriors(adjust_intensity_priors)
     mgdm.setComputePosterior(compute_posterior)
+    mgdm.setPosteriorScale_mm(posterior_scale)
     mgdm.setDiffuseProbabilities(diffuse_probabilities)
     mgdm.setSteps(n_steps)
     mgdm.setMaxIterations(max_iterations)
     mgdm.setTopology(topology)
-    mgdm.setNormalizeQuantitativeMaps(True)
+    mgdm.setNormalizeQuantitativeMaps(normalize_qmaps)
     # set to False for "quantitative" brain prior atlases
     # (version quant-3.0.5 and above)
 
     # load contrast image 1 and use it to set dimensions and resolution
     img = load_volume(contrast_image1)
     data = img.get_data()
-    affine = img.get_affine()
-    header = img.get_header()
+    affine = img.affine
+    header = img.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 
@@ -243,26 +285,26 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     mgdm.setOrientations(sliceorder, LR, AP, IS)
 
     # input image 1
-    mgdm.setContrastImage1(cbstools.JArray('float')(
+    mgdm.setContrastImage1(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
     mgdm.setContrastType1(contrast_type1)
 
     # if further contrast are specified, input them
     if contrast_image2 is not None:
         data = load_volume(contrast_image2).get_data()
-        mgdm.setContrastImage2(cbstools.JArray('float')(
+        mgdm.setContrastImage2(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
         mgdm.setContrastType2(contrast_type2)
 
         if contrast_image3 is not None:
             data = load_volume(contrast_image3).get_data()
-            mgdm.setContrastImage3(cbstools.JArray('float')(
+            mgdm.setContrastImage3(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
             mgdm.setContrastType3(contrast_type3)
 
             if contrast_image4 is not None:
                 data = load_volume(contrast_image4).get_data()
-                mgdm.setContrastImage4(cbstools.JArray('float')(
+                mgdm.setContrastImage4(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
                 mgdm.setContrastType4(contrast_type4)
 
@@ -273,7 +315,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")
-        print sys.exc_info()[0]
+        print(sys.exc_info()[0])
         raise
         return
 
@@ -306,10 +348,22 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     mems = nb.Nifti1Image(mems_data, affine, header)
 
     if save_data:
-        save_volume(os.path.join(output_dir, seg_file), seg)
-        save_volume(os.path.join(output_dir, dist_file), dist)
-        save_volume(os.path.join(output_dir, lbl_file), lbls)
-        save_volume(os.path.join(output_dir, mems_file), mems)
+        save_volume(seg_file, seg)
+        save_volume(dist_file, dist)
+        save_volume(lbl_file, lbls)
+        save_volume(mems_file, mems)
+        output = {
+            'segmentation': seg_file,
+            'labels': lbl_file,
+            'memberships': mems_file,
+            'distance': dist_file
+        }
+    else:
+        output = {
+            'segmentation': seg,
+            'labels': lbls,
+            'memberships': mems,
+            'distance': dist
+        }
 
-    return {'segmentation': seg, 'labels': lbls,
-            'memberships': mems, 'distance': dist}
+    return output
