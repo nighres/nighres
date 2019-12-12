@@ -858,6 +858,7 @@ def embedded_antsreg_multi(source_images, target_images,
                 for trans_file in transformed_source_files:
                     transformed.append(trans_file)
                 output = {'transformed_sources': transformed, 
+                      'transformed_source': transformed[0], 
                       'mapping': mapping_file, 
                       'inverse': inverse_mapping_file}
             return output

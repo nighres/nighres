@@ -95,17 +95,17 @@ vessel_result = nighres.filtering.multiscale_vessel_filter(
                         input_image=skullstripping_results['t1w_masked'],
                         scales=2,
                         save_data=True, file_name="sub001_sess1",
-                        output_dir=out_dir,overwrite=True)
+                        output_dir=out_dir)
 
 
 ############################################################################
 # Now we look at the topology-constrained segmentation MGDM created
 if not skip_plots:
     plotting.plot_img(vessel_result['pv'],
-                      vmin=1, vmax=50, cmap='cubehelix',  colorbar=True,
+                      vmin=0, vmax=1, cmap='cubehelix',  colorbar=True,
                       annotate=False,  draw_cross=False)
     plotting.plot_img(vessel_result['diameter'],
-                      vmin=1, vmax=50, cmap='cubehelix',  colorbar=True,
+                      vmin=0, vmax=4, cmap='cubehelix',  colorbar=True,
                       annotate=False,  draw_cross=False)
 
 ############################################################################
