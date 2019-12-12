@@ -96,41 +96,50 @@ def multiscale_vessel_filter(input_image,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, input_image)
 
-        vesselImage_file = _fname_4saving(module=__name__,file_name=file_name,
+        vesselImage_file = os.path.join(output_dir,
+                            _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='seg', )
+                                  suffix='mvf-seg'))
 
-        filterImage_file = _fname_4saving(module=__name__,file_name=file_name,
+        filterImage_file = os.path.join(output_dir,
+                            _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='filtered')
+                                  suffix='mvf-filter'))
 
-        probaImage_file = _fname_4saving(module=__name__,file_name=file_name,
+        probaImage_file = os.path.join(output_dir,
+                            _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=input_image,
-                                   suffix='proba')
+                                   suffix='mvf-proba'))
 
-        scaleImage_file = _fname_4saving(module=__name__,file_name=file_name,
+        scaleImage_file = os.path.join(output_dir,
+                            _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=input_image,
-                                   suffix='scale')
+                                   suffix='mvf-scale'))
 
-        diameterImage_file = _fname_4saving(module=__name__,file_name=file_name,
+        diameterImage_file = os.path.join(output_dir,
+                            _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='dia', )
+                                  suffix='mvf-dia'))
 
-        lengthImage_file = _fname_4saving(module=__name__,file_name=file_name,
+        lengthImage_file = os.path.join(output_dir,
+                            _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='length')
+                                  suffix='mvf-length'))
 
-        pvImage_file = _fname_4saving(module=__name__,file_name=file_name,
+        pvImage_file = os.path.join(output_dir,
+                            _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=input_image,
-                                   suffix='pv')
+                                   suffix='mvf-pv'))
 
-        labelImage_file = _fname_4saving(module=__name__,file_name=file_name,
+        labelImage_file = os.path.join(output_dir,
+                            _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='label')
+                                  suffix='mvf-label'))
 
-        directionImage_file = _fname_4saving(module=__name__,file_name=file_name,
+        directionImage_file = os.path.join(output_dir,
+                            _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='direction')
+                                  suffix='mvf-dir'))
 
         if overwrite is False \
             and os.path.isfile(vesselImage_file) \
@@ -272,15 +281,15 @@ def multiscale_vessel_filter(input_image,
     directionImage = nb.Nifti1Image(directionImage_data, affine, header)
 
     if save_data:
-        save_volume(os.path.join(output_dir, vesselImage_file), vesselImage)
-        save_volume(os.path.join(output_dir, filterImage_file), filterImage)
-        save_volume(os.path.join(output_dir, probaImage_file), probaImage)
-        save_volume(os.path.join(output_dir, scaleImage_file), scaleImage)
-        save_volume(os.path.join(output_dir, diameterImage_file), diameterImage)
-        save_volume(os.path.join(output_dir, pvImage_file), pvImage)
-        save_volume(os.path.join(output_dir, lengthImage_file), lengthImage)
-        save_volume(os.path.join(output_dir, labelImage_file), labelImage)
-        save_volume(os.path.join(output_dir, directionImage_file), directionImage)
+        save_volume(vesselImage_file, vesselImage)
+        save_volume(filterImage_file, filterImage)
+        save_volume(probaImage_file, probaImage)
+        save_volume(scaleImage_file, scaleImage)
+        save_volume(diameterImage_file, diameterImage)
+        save_volume(pvImage_file, pvImage)
+        save_volume(lengthImage_file, lengthImage)
+        save_volume(labelImage_file, labelImage)
+        save_volume(directionImage_file, directionImage)
 
         return {'segmentation': vesselImage_file, 'filtered': filterImage_file,
                 'probability': probaImage_file, 'scale': scaleImage_file,

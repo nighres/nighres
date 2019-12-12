@@ -190,7 +190,7 @@ cp -rv build/nighresjava/ ../nighresjava/
 find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' ../nighresjava/_nighresjava.so
 cd ..
 
-# python3 -m pip install .
+python3 -m pip install .
 
 # Make the python wheel
 # PLT=$(uname | tr '[:upper:]' '[:lower:]')
