@@ -156,34 +156,36 @@ if not skip_plots:
 # ---------------------
 # Next, we use the masked data as input for co-registration. The T1 maps are
 # used here as they are supposed to be more similar
-syn_results1 = nighres.registration.embedded_antsreg(
+ants_results1 = nighres.registration.embedded_antsreg(
                         source_image=skullstripping_results1['t1map_masked'],
                         target_image=skullstripping_results3['t1map_masked'],
-                        run_rigid=True, run_affine=True, run_syn=True,
+                        run_rigid=True, run_affine=False, run_syn=False,
                         coarse_iterations=40,
                         medium_iterations=0, fine_iterations=0,
                         cost_function='MutualInformation',
                         interpolation='NearestNeighbor',
+                        ignore_affine=False, 
                         save_data=True, file_name="sub001_sess1",
                         output_dir=out_dir)
 
-syn_results2 = nighres.registration.embedded_antsreg(
+ants_results2 = nighres.registration.embedded_antsreg(
                         source_image=skullstripping_results2['t1map_masked'],
                         target_image=skullstripping_results3['t1map_masked'],
-                        run_rigid=True, run_affine=True, run_syn=True,
+                        run_rigid=True, run_affine=False, run_syn=False,
                         coarse_iterations=40,
                         medium_iterations=0, fine_iterations=0,
                         cost_function='MutualInformation',
                         interpolation='NearestNeighbor',
+                        ignore_affine=False, 
                         save_data=True, file_name="sub002_sess1",
                         output_dir=out_dir)
 
 ############################################################################
 # Now we look at the coregistered image that SyN created
 if not skip_plots:
-    plotting.plot_img(syn_results1['transformed_source'],
+    plotting.plot_img(ants_results1['transformed_source'],
                       annotate=False,  draw_cross=False)
-    plotting.plot_img(syn_results2['transformed_source'],
+    plotting.plot_img(ants_results2['transformed_source'],
                       annotate=False,  draw_cross=False)
 
 ############################################################################
@@ -194,13 +196,13 @@ if not skip_plots:
 # We use the computed deformation to transform MGDM segmentations
 deformed1 = nighres.registration.apply_coordinate_mappings(
                         image=mgdm_results1['segmentation'],
-                        mapping1=syn_results1['mapping'],
+                        mapping1=ants_results1['mapping'],
                         save_data=True, file_name="sub001_sess1_seg",
                         output_dir=out_dir)
 
 deformed2 = nighres.registration.apply_coordinate_mappings(
                         image=mgdm_results2['segmentation'],
-                        mapping1=syn_results2['mapping'],
+                        mapping1=ants_results2['mapping'],
                         save_data=True, file_name="sub002_sess1_seg",
                         output_dir=out_dir)
 

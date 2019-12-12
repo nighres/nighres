@@ -14,7 +14,7 @@ function join_by { local IFS="$1"; shift; echo "$*"; }
 cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
 imcntk_repo="https://github.com/piloubazin/imcn-imaging.git"
 
-release="release-1.1.0b"
+release="release-1.2.0"
 
 # Check the system has the necessary commands
 hash wget tar javac jar python3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3"
