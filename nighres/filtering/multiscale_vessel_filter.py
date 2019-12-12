@@ -22,7 +22,7 @@ def multiscale_vessel_filter(input_image,
                         max_diff = 0.001,
                         max_itr = 100,
                         scale_step = 1.0,
-                        scale = 4,
+                        scales = 4,
                         prior_image=None,
                         invert_prior=False,
                         save_data=False, 
@@ -59,7 +59,7 @@ def multiscale_vessel_filter(input_image,
 	    maximale iteration number (default is 100)
     scale_step: float
 	    Scaling step between diameters (default is 1)
-    scale: int
+    scales: int
 	    Number of scales to use (default is 4)
     prior_image: niimg (opt)
         Image prior for the region to include (positive) or exclude (negative)
@@ -170,7 +170,7 @@ def multiscale_vessel_filter(input_image,
     vessel_filter.setFilterShape(filterType)
     vessel_filter.setThreshold(threshold)
     vessel_filter.setScaleStep(scale_step)
-    vessel_filter.setScaleNumber(scale)
+    vessel_filter.setScaleNumber(scales)
     vessel_filter.setPropagationModel(propagationtype)
     vessel_filter.setDiffusionFactor(factor)
     vessel_filter.setMaxDiff(max_diff)
