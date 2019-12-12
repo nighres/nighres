@@ -164,7 +164,7 @@ ants_results1 = nighres.registration.embedded_antsreg(
                         medium_iterations=0, fine_iterations=0,
                         cost_function='MutualInformation',
                         interpolation='NearestNeighbor',
-                        ignore_affine=False, 
+                        ignore_affine=True, 
                         save_data=True, file_name="sub001_sess1",
                         output_dir=out_dir)
 
@@ -176,7 +176,7 @@ ants_results2 = nighres.registration.embedded_antsreg(
                         medium_iterations=0, fine_iterations=0,
                         cost_function='MutualInformation',
                         interpolation='NearestNeighbor',
-                        ignore_affine=False, 
+                        ignore_affine=True, 
                         save_data=True, file_name="sub002_sess1",
                         output_dir=out_dir)
 
