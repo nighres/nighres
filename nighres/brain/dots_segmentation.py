@@ -404,7 +404,7 @@ def dots_segmentation(tensor_image, mask, atlas_dir, wm_atlas = 1,
         
     Notes
     ----------
-    Algorithm details can be found in [1]_.
+    Algorithm details can be found in the references below.
 
     References
     ----------
