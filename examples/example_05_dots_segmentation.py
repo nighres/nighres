@@ -10,7 +10,7 @@ Oriented Tract Segmentation (DOTS) algorithm [1]_:
 2. Downloading an example DTI data set using
     :func:`nighres.data.download_DTI_2mm`
 3. Segmenting white matter in DTI images into major tracts using 
-    :func:`nighres.brain.dots_segmentation` [1]_
+    :func:`nighres.brain.dots_segmentation`
 4. Visualizing the results using matplotlib
 
 """
