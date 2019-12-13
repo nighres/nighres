@@ -26,7 +26,7 @@ with open('README.rst') as f:
 
 setup(
     name='nighres',
-    version='1.1.0b1',
+    version='1.2.0',
     description='Processing tools for high-resolution neuroimaging',
     long_description=long_description,
     url='https://nighres.readthedocs.io/',
@@ -47,6 +47,6 @@ setup(
     keywords='MRI high-resolution laminar subcortex',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['numpy<=1.16.4', 'nibabel', 'psutil'],
+    install_requires=['numpy<=1.16.4', 'nibabel', 'pandas', 'psutil'],
     python_requires='>=3'
 )
