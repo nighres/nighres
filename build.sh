@@ -190,7 +190,19 @@ cp -rv build/nighresjava/ ../
 find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' ../nighresjava/_nighresjava.so
 cd ..
 
-python3 -m pip install .
+echo ""
+echo "==================================================================================================================="
+echo "You should now be able to install nighres with pip"
+echo "  Local installation:"
+echo "    python3 -m pip install ."
+echo "" 
+echo "  Custom installation (e.g., servers or modulular systems) requires some pre-setup to satisfy setuptools:"
+echo "  Where installDir is the path to your custom install directory (e.g., /opt/quarantine/nighres/${release}/install/)"
+echo "    mkdir -p /opt/quarantine/nighres/${release}/install/lib/python3.7/site-packages/"
+echo "    export PYTHONPATH=/opt/quarantine/nighres/${release}/install/lib/python3.7/site-packages/:\$PYTHONPATH"
+echo "    python3 setup.py install --prefix /opt/quarantine/nighres/${release}/install/"
+echo "==================================================================================================================="
+
 
 # Make the python wheel
 # PLT=$(uname | tr '[:upper:]' '[:lower:]')
