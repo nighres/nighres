@@ -59,8 +59,9 @@ dots_results = nighres.brain.dots_segmentation(tensor_image=dataset['dti'],
                                                save_data=True,
                                                output_dir=out_dir,
                                                file_name='example')
-segmentation = dots_results['segmentation']
-posterior = dots_results['posterior']
+
+segmentation = nighres.io.load_volume(dots_results['segmentation']).get_data()
+posterior = nighres.io.load_volume(dots_results['posterior']).get_data()
 
 ############################################################################
 # .. tip:: The parameter values of the DOTS algorithm can have a significant 
@@ -107,7 +108,8 @@ newcolors[N_t::,:] = np.ones(newcolors[N_t::,:].shape)
 newcmp = ListedColormap(newcolors)
 
 # Calculate FA
-tensor_volume = nb.load(os.path.join(in_dir, 'DTI_2mm/DTI_2mm.nii.gz')).get_data()
+tensor_img = nb.load(os.path.join(in_dir, 'DTI_2mm/DTI_2mm.nii.gz'))
+tensor_volume = tensor_img.get_data()
 xs, ys, zs, _ = tensor_volume.shape
 tenfit = np.zeros((xs, ys, zs, 3, 3))
 tenfit[:,:,:,0,0] = tensor_volume[:,:,:,0]
@@ -124,7 +126,9 @@ evals, evecs = np.linalg.eig(tenfit)
 R = tenfit / np.trace(tenfit, axis1=3, axis2=4)[:,:,:,np.newaxis,np.newaxis]
 FA = np.sqrt(0.5 * (3 - 1/(np.trace(np.matmul(R,R), axis1=3, axis2=4))))
 FA[np.isnan(FA)] = 0
-
+# save for convenience
+nighres.io.save_volume(os.path.join(out_dir, 'FA.nii.gz'), 
+    nb.Nifti1Image(FA,tensor_img.affine,tensor_img.header))
 
 # Show segmentation
 fig, ax = plt.subplots(1, 3, figsize=(28,5))
@@ -138,7 +142,7 @@ for i in range(3):
     ax[i].set_xticks([])
     ax[i].set_yticks([])
 fig.tight_layout()
-fig.savefig('segmentation.png')
+#fig.savefig('segmentation.png')
 plt.show()
 
 ############################################################################
@@ -158,7 +162,7 @@ for i in range(3):
     ax[i].set_xticks([])
     ax[i].set_yticks([])
 fig.tight_layout()
-fig.savefig('CST_posterior.png')
+#fig.savefig('CST_posterior.png')
 plt.show()
 
 ############################################################################

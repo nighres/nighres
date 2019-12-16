@@ -3,6 +3,7 @@ import time
 import numpy as np
 import nibabel as nb
 from ..io import load_volume, save_volume
+from ..utils import _output_dir_4saving, _fname_4saving
 
 
 atlas_labels_1 = ['isotropic', 'other_WM', 'ATR_L', 'ATR_R', 'CC_front', 
