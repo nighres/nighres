@@ -400,7 +400,6 @@ def dots_segmentation(tensor_image, mask, atlas_dir, wm_atlas = 1,
 
         * segmentation (array_like): Hard segmentation of white matter.
         * posterior (array_like): POsterior probabilities of tracts.
-        * energy (array_like): Markov Random Field energies of labels.
         
     Notes
     ----------
@@ -416,7 +415,29 @@ def dots_segmentation(tensor_image, mask, atlas_dir, wm_atlas = 1,
        International Workshop on Diffusion Modelling and Fiber Cup (2009)
     """
     
+    print('\nDOTS white matter tract segmentation')
     
+    # make sure that saving related parameters are correct
+    if save_data:
+        output_dir = _output_dir_4saving(output_dir, tensor_image)
+
+        seg_file = os.path.join(output_dir,
+                        _fname_4saving(module=__name__,file_name=file_name,
+                                   rootfile=tensor_image,
+                                   suffix='dots-seg'))
+
+        proba_file = os.path.join(output_dir,
+                        _fname_4saving(module=__name__,file_name=file_name,
+                                   rootfile=tensor_image,
+                                   suffix='dots-proba'))
+
+        if overwrite is False \
+            and os.path.isfile(seg_file) and os.path.isfile(proba_file) :
+                print("skip computation (use existing results)")
+                output = {'segmentation': seg_file,
+                          'posterior': proba_file}
+                return output
+
     # For external tools: dipy
     try:
         from dipy.align.transforms import AffineTransform3D
@@ -708,13 +729,15 @@ def dots_segmentation(tensor_image, mask, atlas_dir, wm_atlas = 1,
     
     # Save results
     if save_data:
-        save_volume(file_name + '_DOTS_segmentation.nii.gz', 
+        save_volume(seg_file, 
                     nb.Nifti1Image(curr_segmentation, DWI_affine))
-        save_volume(file_name + '_DOTS_posterior.nii.gz', 
+        save_volume(proba_file, 
                     nb.Nifti1Image(fiber_posterior, DWI_affine))
 
+        return {'segmentation': seg_file, 
+                'posterior': proba_file}
 
-    # Return results
-    return {'segmentation': curr_segmentation, 
-            'posterior': fiber_posterior, 
-            'energy': curr_U}
+    else:
+        # Return results
+        return {'segmentation': curr_segmentation, 
+                'posterior': fiber_posterior}
