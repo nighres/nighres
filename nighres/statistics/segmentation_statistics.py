@@ -82,7 +82,7 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
         output_dir = _output_dir_4saving(output_dir,segmentation)
 
         map_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=segmentation,
                                    suffix='stat-map'))
 
@@ -121,20 +121,20 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
 
     stats.setSegmentationImage(nighresjava.JArray('int')(
                                     (data.flatten('F')).astype(int).tolist()))
-    stats.setSegmentationName(_fname_4saving(rootfile=segmentation))
+    stats.setSegmentationName(_fname_4saving(module=__name__,rootfile=segmentation))
 
     # other input images, if any
     if intensity is not None:
         data = load_volume(intensity).get_data()
         stats.setIntensityImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
-        stats.setIntensityName(_fname_4saving(rootfile=intensity))
+        stats.setIntensityName(_fname_4saving(module=__name__,rootfile=intensity))
 
     if template is not None:
         data = load_volume(template).get_data()
         stats.setTemplateImage(nighresjava.JArray('int')(
                                     (data.flatten('F')).astype(int).tolist()))
-        stats.setTemplateName(_fname_4saving(rootfile=template))
+        stats.setTemplateName(_fname_4saving(module=__name__,rootfile=template))
 
     # set algorithm parameters
     if atlas is not None:
@@ -178,6 +178,9 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
     csv_file = stats.getOutputFile()
 
     if output:
-        return {'csv': csv_file, 'map': output}
+        if save_data:
+            return {'csv': csv_file, 'map': map_file}
+        else:
+            return {'csv': csv_file, 'map': output}
     else:
         return {'csv': csv_file}

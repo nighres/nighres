@@ -80,35 +80,35 @@ def conditional_shape(target_images, structures, contrasts,
         output_dir = _output_dir_4saving(output_dir, target_images[0])
 
         spatial_proba_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=target_images[0],
                                   suffix='cspmax-sproba', ))
 
         spatial_label_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=target_images[0],
                                    suffix='cspmax-slabel'))
         combined_proba_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=target_images[0],
                                   suffix='cspmax-cproba', ))
 
         combined_label_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=target_images[0],
                                    suffix='cspmax-clabel'))
         proba_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=target_images[0],
                                   suffix='cspmax-proba', ))
 
         label_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=target_images[0],
                                    suffix='cspmax-label'))
 
         neighbor_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=target_images[0],
                                    suffix='cspmax-ngb'))
         if overwrite is False \
@@ -121,13 +121,13 @@ def conditional_shape(target_images, structures, contrasts,
             and os.path.isfile(neighbor_file):
             
             print("skip computation (use existing results)")
-            output = {'max_spatial_proba': load_volume(spatial_proba_file), 
-                      'max_spatial_label': load_volume(spatial_label_file),
-                      'max_combined_proba': load_volume(combined_proba_file), 
-                      'max_combined_label': load_volume(combined_label_file),
-                      'max_proba': load_volume(proba_file), 
-                      'max_label': load_volume(label_file),
-                      'neighbors': load_volume(neighbor_file)}
+            output = {'max_spatial_proba': spatial_proba_file, 
+                      'max_spatial_label': spatial_label_file,
+                      'max_combined_proba': combined_proba_file, 
+                      'max_combined_label': combined_label_file,
+                      'max_proba': proba_file, 
+                      'max_label': label_file,
+                      'neighbors': neighbor_file}
             return output
 
 
@@ -308,11 +308,15 @@ def conditional_shape(target_images, structures, contrasts,
         save_volume(label_file, label)
         save_volume(neighbor_file, neighbors)
 
-    output= {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 
-            'max_combined_proba': combined_proba, 'max_combined_label': combined_label, 
-            'max_proba': proba, 'max_label': label, 'neighbors': neighbors}
-
-    return output
+        output= {'max_spatial_proba': spatial_proba_file, 'max_spatial_label': spatial_label_file, 
+                'max_combined_proba': combined_proba_file, 'max_combined_label': combined_label_file, 
+                'max_proba': proba_file, 'max_label': label_file, 'neighbors': neighbors_file}
+        return output
+    else:
+        output= {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 
+                'max_combined_proba': combined_proba, 'max_combined_label': combined_label, 
+                'max_proba': proba, 'max_label': label, 'neighbors': neighbors}
+        return output
 
 
 def conditional_shape_atlasing(subjects, structures, contrasts, 
@@ -367,27 +371,27 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
         output_dir = _output_dir_4saving(output_dir, contrast_images[0][0])
 
         spatial_proba_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=contrast_images[0][0],
                                   suffix='cspmax-sproba', ))
 
         spatial_label_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=contrast_images[0][0],
                                    suffix='cspmax-slabel'))
 
         condmean_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=contrast_images[0][0],
                                   suffix='cspmax-cmean', ))
 
         condstdv_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=contrast_images[0][0],
                                    suffix='cspmax-cstdv'))
         
         condhist_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=contrast_images[0][0],
                                    suffix='cspmax-chist'))
         
@@ -397,9 +401,9 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
             and os.path.isfile(condhist_file):
             
             print("skip computation (use existing results)")
-            output = {'max_spatial_proba': load_volume(spatial_proba_file), 
-                      'max_spatial_label': load_volume(spatial_label_file),
-                      'cond_hist': load_volume(condhist_file)}
+            output = {'max_spatial_proba': spatial_proba_file, 
+                      'max_spatial_label': spatial_label_file,
+                      'cond_hist': condhist_file}
 
             return output
 
@@ -489,7 +493,8 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
         save_volume(spatial_proba_file, spatial_proba)
         save_volume(spatial_label_file, spatial_label)
         save_volume(condhist_file, chist)
-
-    output= {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 'cond_hist': chist}
-    
-    return output
+        output= {'max_spatial_proba': spatial_proba_file, 'max_spatial_label': spatial_label_file, 'cond_hist': condhist_file}
+        return output
+    else:
+        output= {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 'cond_hist': chist}
+        return output

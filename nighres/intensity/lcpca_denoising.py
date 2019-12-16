@@ -89,7 +89,7 @@ def lcpca_denoising(image_list, phase_list=None,
             if file_names is None: name=None
             else: name=file_names[idx]
             den_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=name,
+                        _fname_4saving(module=__name__,file_name=name,
                                       rootfile=image,
                                       suffix='lcpca-den'))
             den_files.append(den_file)
@@ -99,7 +99,7 @@ def lcpca_denoising(image_list, phase_list=None,
                 if file_names is None: name=None
                 else: name=file_names[len(image_list)+idx]
                 den_file = os.path.join(output_dir,
-                            _fname_4saving(file_name=name,
+                            _fname_4saving(module=__name__,file_name=name,
                                           rootfile=image,
                                           suffix='lcpca-den'))
                 den_files.append(den_file)
@@ -107,12 +107,12 @@ def lcpca_denoising(image_list, phase_list=None,
         if file_names is None: name=None
         else: name=file_names[0]
         dim_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=name,
+                        _fname_4saving(module=__name__,file_name=name,
                                    rootfile=image_list[0],
                                    suffix='lcpca-dim'))
 
         err_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=name,
+                        _fname_4saving(module=__name__,file_name=name,
                                    rootfile=image_list[0],
                                    suffix='lcpca-res'))
         
@@ -128,10 +128,10 @@ def lcpca_denoising(image_list, phase_list=None,
                     print("skip computation (use existing results)")
                     denoised = []
                     for den_file in den_files:
-                        denoised.append(load_volume(den_file))
+                        denoised.append(den_file)
                     output = {'denoised': denoised,
-                              'dimensions': load_volume(dim_file),
-                              'residuals': load_volume(err_file)}
+                              'dimensions': dim_file,
+                              'residuals': err_file}
                     
                     return output
 
@@ -254,7 +254,8 @@ def lcpca_denoising(image_list, phase_list=None,
     if save_data:
         save_volume(dim_file, dim)
         save_volume(err_file, err)
-
-    output = {'denoised': denoised_list, 'dimensions': dim, 'residuals': err}
+        output = {'denoised': den_files, 'dimensions': dim_file, 'residuals': err_file}
+    else:
+        output = {'denoised': denoised_list, 'dimensions': dim, 'residuals': err}
 
     return output

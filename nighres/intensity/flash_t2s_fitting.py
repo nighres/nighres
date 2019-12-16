@@ -54,22 +54,22 @@ def flash_t2s_fitting(image_list, te_list,
         output_dir = _output_dir_4saving(output_dir, image_list[0])
 
         t2s_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2fit-t2s'))
 
         r2s_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2fit-r2s'))
 
         s0_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2fit-s0'))
 
         err_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2fit-err'))
 
@@ -78,10 +78,10 @@ def flash_t2s_fitting(image_list, te_list,
             and os.path.isfile(r2s_file) \
             and os.path.isfile(s0_file) \
             and os.path.isfile(err_file) :
-                output = {'t2s': load_volume(t2s_file),
-                          'r2s': load_volume(r2s_file),
-                          's0': load_volume(s0_file),
-                          'residuals': load_volume(err_file)}
+                output = {'t2s': t2s_file,
+                          'r2s': r2s_file,
+                          's0': s0_file,
+                          'residuals': err_file}
                 return output
 
     # start virtual machine, if not already running
@@ -167,4 +167,6 @@ def flash_t2s_fitting(image_list, te_list,
         save_volume(s0_file, s0)
         save_volume(err_file, err)
 
-    return {'t2s': t2s, 'r2s': r2s, 's0': s0, 'residuals': err}
+        return {'t2s': t2s_file, 'r2s': r2s_file, 's0': s0_file, 'residuals': err_file}
+    else:
+        return {'t2s': t2s, 'r2s': r2s, 's0': s0, 'residuals': err}

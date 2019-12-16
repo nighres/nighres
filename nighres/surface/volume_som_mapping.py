@@ -59,12 +59,12 @@ def volume_som_mapping(proba_image,
         output_dir = _output_dir_4saving(output_dir, proba_image)
 
         map_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=proba_image,
                                        suffix='som-orig'))
 
         som_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=proba_image,
                                        suffix='som-grid',ext='vtk'))
 
@@ -72,8 +72,8 @@ def volume_som_mapping(proba_image,
             and os.path.isfile(map_file) and os.path.isfile(som_file) :
             
             print("skip computation (use existing results)")
-            output = {'map': load_volume(map_file), 
-                      'som': load_mesh(som_file)}
+            output = {'map': map_file, 
+                      'som': som_file}
             return output
                         
     # start virtual machine if not running
@@ -149,4 +149,6 @@ def volume_som_mapping(proba_image,
         save_volume(map_file, mapped_img)
         save_mesh(som_file, mapped_som_mesh)
 
-    return {'map': mapped_img, 'som': mapped_som_mesh}
+        return {'map': map_file, 'som': som_file}
+    else:
+        return {'map': mapped_img, 'som': mapped_som_mesh}

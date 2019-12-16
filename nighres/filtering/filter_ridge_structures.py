@@ -59,14 +59,14 @@ def filter_ridge_structures(input_image,
         output_dir = _output_dir_4saving(output_dir, input_image)
 
         ridge_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=input_image,
                                        suffix='rdg-img', ))
         if overwrite is False \
             and os.path.isfile(ridge_file) :
 
             print("skip computation (use existing results)")
-            output = {'result': load_volume(ridge_file)}
+            output = {'result': ridge_file}
             return output
 
     # start virtual machine, if not already running
@@ -126,9 +126,9 @@ def filter_ridge_structures(input_image,
 
     ridge_structure_image = nb.Nifti1Image(ridge_structure_image_data, affine,
                                            header)
-    outputs = {'result': ridge_structure_image}
-
     if save_data:
         save_volume(ridge_file, ridge_structure_image)
-
+        outputs = {'result': ridge_file}
+    else:
+        outputs = {'result': ridge_structure_image}
     return outputs

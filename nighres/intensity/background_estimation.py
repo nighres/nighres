@@ -64,17 +64,17 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
         output_dir = _output_dir_4saving(output_dir, image)
 
         masked_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image,
                                    suffix='bge-masked'))
 
         proba_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image,
                                    suffix='bge-proba'))
 
         mask_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image,
                                    suffix='bge-mask'))
 
@@ -82,9 +82,9 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
             and os.path.isfile(masked_file) and os.path.isfile(proba_file) \
             and os.path.isfile(mask_file) :
                 print("skip computation (use existing results)")
-                output = {'masked': load_volume(masked_file), 
-                          'proba': load_volume(proba_file), 
-                          'mask': load_volume(mask_file)}
+                output = {'masked': masked_file, 
+                          'proba': proba_file, 
+                          'mask': mask_file}
                 return output
 
     # start virtual machine, if not already running
@@ -167,5 +167,6 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
         save_volume(masked_file, masked)
         save_volume(proba_file, proba)
         save_volume(mask_file, mask)
-
-    return {'masked': masked, 'proba': proba, 'mask': mask}
+        return {'masked': masked_file, 'proba': proba_file, 'mask': mask_file}
+    else:
+        return {'masked': masked, 'proba': proba, 'mask': mask}

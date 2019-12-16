@@ -64,14 +64,15 @@ def apply_coordinate_mappings(image, mapping1,
         output_dir = _output_dir_4saving(output_dir, image)
 
         deformed_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,
+                                    file_name=file_name,
                                     rootfile=image,
                                     suffix='def-img'))
         if overwrite is False \
             and os.path.isfile(deformed_file) :
 
             print("skip computation (use existing results)")
-            output = {'result': load_volume(deformed_file)}
+            output = {'result': deformed_file}
             return output
 
     # start virutal machine if not already running
@@ -177,8 +178,9 @@ def apply_coordinate_mappings(image, mapping1,
 
     if save_data:
         save_volume(deformed_file, deformed)
-
-    return {'result': deformed}
+        return {'result': deformed_file}
+    else:
+        return {'result': deformed}
 
 def apply_coordinate_mappings_2d(image, mapping1,
                         mapping2=None, mapping3=None, mapping4=None,
@@ -236,7 +238,7 @@ def apply_coordinate_mappings_2d(image, mapping1,
         output_dir = _output_dir_4saving(output_dir, image)
 
         deformed_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                     rootfile=image,
                                     suffix='def-img'))
         if overwrite is False \
@@ -349,5 +351,6 @@ def apply_coordinate_mappings_2d(image, mapping1,
 
     if save_data:
         save_volume(deformed_file, deformed)
-
-    return {'result': deformed}
+        return {'result': deformed_file}
+    else:
+        return {'result': deformed}

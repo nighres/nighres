@@ -68,7 +68,7 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
         output_dir = _output_dir_4saving(output_dir, levelset_image)
 
         mesh_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=levelset_image,
                                        suffix='l2m-mesh',ext="vtk"))
 
@@ -76,7 +76,7 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
             and os.path.isfile(mesh_file) :
 
             print("skip computation (use existing results)")
-            output = {'result': load_mesh_geometry(mesh_file)}
+            output = {'result': mesh_file}
             return output
 
     # start virtual machine if not running
@@ -132,5 +132,6 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
 
     if save_data:
         save_mesh_geometry(mesh_file, mesh)
-
-    return {'result': mesh}
+        return {'result': mesh_file}
+    else:
+        return {'result': mesh}

@@ -14,10 +14,10 @@ function join_by { local IFS="$1"; shift; echo "$*"; }
 cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
 imcntk_repo="https://github.com/piloubazin/imcn-imaging.git"
 
-release="release-1.1.0b"
+release="release-1.2.0"
 
 # Check the system has the necessary commands
-hash wget tar javac jar python3 pip 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3 pip"
+hash wget tar javac jar python3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3"
 
 # Check for setuptools and wheels
 pip_modules=$(python3 -m pip list | tr -s ' ' | cut -f 1 -d ' ')
@@ -83,7 +83,7 @@ javac_opts=(
 
 echo "Compiling..."
 cd cbstools-public
-javac -cp ${deps_list} ${javac_opts[@]} de/mpg/cbs/core/*/*.java $cbstools_list
+javac -cp ${deps_list} ${javac_opts[@]} ca/concordia/qpi/*/*.java de/mpg/cbs/core/*/*.java $cbstools_list
 
 
 echo "Assembling..."
@@ -91,7 +91,7 @@ mkdir -p ../nighresjava/src
 mkdir -p ../nighresjava/lib
 
 #jar cf cbstools.jar     de/mpg/cbs/core/*/*.class
-jar cf ../nighresjava/src/nighresjava.jar de/mpg/cbs/core/*/*.class
+jar cf ../nighresjava/src/nighresjava.jar de/mpg/cbs/core/*/*.class ca/concordia/qpi/*/*.class
 jar cf ../nighresjava/src/cbstools-lib.jar de/mpg/cbs/*/*.class
 
 cp lib/*.jar ../nighresjava/lib/
@@ -190,7 +190,7 @@ cp -rv build/nighresjava/ ../
 find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' ../nighresjava/_nighresjava.so
 cd ..
 
-# python3 -m pip install .
+python3 -m pip install .
 
 # Make the python wheel
 # PLT=$(uname | tr '[:upper:]' '[:lower:]')

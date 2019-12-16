@@ -75,12 +75,12 @@ def topology_correction(image, shape_type,
         output_dir = _output_dir_4saving(output_dir, image)
 
         corrected_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=image,
                                        suffix='tpc-img'))
 
         corrected_obj_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=image,
                                        suffix='tpc-obj'))
         if overwrite is False \
@@ -88,8 +88,8 @@ def topology_correction(image, shape_type,
             and os.path.isfile(corrected_obj_file) :
 
             print("skip computation (use existing results)")
-            output = {'corrected': load_volume(corrected_file),
-                      'object': load_volume(corrected_obj_file)}
+            output = {'corrected': corrected_file,
+                      'object': corrected_obj_file}
             return output
 
     # start virtual machine if not running
@@ -155,4 +155,6 @@ def topology_correction(image, shape_type,
         save_volume(corrected_file, corrected)
         save_volume(corrected_obj_file, corrected_obj)
 
-    return {'corrected': corrected, 'object':corrected_obj}
+        return {'corrected': corrected_file, 'object': corrected_obj_file}
+    else:
+        return {'corrected': corrected, 'object': corrected_obj}

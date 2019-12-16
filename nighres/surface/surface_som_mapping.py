@@ -62,12 +62,12 @@ def surface_som_mapping(surface_mesh, mask_zeros=False,
         output_dir = _output_dir_4saving(output_dir, surface_mesh)
 
         orig_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=surface_mesh,
                                        suffix='som-orig',ext='vtk'))
 
         som_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=surface_mesh,
                                        suffix='som-grid',ext='vtk'))
 
@@ -75,8 +75,8 @@ def surface_som_mapping(surface_mesh, mask_zeros=False,
             and os.path.isfile(orig_file) and os.path.isfile(som_file) :
             
             print("skip computation (use existing results)")
-            output = {'original': load_mesh(orig_file), 
-                      'som': load_mesh(som_file)}
+            output = {'original': orig_file, 
+                      'som': som_file}
             return output
                         
     # start virtual machine if not running
@@ -163,5 +163,6 @@ def surface_som_mapping(surface_mesh, mask_zeros=False,
         print("saving...")
         save_mesh(orig_file, mapped_orig_mesh)
         save_mesh(som_file, mapped_som_mesh)
-
-    return {'original': mapped_orig_mesh, 'som': mapped_som_mesh}
+        return {'original': orig_file, 'som': som_file}
+    else:
+        return {'original': mapped_orig_mesh, 'som': mapped_som_mesh}

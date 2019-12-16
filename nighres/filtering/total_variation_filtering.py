@@ -66,20 +66,20 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
         output_dir = _output_dir_4saving(output_dir, image)
 
         out_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image,
                                    suffix='tv-img'))
 
         res_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image,
                                    suffix='tv-res'))
 
         if overwrite is False \
             and os.path.isfile(out_file) and os.path.isfile(res_file) :
                 print("skip computation (use existing results)")
-                output = {'filtered': load_volume(out_file),
-                          'residual': load_volume(res_file)}
+                output = {'filtered': out_file,
+                          'residual': res_file}
                 return output
 
     # start virtual machine, if not already running
@@ -153,4 +153,6 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
         save_volume(out_file, out)
         save_volume(res_file, res)
 
-    return {'filtered': out, 'residual': res}
+        return {'filtered': out_file, 'residual': res_file}
+    else:
+        return {'filtered': out, 'residual': res}

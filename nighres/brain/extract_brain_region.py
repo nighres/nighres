@@ -15,7 +15,7 @@ def extract_brain_region(segmentation, levelset_boundary,
                          estimate_tissue_densities=False,
                          partial_volume_distance=1.0,
                          save_data=False, overwrite=False, output_dir=None,
-                         file_name=None, return_filename=False):
+                         file_name=None):
     """ Extract Brain Region
 
     Extracts masks, probability maps and levelset surfaces for specific brain
@@ -57,8 +57,6 @@ def extract_brain_region(segmentation, levelset_boundary,
     file_name: str, optional
         Desired base name for output files with file extension
         (suffixes will be added)
-    return_filename: bool, optional
-        Return filename instead of object
 
     Returns
     ----------
@@ -124,47 +122,47 @@ def extract_brain_region(segmentation, levelset_boundary,
 	# build names for saving after setting the parameters to get the proper names
     if save_data:
         reg_mask_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=segmentation,
                                        suffix='xmask-'+xbr.getStructureName(), ))
 
         ins_mask_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=segmentation,
                                        suffix='xmask-'+xbr.getInsideName(), ))
 
         bg_mask_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                       rootfile=segmentation,
                                       suffix='xmask-'+xbr.getBackgroundName(), ))
 
         reg_proba_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                         rootfile=segmentation,
                                         suffix='xproba-'+xbr.getStructureName(), ))
 
         ins_proba_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                         rootfile=segmentation,
                                         suffix='xproba-'+xbr.getInsideName(), ))
 
         bg_proba_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=segmentation,
                                        suffix='xproba-'+xbr.getBackgroundName(), ))
 
         reg_lvl_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                       rootfile=segmentation,
                                       suffix='xlvl-'+xbr.getStructureName(), ))
 
         ins_lvl_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                       rootfile=segmentation,
                                       suffix='xlvl-'+xbr.getInsideName(), ))
 
         bg_lvl_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                      rootfile=segmentation,
                                      suffix='xlvl-'+xbr.getBackgroundName(), ))
         if overwrite is False \
@@ -179,26 +177,15 @@ def extract_brain_region(segmentation, levelset_boundary,
             and os.path.isfile(bg_lvl_file) :
 
             print("skip computation (use existing results)")
-            if return_filename:
-                output = {'inside_mask': ins_mask_file,
-                          'inside_proba': ins_proba_file,
-                          'inside_lvl': ins_lvl_file,
-                          'region_mask': reg_mask_file,
-                          'region_proba': reg_proba_file,
-                          'region_lvl': reg_lvl_file,
-                          'background_mask': bg_mask_file,
-                          'background_proba': bg_proba_file,
-                          'background_lvl': bg_lvl_file}
-            else:
-                output = {'inside_mask': load_volume(ins_mask_file),
-                          'inside_proba': load_volume(ins_proba_file),
-                          'inside_lvl': load_volume(ins_lvl_file),
-                          'region_mask': load_volume(reg_mask_file),
-                          'region_proba': load_volume(reg_proba_file),
-                          'region_lvl': load_volume(reg_lvl_file),
-                          'background_mask': load_volume(bg_mask_file),
-                          'background_proba': load_volume(bg_proba_file),
-                          'background_lvl': load_volume(bg_lvl_file)}
+            output = {'inside_mask': ins_mask_file,
+                  'inside_proba': ins_proba_file,
+                  'inside_lvl': ins_lvl_file,
+                  'region_mask': reg_mask_file,
+                  'region_proba': reg_proba_file,
+                  'region_lvl': reg_lvl_file,
+                  'background_mask': bg_mask_file,
+                  'background_proba': bg_proba_file,
+                  'background_lvl': bg_lvl_file}
             return output
 
     # load images and set dimensions and resolution
@@ -325,7 +312,6 @@ def extract_brain_region(segmentation, levelset_boundary,
         save_volume(bg_proba_file, background_proba)
         save_volume(bg_lvl_file, background_lvl)
 
-    if return_filename:
         output = {
             'inside_mask': ins_mask_file,
             'inside_proba': ins_proba_file,

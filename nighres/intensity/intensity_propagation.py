@@ -62,14 +62,14 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
         output_dir = _output_dir_4saving(output_dir, image)
 
         out_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image,
                                    suffix='ppag-img'))
 
         if overwrite is False \
             and os.path.isfile(out_file) :
                 print("skip computation (use existing results)")
-                output = {'result': load_volume(out_file)}
+                output = {'result': out_file}
                 return output
 
     # start virtual machine, if not already running
@@ -131,5 +131,6 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
 
     if save_data:
         save_volume(out_file, out)
-
-    return {'result': out}
+        return {'result': out_file}
+    else:
+        return {'result': out}

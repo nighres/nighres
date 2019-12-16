@@ -61,12 +61,12 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
         output_dir = _output_dir_4saving(output_dir, intensity_image)
 
         orig_file = os.path.join(output_dir,
-                                 _fname_4saving(file_name=file_name,
+                                 _fname_4saving(module=__name__,file_name=file_name,
                                                 rootfile=intensity_image,
                                                 suffix='map-orig', ext="vtk"))
 
         inf_file = os.path.join(output_dir,
-                                _fname_4saving(file_name=file_name,
+                                _fname_4saving(module=__name__,file_name=file_name,
                                                rootfile=intensity_image,
                                                suffix='map-inf', ext="vtk"))
 
@@ -74,15 +74,15 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
                 os.path.isfile(inf_file)):
 
             print("skip computation (use existing results)")
-            output = {'original': load_mesh(orig_file),
-                      'inflated': load_mesh(inf_file)}
+            output = {'original': orig_file,
+                      'inflated': inf_file}
             return output
 
         elif (overwrite is False and os.path.isfile(orig_file) and
                 inflated_mesh is None):
 
             print("skip computation (use existing results)")
-            output = {'original': load_mesh(orig_file),
+            output = {'original': orig_file,
                       'inflated': None}
             return output
 
@@ -185,7 +185,12 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
         if inflated_mesh is not None:
             save_mesh(inf_file, mapped_inf_mesh)
 
-    if inflated_mesh is not None:
-        return {'original': mapped_orig_mesh, 'inflated': mapped_inf_mesh}
+        if inflated_mesh is not None:
+            return {'original': orig_file, 'inflated': inf_file}
+        else:
+            return {'original': orig_file}
     else:
-        return {'original': mapped_orig_mesh}
+        if inflated_mesh is not None:
+            return {'original': mapped_orig_mesh, 'inflated': mapped_inf_mesh}
+        else:
+            return {'original': mapped_orig_mesh}

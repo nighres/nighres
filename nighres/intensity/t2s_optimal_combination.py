@@ -57,27 +57,27 @@ def t2s_optimal_combination(image_list, te_list, depth=None,
         output_dir = _output_dir_4saving(output_dir, image_list[0])
 
         comb_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2scomb-combined'))
 
         t2s_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2scomb-t2s'))
 
         r2s_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2scomb-r2s'))
 
         s0_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2scomb-s0'))
 
         err_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image_list[0],
                                    suffix='qt2scomb-err'))
 
@@ -87,11 +87,11 @@ def t2s_optimal_combination(image_list, te_list, depth=None,
             and os.path.isfile(r2s_file) \
             and os.path.isfile(s0_file) \
             and os.path.isfile(err_file) :
-                output = {'combined': load_volume(comb_file),
-                          't2s': load_volume(t2s_file),
-                          'r2s': load_volume(r2s_file),
-                          's0': load_volume(s0_file),
-                          'residuals': load_volume(err_file)}
+                output = {'combined': comb_file,
+                          't2s': t2s_file,
+                          'r2s': r2s_file,
+                          's0': s0_file,
+                          'residuals': err_file}
                 return output
 
     # start virtual machine, if not already running
@@ -192,4 +192,6 @@ def t2s_optimal_combination(image_list, te_list, depth=None,
         save_volume(s0_file, s0)
         save_volume(err_file, err)
 
-    return {'combined': comb, 't2s': t2s, 'r2s': r2s, 's0': s0, 'residuals': err}
+        return {'combined': comb_file, 't2s': t2s_file, 'r2s': r2s_file, 's0': s0_file, 'residuals': err_file}
+    else:
+        return {'combined': comb, 't2s': t2s, 'r2s': r2s, 's0': s0, 'residuals': err}

@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving
 
 def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
                            save_data=False, overwrite=False, output_dir=None,
-                           file_name=None, return_filename=False):
+                           file_name=None):
     """ Filter stacking
 
     A small utility to combine multiple priors derived from filtering of
@@ -36,8 +36,6 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
     file_name: str, optional
         Desired base name for output files with file extension
         (suffixes will be added)
-    return_filename: bool, optional
-        Return filename instead of object
 
     Returns
     ----------
@@ -76,14 +74,14 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
         output_dir = _output_dir_4saving(output_dir, img)
 
         filter_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=img,
                                    suffix='bfs-img'))
         if overwrite is False \
             and os.path.isfile(filter_file) :
 
             print("skip computation (use existing results)")
-            output = {"result": load_volume(filter_file) if not return_filename else filter_file}
+            output = {"result": filter_file}
             return output
 
     affine = load_volume(img).affine
@@ -139,5 +137,6 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
 
     if save_data:
         save_volume(filter_file, filter_img)
-
-    return {"result": filter_img if not return_filename else filter_file}
+        return {"result": filter_file}
+    else:
+        return {"result": filter_img}

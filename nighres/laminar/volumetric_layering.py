@@ -81,17 +81,17 @@ def volumetric_layering(inner_levelset, outer_levelset,
         output_dir = _output_dir_4saving(output_dir, inner_levelset)
 
         depth_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                     rootfile=inner_levelset,
                                     suffix='layering-depth'))
 
         layer_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                     rootfile=inner_levelset,
                                     suffix='layering-layers'))
 
         boundary_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=inner_levelset,
                                        suffix='layering-boundaries'))
         if overwrite is False \
@@ -100,9 +100,9 @@ def volumetric_layering(inner_levelset, outer_levelset,
             and os.path.isfile(boundary_file) :
 
             print("skip computation (use existing results)")
-            output = {'depth': load_volume(depth_file),
-                      'layers': load_volume(layer_file),
-                      'boundaries': load_volume(boundary_file)}
+            output = {'depth': depth_file,
+                      'layers': layer_file,
+                      'boundaries': boundary_file}
             return output
 
     # start virutal machine if not already running
@@ -176,4 +176,6 @@ def volumetric_layering(inner_levelset, outer_levelset,
         save_volume(layer_file, layers)
         save_volume(boundary_file, boundaries)
 
-    return {'depth': depth, 'layers': layers, 'boundaries': boundaries}
+        return {'depth': depth_file, 'layers': layer_file, 'boundaries': boundary_file}
+    else:
+        return {'depth': depth, 'layers': layers, 'boundaries': boundaries}

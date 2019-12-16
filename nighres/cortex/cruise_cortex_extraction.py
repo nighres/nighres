@@ -123,42 +123,42 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
         output_dir = _output_dir_4saving(output_dir, gm_image)
 
         cortex_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                      rootfile=gm_image,
                                      suffix='cruise-cortex', ))
 
         gwb_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=gm_image,
                                   suffix='cruise-gwb', ))
 
         cgb_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=gm_image,
                                   suffix='cruise-cgb', ))
 
         avg_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=gm_image,
                                   suffix='cruise-avg', ))
 
         thick_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                     rootfile=gm_image,
                                     suffix='cruise-thick', ))
 
         pwm_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=gm_image,
                                   suffix='cruise-pwm', ))
 
         pgm_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=gm_image,
                                   suffix='cruise-pgm', ))
 
         pcsf_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=gm_image,
                                    suffix='cruise-pcsf', ))
         if overwrite is False \
@@ -172,14 +172,14 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
             and os.path.isfile(pcsf_file) :
 
             print("skip computation (use existing results)")
-            output = {'cortex': load_volume(cortex_file),
-                      'gwb': load_volume(gwb_file),
-                      'cgb': load_volume(cgb_file),
-                      'avg': load_volume(avg_file),
-                      'thickness': load_volume(thick_file),
-                      'pwm': load_volume(pwm_file),
-                      'pgm': load_volume(pgm_file),
-                      'pcsf': load_volume(pcsf_file)}
+            output = {'cortex': cortex_file,
+                      'gwb': gwb_file,
+                      'cgb': cgb_file,
+                      'avg': avg_file,
+                      'thickness': thick_file,
+                      'pwm': pwm_file,
+                      'pgm': pgm_file,
+                      'pcsf': pcsf_file}
             return output
 
     # start virtual machine, if not already running
@@ -303,5 +303,8 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
         save_volume(pgm_file, pgm)
         save_volume(pcsf_file, pcsf)
 
-    return {'cortex': cortex, 'gwb': gwb, 'cgb': cgb, 'avg': avg,
-            'thickness': thickness, 'pwm': pwm, 'pgm': pgm, 'pcsf': pcsf}
+        return {'cortex': cortex_file, 'gwb': gwb_file, 'cgb': cgb_file, 'avg': avg_file,
+                'thickness': thick_file, 'pwm': pwm_file, 'pgm': pgm_file, 'pcsf': pcsf_file}
+    else:
+        return {'cortex': cortex, 'gwb': gwb, 'cgb': cgb, 'avg': avg,
+                'thickness': thickness, 'pwm': pwm, 'pgm': pgm, 'pcsf': pcsf}

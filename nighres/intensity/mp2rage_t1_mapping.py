@@ -81,17 +81,17 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
         output_dir = _output_dir_4saving(output_dir, first_inversion[0])
 
         t1_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=first_inversion[0],
                                    suffix='qt1map-t1'))
 
         r1_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=first_inversion[0],
                                    suffix='qt1map-r1'))
 
         uni_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=first_inversion[0],
                                    suffix='qt1map-uni'))
 
@@ -99,9 +99,9 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
             and os.path.isfile(t1_file) \
             and os.path.isfile(r1_file) \
             and os.path.isfile(uni_file) :
-                output = {'t1': load_volume(t1_file),
-                          'r1': load_volume(r1_file), 
-                          'uni': load_volume(uni_file)}
+                output = {'t1': t1_file,
+                          'r1': r1_file, 
+                          'uni': uni_file}
                 return output
 
     # start virtual machine, if not already running
@@ -197,5 +197,6 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
         save_volume(t1_file, t1)
         save_volume(r1_file, r1)
         save_volume(uni_file, uni)
-       
-    return {'t1': t1, 'r1': r1, 'uni': uni}
+        return {'t1': t1_file, 'r1': r1_file, 'uni': uni_file}
+    else:
+        return {'t1': t1, 'r1': r1, 'uni': uni}

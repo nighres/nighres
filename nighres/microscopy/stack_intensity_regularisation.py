@@ -52,14 +52,14 @@ def stack_intensity_regularisation(image, ratio=50,
         output_dir = _output_dir_4saving(output_dir, image)
 
         regularised_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=image,
                                    suffix='sir-img'))
 
         if overwrite is False \
             and os.path.isfile(regularised_file) :
                 print("skip computation (use existing results)")
-                output = {'result': load_volume(regularised_file)}
+                output = {'result': regularised_file}
                 return output
 
     # start virtual machine, if not already running
@@ -112,5 +112,6 @@ def stack_intensity_regularisation(image, ratio=50,
 
     if save_data:
         save_volume(regularised_file, regularised)
-
-    return {'result': regularised}
+        return {'result': regularised_file}
+    else:
+        return {'result': regularised}

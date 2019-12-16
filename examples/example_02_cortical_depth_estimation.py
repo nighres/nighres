@@ -130,6 +130,25 @@ if not skip_plots:
 # .. image:: ../_static/cortical_extraction3.png
 ###########################################################################
 
+#############################################################################
+# Cortical surface inflation
+# --------------------------------
+# For display purposes, we create a surface mesh from the average cortical
+# CRUISE surface, which we then inflate
+cortical_surface = nighres.surface.levelset_to_mesh(
+                        levelset_image=cruise['avg'],
+                        save_data=True,
+                        file_name="sub001_sess1_left_cerebrum.vtk",
+                        output_dir=out_dir)
+
+inflated_surface = nighres.surface.surface_inflation(
+                        surface_mesh=cortical_surface['result'],
+                        save_data=True,
+                        file_name="sub001_sess1_left_cerebrum.vtk",
+                        output_dir=out_dir)
+
+#############################################################################
+
 ###########################################################################
 # Volumetric layering
 # ---------------------

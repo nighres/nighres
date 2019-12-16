@@ -7,7 +7,7 @@ from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, _check_available_memory
 
 
-def profile_averaging(profile_surface_image, intensity_image, roi_image,
+def laminar_regional_approximation(profile_surface_image, intensity_image, roi_image,
                      save_data=False, overwrite=False, output_dir=None,
                      file_name=None):
 
@@ -38,18 +38,22 @@ def profile_averaging(profile_surface_image, intensity_image, roi_image,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * weights (niimg): weight image , representing the weighting of profiles
-        in the estimation (_lpa-weight)
-        * best ([float]): the estimated best profile
-        * median ([float]): the estimated median profile
-        * iqr ([float]): the estimated IQR profile
+        * weights (niimg): weight image, representing the weighting of profiles
+        in the estimation (_lra-weight)
+        * degree (niimg): degree image, representing the degree of profiles
+        in the estimation (_lra-deg)
+        * residuals (niimg): residuals image, representing the residual error
+        in the estimation (_lra-res)
+        * median ([float]): the estimated median profile (_lra-med)
+        * perc25 ([float]): the estimated 25 percentile profile (_lra-p25)
+        * perc75 ([float]): the estimated 75 percentile profile (_lra-p75)
 
     Notes
     ----------
     Original Java module by Pierre-Louis Bazin
     '''
 
-    print('\nProfile averaging')
+    print('\nProfile regional approximation')
 
     # make sure that saving related parameters are correct
     if save_data:
@@ -58,19 +62,27 @@ def profile_averaging(profile_surface_image, intensity_image, roi_image,
         weight_file = os.path.join(output_dir,
                         _fname_4saving(module=__name__,file_name=file_name,
                                       rootfile=intensity_image,
-                                      suffix='lpa-weight'))
-        sample_file = os.path.join(output_dir,
+                                      suffix='lra-weight'))
+        deg_file = os.path.join(output_dir,
                         _fname_4saving(module=__name__,file_name=file_name,
                                       rootfile=intensity_image,
-                                      suffix='lpa-best',ext='txt'))
+                                      suffix='lra-deg'))
+        res_file = os.path.join(output_dir,
+                        _fname_4saving(module=__name__,file_name=file_name,
+                                      rootfile=intensity_image,
+                                      suffix='lra-res'))
+        perc25_file = os.path.join(output_dir,
+                        _fname_4saving(module=__name__,file_name=file_name,
+                                      rootfile=intensity_image,
+                                      suffix='lra-p25',ext='txt'))
         median_file = os.path.join(output_dir,
                         _fname_4saving(module=__name__,file_name=file_name,
                                       rootfile=intensity_image,
                                       suffix='lpa-med',ext='txt'))
-        iqr_file = os.path.join(output_dir,
+        perc75_file = os.path.join(output_dir,
                         _fname_4saving(module=__name__,file_name=file_name,
                                       rootfile=intensity_image,
-                                      suffix='lpa-iqr',ext='txt'))
+                                      suffix='lpa-p75',ext='txt'))
         if overwrite is False \
             and os.path.isfile(weight_file) and os.path.isfile(sample_file) \
             and os.path.isfile(median_file) and os.path.isfile(iqr_file) :
@@ -143,7 +155,6 @@ def profile_averaging(profile_surface_image, intensity_image, roi_image,
         numpy.savetxt(sample_file, sample)
         numpy.savetxt(median_file, median)
         numpy.savetxt(iqr_file, iqr)
-
         return {'weights': weight_file}
     else:
         return {'weights': weights}

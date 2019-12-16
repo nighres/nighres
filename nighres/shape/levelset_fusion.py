@@ -61,7 +61,7 @@ def levelset_fusion(levelset_images,
         output_dir = _output_dir_4saving(output_dir, levelset_images[0])
 
         levelset_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=levelset_images[0],
                                        suffix='lsf-avg'))
         print('output file: '+levelset_file)
@@ -69,7 +69,7 @@ def levelset_fusion(levelset_images,
             and os.path.isfile(levelset_file) :
 
             print("skip computation (use existing results)")
-            output = {'result': load_volume(levelset_file)}
+            output = {'result': levelset_file}
             return output
 
     # start virtual machine if not running
@@ -126,5 +126,6 @@ def levelset_fusion(levelset_images,
 
     if save_data:
         save_volume(levelset_file, levelset)
-
-    return {'result': levelset}
+        return {'result': levelset_file}
+    else:
+        return {'result': levelset}

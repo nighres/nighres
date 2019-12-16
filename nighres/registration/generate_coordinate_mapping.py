@@ -70,7 +70,7 @@ def generate_coordinate_mapping(reference_image,
     output_dir = _output_dir_4saving(output_dir, source_image) # needed for intermediate results
     if save_data:
         mapping_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=source_image,
                                    suffix='coord-map'))
 
@@ -78,7 +78,7 @@ def generate_coordinate_mapping(reference_image,
             and os.path.isfile(mapping_file) :
             
             print("skip computation (use existing results)")
-            output = {'result': load_volume(mapping_file)}
+            output = {'result': mapping_file}
             return output
 
 
@@ -141,7 +141,8 @@ def generate_coordinate_mapping(reference_image,
 
     if save_data:
         save_volume(mapping_file, mapping_img)
- 
-    outputs = {'result': mapping_img}
+        outputs = {'result': mapping_file}
+    else:
+        outputs = {'result': mapping_img}
 
     return outputs

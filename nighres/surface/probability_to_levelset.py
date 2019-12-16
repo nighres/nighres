@@ -56,7 +56,7 @@ def probability_to_levelset(probability_image, mask_image=None,
         output_dir = _output_dir_4saving(output_dir, probability_image)
 
         levelset_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=probability_image,
                                        suffix='p2l-surf'))
 
@@ -64,7 +64,7 @@ def probability_to_levelset(probability_image, mask_image=None,
             and os.path.isfile(levelset_file) :
 
             print("skip computation (use existing results)")
-            output = {'result': load_volume(levelset_file)}
+            output = {'result': levelset_file}
             return output
 
     # start virtual machine if not running
@@ -121,5 +121,6 @@ def probability_to_levelset(probability_image, mask_image=None,
 
     if save_data:
         save_volume(levelset_file, levelset)
-
-    return {'result': levelset}
+        return {'result': levelset_file}
+    else:
+        return {'result': levelset}

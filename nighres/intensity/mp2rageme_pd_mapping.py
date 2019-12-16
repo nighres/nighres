@@ -91,17 +91,17 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
         output_dir = _output_dir_4saving(output_dir, first_inversion[0])
 
         pd1_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=first_inversion[0],
                                    suffix='qpd-inv1'))
 
         pd2_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=first_inversion[0],
                                    suffix='qpd-inv2'))
 
         pd_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=first_inversion[0],
                                    suffix='qpd-avg'))
 
@@ -109,9 +109,9 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
             and os.path.isfile(pd1_file) \
             and os.path.isfile(pd2_file) \
             and os.path.isfile(pd_file) :
-                output = {'pd1': load_volume(pd1_file),
-                          'pd2': load_volume(pd2_file), 
-                          'pd': load_volume(pd_file)}
+                output = {'pd1': pd1_file,
+                          'pd2': pd2_file, 
+                          'pd': pd_file}
                 return output
 
     # start virtual machine, if not already running
@@ -221,5 +221,6 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
         save_volume(pd1_file, pd1)
         save_volume(pd2_file, pd2)
         save_volume(pd_file, pd)
-       
-    return {'pd1': pd1, 'pd2': pd2, 'pd': pd}
+        return {'pd1': pd1_file, 'pd2': pd2_file, 'pd': pd_file}
+    else:
+        return {'pd1': pd1, 'pd2': pd2, 'pd': pd}

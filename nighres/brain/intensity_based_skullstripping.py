@@ -82,21 +82,21 @@ def intensity_based_skullstripping(main_image, extra_image=None,
         output_dir = _output_dir_4saving(output_dir, main_image)
 
         mask_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=main_image,
                                    suffix='istrip-mask'))
         proba_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=main_image,
                                    suffix='istrip-proba'))
         main_file = os.path.join(output_dir, 
-                    _fname_4saving(file_name=file_name,
+                    _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=main_image,
                                   suffix='istrip-main'))
 
         if extra_image is not None:
             extra_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                         rootfile=extra_image,
                                         suffix='istrip-extra'))
         else:
@@ -108,12 +108,12 @@ def intensity_based_skullstripping(main_image, extra_image=None,
             and os.path.isfile(main_file) :
             
             print("skip computation (use existing results)")
-            output = {'brain_mask': load_volume(mask_file), 
-                    'brain_proba': load_volume(proba_file), 
-                    'main_masked': load_volume(main_file)}
+            output = {'brain_mask': mask_file, 
+                    'brain_proba': proba_file, 
+                    'main_masked': main_file}
             if extra_file is not None:
                 if os.path.isfile(extra_file) :     
-                    output['extra_masked'] = load_volume(extra_file)
+                    output['extra_masked'] = extra_file
             return output
 
     # start virtual machine, if not already running
@@ -182,22 +182,24 @@ def intensity_based_skullstripping(main_image, extra_image=None,
     main_hdr['cal_max'] = np.nanmax(proba_data)
     proba = nb.Nifti1Image(proba_data, main_affine, main_hdr)
 
-    outputs = {'brain_mask': mask, 'brain_proba': proba, 'main_masked': main_masked}
-
-    if save_data:
-        save_volume(main_file, main_masked)
-        save_volume(mask_file, mask)
-        save_volume(proba_file, proba)
-
     if extra_image is not None:
         extra_data = np.reshape(np.array(
                                 algo.getMaskedExtraImage(),
                                 dtype=np.float32), dimensions, 'F')
         extra_hdr['cal_max'] = np.nanmax(extra_data)
         extra_masked = nb.Nifti1Image(extra_data, extra_affine, extra_hdr)
-        outputs['extra_masked'] = extra_masked
 
-        if save_data:
+    if save_data:
+        save_volume(main_file, main_masked)
+        save_volume(mask_file, mask)
+        save_volume(proba_file, proba)
+        outputs = {'brain_mask': mask_file, 'brain_proba': proba_file, 'main_masked': main_file}
+        if extra_image is not None:
             save_volume(extra_file, extra_masked)
+            outputs['extra_masked'] = extra_file
+    else:
+        outputs = {'brain_mask': mask, 'brain_proba': proba, 'main_masked': main_masked}
+        if extra_image is not None:
+            outputs['extra_masked'] = extra_masked
             
     return outputs

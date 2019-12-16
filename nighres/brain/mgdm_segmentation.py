@@ -62,13 +62,12 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
                       contrast_image4=None, contrast_type4=None,
                       n_steps=5, max_iterations=800, topology='wcs',
                       atlas_file=None, topology_lut_dir=None,
-                      normalize_qmaps=False,
                       adjust_intensity_priors=False,
+                      normalize_qmaps=True,
                       compute_posterior=False, posterior_scale=5.0,
                       diffuse_probabilities=False,
                       save_data=False, overwrite=False, output_dir=None,
-                      file_name=None,
-                      return_filename=False):
+                      file_name=None):
     """ MGDM segmentation
 
     Estimates brain structures from an atlas for MRI data using
@@ -145,8 +144,6 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     file_name: str, optional
         Desired base name for output files with file extension
         (suffixes will be added)
-    return_filename: bool, optional
-        Return filename instead of object
 
     Returns
     ----------
@@ -215,22 +212,22 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         output_dir = _output_dir_4saving(output_dir, contrast_image1)
 
         seg_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=contrast_image1,
                                   suffix='mgdm-seg', ))
 
         lbl_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=contrast_image1,
                                   suffix='mgdm-lbls'))
 
         mems_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=contrast_image1,
                                    suffix='mgdm-mems'))
 
         dist_file = os.path.join(output_dir, 
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=contrast_image1,
                                    suffix='mgdm-dist'))
         if overwrite is False \
@@ -240,20 +237,12 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
             and os.path.isfile(dist_file) :
             
             print("skip computation (use existing results)")
-            if return_filename:
-                output = {
-                    'segmentation': seg_file,
-                    'labels': lbl_file,
-                    'memberships': mems_file,
-                    'distance': dist_file
-                }
-            else:
-                output = {
-                    'segmentation': load_volume(seg_file),
-                    'labels': load_volume(lbl_file),
-                    'memberships': load_volume(mems_file),
-                    'distance': load_volume(dist_file)
-                }
+            output = {
+                'segmentation': seg_file,
+                'labels': lbl_file,
+                'memberships': mems_file,
+                'distance': dist_file
+            }
             return output
 
     # start virtual machine, if not already running
@@ -363,8 +352,6 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         save_volume(dist_file, dist)
         save_volume(lbl_file, lbls)
         save_volume(mems_file, mems)
-
-    if return_filename:
         output = {
             'segmentation': seg_file,
             'labels': lbl_file,

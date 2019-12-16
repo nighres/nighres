@@ -120,12 +120,12 @@ def mgdm_cells(contrast_image1, contrast_type1,
         output_dir = _output_dir_4saving(output_dir, contrast_image1)
 
         seg_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=contrast_image1,
                                   suffix='mgdmc-seg', ))
 
         dist_file = os.path.join(output_dir,
-                        _fname_4saving(file_name=file_name,
+                        _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=contrast_image1,
                                    suffix='mgdmc-dist'))
         if overwrite is False \
@@ -133,8 +133,8 @@ def mgdm_cells(contrast_image1, contrast_type1,
             and os.path.isfile(dist_file) :
 
             print("skip computation (use existing results)")
-            output = {'segmentation': load_volume(seg_file),
-                      'distance': load_volume(dist_file)}
+            output = {'segmentation': seg_file,
+                      'distance': dist_file}
             return output
 
 
@@ -216,5 +216,6 @@ def mgdm_cells(contrast_image1, contrast_type1,
     if save_data:
         save_volume(seg_file, seg)
         save_volume(dist_file, dist)
-
-    return {'segmentation': seg, 'distance': dist}
+        return {'segmentation': seg_file, 'distance': dist_file}
+    else:
+        return {'segmentation': seg, 'distance': dist}
