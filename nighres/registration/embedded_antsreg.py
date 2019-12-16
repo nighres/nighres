@@ -1293,12 +1293,12 @@ def embedded_antsreg_multi(source_images, target_images,
     # if ignoring header and/or affine, must paste back the correct headers
     if ignore_affine or ignore_header:
         mapping = load_volume(mapping_file)
-        save_volume(mapping_file, nb.Nifti1Image(mapping.data, orig_trg_aff, orig_trg_hdr))
+        save_volume(mapping_file, nb.Nifti1Image(mapping.get_data(), orig_trg_aff, orig_trg_hdr))
         inverse = load_volume(inverse_mapping_file)
-        save_volume(inverse_mapping_file, nb.Nifti1Image(inverse.data, orig_src_aff, orig_src_hdr))
+        save_volume(inverse_mapping_file, nb.Nifti1Image(inverse.get_data(), orig_src_aff, orig_src_hdr))
         for trans_file in transformed_source_files:
             trans = load_volume(trans_file)
-            save_volume(trans_file, nb.Nifti1Image(trans.data, orig_trg_aff, orig_trg_hdr))
+            save_volume(trans_file, nb.Nifti1Image(trans.get_data(), orig_trg_aff, orig_trg_hdr))
         
     if not save_data:
         # collect saved outputs 
