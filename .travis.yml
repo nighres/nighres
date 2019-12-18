@@ -6,7 +6,7 @@ matrix:
     before_install:
     - sudo apt-get update
     - sudo apt-get install python3.5
-    - sudo apt-get install python3.5-pip
+    - sudo apt-get install python3-pip
     - python3 -m pip install --upgrade --user wheel
     - python3 -m pip install --upgrade --user JCC
     script: "travis/make_dist.sh"
