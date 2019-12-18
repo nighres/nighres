@@ -26,11 +26,11 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
     phase_list: [niimg]
         List of input 4D phase images to denoise (optional)
     ngb_size: int, optional
-        Size of the local PCA neighborhood, to be increased with number of 
+        Size of the local PCA neighborhood, to be increased with number of
         inputs (default is 3)
     ngb_time: int, optional
         Size of the time window to use (default is 3)
-    stdev_cutoff: float, optional 
+    stdev_cutoff: float, optional
         Factor of local noise level to remove PCA components. Higher
         values remove more components (default is 1.05)
     min_dimension: int, optional
@@ -57,8 +57,7 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
 
         * denoised ([niimg]): The list of denoised input images (_lcat_den)
         * dimensions (niimg): Map of the estimated local dimensions (_lcat_dim)
-        * residuals (niimg): Estimated residuals between input and denoised
-            images (_lcat_err)
+        * residuals (niimg): Estimated residuals between input and denoised images (_lcat_err)
 
     Notes
     ----------
@@ -68,7 +67,7 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
 
     References
     ----------
-    .. [1] Manjon, Coupe, Concha, Buades, Collins, Robles (2013). Diffusion 
+    .. [1] Manjon, Coupe, Concha, Buades, Collins, Robles (2013). Diffusion
         Weighted Image Denoising Using Overcomplete Local PCA
         doi:10.1371/journal.pone.0073021
     """
@@ -83,34 +82,34 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
         for idx,image in enumerate(image_list):
             if file_names is None: name=None
             else: name=file_names[idx]
-            den_file = os.path.join(output_dir, 
+            den_file = os.path.join(output_dir,
                         _fname_4saving(module=__name__,file_name=name,
                                       rootfile=image,
                                       suffix='lcat-den'))
             den_files.append(den_file)
-        
+
         if phase_list is not None:
             for idx,image in enumerate(phase_list):
                 if file_names is None: name=None
                 else: name=file_names[idx]
-                den_file = os.path.join(output_dir, 
+                den_file = os.path.join(output_dir,
                             _fname_4saving(module=__name__,file_name=name,
                                           rootfile=image,
                                           suffix='lcat-den'))
-                den_files.append(den_file)            
+                den_files.append(den_file)
 
         if file_names is None: name=None
         else: name=file_names[0]
-        dim_file = os.path.join(output_dir, 
+        dim_file = os.path.join(output_dir,
                         _fname_4saving(module=__name__,file_name=name,
                                    rootfile=image_list[0],
                                    suffix='lcat-dim'))
 
-        err_file = os.path.join(output_dir, 
+        err_file = os.path.join(output_dir,
                         _fname_4saving(module=__name__,file_name=name,
                                    rootfile=image_list[0],
                                    suffix='lcat-res'))
-        
+
         if overwrite is False \
             and os.path.isfile(dim_file) \
             and os.path.isfile(err_file) :
@@ -123,11 +122,11 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
                     print("skip computation (use existing results)")
                     denoised = []
                     for den_file in den_files:
-                        denoised.append(den_file)        
+                        denoised.append(den_file)
                     output = {'denoised': denoised,
-                              'dimensions': dim_file, 
+                              'dimensions': dim_file,
                               'residuals': err_file}
-                    
+
                     return output
 
     # start virtual machine, if not already running
@@ -141,7 +140,7 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
 
     # set lcat parameters
     lcat.setNumberOfContrasts(len(image_list))
-    
+
     # load first image and use it to set dimensions and resolution
     img = load_volume(image_list[0])
     data = img.get_data()
@@ -160,7 +159,7 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
     data = load_volume(image_mask).get_data()
     lcat.setMaskImage(nighresjava.JArray('int')(
                     (data.flatten('F')).astype(int).tolist()))
-           
+
     # important: set image number before adding images
     for idx, image in enumerate(image_list):
         #print('\nloading ('+str(idx)+'): '+image)
@@ -216,7 +215,7 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
             header['cal_max'] = np.nanmax(den_data)
             denoised = nb.Nifti1Image(den_data, affine, header)
             denoised_list.append(denoised)
-    
+
             if save_data:
                 save_volume(den_files[len(image_list)+idx], denoised)
 

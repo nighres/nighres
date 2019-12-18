@@ -25,13 +25,13 @@ def multiscale_vessel_filter(input_image,
                         scales = 4,
                         prior_image=None,
                         invert_prior=False,
-                        save_data=False, 
-                        overwrite=False, 
+                        save_data=False,
+                        overwrite=False,
                         output_dir=None,
                         file_name=None):
 
     """ Vessel filter with prior
-    
+
     Uses an image filter to make a probabilistic image of ridge
     structures.
 
@@ -41,15 +41,15 @@ def multiscale_vessel_filter(input_image,
     input_image: niimg
         Image containing structure-of-interest
     structure_intensity: str
-        Image intensity of structure-of-interest 'bright', 'dark', or 'both' 
+        Image intensity of structure-of-interest 'bright', 'dark', or 'both'
         (default is 'bright').
     filterType: str
 	    Decide for a filter type: either RRF or Hessian (default is 'RRF')
     propagationtype: str
-	    Set the diffusion model of the filter: either 'diffusion' or 'belief' 
+	    Set the diffusion model of the filter: either 'diffusion' or 'belief'
 	    propagation model (default is 'diffusion')
     threshold: float
-	    Set the propability treshold to decide at what probability the detected 
+	    Set the propability treshold to decide at what probability the detected
 	    structure should be seen as a vessel (default is 0.5)
     factor: float
 	    Diffusion factor between 0 and 100 (default is 0.5)
@@ -64,7 +64,7 @@ def multiscale_vessel_filter(input_image,
     prior_image: niimg (opt)
         Image prior for the region to include (positive) or exclude (negative)
     invert_prior: boolean, optional (default is False)
- 	    In case there is a prior, the prior can be considered as negative prior 
+ 	    In case there is a prior, the prior can be considered as negative prior
  	    (False) or as positive prior (True)
     save_data: bool, optional
         Save output data to file (default is False)
@@ -78,15 +78,19 @@ def multiscale_vessel_filter(input_image,
 
     Returns
     ----------
-   segmentation
-   filtered
-   probability
-   scale
-   diameter
-   length
-   pv
-   label
-   direction
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files in brackets)
+
+		* segmentation: .... (_mvf-seg)
+		* filtered
+	    * probability
+	    * scale
+	    * diameter
+	    * length
+	    * pv
+	    * label
+	    * direction
 
     Notes
     ----------
@@ -162,7 +166,7 @@ def multiscale_vessel_filter(input_image,
                           'direction': directionImage_file}
                 return output
 
-       
+
 
 
     # start virtual machine, if not already running
@@ -194,9 +198,9 @@ def multiscale_vessel_filter(input_image,
     header = input_image.get_header()
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = input_image.shape
-    
+
     # direction output has a 4th dimension, set to 3
-    dimensions4d = [dimensions[0], dimensions[1], dimensions[2], 3] 
+    dimensions4d = [dimensions[0], dimensions[1], dimensions[2], 3]
 
     vessel_filter.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     vessel_filter.setResolutions(resolution[0], resolution[1], resolution[2])
@@ -293,10 +297,10 @@ def multiscale_vessel_filter(input_image,
 
         return {'segmentation': vesselImage_file, 'filtered': filterImage_file,
                 'probability': probaImage_file, 'scale': scaleImage_file,
-                'diameter': diameterImage_file, 'pv': pvImage_file, 
+                'diameter': diameterImage_file, 'pv': pvImage_file,
             'length':lengthImage_file, 'label':labelImage_file, 'direction':directionImage_file}
     else:
         return {'segmentation': vesselImage, 'filtered': filterImage,
                 'probability': probaImage, 'scale': scaleImage,
-                'diameter': diameterImage, 'pv': pvImage, 
+                'diameter': diameterImage, 'pv': pvImage,
             'length':lengthImage, 'label':labelImage, 'direction':directionImage}
