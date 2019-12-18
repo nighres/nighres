@@ -1,7 +1,7 @@
 intensity\_based\_skullstripping
 ================================
 
-.. autofunction:: nighres.brain.intensity\_based\_skullstripping
+.. autofunction:: nighres.brain.intensity_based_skullstripping
 
 .. This snippet automatically includes a sphinx gallery below the
 .. documentation with examples that use the function

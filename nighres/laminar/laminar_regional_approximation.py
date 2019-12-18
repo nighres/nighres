@@ -38,12 +38,9 @@ def laminar_regional_approximation(profile_surface_image, intensity_image, roi_i
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * weights (niimg): weight image, representing the weighting of profiles
-        in the estimation (_lra-weight)
-        * degree (niimg): degree image, representing the degree of profiles
-        in the estimation (_lra-deg)
-        * residuals (niimg): residuals image, representing the residual error
-        in the estimation (_lra-res)
+        * weights (niimg): weight image, representing the weighting of profiles in the estimation (_lra-weight)
+        * degree (niimg): degree image, representing the degree of profiles in the estimation (_lra-deg)
+        * residuals (niimg): residuals image, representing the residual error in the estimation (_lra-res)
         * median ([float]): the estimated median profile (_lra-med)
         * perc25 ([float]): the estimated 25 percentile profile (_lra-p25)
         * perc75 ([float]): the estimated 75 percentile profile (_lra-p75)
@@ -88,7 +85,7 @@ def laminar_regional_approximation(profile_surface_image, intensity_image, roi_i
             and os.path.isfile(median_file) and os.path.isfile(iqr_file) :
 
             print("skip computation (use existing results)")
-            output = {'weights': weight_file, 
+            output = {'weights': weight_file,
                       'best': numpy.loadtxt(sample_file),
                       'median': numpy.loadtxt(median_file),
                       'iqr': numpy.loadtxt(iqr_file)}
@@ -142,7 +139,7 @@ def laminar_regional_approximation(profile_surface_image, intensity_image, roi_i
     weight_data = numpy.reshape(numpy.array(
                                 sampler.getProfileWeights(),
                                 dtype=numpy.float32), (dimensions[0],dimensions[1],dimensions[2]), 'F')
-    
+
     sample = numpy.array(sampler.getSampleProfile(), dtype=numpy.float32)
     median = numpy.array(sampler.getMedianProfile(), dtype=numpy.float32)
     iqr = numpy.array(sampler.getIqrProfile(), dtype=numpy.float32)
