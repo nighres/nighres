@@ -1,6 +1,6 @@
 matrix:
   include:
-  - dist: trusty
+  - dist: xenial
     language: java
     jdk: openjdk7
     before_install:
