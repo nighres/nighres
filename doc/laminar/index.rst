@@ -4,6 +4,9 @@ Laminar
 .. toctree::
    :maxdepth: 1
 
-   volumetric_layering
-   profile_sampling
    laminar_iterative_smoothing
+   laminar_regional_approximation
+   profile_averaging
+   profile_meshing
+   profile_sampling
+   volumetric_layering

@@ -5,3 +5,4 @@ Microscopy
    :maxdepth: 1
 
    mgdm_cells
+   stack_intensity_regularisation

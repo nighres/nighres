@@ -43,6 +43,7 @@ the `IMCN imaging toolkit <https://github.com/IMCN-UvA/imcn-imaging>`_.
    microscopy/index
    registration/index
    shape/index
+   segmentation/index
    statistics/index
    surface/index
 
