@@ -4,6 +4,9 @@ matrix:
     language: java
     jdk: openjdk8
     before_install:
+    - echo $JAVA_HOME
+    - javac -version
+    - java -version
     - export JCC_JDK=/usr/lib/jvm/java-openjdk8-amd64
     - sudo apt-get update
     - sudo apt-get install python3.5
