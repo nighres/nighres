@@ -2,7 +2,7 @@ matrix:
   include:
   - dist: xenial
     language: java
-    jdk: openjdk7
+    jdk: openjdk9
     before_install:
     - sudo apt-get update
     - sudo apt-get install python3.8
