@@ -50,9 +50,13 @@ def simple_skeleton(input_image,
 
     Returns
     ----------
-   Medial_Surface_Image
-   Medial_Curve_Image
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files in brackets)
 
+        * medial (niimg): A 2D medial surface extracted from the shape (_ssk-med)
+        * skeleton (niimg): The 1D skeleton extracted from the shape (_ssk-skel)
+        
     Notes
     ----------
     Original Java module by Pierre-Louis Bazin.
@@ -70,12 +74,12 @@ def simple_skeleton(input_image,
         MedialSurface_file = os.path.join(output_dir, 
                                   _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='medial', ))
+                                  suffix='_ssk-med'))
 
         Medial_Curve_file = os.path.join(output_dir, 
                                   _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='skel'))   
+                                  suffix='_ssk-skel'))
 
         if overwrite is False \
             and os.path.isfile(MedialSurface_file) \
@@ -83,7 +87,7 @@ def simple_skeleton(input_image,
 
             print("skip computation (use existing results)")
             output = {'medial': MedialSurface_file,
-                          'skel': Medial_Curve_file}
+                      'skeleton': Medial_Curve_file}
             return output
 
     # start virtual machine, if not already running
@@ -140,7 +144,6 @@ def simple_skeleton(input_image,
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
- #   d_head['data_type'] = np.array(8).astype('int8') #convert the header as well
     header['cal_min'] = np.nanmin(medialImage_data)
     header['cal_max'] = np.nanmax(medialImage_data)
     medialImage = nb.Nifti1Image(medialImage_data, affine, header)
@@ -153,9 +156,9 @@ def simple_skeleton(input_image,
         save_volume(MedialSurface_file, medialImage)
         save_volume(Medial_Curve_file, skelImage)
 
-        return {'medialImage': MedialSurface_file, 
-                'skelImage':  Medial_Curve_file}
+        return {'medial': MedialSurface_file,
+                'skeleton': Medial_Curve_file}
     else:
-        return {'medialImage': medialImage, 'skelImage': skelImage}
+        return {'medial': medialImage, 'skeleton': skelImage}
 
 
