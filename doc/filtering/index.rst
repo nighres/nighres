@@ -4,6 +4,7 @@ Filtering
 .. toctree::
    :maxdepth: 1
 
-   total_variation_filtering
    filter_ridge_structures
+   multiscale_vessel_filter
    recursive_ridge_diffusion
+   total_variation_filtering

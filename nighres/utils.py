@@ -75,7 +75,7 @@ def _fname_4saving_prev(file_name=None, rootfile=None, suffix=None, ext=None, mo
         if ext is None: ext = 'nii.gz'
     else:
         # pop file extension
-        if ext is None: 
+        if ext is None:
             ext = split_name.pop(-1)
             # file extension could have two parts if compressed
             if ext == 'gz':
@@ -145,9 +145,14 @@ def _fname_4saving(file_name=None, rootfile=None, suffix=None, ext=None, module=
         while split_name:
             base += '.'+split_name.pop(0)
 
-    # check if extention is given otherwise use the one from input file
+        # Check if extension is given, otherwise use from file name
+        if ext is None:
+            ext = file_ext
+
+    # If there was no extension given and the file name didn't have extension
+    # use nifti
     if ext is None:
-        ext = file_ext
+        ext = 'nii.gz'
 
     # insert suffix if given
     if suffix is not None:

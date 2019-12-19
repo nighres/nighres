@@ -14,8 +14,7 @@ def apply_coordinate_mappings(image, mapping1,
                         save_data=False, overwrite=False, output_dir=None,
                         file_name=None):
 
-    '''Apply a coordinate mapping (or a succession of coordinate mappings) to
-        a 3D or 4D image.
+    '''Apply a coordinate mapping (or a succession of coordinate mappings) to a 3D or 4D image.
 
     Parameters
     ----------
@@ -188,8 +187,7 @@ def apply_coordinate_mappings_2d(image, mapping1,
                         save_data=False, overwrite=False, output_dir=None,
                         file_name=None):
 
-    '''Apply a 2D coordinate mapping (or a succession of coordinate mappings) to
-        a 2D or 3D image.
+    '''Apply a 2D coordinate mapping (or a succession of coordinate mappings) to a 2D or 3D image.
 
     Parameters
     ----------

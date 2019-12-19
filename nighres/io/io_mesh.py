@@ -385,7 +385,7 @@ def _read_vtk(file):
                                         'POINT_DATA')].index.tolist()[0]) + 3
         number_data = number_vertices
         data_df = pd.read_csv(file, skiprows=range(start_data),
-                              nrows=number_data, sep='\s*', header=None,
+                              nrows=number_data, sep='\s+', header=None,
                               engine='python')
         data_array = np.array(data_df)
     else:

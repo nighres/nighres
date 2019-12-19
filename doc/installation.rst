@@ -58,6 +58,25 @@ Build Nighres
 
     python3 -m pip install .
 
+Installation to a custom directory (e.g., servers and module-based systems)
+---------------------------------------------------------------------------
+
+This is generally only useful for administrators supporting server installs and/or where it is necessary to retain support for multiple versions of Nighres.
+
+Complete 1. and 2. to build Nighres as described above.
+
+3. Create an empty directory within your desired installation directory to satisfy Setuptools. This example will install to /opt/quarantine/nighres/install/ and use Python3.7::
+
+    mkdir -p /opt/quarantine/nighres/install/lib/python3.7/site-packages/
+
+4. Update your Python path environment variable and install to your custom directory::
+   
+    export PYTHONPATH=/opt/quarantine/nighres/install/lib/python3.7/site-packages/:$PYTHONPATH
+    python3 setup.py install --prefix /opt/quarantine/nighres/install/
+   
+5. Update PYTHONPATH for all users to point to Nighres::
+   
+    PYTHONPATH=/opt/quarantine/nighres/install/lib/python3.7/site-packages/:$PYTHONPATH
 
 Testing the installation
 ------------------------

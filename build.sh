@@ -185,12 +185,19 @@ sed -i -e 's/__dir__/__ndir__/g' build/nighresjava/__init__.py
 
 echo "Copying necessary files for nires pypi package..."
 
-cp -rv build/nighresjava/ ../nighresjava/
+cp -rv build/nighresjava/ ../
 # Find and copy the shared object file for the current architecture
 find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' ../nighresjava/_nighresjava.so
 cd ..
 
-python3 -m pip install .
+echo ""
+echo "======="
+echo "You should now be able to install nighres with pip"
+echo " python3 -m pip install ."
+echo "======="
+echo ""
+
+#python3 -m pip install .
 
 # Make the python wheel
 # PLT=$(uname | tr '[:upper:]' '[:lower:]')

@@ -1,12 +1,14 @@
 matrix:
   include:
-  - dist: trusty
+  - dist: xenial
     language: java
-    jdk: openjdk7
+    jdk: openjdk8
     before_install:
+    - export JCC_JDK=/usr/lib/jvm/java-1.8.0-openjdk-amd64
     - sudo apt-get update
-    - sudo apt-get install python3
+    - sudo apt-get install python3.5
     - sudo apt-get install python3-pip
+    - python3 -m pip install --upgrade --user setuptools
     - python3 -m pip install --upgrade --user wheel
     - python3 -m pip install --upgrade --user JCC
     script: "travis/make_dist.sh"
