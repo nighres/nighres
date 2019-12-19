@@ -74,12 +74,12 @@ def simple_skeleton(input_image,
         MedialSurface_file = os.path.join(output_dir, 
                                   _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='_ssk-med'))
+                                  suffix='ssk-med'))
 
         Medial_Curve_file = os.path.join(output_dir, 
                                   _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='_ssk-skel'))
+                                  suffix='ssk-skel'))
 
         if overwrite is False \
             and os.path.isfile(MedialSurface_file) \

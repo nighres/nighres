@@ -54,23 +54,25 @@ def levelset_thickness(input_image,
     Original Java module by Pierre-Louis Bazin.
     """
 
+    print("\nLevelset Thickness")
+
     if save_data:
         output_dir = _output_dir_4saving(output_dir, input_image)
 
         thickness_file = os.path.join(output_dir, 
                             _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='_lth-map', ))
+                                  suffix='lth-map'))
 
         axis_file = os.path.join(output_dir, 
                             _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='_lth-ax'))    
+                                  suffix='lth-ax'))    
 
         dist_file = os.path.join(output_dir, 
                             _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='_lth-dist'))  
+                                  suffix='lth-dist'))  
 
         if overwrite is False \
             and os.path.isfile(thickness_file) \
@@ -124,39 +126,39 @@ def levelset_thickness(input_image,
     # Collect output
     axis_data = np.reshape(np.array(
                                     algorithm.getMedialAxisImage(),
-                                    dtype=np.int8), dimensions, 'F')
+                                    dtype=np.float32), dimensions, 'F')
     dist_data = np.reshape(np.array(
                                     algorithm.getMedialDistanceImage(),
-                                    dtype=np.int8), dimensions, 'F')
+                                    dtype=np.float32), dimensions, 'F')
 
-    thick_data = np.reshape(np.array(
+    thickness_data = np.reshape(np.array(
                                     algorithm.geThicknessImage(),
-                                    dtype=np.int8), dimensions, 'F')
+                                    dtype=np.float32), dimensions, 'F')
 
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
-    header['cal_min'] = np.nanmin(medialImage_data)
-    header['cal_max'] = np.nanmax(medialImage_data)
+    header['cal_min'] = np.nanmin(axis_data)
+    header['cal_max'] = np.nanmax(axis_data)
     axis_img = nb.Nifti1Image(axis_data, affine, header)
 
-    header['cal_min'] = np.nanmin(skelImage_data)
-    header['cal_max'] = np.nanmax(skelImage_data)
+    header['cal_min'] = np.nanmin(dist_data)
+    header['cal_max'] = np.nanmax(dist_data)
     dist_img = nb.Nifti1Image(dist_data, affine, header)
 
-    header['cal_min'] = np.nanmin(skelImage_data)
-    header['cal_max'] = np.nanmax(skelImage_data)
-    thick_img = nb.Nifti1Image(thick_data, affine, header)
+    header['cal_min'] = np.nanmin(thickness_data)
+    header['cal_max'] = np.nanmax(thickness_data)
+    thickness_img = nb.Nifti1Image(thickness_data, affine, header)
 
     if save_data:
         save_volume(axis_file, axis_img)
-        save_volume(dist_file), dist_img)
-        save_volume(thick_file), thick_img)
+        save_volume(dist_file, dist_img)
+        save_volume(thickness_file, thickness_img)
 
-        return {'thickness': thick_file, 
+        return {'thickness': thickness_file, 
                 'axis': axis_file,
                 'dist': dist_file}
     else:
-        return {'thickness': thick_img, 'axis': axis_img, 'dist': dist_img}
+        return {'thickness': thickness_img, 'axis': axis_img, 'dist': dist_img}
 
 

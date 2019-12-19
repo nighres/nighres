@@ -1,3 +1,4 @@
 from nighres.shape.levelset_fusion import levelset_fusion
 from nighres.shape.topology_correction import topology_correction
 from nighres.shape.simple_skeleton import simple_skeleton
+from nighres.shape.levelset_thickness import levelset_thickness
