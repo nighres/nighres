@@ -82,15 +82,15 @@ def multiscale_vessel_filter(input_image,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-		* segmentation: .... (_mvf-seg)
-		* filtered
-	    * probability
-	    * scale
-	    * diameter
-	    * length
-	    * pv
-	    * label
-	    * direction
+        * segmentation: segmented vessel centerlines (_mvf-seg)
+        * filtered: result of the vessel filtering step (_mvf-filter)
+        * probability: probability score of segmented centerlines (_mvf-proba)
+        * scale: discrete scale at which the centerlines are detected (_mvf-scale)
+        * diameter: estimated vessel diameter (_mvf-dia)
+        * length: lenght of continuous vessel segments (_mvf-length)
+        * pv: partial volume estimate of vessels (_mvf-pv)
+        * label: labeling of individual vessel segments (_mvf-label)
+        * direction: estimated vessel direction (_mvf-dir)
 
     Notes
     ----------
