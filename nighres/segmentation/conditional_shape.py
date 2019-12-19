@@ -320,7 +320,8 @@ def conditional_shape(target_images, structures, contrasts,
 
 
 def conditional_shape_atlasing(subjects, structures, contrasts, 
-                      levelset_images=None, contrast_images=None, 
+                      levelset_images=None, skeleton_images=None, 
+                      contrast_images=None, 
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Conditioanl Shape Parcellation Atlasing
@@ -337,6 +338,8 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
        Number of image intensity contrasts
     levelset_images: [niimg]
         Atlas shape levelsets indexed by (subjects,structures)
+    skeleton_images: [niimg]
+        Atlas shape skeletons indexed by (subjects,structures)
     contrast_images: [niimg]
         Atlas images to use in the parcellation, indexed by (subjects, contrasts)
     save_data: bool
@@ -358,6 +361,8 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
         * max_spatial_proba (niimg): Maximum spatial probability map (_cspmax-sproba)
         * max_spatial_label (niimg): Maximum spatial probability labels (_cspmax-slabel)
         * cond_hist (niimg): Conditional intensity histograms (_cspmax-chist)
+        * max_skeleton_proba (niimg): Maximum skeleton probability map (_cspmax-kproba)
+        * max_skeleton_label (niimg): Maximum skeleton probability labels (_cspmax-klabel)
 
     Notes
     ----------
@@ -380,30 +385,35 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
                                    rootfile=contrast_images[0][0],
                                    suffix='cspmax-slabel'))
 
-        condmean_file = os.path.join(output_dir, 
-                        _fname_4saving(module=__name__,file_name=file_name,
-                                  rootfile=contrast_images[0][0],
-                                  suffix='cspmax-cmean', ))
-
-        condstdv_file = os.path.join(output_dir, 
-                        _fname_4saving(module=__name__,file_name=file_name,
-                                   rootfile=contrast_images[0][0],
-                                   suffix='cspmax-cstdv'))
-        
         condhist_file = os.path.join(output_dir, 
                         _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=contrast_images[0][0],
                                    suffix='cspmax-chist'))
         
+        skeleton_proba_file = os.path.join(output_dir, 
+                        _fname_4saving(module=__name__,file_name=file_name,
+                                  rootfile=contrast_images[0][0],
+                                  suffix='cspmax-kproba', ))
+
+        skeleton_label_file = os.path.join(output_dir, 
+                        _fname_4saving(module=__name__,file_name=file_name,
+                                   rootfile=contrast_images[0][0],
+                                   suffix='cspmax-klabel'))
+
+        
         if overwrite is False \
             and os.path.isfile(spatial_proba_file) \
             and os.path.isfile(spatial_label_file) \
-            and os.path.isfile(condhist_file):
+            and os.path.isfile(condhist_file) \
+            and os.path.isfile(skeleton_proba_file) \
+            and os.path.isfile(skeleton_label_file):
             
             print("skip computation (use existing results)")
             output = {'max_spatial_proba': spatial_proba_file, 
                       'max_spatial_label': spatial_label_file,
-                      'cond_hist': condhist_file}
+                      'cond_hist': condhist_file,
+                      'max_skeleton_proba': skeleton_proba_file, 
+                      'max_skeleton_label': skeleton_label_file}
 
             return output
 
@@ -446,6 +456,10 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
             data = load_volume(levelset_images[sub][struct]).get_data()
             cspmax.setLevelsetImageAt(sub, struct, nighresjava.JArray('float')(
                                                 (data.flatten('F')).astype(float)))
+            print("load: "+str(skeleton_images[sub][struct]))
+            data = load_volume(skeleton_images[sub][struct]).get_data()
+            cspmax.setSkeletonImageAt(sub, struct, nighresjava.JArray('float')(
+                                                (data.flatten('F')).astype(float)))
                 
         for contrast in range(contrasts):
             print("load: "+str(contrast_images[sub][contrast]))
@@ -465,6 +479,7 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
 
     # reshape output to what nibabel likes
     dimensions = (dimensions[0],dimensions[1],dimensions[2],cspmax.getBestDimension())
+    dimskel = (dimensions[0],dimensions[1],dimensions[2],cspmax.getBestDimension()/4)
     dims3Dtrg = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2])
 
     intens_dims = (structures+1,structures+1,contrasts)
@@ -479,6 +494,13 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
     intens_hist_data = np.reshape(np.array(cspmax.getConditionalHistogram(),
                                        dtype=np.float32), intens_hist_dims, 'F')
 
+    skeleton_proba_data = np.reshape(np.array(cspmax.getBestSkeletonProbabilityMaps(dimskel[3]),
+                                   dtype=np.float32), dimskel, 'F')
+
+    skeleton_label_data = np.reshape(np.array(cspmax.getBestSkeletonProbabilityLabels(dimskel[3]),
+                                    dtype=np.int32), dimskel, 'F')    
+
+
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
     header['cal_max'] = np.nanmax(spatial_proba_data)
@@ -489,12 +511,28 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
 
     chist = nb.Nifti1Image(intens_hist_data, None, None)
 
+    header['cal_max'] = np.nanmax(skeleton_proba_data)
+    skeleton_proba = nb.Nifti1Image(skeleton_proba_data, affine, header)
+
+    header['cal_max'] = np.nanmax(skeleton_label_data)
+    skeleton_label = nb.Nifti1Image(skeleton_label_data, affine, header)
+
     if save_data:
         save_volume(spatial_proba_file, spatial_proba)
         save_volume(spatial_label_file, spatial_label)
         save_volume(condhist_file, chist)
-        output= {'max_spatial_proba': spatial_proba_file, 'max_spatial_label': spatial_label_file, 'cond_hist': condhist_file}
+        save_volume(skeleton_proba_file, skeleton_proba)
+        save_volume(skeleton_label_file, skeleton_label)
+        output= {'max_spatial_proba': spatial_proba_file, 
+                 'max_spatial_label': spatial_label_file, 
+                 'cond_hist': condhist_file,
+                 'max_skeleton_proba': skeleton_proba_file, 
+                 'max_skeleton_label': skeleton_label_file}
         return output
     else:
-        output= {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 'cond_hist': chist}
+        output= {'max_spatial_proba': spatial_proba, 
+                 'max_spatial_label': spatial_label, 
+                 'cond_hist': chist,
+                 'max_skeleton_proba': skeleton_proba, 
+                 'max_skeleton_label': skeleton_label}
         return output
