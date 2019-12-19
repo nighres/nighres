@@ -11,6 +11,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def conditional_shape(target_images, structures, contrasts,
                       shape_atlas_probas=None, shape_atlas_labels=None, 
                       intensity_atlas_hist=None,
+                      skeleton_atlas_probas=None, skeleton_atlas_labels=None, 
                       map_to_atlas=None, map_to_target=None,
                       max_iterations=80, max_difference=0.1, ngb_size=4,
                       save_data=False, overwrite=False, output_dir=None,
@@ -33,6 +34,10 @@ def conditional_shape(target_images, structures, contrasts,
         Pre-computed shape atlas from the shape levelsets (replacing them)
     intensity_atlas_hist: niimg
         Pre-computed intensity atlas from the contrast images (replacing them)
+    skeleton_atlas_probas: niimg
+        Pre-computed skeleton atlas from the shape levelsets (replacing them)
+    skeleton_atlas_labels: niimg
+        Pre-computed skeleton atlas from the shape levelsets (replacing them)
     map_to_atlas: niimg
         Coordinate mapping from the target to the atlas (opt)
     map_to_target: niimg
@@ -88,6 +93,7 @@ def conditional_shape(target_images, structures, contrasts,
                         _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=target_images[0],
                                    suffix='cspmax-slabel'))
+        
         combined_proba_file = os.path.join(output_dir, 
                         _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=target_images[0],
@@ -202,14 +208,25 @@ def conditional_shape(target_images, structures, contrasts,
                                 nighresjava.JArray('int')(
                                 (ldata.flatten('F')).astype(int).tolist()))
 
+    print("load: "+str(os.path.join(output_dir,skeleton_atlas_probas)))
+    pdata = load_volume(os.path.join(output_dir,skeleton_atlas_probas)).get_data()
+    
+    print("load: "+str(os.path.join(output_dir,skeleton_atlas_labels)))
+    ldata = load_volume(os.path.join(output_dir,skeleton_atlas_labels)).get_data()
+
+    cspmax.setSkeletonAtlasProbasAndLabels(nighresjava.JArray('float')(
+                                (pdata.flatten('F')).astype(float)),
+                                nighresjava.JArray('int')(
+                                (ldata.flatten('F')).astype(int).tolist()))
+
     # execute
     try:
         cspmax.estimateTarget()
         #cspmax.strictSimilarityDiffusion(ngb_size)
-        #cspmax.fastSimilarityDiffusion(ngb_size)
+        cspmax.fastSimilarityDiffusion(ngb_size)
         #cspmax.fastJointSimilarityDiffusion(ngb_size)
         #cspmax.fastCombinedSimilarityDiffusion(ngb_size)
-        cspmax.globalSmoothing(ngb_size)
+        #cspmax.globalSmoothing(ngb_size)
         
         cspmax.collapseToJointMaps()
         
