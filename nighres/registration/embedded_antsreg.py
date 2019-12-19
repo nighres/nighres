@@ -877,6 +877,9 @@ def embedded_antsreg_multi(source_images, target_images,
         rsx = source.header.get_zooms()[X]
         rsy = source.header.get_zooms()[Y]
         rsz = source.header.get_zooms()[Z]
+        
+        orig_src_aff = source.affine
+        orig_src_hdr = source.header
     
         target = load_volume(target_images[idx])
         trg_affine = target.affine
@@ -887,6 +890,9 @@ def embedded_antsreg_multi(source_images, target_images,
         rtx = target.header.get_zooms()[X]
         rty = target.header.get_zooms()[Y]
         rtz = target.header.get_zooms()[Z]
+    
+        orig_trg_aff = target.affine
+        orig_trg_hdr = target.header
     
         # in case the affine transformations are not to be trusted: make them equal
         if ignore_affine or ignore_header:
@@ -1284,6 +1290,16 @@ def embedded_antsreg_multi(source_images, target_images,
     for name in inverse: 
         if os.path.exists(name): os.remove(name)
 
+    # if ignoring header and/or affine, must paste back the correct headers
+    if ignore_affine or ignore_header:
+        mapping = load_volume(mapping_file)
+        save_volume(mapping_file, nb.Nifti1Image(mapping.get_data(), orig_trg_aff, orig_trg_hdr))
+        inverse = load_volume(inverse_mapping_file)
+        save_volume(inverse_mapping_file, nb.Nifti1Image(inverse.get_data(), orig_src_aff, orig_src_hdr))
+        for trans_file in transformed_source_files:
+            trans = load_volume(trans_file)
+            save_volume(trans_file, nb.Nifti1Image(trans.get_data(), orig_trg_aff, orig_trg_hdr))
+        
     if not save_data:
         # collect saved outputs 
         transformed = []
