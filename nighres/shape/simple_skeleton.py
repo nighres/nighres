@@ -17,14 +17,14 @@ def simple_skeleton(input_image,
 		   shape_image_type = 'signed_distance',
                    boundary_threshold = 0.0,
                    skeleton_threshold = 2.0,
-		   Topology_LUT_directory = None,
-                   save_data=False, 
-                   overwrite=False, 
+                   topology_lut_dir = None,
+                   save_data=False,
+                   overwrite=False,
                    output_dir=None,
                    file_name=None):
 
     """ Simple Skeleton
-    
+
     Create a skeleton for a levelset surface or a probability map (loosely adapted from Bouix et al., 2006)
 
 
@@ -33,13 +33,13 @@ def simple_skeleton(input_image,
     input_image: niimg
         Image containing structure-of-interest
     shape_image_type: str
-        shape of the input image: either 'signed_distance' or 'probability_map'.
+        Shape of the input image: either 'signed_distance' or 'probability_map'.
     boundary_threshold: float
-	Boundary threshold (>0: inside, <0: outside)
+	    Boundary threshold (>0: inside, <0: outside)
     skeleton_threshold: float
-	Skeleton threshold (>0: inside, <0: outside)
-    Topology_LUT_directory:str
-         Directory of LUT topology
+	    Skeleton threshold (>0: inside, <0: outside)
+    topology_lut_dir:str
+        Directory of LUT topology
     save_data: bool, optional
         Save output data to file (default is False)
     output_dir: str, optional
@@ -56,21 +56,27 @@ def simple_skeleton(input_image,
 
         * medial (niimg): A 2D medial surface extracted from the shape (_ssk-med)
         * skeleton (niimg): The 1D skeleton extracted from the shape (_ssk-skel)
-        
+
     Notes
     ----------
     Original Java module by Pierre-Louis Bazin.
     """
 
+    print("\nSimple Skeleton")
+
+    # check topology_lut_dir and set default if not given
+    topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
+
+    # make sure that saving related parameters are correct
     if save_data:
         output_dir = _output_dir_4saving(output_dir, input_image)
 
-        MedialSurface_file = os.path.join(output_dir, 
+        MedialSurface_file = os.path.join(output_dir,
                                   _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
                                   suffix='_ssk-med'))
 
-        Medial_Curve_file = os.path.join(output_dir, 
+        Medial_Curve_file = os.path.join(output_dir,
                                   _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
                                   suffix='_ssk-skel'))
@@ -94,7 +100,7 @@ def simple_skeleton(input_image,
     # set parameters
     skeleton.setBoundaryThreshold(boundary_threshold)
     skeleton.setSkeletonThreshold(skeleton_threshold)
-    skeleton.setTopologyLUTdirectory(Topology_LUT_directory)
+    skeleton.setTopologyLUTdirectory(topology_lut_dir)
     skeleton.setShapeImageType(shape_image_type)
 
 
@@ -153,5 +159,3 @@ def simple_skeleton(input_image,
                 'skeleton': Medial_Curve_file}
     else:
         return {'medial': medialImage, 'skeleton': skelImage}
-
-
