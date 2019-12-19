@@ -17,7 +17,7 @@ def simple_skeleton(input_image,
 		   shape_image_type = 'signed_distance',
                    boundary_threshold = 0.0,
                    skeleton_threshold = 2.0,
-		   Topology_LUT_directory = None,
+                   topology_lut_dir = None,
                    save_data=False, 
                    overwrite=False, 
                    output_dir=None,
@@ -33,13 +33,13 @@ def simple_skeleton(input_image,
     input_image: niimg
         Image containing structure-of-interest
     shape_image_type: str
-        shape of the input image: either 'signed_distance' or 'probability_map'.
+        Shape of the input image: either 'signed_distance' or 'probability_map'.
     boundary_threshold: float
-	Boundary threshold (>0: inside, <0: outside)
+	    Boundary threshold (>0: inside, <0: outside)
     skeleton_threshold: float
-	Skeleton threshold (>0: inside, <0: outside)
-    Topology_LUT_directory:str
-         Directory of LUT topology
+	    Skeleton threshold (>0: inside, <0: outside)
+    topology_lut_dir:str
+        Directory of LUT topology
     save_data: bool, optional
         Save output data to file (default is False)
     output_dir: str, optional
@@ -58,23 +58,33 @@ def simple_skeleton(input_image,
     Original Java module by Pierre-Louis Bazin.
     """
 
+    print("\nSimple Skeleton")
+
+    # check topology_lut_dir and set default if not given
+    topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
+
+    # make sure that saving related parameters are correct
     if save_data:
         output_dir = _output_dir_4saving(output_dir, input_image)
 
-        MedialSurface_file = _fname_4saving(module=__name__,file_name=file_name,
+        MedialSurface_file = os.path.join(output_dir, 
+                                  _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='medial', )
+                                  suffix='medial', ))
 
-        Medial_Curve_file = _fname_4saving(module=__name__,file_name=file_name,
+        Medial_Curve_file = os.path.join(output_dir, 
+                                  _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='skel')     
+                                  suffix='skel'))   
 
         if overwrite is False \
             and os.path.isfile(MedialSurface_file) \
             and os.path.isfile(Medial_Curve_file) :
-                output = {'medial': MedialSurface_file,
+
+            print("skip computation (use existing results)")
+            output = {'medial': MedialSurface_file,
                           'skel': Medial_Curve_file}
-                return output
+            return output
 
     # start virtual machine, if not already running
     try:
@@ -88,7 +98,7 @@ def simple_skeleton(input_image,
     # set parameters
     skeleton.setBoundaryThreshold(boundary_threshold)
     skeleton.setSkeletonThreshold(skeleton_threshold)
-    skeleton.setTopologyLUTdirectory(Topology_LUT_directory)
+    skeleton.setTopologyLUTdirectory(topology_lut_dir)
     skeleton.setShapeImageType(shape_image_type)
 
 
@@ -140,11 +150,11 @@ def simple_skeleton(input_image,
     skelImage = nb.Nifti1Image(skelImage_data, affine, header)
 
     if save_data:
-        save_volume(os.path.join(output_dir, MedialSurface_file), medialImage)
-        save_volume(os.path.join(output_dir, Medial_Curve_file), skelImage)
+        save_volume(MedialSurface_file, medialImage)
+        save_volume(Medial_Curve_file, skelImage)
 
-        return {'medialImage': os.path.join(output_dir, MedialSurface_file), 
-                'skelImage': os.path.join(output_dir, Medial_Curve_file)}
+        return {'medialImage': MedialSurface_file, 
+                'skelImage':  Medial_Curve_file}
     else:
         return {'medialImage': medialImage, 'skelImage': skelImage}
 
