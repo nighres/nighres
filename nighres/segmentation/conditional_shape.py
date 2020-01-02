@@ -235,7 +235,8 @@ def conditional_shape(target_images, structures, contrasts,
         cspmax.topologyBoundaryDefinition("wcs", topology_lut_dir)
         
         #cspmax.conditionalVolumeCertaintyThreshold(3.0)
-        cspmax.conditionalPrecomputedVolumeGrowth(3.0)
+        #cspmax.conditionalPrecomputedVolumeGrowth(3.0)
+        cspmax.conditionalPrecomputedDirectVolumeGrowth(3.0)
         
         cspmax.collapseSpatialPriorMaps()
         #cspmax.collapseConditionalMaps()
@@ -327,7 +328,7 @@ def conditional_shape(target_images, structures, contrasts,
 
         output= {'max_spatial_proba': spatial_proba_file, 'max_spatial_label': spatial_label_file, 
                 'max_combined_proba': combined_proba_file, 'max_combined_label': combined_label_file, 
-                'max_proba': proba_file, 'max_label': label_file, 'neighbors': neighbors_file}
+                'max_proba': proba_file, 'max_label': label_file, 'neighbors': neighbor_file}
         return output
     else:
         output= {'max_spatial_proba': spatial_proba, 'max_spatial_label': spatial_label, 
@@ -473,19 +474,15 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
             data = load_volume(levelset_images[sub][struct]).get_data()
             cspmax.setLevelsetImageAt(sub, struct, nighresjava.JArray('float')(
                                                 (data.flatten('F')).astype(float)))
-            print("load: "+str(skeleton_images[sub][struct]))
-            data = load_volume(skeleton_images[sub][struct]).get_data()
-            cspmax.setSkeletonImageAt(sub, struct, nighresjava.JArray('float')(
-                                                (data.flatten('F')).astype(float)))
-                
         for contrast in range(contrasts):
             print("load: "+str(contrast_images[sub][contrast]))
             data = load_volume(contrast_images[sub][contrast]).get_data()
             cspmax.setContrastImageAt(sub, contrast, nighresjava.JArray('float')(
                                                 (data.flatten('F')).astype(float)))
-    # execute
+    # execute first step
+    scale = 1.0
     try:
-        cspmax.computeAtlasPriors()
+        scale = cspmax.computeAtlasPriors()
  
     except:
         # if the Java module fails, reraise the error it throws
@@ -494,9 +491,32 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
         raise
         return
 
+    # clean up and go to second step
+    levelset_images = None
+    contrast_images = None
+    
+    for sub in range(subjects):
+        for struct in range(structures):
+            print("load: "+str(skeleton_images[sub][struct]))
+            data = load_volume(skeleton_images[sub][struct]).get_data()
+            cspmax.setSkeletonImageAt(sub, struct, nighresjava.JArray('float')(
+                                                (data.flatten('F')).astype(float)))
+                
+    try:
+        cspmax.computeSkeletonPriors(scale)
+ 
+    except:
+        # if the Java module fails, reraise the error it throws
+        print("\n The underlying Java code did not execute cleanly: ")
+        print(sys.exc_info()[0])
+        raise
+        return
+
+    skeleton_images = None
+
     # reshape output to what nibabel likes
     dimensions = (dimensions[0],dimensions[1],dimensions[2],cspmax.getBestDimension())
-    dimskel = (dimensions[0],dimensions[1],dimensions[2],cspmax.getBestDimension()/4)
+    dimskel = (dimensions[0],dimensions[1],dimensions[2],int(cspmax.getBestDimension()/4))
     dims3Dtrg = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2])
 
     intens_dims = (structures+1,structures+1,contrasts)
