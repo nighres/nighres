@@ -92,10 +92,6 @@ def extract_brain_region(segmentation, levelset_boundary,
 
     print('\nExtract Brain Region')
 
-    # Check data file parameters
-    if not save_data and return_filename:
-        raise ValueError('save_data must be True if return_filename is True ')
-
     # check atlas_file and set default if not given
     atlas_file = _check_atlas_file(atlas_file)
 

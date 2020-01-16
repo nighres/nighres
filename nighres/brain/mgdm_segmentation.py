@@ -178,10 +178,6 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     print('\nMGDM Segmentation')
 
-    # Check data file parameters
-    if not save_data and return_filename:
-        raise ValueError('save_data must be True if return_filename is True ')
-
     # check atlas_file and set default if not given
     atlas_file = _check_atlas_file(atlas_file)
 

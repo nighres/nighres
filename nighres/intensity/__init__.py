@@ -5,5 +5,6 @@ from nighres.intensity.lcat_denoising import lcat_denoising
 from nighres.intensity.lcpca_denoising import lcpca_denoising
 from nighres.intensity.mp2rageme_pd_mapping import mp2rageme_pd_mapping
 from nighres.intensity.mp2rage_t1_mapping import mp2rage_t1_mapping
+from nighres.intensity.mp2rage_t1_mapping import mp2rage_t1_from_uni
 from nighres.intensity.phase_unwrapping import phase_unwrapping
 from nighres.intensity.t2s_optimal_combination import t2s_optimal_combination

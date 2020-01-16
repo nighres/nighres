@@ -201,7 +201,7 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
     else:
         return {'t1': t1, 'r1': r1, 'uni': uni}
 
-def mp2rage_uni2t1(uniform_image, 
+def mp2rage_t1_from_uni(uniform_image, 
                       inversion_times, flip_angles, inversion_TR,
                       excitation_TR, N_excitations, efficiency=0.96,
                       correct_B1=False, B1_map=None, scale_phase=True,
@@ -268,16 +268,16 @@ def mp2rage_uni2t1(uniform_image,
 
     # make sure that saving related parameters are correct
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, first_inversion[0])
+        output_dir = _output_dir_4saving(output_dir, uniform_image)
 
         t1_file = os.path.join(output_dir, 
                         _fname_4saving(module=__name__,file_name=file_name,
-                                   rootfile=first_inversion[0],
+                                   rootfile=uniform_image,
                                    suffix='qt1map-t1'))
 
         r1_file = os.path.join(output_dir, 
                         _fname_4saving(module=__name__,file_name=file_name,
-                                   rootfile=first_inversion[0],
+                                   rootfile=uniform_image,
                                    suffix='qt1map-r1'))
 
         if overwrite is False \
@@ -309,7 +309,7 @@ def mp2rage_uni2t1(uniform_image,
     qt1map.setCorrectB1inhomogeneities(correct_B1)
      
     # load first image and use it to set dimensions and resolution
-    img = load_volume(uniform[0])
+    img = load_volume(uniform_image)
     data = img.get_data()
     #data = data[0:10,0:10,0:10]
     affine = img.affine
