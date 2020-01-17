@@ -30,7 +30,7 @@ def levelset_thickness(input_image,
     input_image: niimg
         Image containing structure-of-interest
     shape_image_type: str
-        shape of the input image: either 'signed_distance' or 'probability_map'.
+        shape of the input image: either 'signed_distance', 'probability_map', or 'parcellation'.
     save_data: bool, optional
         Save output data to file (default is False)
     output_dir: str, optional
@@ -109,7 +109,11 @@ def levelset_thickness(input_image,
     algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
 
     data = load_volume(input_image).get_data()
-    algorithm.setShapeImage(nighresjava.JArray('float')(
+    if (shape_image_type is 'parcellation'):
+        algorithm.setLabelImage(nighresjava.JArray('int')(
+                               (data.flatten('F')).astype(int).tolist()))
+    else:
+        algorithm.setShapeImage(nighresjava.JArray('float')(
                                (data.flatten('F')).astype(float)))
 
     # execute
