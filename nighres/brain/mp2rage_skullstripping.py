@@ -71,10 +71,6 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     print('\nMP2RAGE Skull Stripping')
 
-    # Check data file parameters
-    if not save_data and return_filename:
-        raise ValueError('save_data must be True if return_filename is True ')
-
     # check topology lut dir and set default if not given
     topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)
 
