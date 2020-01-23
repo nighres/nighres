@@ -55,16 +55,16 @@ def intrinsic_coordinates(label_image,
     print("\nIntrinsic Coordinates")
 
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, input_image)
+        output_dir = _output_dir_4saving(output_dir, label_image)
 
         coord_file = os.path.join(output_dir, 
                             _fname_4saving(module=__name__,file_name=file_name,
-                                  rootfile=input_image,
+                                  rootfile=label_image,
                                   suffix='ics-coord'))
 
         img_file = os.path.join(output_dir, 
                             _fname_4saving(module=__name__,file_name=file_name,
-                                  rootfile=input_image,
+                                  rootfile=label_image,
                                   suffix='ics-img'))    
 
         if overwrite is False \
