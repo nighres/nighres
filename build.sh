@@ -46,6 +46,7 @@ test -f "${python_include_path}/Python.h" || fatal 'This script requires python 
 # Get cbstools git clone
 test -d cbstools-public && (
     cd cbstools-public
+	git fetch
 	git checkout $release
 	git pull
 	cd ..
@@ -104,6 +105,7 @@ cd ..
 # Get imcntk git clone
 test -d imcn-imaging && (
     cd imcn-imaging
+	git fetch
 	git checkout $release
 	git pull
 	cd ..
