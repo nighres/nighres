@@ -127,7 +127,10 @@ def flash_t2s_fitting(image_list, te_list, r2s_threshold=None,
     # execute the algorithm
     try:
         if (r2s_threshold is not None):
-            qt2fit.variableEchoEstimation()
+            if (r2s_threshold==0):
+                qt2fit.minEchoEstimation()
+            else:
+                qt2fit.variableEchoEstimation()
         else:
             qt2fit.execute()
 
