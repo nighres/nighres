@@ -15,6 +15,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def intrinsic_coordinates(label_image,
                    system_type='centroid_pca',
+                   som_size=10,
                    save_data=False, 
                    overwrite=False, 
                    output_dir=None,
@@ -30,7 +31,9 @@ def intrinsic_coordinates(label_image,
     label_image: niimg
         Image of the object(s) of interest
     system_type: str
-        coordinate system derivation: 'centroid_pca' or 'voxel_pca'.
+        coordinate system derivation: 'centroid_pca', 'weighted_pca', 'voxel_pca', 'weighted_som', 'weighted_som2d'.
+    som_size: int
+        size of the self-organizing map for the 'weighted_som' (default is 10)
     save_data: bool, optional
         Save output data to file (default is False)
     output_dir: str, optional
@@ -85,6 +88,7 @@ def intrinsic_coordinates(label_image,
 
     # set parameters
     algorithm.setSystemType(system_type)
+    algorithm.setSomSize(som_size)
 
     # load images and set dimensions and resolution
     label_image = load_volume(label_image)
