@@ -227,22 +227,25 @@ def embedded_antsreg_2d(source_image, target_image,
     print('\nEmbedded ANTs Registration 2D')
 
     # make sure that saving related parameters are correct
-    output_dir = _output_dir_4saving(output_dir, source_image) # needed for intermediate results
+    
+     # filenames needed for intermediate results
+    output_dir = _output_dir_4saving(output_dir, source_image)
+    
+    transformed_source_file = os.path.join(output_dir,
+                    _fname_4saving(module=__name__,file_name=file_name,
+                               rootfile=source_image,
+                               suffix='ants-def'))
+
+    mapping_file = os.path.join(output_dir,
+                    _fname_4saving(module=__name__,file_name=file_name,
+                               rootfile=source_image,
+                               suffix='ants-map'))
+
+    inverse_mapping_file = os.path.join(output_dir,
+                    _fname_4saving(module=__name__,file_name=file_name,
+                               rootfile=source_image,
+                               suffix='ants-invmap'))
     if save_data:
-        transformed_source_file = os.path.join(output_dir,
-                        _fname_4saving(module=__name__,file_name=file_name,
-                                   rootfile=source_image,
-                                   suffix='ants-def'))
-
-        mapping_file = os.path.join(output_dir,
-                        _fname_4saving(module=__name__,file_name=file_name,
-                                   rootfile=source_image,
-                                   suffix='ants-map'))
-
-        inverse_mapping_file = os.path.join(output_dir,
-                        _fname_4saving(module=__name__,file_name=file_name,
-                                   rootfile=source_image,
-                                   suffix='ants-invmap'))
         if overwrite is False \
             and os.path.isfile(transformed_source_file) \
             and os.path.isfile(mapping_file) \
@@ -825,24 +828,27 @@ def embedded_antsreg_multi(source_images, target_images,
     print('\nEmbedded ANTs Registration Multi-contrasts')
 
     # make sure that saving related parameters are correct
-    output_dir = _output_dir_4saving(output_dir, source_images[0]) # needed for intermediate results
+    
+     # output files needed for intermediate results
+    output_dir = _output_dir_4saving(output_dir, source_images[0])
+    
+    transformed_source_files = []
+    for idx,source_image in enumerate(source_images):
+        transformed_source_files.append(os.path.join(output_dir, 
+                                    _fname_4saving(module=__name__,file_name=file_name,
+                                   rootfile=source_image,
+                                   suffix='ants-def'+str(idx))))
+
+    mapping_file = os.path.join(output_dir, 
+                    _fname_4saving(module=__name__,file_name=file_name,
+                               rootfile=source_images[0],
+                               suffix='ants-map'))
+
+    inverse_mapping_file = os.path.join(output_dir, 
+                    _fname_4saving(module=__name__,file_name=file_name,
+                               rootfile=source_images[0],
+                               suffix='ants-invmap'))
     if save_data:
-        transformed_source_files = []
-        for idx,source_image in enumerate(source_images):
-            transformed_source_files.append(os.path.join(output_dir, 
-                                        _fname_4saving(module=__name__,file_name=file_name,
-                                       rootfile=source_image,
-                                       suffix='ants-def'+str(idx))))
-
-        mapping_file = os.path.join(output_dir, 
-                        _fname_4saving(module=__name__,file_name=file_name,
-                                   rootfile=source_images[0],
-                                   suffix='ants-map'))
-
-        inverse_mapping_file = os.path.join(output_dir, 
-                        _fname_4saving(module=__name__,file_name=file_name,
-                                   rootfile=source_images[0],
-                                   suffix='ants-invmap'))
         if overwrite is False \
             and os.path.isfile(mapping_file) \
             and os.path.isfile(inverse_mapping_file) :
@@ -862,7 +868,6 @@ def embedded_antsreg_multi(source_images, target_images,
                       'mapping': mapping_file, 
                       'inverse': inverse_mapping_file}
             return output
-
 
     # load and get dimensions and resolution from input images
     sources = []

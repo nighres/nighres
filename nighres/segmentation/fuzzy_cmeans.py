@@ -112,8 +112,11 @@ def fuzzy_cmeans(image, clusters=3, max_iterations=50, max_difference=0.01,
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 
-    rfcm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
-    rfcm.setResolutions(resolution[0], resolution[1], resolution[2])
+    if len(dimensions)>2: rfcm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+    else: rfcm.setDimensions(dimensions[0], dimensions[1], 1)
+    
+    if len(resolution)>2: rfcm.setResolutions(resolution[0], resolution[1], resolution[2])
+    else: rfcm.setResolutions(resolution[0], resolution[1], resolution[1])
 
     # image
     rfcm.setImage(nighresjava.JArray('float')(
