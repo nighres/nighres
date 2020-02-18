@@ -348,7 +348,7 @@ def _read_vtk(file):
     start_vertices = (vtk_df[vtk_df[0].str.contains(
                                             'POINTS')].index.tolist()[0]) + 1
     vertex_df = pd.read_csv(file, skiprows=range(start_vertices),
-                            nrows=number_vertices, sep='\s*',
+                            nrows=number_vertices, sep='\s+',
                             header=None, engine='python')
     if np.array(vertex_df).shape[1] == 3:
         vertex_array = np.array(vertex_df)
@@ -357,7 +357,7 @@ def _read_vtk(file):
     elif np.array(vertex_df).shape[1] == 9:
         vertex_df = pd.read_csv(file, skiprows=range(start_vertices),
                                 nrows=int(number_vertices / 3) + 1,
-                                sep='\s*', header=None, engine='python')
+                                sep='\s+', header=None, engine='python')
         vertex_array = np.array(vertex_df.iloc[0:1, 0:3])
         vertex_array = np.append(vertex_array, vertex_df.iloc[0:1, 3:6],
                                  axis=0)
@@ -376,7 +376,7 @@ def _read_vtk(file):
     start_faces = (vtk_df[vtk_df[0].str.contains(
                                             'POLYGONS')].index.tolist()[0]) + 1
     face_df = pd.read_csv(file, skiprows=range(start_faces),
-                          nrows=number_faces, sep='\s*', header=None,
+                          nrows=number_faces, sep='\s+', header=None,
                           engine='python')
     face_array = np.array(face_df.iloc[:, 1:4])
     # read data into df and array if exists
@@ -413,13 +413,13 @@ def _read_ply(file):
     end_header = ply_df[ply_df[0].str.contains('end_header')].index.tolist()[0]
     # read vertex coordinates into dict
     vertex_df = pd.read_csv(file, skiprows=range(end_header + 1),
-                            nrows=number_vertices, sep='\s*', header=None,
+                            nrows=number_vertices, sep='\s+', header=None,
                             engine='python')
     vertex_array = np.array(vertex_df)
     # read face indices into dict
     face_df = pd.read_csv(file,
                           skiprows=range(end_header + number_vertices + 1),
-                          nrows=number_faces, sep='\s*', header=None,
+                          nrows=number_faces, sep='\s+', header=None,
                           engine='python')
     face_array = np.array(face_df.iloc[:, 1:4])
 
