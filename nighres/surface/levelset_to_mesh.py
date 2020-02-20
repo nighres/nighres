@@ -19,7 +19,7 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
     Parameters
     ----------
     levelset_image: niimg
-        Levelset image to be turned into probabilities
+        Levelset image to be turned into a mesh
     connectivity: {"6/18","6/26","18/6","26/6"}, optional
         Choice of digital connectivity to build the mesh (default is 18/6)
     level: float, optional
