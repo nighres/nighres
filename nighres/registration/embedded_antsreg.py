@@ -708,7 +708,7 @@ def embedded_antsreg_2d(source_image, target_image,
 
     if not save_data:
         # collect saved outputs 
-        output = {'transformed_sources': load_volume(transformed_source_file), 
+        output = {'transformed_source': load_volume(transformed_source_file), 
               'mapping': load_volume(mapping_file), 
               'inverse': load_volume(inverse_mapping_file)}
     
@@ -720,7 +720,7 @@ def embedded_antsreg_2d(source_image, target_image,
         return output
     else:
         # collect saved outputs 
-        output = {'transformed_sources': transformed_source_file, 
+        output = {'transformed_source': transformed_source_file, 
               'mapping': mapping_file, 
               'inverse': inverse_mapping_file}
     
