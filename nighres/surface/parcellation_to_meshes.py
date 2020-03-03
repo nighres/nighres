@@ -1,17 +1,19 @@
 import os
 import sys
 import numpy
+import scipy.ndimage
 import nibabel
 import nighresjava
-from ..io import load_volume, save_volume, load_mesh_geometry, save_mesh_geometry
+from ..io import load_volume, save_volume, load_mesh, save_mesh
 from ..utils import _output_dir_4saving, _fname_4saving,_check_available_memory
 
 
-def parcellation_to_meshes(parcellation_image, connectivity="18/6", spacing = 0.0,
+def parcellation_to_meshes(parcellation_image, connectivity="18/6", 
+                     spacing = 0.0, smoothing=1.0,
                      save_data=False, overwrite=False,
                      output_dir=None, file_name=None):
 
-    """Levelset to mesh
+    """Parcellation to meshes
 
     Creates a collection of triangulated meshes from a parcellation
     using a connectivity-consistent marching cube algorithm.
@@ -23,7 +25,10 @@ def parcellation_to_meshes(parcellation_image, connectivity="18/6", spacing = 0.
     connectivity: {"6/18","6/26","18/6","26/6"}, optional
         Choice of digital connectivity to build the mesh (default is 18/6)
     spacing: float, optional
-        Added spacing between meshes for better visualization (default is 0)
+        Added spacing between meshes for better visualization (default is 0.0)
+    smoothing: float, optional
+        Smoothing of the boundary for prettier meshes, high values may bring 
+        distortions small (default is 1.0)
     save_data: bool, optional
         Save output data to file (default is False)
     overwrite: bool, optional
@@ -72,26 +77,28 @@ def parcellation_to_meshes(parcellation_image, connectivity="18/6", spacing = 0.
 
     # count the labels (incl. background)
     labels = numpy.unique(p_data)
+    print("found labels: "+str(labels))
 
     # make sure that saving related parameters are correct
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, levelset_image)
+        output_dir = _output_dir_4saving(output_dir, parcellation_image)
 
         mesh_files = [] 
-        for num in enumerate(labels):
+        for num,label in enumerate(labels):
             # exclude background as first label
             if num>0:
                 mesh_file = os.path.join(output_dir,
                         _fname_4saving(module=__name__,file_name=file_name,
-                                       rootfile=levelset_image,
+                                       rootfile=parcellation_image,
                                        suffix='p2m-mesh'+str(num),ext="vtk"))
                 mesh_files.append(mesh_file)
 
         if overwrite is False :
             missing = False
-            for num in enumerate(labels):
-                if not os.path.isfile(mesh_files[num]) :
-                    missing = True
+            for num,label in enumerate(labels):
+                if num>0:
+                    if not os.path.isfile(mesh_files[num-1]) :
+                        missing = True
 
             if not missing:
                 print("skip computation (use existing results)")
@@ -115,57 +122,61 @@ def parcellation_to_meshes(parcellation_image, connectivity="18/6", spacing = 0.
     meshes = []
     for num,label in enumerate(labels):
         
-        lvl_data = -0.5*(p_data==label) +0.5*(p_data!=label)
+        if num>0:
+            lvl_data = -1.0*(p_data==label) +1.0*(p_data!=label)
+            
+            algorithm.setLevelsetImage(nighresjava.JArray('float')(
+                                    (lvl_data.flatten('F')).astype(float)))
     
-        algorithm.setLevelsetImage(nighresjava.JArray('float')(
-                                (lvl_data.flatten('F')).astype(float)))
+            algorithm.setConnectivity(connectivity)
+            algorithm.setZeroLevel(0.0)
+            algorithm.setInclusive(True)
+            algorithm.setSmoothing(smoothing)
 
-        algorithm.setConnectivity(connectivity)
-        algorithm.setZeroLevel(0.0)
-        algorithm.setInclusive(True)
-
-        # execute class
-        try:
-            algorithm.execute()
-
-        except:
-            # if the Java module fails, reraise the error it throws
-            print("\n The underlying Java code did not execute cleanly: ")
-            print(sys.exc_info()[0])
-            raise
-            return
-
-        # collect outputs
-        npt = int(numpy.array(algorithm.getPointList(), dtype=numpy.float32).shape[0]/3)
-        mesh_points = numpy.reshape(numpy.array(algorithm.getPointList(),
-                               dtype=numpy.float32), (npt,3), 'C')
-
-        nfc = int(numpy.array(algorithm.getTriangleList(), dtype=numpy.int32).shape[0]/3)
-        mesh_faces = numpy.reshape(numpy.array(algorithm.getTriangleList(),
-                               dtype=numpy.int32), (nfc,3), 'C')
-
-        # create the mesh dictionary
-        mesh = {"points": mesh_points, "faces": mesh_faces}
-
-        meshes.append(mesh)
+            # execute class
+            try:
+                algorithm.execute()
+    
+            except:
+                # if the Java module fails, reraise the error it throws
+                print("\n The underlying Java code did not execute cleanly: ")
+                print(sys.exc_info()[0])
+                raise
+                return
+    
+            # collect outputs
+            npt = int(numpy.array(algorithm.getPointList(), dtype=numpy.float32).shape[0]/3)
+            mesh_points = numpy.reshape(numpy.array(algorithm.getPointList(),
+                                   dtype=numpy.float32), (npt,3), 'C')
+    
+            nfc = int(numpy.array(algorithm.getTriangleList(), dtype=numpy.int32).shape[0]/3)
+            mesh_faces = numpy.reshape(numpy.array(algorithm.getTriangleList(),
+                                   dtype=numpy.int32), (nfc,3), 'C')
+    
+            mesh_label = label*numpy.ones((npt,1))
+    
+            # create the mesh dictionary
+            mesh = {"points": mesh_points, "faces": mesh_faces, "data": mesh_label}
+    
+            meshes.append(mesh)
         
     # if needed, spread values away from center
     if spacing>0:
-        center = numpy.zeros(1,3)
-        for num in enumerate(labels):
+        center = numpy.zeros((1,3))
+        for num,label in enumerate(labels):
             if num>0:
                 center = center + numpy.mean(meshes[num-1]['points'], axis=0)
         center = center/(len(labels)-1)
         
-        for num in enumerate(labels):
+        for num,label in enumerate(labels):
             if num>0:
                 mesh0 = numpy.mean(meshes[num-1]['points'], axis=0)
-                meshes[num-1]['points'] = meshes[num-1]['points']-mesh0 + spacing*(mesh0-center)
+                meshes[num-1]['points'] = meshes[num-1]['points']-mesh0 + spacing*(mesh0-center) + center
         
     if save_data:
-        for num in enumerate(labels):
+        for num,label in enumerate(labels):
             if num>0:
-                save_mesh_geometry(mesh_files[num-1], mesh[num-1])
+                save_mesh(mesh_files[num-1], meshes[num-1])
         return {'result': mesh_files}
     else:
         return {'result': meshes}

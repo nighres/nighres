@@ -577,7 +577,7 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
 def conditional_shape_updating(subjects, structures, contrasts, 
                       levelset_images=None, skeleton_images=None, 
                       contrast_images=None, 
-                      atlas_weight=10, update_weight=10, 
+                      atlas_weight=10.0, update_weight=10.0, 
                       shape_atlas_probas=None, shape_atlas_labels=None, 
                       intensity_atlas_hist=None,
                       skeleton_atlas_probas=None, skeleton_atlas_labels=None, 
@@ -642,7 +642,7 @@ def conditional_shape_updating(subjects, structures, contrasts,
     Original Java module by Pierre-Louis Bazin.
     """
 
-    print('\nConditional Shape Atlasing')
+    print('\nConditional Shape Updating')
 
     # make sure that saving related parameters are correct
     if save_data:
