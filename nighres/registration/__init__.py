@@ -3,5 +3,6 @@ from nighres.registration.apply_coordinate_mappings import apply_coordinate_mapp
 from nighres.registration.embedded_antsreg import embedded_antsreg
 from nighres.registration.embedded_antsreg import embedded_antsreg_2d
 from nighres.registration.embedded_antsreg import embedded_antsreg_multi
+from nighres.registration.embedded_antsreg import embedded_antsreg_2d_multi
 from nighres.registration.generate_coordinate_mapping import generate_coordinate_mapping
 from nighres.registration.simple_align import simple_align

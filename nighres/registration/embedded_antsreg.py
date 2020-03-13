@@ -740,7 +740,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
 					regularization='High',
 					convergence=1e-6,
 					mask_zero=False,
-					ignore_affine=False, ignore_header=False,
+					ignore_affine=False, ignore_orient=False, ignore_res=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
     """ Embedded ANTS Registration 2D Multi-contrasts
@@ -782,9 +782,12 @@ def embedded_antsreg_2d_multi(source_images, target_images,
     ignore_affine: bool
         Ignore the affine matrix information extracted from the image header
         (default is False)
-    ignore_header: bool
+    ignore_orient: bool
         Ignore the orientation information and affine matrix information
         extracted from the image header (default is False)
+    ignore_res: bool
+        Ignore the resolution information extracted from the image header 
+        (default is False)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -868,6 +871,8 @@ def embedded_antsreg_2d_multi(source_images, target_images,
     # load and get dimensions and resolution from input images
     sources = []
     targets = []
+    src_img_files = []
+    trg_img_files = []
     for idx,img in enumerate(source_images):
         source = load_volume(source_images[idx])
         src_affine = source.affine
@@ -877,7 +882,10 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         nsz = 1
         rsx = source.header.get_zooms()[X]
         rsy = source.header.get_zooms()[Y]
-        rsz = 1
+        rsz = 1.0
+    
+        orig_src_aff = source.affine
+        orig_src_hdr = source.header
     
         target = load_volume(target_images[idx])
         trg_affine = target.affine
@@ -887,22 +895,33 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         ntz = 1
         rtx = target.header.get_zooms()[X]
         rty = target.header.get_zooms()[Y]
-        rtz = 1
+        rtz = 1.0
     
+        orig_trg_aff = target.affine
+        orig_trg_hdr = target.header
+
         # in case the affine transformations are not to be trusted: make them equal
-        if ignore_affine or ignore_header:
+        if ignore_affine or ignore_orient or ignore_res:
             mx = np.argmax(np.abs(src_affine[0][0:3]))
             my = np.argmax(np.abs(src_affine[1][0:3]))
             mz = np.argmax(np.abs(src_affine[2][0:3]))
             new_affine = np.zeros((4,4))
-            if ignore_header:
+            if ignore_res:
+                new_affine[0][:] = src_affine[0][:]/rsx
+                new_affine[1][:] = src_affine[1][:]/rsy
+                new_affine[2][:] = src_affine[2][:]/rsz
+                rsx = 1.0
+                rsy = 1.0
+                rsz = 1.0
+    
+            if ignore_orient:
                 new_affine[0][0] = rsx
                 new_affine[1][1] = rsy
                 new_affine[2][2] = rsz
                 new_affine[0][3] = -rsx*nsx/2.0
                 new_affine[1][3] = -rsy*nsy/2.0
                 new_affine[2][3] = -rsz*nsz/2.0
-            else:
+            elif ignore_affine:
                 new_affine[0][mx] = rsx*np.sign(src_affine[0][mx])
                 new_affine[1][my] = rsy*np.sign(src_affine[1][my])
                 new_affine[2][mz] = rsz*np.sign(src_affine[2][mz])
@@ -937,20 +956,29 @@ def embedded_antsreg_2d_multi(source_images, target_images,
             source = load_volume(src_img_file)
             src_affine = source.affine
             src_header = source.header
+            src_img_files.append(src_img_file)
     
             # create generic affine aligned with the orientation for the target
             mx = np.argmax(np.abs(trg_affine[0][0:3]))
             my = np.argmax(np.abs(trg_affine[1][0:3]))
             mz = np.argmax(np.abs(trg_affine[2][0:3]))
             new_affine = np.zeros((4,4))
-            if ignore_header:
+            if ignore_res:
+                new_affine[0][:] = trg_affine[0][:]/rtx
+                new_affine[1][:] = trg_affine[1][:]/rty
+                new_affine[2][:] = trg_affine[2][:]/rtz
+                rtx = 1.0
+                rty = 1.0
+                rtz = 1.0
+                
+            if ignore_orient:
                 new_affine[0][0] = rtx
                 new_affine[1][1] = rty
                 new_affine[2][2] = rtz
                 new_affine[0][3] = -rtx*ntx/2.0
                 new_affine[1][3] = -rty*nty/2.0
                 new_affine[2][3] = -rtz*ntz/2.0
-            else:
+            elif ignore_affine:
                 new_affine[0][mx] = rtx*np.sign(trg_affine[0][mx])
                 new_affine[1][my] = rty*np.sign(trg_affine[1][my])
                 new_affine[2][mz] = rtz*np.sign(trg_affine[2][mz])
@@ -985,6 +1013,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
             target = load_volume(trg_img_file)
             trg_affine = target.affine
             trg_header = target.header
+            trg_img_files.append(trg_img_file)
         
         sources.append(source)
         targets.append(target)
@@ -1326,9 +1355,11 @@ def embedded_antsreg_2d_multi(source_images, target_images,
     if os.path.exists(src_mapY_trans): os.remove(src_mapY_trans)
     if os.path.exists(trg_mapX_trans): os.remove(trg_mapX_trans)
     if os.path.exists(trg_mapY_trans): os.remove(trg_mapY_trans)
-    if ignore_affine or ignore_header:
-        if os.path.exists(src_img_file): os.remove(src_img_file)
-        if os.path.exists(trg_img_file): os.remove(trg_img_file)
+    if ignore_affine or ignore_orient or ignore_res:
+        for src_img_file in src_img_files:
+            if os.path.exists(src_img_file): os.remove(src_img_file)
+        for trg_img_file in trg_img_files:    
+            if os.path.exists(trg_img_file): os.remove(trg_img_file)
         
     for name in forward: 
         if os.path.exists(name): os.remove(name)
@@ -1336,7 +1367,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         if os.path.exists(name): os.remove(name)
 
     # if ignoring header and/or affine, must paste back the correct headers
-    if ignore_affine or ignore_header:
+    if ignore_affine or ignore_orient or ignore_res:
         mapping = load_volume(mapping_file)
         save_volume(mapping_file, nb.Nifti1Image(mapping.get_data(), orig_trg_aff, orig_trg_hdr))
         inverse = load_volume(inverse_mapping_file)
