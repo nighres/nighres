@@ -12,7 +12,7 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
                       t1map, r2smap, echo_times,
                       inversion_times, flip_angles, inversion_TR,
                       excitation_TR, N_excitations, efficiency=0.96,
-                      b1map=None, s0img=None,
+                      b1map=None, 
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ MP2RAGEME PD mapping
@@ -48,8 +48,6 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
         Whether to correct for B1 inhomogeneities (default is False)
     b1map: niimg
         Computed B1 map (optional)
-    s0map: niimg
-        Computed S0 map (optional)
     scale_phase: bool
         Whether to rescale the phase image in [0,2PI] or to assume it is 
         already in radians
@@ -69,9 +67,7 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * pd1 (niimg): Map of estimated proton density from inv1 (_qpd-inv1)
-        * pd2 (niimg): Map of estimated proton density from inv2 (_qpd-inv2)
-        * pd (niimg):  Map of estimated proton density average (_qpd-avg)
+        * pd (niimg):  Map of estimated proton density ratio (_qpd-map)
         
     Notes
     ----------
@@ -90,28 +86,14 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, first_inversion[0])
 
-        pd1_file = os.path.join(output_dir, 
-                        _fname_4saving(module=__name__,file_name=file_name,
-                                   rootfile=first_inversion[0],
-                                   suffix='qpd-inv1'))
-
-        pd2_file = os.path.join(output_dir, 
-                        _fname_4saving(module=__name__,file_name=file_name,
-                                   rootfile=first_inversion[0],
-                                   suffix='qpd-inv2'))
-
         pd_file = os.path.join(output_dir, 
                         _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=first_inversion[0],
-                                   suffix='qpd-avg'))
+                                   suffix='qpd-map'))
 
         if overwrite is False \
-            and os.path.isfile(pd1_file) \
-            and os.path.isfile(pd2_file) \
             and os.path.isfile(pd_file) :
-                output = {'pd1': pd1_file,
-                          'pd2': pd2_file, 
-                          'pd': pd_file}
+                output = {'pd': pd_file}
                 return output
 
     # start virtual machine, if not already running
@@ -172,11 +154,6 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     qpdmap.setR2smapImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
-    if (s0img!=None):
-        data = load_volume(s0img).get_data()
-        qpdmap.setS0Image(nighresjava.JArray('float')(
-                                    (data.flatten('F')).astype(float)))
- 
     if (b1map!=None):
         data = load_volume(b1map).get_data()
         qpdmap.setB1mapImage(nighresjava.JArray('float')(
@@ -194,33 +171,17 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
         return
 
     # reshape output to what nibabel likes
-    pd1_data = np.reshape(np.array(qpdmap.getProtonDensityImage1(),
-                                    dtype=np.float32), dimensions, 'F')
-
-    pd2_data = np.reshape(np.array(qpdmap.getProtonDensityImage2(),
-                                    dtype=np.float32), dimensions, 'F')
-
     pd_data = np.reshape(np.array(qpdmap.getProtonDensityImage(),
                                     dtype=np.float32), dimensions, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
-    header['cal_min'] = np.nanmin(pd1_data)
-    header['cal_max'] = np.nanmax(pd1_data)
-    pd1 = nb.Nifti1Image(pd1_data, affine, header)
-
-    header['cal_min'] = np.nanmin(pd2_data)
-    header['cal_max'] = np.nanmax(pd2_data)
-    pd2 = nb.Nifti1Image(pd2_data, affine, header)
-
     header['cal_min'] = np.nanmin(pd_data)
     header['cal_max'] = np.nanmax(pd_data)
     pd = nb.Nifti1Image(pd_data, affine, header)
 
     if save_data:
-        save_volume(pd1_file, pd1)
-        save_volume(pd2_file, pd2)
         save_volume(pd_file, pd)
-        return {'pd1': pd1_file, 'pd2': pd2_file, 'pd': pd_file}
+        return {'pd': pd_file}
     else:
-        return {'pd1': pd1, 'pd2': pd2, 'pd': pd}
+        return {'pd': pd}
