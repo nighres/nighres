@@ -28,7 +28,7 @@ def parcellation_to_meshes(parcellation_image, connectivity="18/6",
         Added spacing between meshes for better visualization (default is 0.0)
     smoothing: float, optional
         Smoothing of the boundary for prettier meshes, high values may bring 
-        distortions small (default is 1.0)
+        small distortions (default is 1.0)
     save_data: bool, optional
         Save output data to file (default is False)
     overwrite: bool, optional
