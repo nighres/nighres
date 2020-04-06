@@ -1,6 +1,6 @@
 import os
 from urllib.request import urlretrieve
-
+from nighres.global_settings import DEFAULT_ATLAS
 
 def download_7T_TRT(data_dir, overwrite=False, subject_id='sub001_sess1'):
     """
@@ -166,4 +166,67 @@ def download_DOTS_atlas(data_dir, overwrite=False):
 
     return {'fiber_p': file_targets[0],
             'fiber_dir': file_targets[1]} 
+           
+def download_MASSP_atlas(data_dir=None, overwrite=False):
+    """
+    Downloads the MASSP atlas presented in [1]_
+
+    Parameters
+    ----------
+    data_dir: str
+        Writeable directory in which downloaded atlas files should be stored. A
+        subdirectory called 'massp-prior' will be created in this location.
+    overwrite: bool
+        Overwrite existing files in the same exact path (default is False)
+        
+    Returns
+    ----------
+    dict
+        Dictionary with keys pointing to the location of the downloaded files
+
+        * histograms : path to histogram image
+        * spatial_probas : path to spatial probability image
+        * spatial_labels : path to spatial label image
+        * skeleton_probas : path to skeleton probability image
+        * skeleton_labels : path to skeleton label image
+
+    References
+    ----------
+    .. [1] Bazin et al (2020). Multi-contrast Anatomical Subcortical
+    Structure Parcellation. Under review.
+    """
+
+    if (data_dir is None):
+        data_dir = DEFAULT_ATLAS
+        
+    data_dir = os.path.join(data_dir, 'massp-prior')
+    
+    if not os.path.isdir(data_dir):
+        os.makedirs(data_dir)
+
+    figshare = 'https://uvaauas.figshare.com/ndownloader/files/'
+    
+    file_sources = ['22200465','22200468','22200471','22200474','22200477']
+
+    file_targets = [os.path.join(data_dir, filename) for filename in
+                    ['massp_19structures_spatial_label.nii.gz',
+                     'massp_19structures_skeleton_proba.nii.gz',
+                     'massp_19structures_spatial_proba.nii.gz',
+                     'massp_19structures_skeleton_label.nii.gz',
+                     'massp_19structures_mp2rageme_histograms.nii.gz']]
+
+    for source, target in zip(file_sources, file_targets):
+
+        if os.path.isfile(target) and overwrite is False:
+            print("\nThe file {0} exists and overwrite was set to False "
+                  "-- not downloading.".format(target))
+        else:
+            print("\nDownloading to {0}".format(target))
+            urlretrieve(source, target)
+
+    return {'spatial_labels': file_targets[0],
+            'spatial_probas': file_targets[2],
+            'skeleton_labels': file_targets[3],
+            'skeleton_probas': file_targets[1],
+            'histograms': file_targets[4]} 
            

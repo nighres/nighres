@@ -5,7 +5,11 @@ import sys
 import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
-                    _check_topology_lut_dir, _check_available_memory
+                    _check_topology_lut_dir, _check_available_memory,
+from nighres.global_settings import DEFAULT_MASSP_ATLAS, DEFAULT_MASSP_HIST, \
+                    DEFAULT_MASSP_SPATIAL_PROBA, DEFAULT_MASSP_SPATIAL_LABEL, \
+                    DEFAULT_MASSP_SKEL_PROBA, DEFAULT_MASSP_SKEL_LABEL
+from nighres.data.download_data import download_MASSP_atlas
 
 
 def massp(target_images, structures, contrasts,
@@ -28,16 +32,16 @@ def massp(target_images, structures, contrasts,
         Number of structures to parcellate
     contrasts: int
        Number of image intensity contrasts
-    shape_atlas_probas: niimg
-        Pre-computed shape atlas from the shape levelsets (replacing them)
-    shape_atlas_labels: niimg
-        Pre-computed shape atlas from the shape levelsets (replacing them)
-    intensity_atlas_hist: niimg
-        Pre-computed intensity atlas from the contrast images (replacing them)
-    skeleton_atlas_probas: niimg
-        Pre-computed skeleton atlas from the shape levelsets (replacing them)
-    skeleton_atlas_labels: niimg
-        Pre-computed skeleton atlas from the shape levelsets (replacing them)
+    shape_atlas_probas: niimg (opt)
+        Pre-computed shape atlas probabilities (default is loaded from nighres atlas)
+    shape_atlas_labels: niimg (opt)
+        Pre-computed shape atlas labels (default is loaded from nighres atlas)
+    intensity_atlas_hist: niimg (opt)
+        Pre-computed intensity atlas from the contrast images  (default is loaded from nighres atlas)
+    skeleton_atlas_probas: niimg (opt)
+        Pre-computed skeleton atlas probabilities (default is loaded from nighres atlas)
+    skeleton_atlas_labels: niimg (opt)
+        Pre-computed skeleton atlas labels (default is loaded from nighres atlas)
     map_to_target: niimg
         Coordinate mapping from the atlas to the target (opt)
     max_iterations: int
@@ -88,13 +92,8 @@ def massp(target_images, structures, contrasts,
                                    suffix='massp-label'))
 
         if overwrite is False \
-            and os.path.isfile(spatial_proba_file) \
-            and os.path.isfile(spatial_label_file) \
-            and os.path.isfile(combined_proba_file) \
-            and os.path.isfile(combined_label_file) \
             and os.path.isfile(proba_file) \
-            and os.path.isfile(label_file) \
-            and os.path.isfile(neighbor_file):
+            and os.path.isfile(label_file):
             
             print("skip computation (use existing results)")
             output = {'max_proba': proba_file, 
@@ -139,16 +138,30 @@ def massp(target_images, structures, contrasts,
         massp.setTargetImageAt(contrast, nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
 
+    # if not specified, check if standard atlases are available or download them
+    if ( (intensity_atlas_hist is None) or (shape_atlas_probas is None) or (shape_atlas_labels is None)
+        or (skeleton_atlas_probas is None) or (skeleton_atlas_labels is None)):
+        
+        if (not os.path.exists(DEFAULT_MASSP_ATLAS)):
+            download_MASSP_atlas(overwrite=False)
+            
+        intensity_atlas_hist = DEFAULT_MASSP_HIST
+        shape_atlas_probas = DEFAULT_MASSP_SPATIAL_PROBA
+        shape_atlas_labels = DEFAULT_MASSP_SPATIAL_LABEL
+        skeleton_atlas_probas = DEFAULT_MASSP_SKEL_PROBA
+        skeleton_atlas_labels = DEFAULT_MASSP_SKEL_LABEL
+        
+
     # load the shape and intensity atlases
-    print("load: "+str(os.path.join(output_dir,intensity_atlas_hist)))
-    hist = load_volume(os.path.join(output_dir,intensity_atlas_hist)).get_data()
+    print("load: "+str(intensity_atlas_hist))
+    hist = load_volume(intensity_atlas_hist).get_data()
     massp.setConditionalHistogram(nighresjava.JArray('float')(
                                         (hist.flatten('F')).astype(float)))
 
-    print("load: "+str(os.path.join(output_dir,shape_atlas_probas)))
+    print("load: "+str(shape_atlas_probas))
     
     # load a first image for dim, res
-    img = load_volume(os.path.join(output_dir,shape_atlas_probas))
+    img = load_volume(shape_atlas_probas)
     pdata = img.get_data()
     header = img.get_header()
     affine = img.get_affine()
@@ -158,8 +171,8 @@ def massp(target_images, structures, contrasts,
     massp.setAtlasDimensions(dimensions[0], dimensions[1], dimensions[2])
     massp.setAtlasResolutions(resolution[0], resolution[1], resolution[2])
 
-    print("load: "+str(os.path.join(output_dir,shape_atlas_labels)))
-    ldata = load_volume(os.path.join(output_dir,shape_atlas_labels)).get_data()
+    print("load: "+str(shape_atlas_labels))
+    ldata = load_volume(shape_atlas_labels).get_data()
     
     if map_to_target is not None:
         print("map atlas to subject")
@@ -173,11 +186,11 @@ def massp(target_images, structures, contrasts,
                                 nighresjava.JArray('int')(
                                 (ldata.flatten('F')).astype(int).tolist()))
 
-    print("load: "+str(os.path.join(output_dir,skeleton_atlas_probas)))
-    pdata = load_volume(os.path.join(output_dir,skeleton_atlas_probas)).get_data()
+    print("load: "+str(skeleton_atlas_probas))
+    pdata = load_volume(skeleton_atlas_probas).get_data()
     
-    print("load: "+str(os.path.join(output_dir,skeleton_atlas_labels)))
-    ldata = load_volume(os.path.join(output_dir,skeleton_atlas_labels)).get_data()
+    print("load: "+str(skeleton_atlas_labels))
+    ldata = load_volume(skeleton_atlas_labels).get_data()
 
     massp.setSkeletonAtlasProbasAndLabels(nighresjava.JArray('float')(
                                 (pdata.flatten('F')).astype(float)),
