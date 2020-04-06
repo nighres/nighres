@@ -193,6 +193,7 @@ def _check_atlas_file(atlas_file):
 
     return atlas_file
 
+
 def _check_available_memory():
 
     init_memory = str(int(round(0.25*psutil.virtual_memory()[1])))
