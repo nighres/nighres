@@ -5,7 +5,7 @@ import sys
 import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
-                    _check_topology_lut_dir, _check_available_memory,
+                    _check_topology_lut_dir, _check_available_memory
 from nighres.global_settings import DEFAULT_MASSP_ATLAS, DEFAULT_MASSP_HIST, \
                     DEFAULT_MASSP_SPATIAL_PROBA, DEFAULT_MASSP_SPATIAL_LABEL, \
                     DEFAULT_MASSP_SKEL_PROBA, DEFAULT_MASSP_SKEL_LABEL
@@ -292,7 +292,7 @@ def massp_atlasing(subjects, structures, contrasts,
     Original Java module by Pierre-Louis Bazin.
     """
 
-    print('\nConditional Shape Atlasing')
+    print('\nMASSP Atlasing')
 
     # make sure that saving related parameters are correct
     if save_data:
