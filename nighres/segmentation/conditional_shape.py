@@ -147,7 +147,7 @@ def conditional_shape(target_images, structures, contrasts,
     cspmax = nighresjava.ConditionalShapeSegmentation()
 
     # set parameters
-    cspmax.setNumberOfSubjectsObjectsAndContrasts(1,structures,contrasts)
+    cspmax.setNumberOfSubjectsObjectsBgAndContrasts(1,structures,3,contrasts)
     cspmax.setOptions(True, False, False, False, True)
     cspmax.setDiffusionParameters(max_iterations, max_difference)
     
@@ -446,7 +446,7 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
     cspmax = nighresjava.ConditionalShapeSegmentation()
 
     # set parameters
-    cspmax.setNumberOfSubjectsObjectsAndContrasts(subjects,structures,contrasts)
+    cspmax.setNumberOfSubjectsObjectsBgAndContrasts(subjects,structures,3,contrasts)
     cspmax.setOptions(True, False, False, False, True)
      
     # load target image for parameters
@@ -701,7 +701,7 @@ def conditional_shape_updating(subjects, structures, contrasts,
     cspmax = nighresjava.ConditionalShapeSegmentation()
 
     # set parameters
-    cspmax.setNumberOfSubjectsObjectsAndContrasts(subjects,structures,contrasts)
+    cspmax.setNumberOfSubjectsObjectsBgAndContrasts(subjects,structures,3,contrasts)
     cspmax.setOptions(True, False, False, False, True)
      
     # load target image for parameters
