@@ -278,11 +278,11 @@ def conditional_shape(target_images, structures, contrasts,
 #    combined_label_data = np.reshape(np.array(cspmax.getBestProbabilityLabels(1),
 #                                    dtype=np.int32), dims3Dtrg, 'F')
 
-    combined_proba_data = np.reshape(np.array(cspmax.getJointProbabilityMaps(1),
-                                   dtype=np.float32), dims3Dtrg, 'F')
+    combined_proba_data = np.reshape(np.array(cspmax.getJointProbabilityMaps(4),
+                                   dtype=np.float32), dims_extra, 'F')
 
-    combined_label_data = np.reshape(np.array(cspmax.getJointProbabilityLabels(1),
-                                    dtype=np.int32), dims3Dtrg, 'F')
+    combined_label_data = np.reshape(np.array(cspmax.getJointProbabilityLabels(4),
+                                    dtype=np.int32), dims_extra, 'F')
 
     proba_data = np.reshape(np.array(cspmax.getFinalProba(),
                                     dtype=np.float32), dims3Dtrg, 'F')
