@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def conditional_shape(target_images, structures, contrasts,
+def conditional_shape(target_images, structures, contrasts, background=3,
                       shape_atlas_probas=None, shape_atlas_labels=None, 
                       intensity_atlas_hist=None,
                       skeleton_atlas_probas=None, skeleton_atlas_labels=None, 
@@ -28,6 +28,8 @@ def conditional_shape(target_images, structures, contrasts,
         Number of structures to parcellate
     contrasts: int
        Number of image intensity contrasts
+    background: int
+       Number of background tissue classes (default is 3)
     shape_atlas_probas: niimg
         Pre-computed shape atlas from the shape levelsets (replacing them)
     shape_atlas_labels: niimg
@@ -147,7 +149,7 @@ def conditional_shape(target_images, structures, contrasts,
     cspmax = nighresjava.ConditionalShapeSegmentation()
 
     # set parameters
-    cspmax.setNumberOfSubjectsObjectsBgAndContrasts(1,structures,3,contrasts)
+    cspmax.setNumberOfSubjectsObjectsBgAndContrasts(1,structures,background,contrasts)
     cspmax.setOptions(True, False, False, False, True)
     cspmax.setDiffusionParameters(max_iterations, max_difference)
     
@@ -262,9 +264,9 @@ def conditional_shape(target_images, structures, contrasts,
     dims_ngb = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2],ngb_size)
     dims_extra = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2],4)
 
-    intens_dims = (structures+1,structures+1,contrasts)
+    intens_dims = (structures+background,structures+background,contrasts)
 
-    intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+4,contrasts)
+    intens_hist_dims = ((structures+background)*(structures+background),cspmax.getNumberOfBins()+6,contrasts)
 
     spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(1),
                                    dtype=np.float32), dims3Dtrg, 'F')
@@ -339,7 +341,7 @@ def conditional_shape(target_images, structures, contrasts,
 
 def conditional_shape_atlasing(subjects, structures, contrasts, 
                       levelset_images=None, skeleton_images=None, 
-                      contrast_images=None, 
+                      contrast_images=None, background=3,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Conditioanl Shape Parcellation Atlasing
@@ -360,6 +362,8 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
         Atlas shape skeletons indexed by (subjects,structures)
     contrast_images: [niimg]
         Atlas images to use in the parcellation, indexed by (subjects, contrasts)
+    background: int
+        Number of separate tissue classes for the background (default is 3)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -446,7 +450,7 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
     cspmax = nighresjava.ConditionalShapeSegmentation()
 
     # set parameters
-    cspmax.setNumberOfSubjectsObjectsBgAndContrasts(subjects,structures,3,contrasts)
+    cspmax.setNumberOfSubjectsObjectsBgAndContrasts(subjects,structures,background,contrasts)
     cspmax.setOptions(True, False, False, False, True)
      
     # load target image for parameters
@@ -519,8 +523,8 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
     dimskel = (dimensions[0],dimensions[1],dimensions[2],int(cspmax.getBestDimension()/4))
     dims3Dtrg = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2])
 
-    intens_dims = (structures+1,structures+1,contrasts)
-    intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+6,contrasts)
+    intens_dims = (structures+background,structures+background,contrasts)
+    intens_hist_dims = ((structures+background)*(structures+background),cspmax.getNumberOfBins()+6,contrasts)
 
     spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(dimensions[3]),
                                    dtype=np.float32), dimensions, 'F')
