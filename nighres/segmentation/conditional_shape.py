@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def conditional_shape(target_images, structures, contrasts, background=3,
+def conditional_shape(target_images, structures, contrasts, background=1,
                       shape_atlas_probas=None, shape_atlas_labels=None, 
                       intensity_atlas_hist=None,
                       skeleton_atlas_probas=None, skeleton_atlas_labels=None, 
@@ -29,7 +29,7 @@ def conditional_shape(target_images, structures, contrasts, background=3,
     contrasts: int
        Number of image intensity contrasts
     background: int
-       Number of background tissue classes (default is 3)
+       Number of background tissue classes (default is 1)
     shape_atlas_probas: niimg
         Pre-computed shape atlas from the shape levelsets (replacing them)
     shape_atlas_labels: niimg
@@ -341,7 +341,7 @@ def conditional_shape(target_images, structures, contrasts, background=3,
 
 def conditional_shape_atlasing(subjects, structures, contrasts, 
                       levelset_images=None, skeleton_images=None, 
-                      contrast_images=None, background=3,
+                      contrast_images=None, background=1,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Conditioanl Shape Parcellation Atlasing
@@ -363,7 +363,7 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
     contrast_images: [niimg]
         Atlas images to use in the parcellation, indexed by (subjects, contrasts)
     background: int
-        Number of separate tissue classes for the background (default is 3)
+        Number of separate tissue classes for the background (default is 1)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
