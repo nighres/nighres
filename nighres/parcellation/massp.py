@@ -111,7 +111,7 @@ def massp(target_images, structures, contrasts,
     massp = nighresjava.ConditionalShapeSegmentation()
 
     # set parameters
-    massp.setNumberOfSubjectsObjectsAndContrasts(1,structures,contrasts)
+    massp.setNumberOfSubjectsObjectsBgAndContrasts(1,structures,1,contrasts)
     massp.setOptions(True, False, False, False, True)
     massp.setDiffusionParameters(max_iterations, max_difference)
     
@@ -351,7 +351,7 @@ def massp_atlasing(subjects, structures, contrasts,
     massp = nighresjava.ConditionalShapeSegmentation()
 
     # set parameters
-    massp.setNumberOfSubjectsObjectsAndContrasts(subjects,structures,contrasts)
+    massp.setNumberOfSubjectsObjectsBgAndContrasts(subjects,structures,1,contrasts)
     massp.setOptions(True, False, False, False, True)
      
     # load target image for parameters
