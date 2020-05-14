@@ -1,6 +1,7 @@
 import os
 from urllib.request import urlretrieve
 from nighres.global_settings import DEFAULT_ATLAS
+from nighres.global_settings import ATLAS_DIR
 
 def download_7T_TRT(data_dir, overwrite=False, subject_id='sub001_sess1'):
     """
@@ -115,7 +116,7 @@ def download_DTI_2mm(data_dir, overwrite=False):
             'mask': file_targets[1]} 
            
            
-def download_DOTS_atlas(data_dir, overwrite=False):
+def download_DOTS_atlas(data_dir=None, overwrite=False):
     """
     Downloads the statistical atlas presented in [1]_
 
@@ -142,6 +143,9 @@ def download_DOTS_atlas(data_dir, overwrite=False):
            DOI: 10.1016/j.neuroimage.2011.06.020
     """
 
+    if (data_dir is None):
+        data_dir = ATLAS_DIR
+        
     data_dir = os.path.join(data_dir, 'DOTS_atlas')
     
     if not os.path.isdir(data_dir):
@@ -197,7 +201,7 @@ def download_MASSP_atlas(data_dir=None, overwrite=False):
     """
 
     if (data_dir is None):
-        data_dir = DEFAULT_ATLAS
+        data_dir = ATLAS_DIR
         
     data_dir = os.path.join(data_dir, 'massp-prior')
     
@@ -206,14 +210,15 @@ def download_MASSP_atlas(data_dir=None, overwrite=False):
 
     figshare = 'https://uvaauas.figshare.com/ndownloader/files/'
     
-    file_sources = ['22200465','22200468','22200471','22200474','22200477']
+    file_sources = [figshare + x for x in 
+                    ['22627481','22627484','22627475','22627478','22627472']]
 
     file_targets = [os.path.join(data_dir, filename) for filename in
-                    ['massp_19structures_spatial_label.nii.gz',
-                     'massp_19structures_skeleton_proba.nii.gz',
-                     'massp_19structures_spatial_proba.nii.gz',
-                     'massp_19structures_skeleton_label.nii.gz',
-                     'massp_19structures_mp2rageme_histograms.nii.gz']]
+                    ['massp_17structures_spatial_label.nii.gz',
+                     'massp_17structures_spatial_proba.nii.gz',
+                     'massp_17structures_skeleton_label.nii.gz',
+                     'massp_17structures_skeleton_proba.nii.gz',
+                     'massp_17structures_r1r2sqsm_histograms.nii.gz']]
 
     for source, target in zip(file_sources, file_targets):
 
@@ -225,8 +230,121 @@ def download_MASSP_atlas(data_dir=None, overwrite=False):
             urlretrieve(source, target)
 
     return {'spatial_labels': file_targets[0],
-            'spatial_probas': file_targets[2],
-            'skeleton_labels': file_targets[3],
-            'skeleton_probas': file_targets[1],
+            'spatial_probas': file_targets[1],
+            'skeleton_labels': file_targets[2],
+            'skeleton_probas': file_targets[3],
             'histograms': file_targets[4]} 
+           
+def download_MP2RAGEME_sample(data_dir, overwrite=False):
+    """
+    Downloads an example data set from a MP2RAGEME acquisition _[1].
+
+    Parameters
+    ----------
+    data_dir: str
+        Writeable directory in which downloaded atlas files should be stored.
+    overwrite: bool
+        Overwrite existing files in the same exact path (default is False)
+        
+    Returns
+    ----------
+    dict
+        Dictionary with keys pointing to the location of the downloaded files
+
+        * qr1 : path to quantitative R1 map image
+        * qr2s : path to quantitative R2* map image
+        * qsm : path to QSM image
+
+    References
+    ----------
+    .. [1] Caan et al (2018). MP2RAGEME: T1, T2*, and QSM mapping in one 
+    sequence at 7 tesla. doi:10.1002/hbm.24490
+    """
+
+    data_dir = os.path.join(data_dir, 'mp2rageme')
+    if not os.path.isdir(data_dir):
+        os.makedirs(data_dir)
+
+    figshare = 'https://uvaauas.figshare.com/ndownloader/files/'
+    
+    file_sources = [figshare + x for x in 
+                    ['22678334','22678337','22628750']]
+
+    file_targets = [os.path.join(data_dir, filename) for filename in
+                    ['sample-subject_mp2rageme-qr1_brain.nii.gz',
+                     'sample-subject_mp2rageme-qr2s_brain.nii.gz',
+                     'sample-subject_mp2rageme-qsm_brain.nii.gz']]
+
+    for source, target in zip(file_sources, file_targets):
+
+        if os.path.isfile(target) and overwrite is False:
+            print("\nThe file {0} exists and overwrite was set to False "
+                  "-- not downloading.".format(target))
+        else:
+            print("\nDownloading to {0}".format(target))
+            urlretrieve(source, target)
+
+    return {'qr1': file_targets[0],
+            'qr2s': file_targets[1],
+            'qsm': file_targets[2]} 
+           
+def download_AHEAD_template(data_dir=None, overwrite=False):
+    """
+    Downloads the AHEAD group template _[1].
+
+    Parameters
+    ----------
+    data_dir: str
+        Writeable directory in which downloaded atlas files should be stored. A
+        subdirectory called 'ahead-template' will be created in this location
+        (default is ATLAS_DIR)
+    overwrite: bool
+        Overwrite existing files in the same exact path (default is False)
+        
+    Returns
+    ----------
+    dict
+        Dictionary with keys pointing to the location of the downloaded files
+
+        * qr1 : path to quantitative R1 map image
+        * qr2s : path to quantitative R2* map image
+        * qsm : path to QSM image
+
+    References
+    ----------
+    .. [1] Alkemade et al (under review). The Amsterdam Ultra-high field adult 
+       lifespan database (AHEAD): A freely available multimodal 7 Tesla 
+       submillimeter magnetic resonance imaging database.
+    """
+
+    if (data_dir is None):
+        data_dir = ATLAS_DIR
+        
+    data_dir = os.path.join(data_dir, 'ahead-template')
+    
+    if not os.path.isdir(data_dir):
+        os.makedirs(data_dir)
+
+    figshare = 'https://uvaauas.figshare.com/ndownloader/files/'
+    
+    file_sources = [figshare + x for x in 
+                    ['22679537','22679543','22679546']]
+
+    file_targets = [os.path.join(data_dir, filename) for filename in
+                    ['ahead_med_qr1.nii.gz',
+                     'ahead_med_qr2s.nii.gz',
+                     'ahead_med_qsm.nii.gz']]
+
+    for source, target in zip(file_sources, file_targets):
+
+        if os.path.isfile(target) and overwrite is False:
+            print("\nThe file {0} exists and overwrite was set to False "
+                  "-- not downloading.".format(target))
+        else:
+            print("\nDownloading to {0}".format(target))
+            urlretrieve(source, target)
+
+    return {'qr1': file_targets[0],
+            'qr2s': file_targets[1],
+            'qsm': file_targets[2]} 
            

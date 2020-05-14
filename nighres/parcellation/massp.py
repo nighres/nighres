@@ -11,8 +11,18 @@ from nighres.global_settings import DEFAULT_MASSP_ATLAS, DEFAULT_MASSP_HIST, \
                     DEFAULT_MASSP_SKEL_PROBA, DEFAULT_MASSP_SKEL_LABEL
 from nighres.data.download_data import download_MASSP_atlas
 
+# labels for the 17 structures anatomical parcellation atlas
+labels_17structures = ['Str-l','Str-r','STN-l','STN-r','SN-l','SN-r',\
+                       'RN-l','RN-r','GPi-l','GPi-r','GPe-l','GPe-r',\
+                       'Tha-l','Tha-r','LV-l','LV-r','3V','4V','Amg-l','Amg-r',\
+                       'ic-l','ic-r','VTA-l','VTA-r','fx','PAG-l','PAG-r',\
+                       'PPN-l','PPN-r','Cl-l','Cl-r']
 
-def massp(target_images, structures, contrasts,
+def massp_17structures_label(name):
+    return labels_17structures.index(name)
+ 
+ 
+def massp(target_images, structures=31,
                       shape_atlas_probas=None, shape_atlas_labels=None, 
                       intensity_atlas_hist=None,
                       skeleton_atlas_probas=None, skeleton_atlas_labels=None, 
@@ -30,8 +40,6 @@ def massp(target_images, structures, contrasts,
         Input images to perform the parcellation from
     structures: int
         Number of structures to parcellate
-    contrasts: int
-       Number of image intensity contrasts
     shape_atlas_probas: niimg (opt)
         Pre-computed shape atlas probabilities (default is loaded from nighres atlas)
     shape_atlas_labels: niimg (opt)
@@ -100,6 +108,7 @@ def massp(target_images, structures, contrasts,
                       'max_label': label_file}
             return output
 
+    contrasts = len(target_images)
 
     # start virtual machine, if not already running
     try:

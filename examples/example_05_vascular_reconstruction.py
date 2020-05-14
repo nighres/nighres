@@ -4,7 +4,7 @@
 Vascular Reconstruction
 ========================
 
-This example shows how to perform multi-atlas segmentation based on MP2RAGE
+This example shows how to perform vascular reconstruction based on MP2RAGE
 data by performing the following steps:
 
 1. Downloading three open MP2RAGE datasets using
