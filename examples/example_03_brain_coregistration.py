@@ -117,7 +117,7 @@ syn_results = nighres.registration.embedded_antsreg(
                         cost_function='MutualInformation',
                         interpolation='NearestNeighbor',
                         save_data=True, file_name="sub001_sess1",
-                        output_dir=out_dir, overwrite=True)
+                        output_dir=out_dir, overwrite=False)
 
 ############################################################################
 # Now we look at the coregistered image that SyN created
