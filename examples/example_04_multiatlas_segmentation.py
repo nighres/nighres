@@ -244,7 +244,7 @@ final_seg = nighres.shape.levelset_fusion(levelset_images=[levelset1['result'],
                         levelset2['result']],
                         correct_topology=True,
                         save_data=True, file_name="sub003_sess1_struct_seg",
-                        output_dir=out_dir, overwrite=True)
+                        output_dir=out_dir)
 
 ############################################################################
 # Now we look at the final segmentation from shape fusion
