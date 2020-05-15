@@ -88,9 +88,9 @@ ants = nighres.registration.embedded_antsreg_multi(
 # .
 
 if not skip_plots:
-    plotting.plot_img(ants['transformed_source'],
+    plotting.plot_anat(ants['transformed_source'],cut_coords=[0.0,0.0,0.0],
                       annotate=False,  draw_cross=False)
-    plotting.plot_img(template['qr1'],
+    plotting.plot_anat(template['qr1'],cut_coords=[0.0,0.0,0.0],
                       annotate=False,  draw_cross=False)
 ############################################################################
 
@@ -111,9 +111,9 @@ massp = nighres.parcellation.massp(target_images=[dataset['qr1'],dataset['qr2s']
 if not skip_plots:
     plotting.plot_roi(massp['max_label'], dataset['qr1'],
                       annotate=False, black_bg=False, draw_cross=False,
-                      cmap='autumn')
+                      cmap='cubehelix')
     plotting.plot_img(massp['max_proba'],
-                      vmin=0, vmax=1, cmap='cubehelix',  colorbar=True,
+                      vmin=0, vmax=1, cmap='gray',  colorbar=True,
                       annotate=False,  draw_cross=False)
 
 ############################################################################
