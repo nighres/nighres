@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def flash_t2s_fitting(image_list, te_list,
+def flash_t2s_fitting(image_list, te_list, r2s_threshold=None,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ FLASH T2* fitting
@@ -21,6 +21,9 @@ def flash_t2s_fitting(image_list, te_list,
         List of input images to fit the T2* curve
     te_list: [float]
         List of input echo times (TE)
+    r2s_threshold: float
+        Threshold of R2* values to reduce the echoes used in fitting
+        (optional, default is None)
     save_data: bool, optional
         Save output data to file (default is False)
     overwrite: bool, optional
@@ -95,6 +98,8 @@ def flash_t2s_fitting(image_list, te_list,
 
     # set algorithm parameters
     qt2fit.setNumberOfEchoes(len(image_list))
+    if (r2s_threshold is not None):
+        qt2fit.setMaxR2s(r2s_threshold)
 
     # load first image and use it to set dimensions and resolution
     img = load_volume(image_list[0])
@@ -121,7 +126,13 @@ def flash_t2s_fitting(image_list, te_list,
 
     # execute the algorithm
     try:
-        qt2fit.execute()
+        if (r2s_threshold is not None):
+            if (r2s_threshold==0):
+                qt2fit.minEchoEstimation()
+            else:
+                qt2fit.variableEchoEstimation()
+        else:
+            qt2fit.execute()
 
     except:
         # if the Java module fails, reraise the error it throws

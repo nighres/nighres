@@ -54,10 +54,6 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
 
     print('\nFilter stacking')
 
-    # Check data file parameters
-    if not save_data and return_filename:
-        raise ValueError('save_data must be True if return_filename is True ')
-
     # check if there's inputs
     if (dura_img is None and pvcsf_img is None and arteries_img is None):
         raise ValueError('You must specify at least one of '

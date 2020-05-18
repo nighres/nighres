@@ -64,10 +64,6 @@ def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
 
     print('\nMP2RAGE Dura Estimation')
 
-    # Check data file parameters
-    if not save_data and return_filename:
-        raise ValueError('save_data must be True if return_filename is True ')
-
     # make sure that saving related parameters are correct
     if save_data:
         output_dir = _output_dir_4saving(output_dir, second_inversion)

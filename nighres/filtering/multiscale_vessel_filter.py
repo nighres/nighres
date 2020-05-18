@@ -97,6 +97,8 @@ def multiscale_vessel_filter(input_image,
     Original Java module by Pierre-Louis Bazin and Julia Huck.
     """
 
+    print('\n Multiscale Vessel Filter')
+
     if save_data:
         output_dir = _output_dir_4saving(output_dir, input_image)
 

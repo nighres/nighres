@@ -10,7 +10,8 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def intensity_based_skullstripping(main_image, extra_image=None,
                             noise_model='exponential', skip_zero_values=True,
-                            iterate=False, dilate_mask=0, topology_lut_dir=None,
+                            iterate=False, dilate_mask=0, dynamic_range=0.8,
+                            topology_lut_dir=None,
                             save_data=False, overwrite=False, output_dir=None,
                             file_name=None):
     """ Intensity-based skull stripping
@@ -36,6 +37,9 @@ def intensity_based_skullstripping(main_image, extra_image=None,
     dilate_mask: int
          Additional dilation (or erosion, if negative) of the brain mask 
          (default is 0)
+    dynamic_range: float
+         Dynamic range for the foreground / background differences in [0,1]
+         (default is 0.8)
     topology_lut_dir: str, optional
         Path to directory in which topology files are stored (default is stored
         in TOPOLOGY_LUT_DIR)
@@ -152,6 +156,7 @@ def intensity_based_skullstripping(main_image, extra_image=None,
     algo.setSkipZeroValues(skip_zero_values)
     algo.setAdditionalMaskDilation(dilate_mask)
     algo.setTopologyLUTdirectory(topology_lut_dir)
+    algo.setDynamicRange(dynamic_range)
 
     # execute skull stripping
     try:

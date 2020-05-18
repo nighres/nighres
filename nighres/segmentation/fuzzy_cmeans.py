@@ -9,7 +9,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 
 def fuzzy_cmeans(image, clusters=3, max_iterations=50, max_difference=0.01, 
-                    smoothing=0.1, fuzziness=2.0,
+                    smoothing=0.1, fuzziness=2.0, mask_zero=True,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
     """ Fuzzy C-means image segmentation
@@ -31,6 +31,8 @@ def fuzzy_cmeans(image, clusters=3, max_iterations=50, max_difference=0.01,
         Ratio of spatial smoothness to impose on the clusters (default is 0.1)
     fuzziness: float
         Scaling of the C-means measure, in [1.0 - 3.0] (default is 2.0)
+    mask_zero: bool
+        Whether to ignore zero values (default is true)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -112,8 +114,11 @@ def fuzzy_cmeans(image, clusters=3, max_iterations=50, max_difference=0.01,
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 
-    rfcm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
-    rfcm.setResolutions(resolution[0], resolution[1], resolution[2])
+    if len(dimensions)>2: rfcm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+    else: rfcm.setDimensions(dimensions[0], dimensions[1], 1)
+    
+    if len(resolution)>2: rfcm.setResolutions(resolution[0], resolution[1], resolution[2])
+    else: rfcm.setResolutions(resolution[0], resolution[1], resolution[1])
 
     # image
     rfcm.setImage(nighresjava.JArray('float')(
@@ -121,7 +126,8 @@ def fuzzy_cmeans(image, clusters=3, max_iterations=50, max_difference=0.01,
     
     # execute
     try:
-        rfcm.initZeroMaskImage()
+        if mask_zero: rfcm.initZeroMaskImage()
+        else: rfcm.initBasicMaskImage()
         rfcm.execute()
 
     except:
