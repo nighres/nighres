@@ -31,7 +31,7 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
     inversion_TR: float
         Inversion repetition time, in seconds
     excitation_TR: [float]
-        List of {first,second} repetition times,in seconds
+        List of {first,second} repetition times, in seconds
     N_excitations: int
         Number of excitations
     efficiency: float
@@ -59,9 +59,9 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * t1 (niimg): Map of estimated T1 times (_qt1map-t1)
-        * r1 (niimg): Map of estimated R1 relaxation rate (_qt1map-r1)
-        * uni (niimg): Estimated PD weighted image at TE=0 (_qt1map-uni)
+        * t1 (niimg): Map of estimated T1 times in seconds (_qt1map-t1)
+        * r1 (niimg): Map of estimated R1 relaxation rate in hertz (_qt1map-r1)
+        * uni (niimg): Estimated T1 weighted image at TE=0 (_qt1map-uni)
         
     Notes
     ----------
@@ -250,8 +250,8 @@ def mp2rage_t1_from_uni(uniform_image,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * t1 (niimg): Map of estimated T1 times (_qt1map-t1)
-        * r1 (niimg): Map of estimated R1 relaxation rate (_qt1map-r1)
+        * t1 (niimg): Map of estimated T1 times in seconds (_qt1map-t1)
+        * r1 (niimg): Map of estimated R1 relaxation rate in hertz (_qt1map-r1)
         
     Notes
     ----------
