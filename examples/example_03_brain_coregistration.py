@@ -95,18 +95,9 @@ if not skip_plots:
 
 #############################################################################
 # SyN co-registration
-# ---------------------
+# --------------------
 # Next, we use the masked data as input for co-registration. The T1 maps are
 # used here as they are supposed to be more similar
-#syn_results = nighres.registration.embedded_syn(
-#                        source_image=skullstripping_results1['t1map_masked'],
-#                        target_image=skullstripping_results2['t1map_masked'],
-#                        coarse_iterations=0,
-#                        medium_iterations=0, fine_iterations=0,
-#                        run_rigid_first=True, cost_function='MutualInformation',
-#                        interpolation='NearestNeighbor',
-#                        save_data=True, file_name="sub001_sess1",
-#                        output_dir=out_dir, overwrite=True)
 
 syn_results = nighres.registration.embedded_antsreg(
                         source_image=skullstripping_results1['t1map_masked'],
