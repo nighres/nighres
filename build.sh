@@ -113,7 +113,7 @@ test -d imcn-imaging && (
 ) || (
 	git clone $imcntk_repo
 	cd imcn-imaging
-	git checkoutmaster
+	git checkout master
 	git pull
 	cd ..
 )
