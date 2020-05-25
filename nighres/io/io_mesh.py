@@ -34,7 +34,7 @@ def load_mesh(surf_mesh):
        depth-resolved analysis of high-resolution brain imaging data in
        Python. DOI: 10.3897/rio.3.e12346
     '''
-    
+
     if surf_mesh.endswith('vtk'):
         points, faces, data = _read_vtk(surf_mesh)
         return {'points': points, 'faces': faces, 'data': data}
@@ -43,15 +43,15 @@ def load_mesh(surf_mesh):
         points, faces, data = _read_gifti(surf_mesh)
         return {'points': points, 'faces': faces, 'data': data}
 
-    else:    
+    else:
         geom = load_mesh_geometry(surf_mesh)
         return geom
-        
+
 
 def save_mesh(filename, surf_dict):
     '''
     Saves surface mesh to file
-    
+
     Parameters
     ----------
     filename: str
@@ -64,13 +64,13 @@ def save_mesh(filename, surf_dict):
         Surface mesh geometry to be saved. Dictionary with a numpy array with
         key "points" for a Numpy array of the x-y-z coordinates of the mesh
         vertices and key "faces" for a Numpy array of the the indices
-        (into points) of the mesh faces. Optional "data" key is a Numpy array 
+        (into points) of the mesh faces. Optional "data" key is a Numpy array
         of values sampled on the "points"
-    
+
     Notes
     ----------
     Originally created as part of Laminar Python [1]_
-    
+
     References
     -----------
     .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
@@ -83,9 +83,9 @@ def save_mesh(filename, surf_dict):
     elif filename.endswith('gii'):
         _write_gifti(filename, surf_dict['points'], surf_dict['faces'],
                            surf_dict['data'])
-    else:    
+    else:
         save_mesh_geometry(filename, surf_dict)
-    
+
 
 def load_mesh_geometry(surf_mesh):
     '''
@@ -306,7 +306,7 @@ def _read_gifti(file):
                 nb.nifti1.intent_codes['NIFTI_INTENT_POINTSET'])[0].data
     faces = nb.gifti.read(file).get_arrays_from_intent(
                 nb.nifti1.intent_codes['NIFTI_INTENT_TRIANGLE'])[0].data
-    
+
     narrays = len(nb.gifti.read(file).darrays)-2
     if narrays>0:
         data = np.zeros([points.shape[0], narrays])
@@ -348,7 +348,7 @@ def _read_vtk(file):
     start_vertices = (vtk_df[vtk_df[0].str.contains(
                                             'POINTS')].index.tolist()[0]) + 1
     vertex_df = pd.read_csv(file, skiprows=range(start_vertices),
-                            nrows=number_vertices, sep='\s*',
+                            nrows=number_vertices, delim_whitespace=True,
                             header=None, engine='python')
     if np.array(vertex_df).shape[1] == 3:
         vertex_array = np.array(vertex_df)
@@ -357,7 +357,8 @@ def _read_vtk(file):
     elif np.array(vertex_df).shape[1] == 9:
         vertex_df = pd.read_csv(file, skiprows=range(start_vertices),
                                 nrows=int(number_vertices / 3) + 1,
-                                sep='\s*', header=None, engine='python')
+                                delim_whitespace=True, header=None,
+                                engine='python')
         vertex_array = np.array(vertex_df.iloc[0:1, 0:3])
         vertex_array = np.append(vertex_array, vertex_df.iloc[0:1, 3:6],
                                  axis=0)
@@ -376,8 +377,8 @@ def _read_vtk(file):
     start_faces = (vtk_df[vtk_df[0].str.contains(
                                             'POLYGONS')].index.tolist()[0]) + 1
     face_df = pd.read_csv(file, skiprows=range(start_faces),
-                          nrows=number_faces, sep='\s*', header=None,
-                          engine='python')
+                          nrows=number_faces, delim_whitespace=True,
+                          header=None, engine='python')
     face_array = np.array(face_df.iloc[:, 1:4])
     # read data into df and array if exists
     if vtk_df[vtk_df[0].str.contains('POINT_DATA')].index.tolist() != []:
@@ -385,8 +386,8 @@ def _read_vtk(file):
                                         'POINT_DATA')].index.tolist()[0]) + 3
         number_data = number_vertices
         data_df = pd.read_csv(file, skiprows=range(start_data),
-                              nrows=number_data, sep='\s+', header=None,
-                              engine='python')
+                              nrows=number_data, delim_whitespace=True,
+                              header=None, engine='python')
         data_array = np.array(data_df)
     else:
         data_array = None
@@ -482,7 +483,7 @@ def _write_gifti(surf_mesh, points, faces, data=None):
         gii = nb.gifti.GiftiImage(darrays=[coord_array, face_array, data_array])
     else:
         gii = nb.gifti.GiftiImage(darrays=[coord_array, face_array])
-        
+
     nb.gifti.write(gii, surf_mesh)
 
 
