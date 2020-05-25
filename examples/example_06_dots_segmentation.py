@@ -9,7 +9,7 @@ Oriented Tract Segmentation (DOTS) algorithm [1]_:
     :func:`nighres.data.download_DOTS_atlas`
 2. Downloading an example DTI data set using
     :func:`nighres.data.download_DTI_2mm`
-3. Segmenting white matter in DTI images into major tracts using 
+3. Segmenting white matter in DTI images into major tracts using
     :func:`nighres.brain.dots_segmentation`
 4. Visualizing the results using matplotlib
 
@@ -18,11 +18,11 @@ Oriented Tract Segmentation (DOTS) algorithm [1]_:
 ############################################################################
 # Import and download
 # -------------------
-# First we import ``nighres`` and ``os`` to set the output directory. Make sure 
-# to run this file in a  directory you have write access to, or change the 
-# ``out_dir`` variable below. We can downloadthe  DOTS atlas priors and an 
-# example DTI dataset using the following command. The registration step of the 
-# DOTS function relies on ``dipy``, so make sure you have installed it 
+# First we import ``nighres`` and ``os`` to set the output directory. Make sure
+# to run this file in a  directory you have write access to, or change the
+# ``out_dir`` variable below. We can downloadthe  DOTS atlas priors and an
+# example DTI dataset using the following command. The registration step of the
+# DOTS function relies on ``dipy``, so make sure you have installed it
 # (https://nipy.org/dipy/).
 
 import os
@@ -50,7 +50,7 @@ except ImportError:
 # -------------------------
 # The DOTS segmentation can be run as follows. By default, the algorithm uses
 # the tract atlas consisting of 23 tracts specified in [2]_. This can be changed
-# to the full atlas by changing the value of the parameter 'wm_atlas' to 2. 
+# to the full atlas by changing the value of the parameter 'wm_atlas' to 2.
 # Please see documentation for details.
 
 dots_results = nighres.brain.dots_segmentation(tensor_image=dataset['dti'],
@@ -64,15 +64,15 @@ segmentation = nighres.io.load_volume(dots_results['segmentation']).get_data()
 posterior = nighres.io.load_volume(dots_results['posterior']).get_data()
 
 ############################################################################
-# .. tip:: The parameter values of the DOTS algorithm can have a significant 
+# .. tip:: The parameter values of the DOTS algorithm can have a significant
 #    effect on segmentation results. Experiment with changing their values to
 #    obtain optimal results.
 
 #############################################################################
 # Interpretation of results
 # -------------------------
-# The integers in the segmentation array and the fourth dimension of the 
-# posterior array correspond to the tracts specified in atlas_labels_1 (in 
+# The integers in the segmentation array and the fourth dimension of the
+# posterior array correspond to the tracts specified in atlas_labels_1 (in
 # case of using wm_atlas 1) which can be imported as follows
 
 from nighres.brain.dots_segmentation import atlas_labels_1
@@ -80,7 +80,7 @@ from nighres.brain.dots_segmentation import atlas_labels_1
 #############################################################################
 # Visualization of results
 # ------------------------
-# We can visualize the segmented tracts overlaid on top of a fractional 
+# We can visualize the segmented tracts overlaid on top of a fractional
 # anisotropy map. Let's first import the necessary modules and define a
 # colormap. Then, we calculate the FA map and show the tracts. Let's also
 # show the posterior probability distribution of an individual tract.
@@ -122,12 +122,12 @@ tenfit[:,:,:,2,0] = tensor_volume[:,:,:,4]
 tenfit[:,:,:,1,2] = tensor_volume[:,:,:,5]
 tenfit[:,:,:,2,1] = tensor_volume[:,:,:,5]
 tenfit[np.isnan(tenfit)] = 0
-evals, evecs = np.linalg.eig(tenfit)   
+evals, evecs = np.linalg.eig(tenfit)
 R = tenfit / np.trace(tenfit, axis1=3, axis2=4)[:,:,:,np.newaxis,np.newaxis]
 FA = np.sqrt(0.5 * (3 - 1/(np.trace(np.matmul(R,R), axis1=3, axis2=4))))
 FA[np.isnan(FA)] = 0
 # save for convenience
-nighres.io.save_volume(os.path.join(out_dir, 'FA.nii.gz'), 
+nighres.io.save_volume(os.path.join(out_dir, 'FA.nii.gz'),
     nb.Nifti1Image(FA,tensor_img.affine,tensor_img.header))
 
 # Show segmentation
@@ -147,6 +147,7 @@ plt.show()
 
 ############################################################################
 # .. image:: ../_static/dots_hard_segmentation.png
+
 #############################################################################
 
 # Show posterior probability of the left corticospinal tract
@@ -167,14 +168,15 @@ plt.show()
 
 ############################################################################
 # .. image:: ../_static/dots_posterior_probability.png
+
 #############################################################################
 
 #############################################################################
 # References
 # ----------
-# .. [1] Bazin, Pierre-Louis, et al. "Direct segmentation of the major white 
+# .. [1] Bazin, Pierre-Louis, et al. "Direct segmentation of the major white
 #    matter tracts in diffusion tensor images." Neuroimage (2011)
 #    doi: https://doi.org/10.1016/j.neuroimage.2011.06.020
-# .. [2] Bazin, Pierre-Louis, et al. "Efficient MRF segmentation of DTI white 
-#    matter tracts using an overlapping fiber model." Proceedings of the 
+# .. [2] Bazin, Pierre-Louis, et al. "Efficient MRF segmentation of DTI white
+#    matter tracts using an overlapping fiber model." Proceedings of the
 #    International Workshop on Diffusion Modelling and Fiber Cup (2009)
