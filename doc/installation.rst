@@ -15,7 +15,6 @@ To build Nighres you need:
 
 The following Python packages are automatically installed with Nighres
 * `numpy <http://www.numpy.org/>`_
-* `scipy <https://www.scipy.org/scipylib/index.html>`_
 * `nibabel <http://nipy.org/nibabel/>`_
 * `psutils <https://pypi.org/project/psutil/>`_
 
