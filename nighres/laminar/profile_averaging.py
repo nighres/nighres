@@ -38,8 +38,8 @@ def profile_averaging(profile_surface_image, intensity_image, roi_image,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * weights (niimg): weight image , representing the weighting of profiles
-        in the estimation (_lpa-weight)
+        * weights (niimg): weight image, representing the weighting of profiles
+          in the estimation (_lpa-weight)
         * best ([float]): the estimated best profile
         * median ([float]): the estimated median profile
         * iqr ([float]): the estimated IQR profile
@@ -76,7 +76,7 @@ def profile_averaging(profile_surface_image, intensity_image, roi_image,
             and os.path.isfile(median_file) and os.path.isfile(iqr_file) :
 
             print("skip computation (use existing results)")
-            output = {'weights': weight_file, 
+            output = {'weights': weight_file,
                       'best': numpy.loadtxt(sample_file),
                       'median': numpy.loadtxt(median_file),
                       'iqr': numpy.loadtxt(iqr_file)}
@@ -130,7 +130,7 @@ def profile_averaging(profile_surface_image, intensity_image, roi_image,
     weight_data = numpy.reshape(numpy.array(
                                 sampler.getProfileWeights(),
                                 dtype=numpy.float32), (dimensions[0],dimensions[1],dimensions[2]), 'F')
-    
+
     sample = numpy.array(sampler.getSampleProfile(), dtype=numpy.float32)
     median = numpy.array(sampler.getMedianProfile(), dtype=numpy.float32)
     iqr = numpy.array(sampler.getIqrProfile(), dtype=numpy.float32)

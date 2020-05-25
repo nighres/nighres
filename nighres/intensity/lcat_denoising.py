@@ -61,15 +61,15 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
 
     Notes
     ----------
-    Original Java module by Pierre-Louis Bazin. Algorithm inspired fromby[1]_
+    Original Java module by Pierre-Louis Bazin. Algorithm inspired by [1]_
     with a different approach to set the adaptive noise threshold and additional
     processing to handle the time series properties.
 
     References
     ----------
     .. [1] Manjon, Coupe, Concha, Buades, Collins, Robles (2013). Diffusion
-        Weighted Image Denoising Using Overcomplete Local PCA
-        doi:10.1371/journal.pone.0073021
+       Weighted Image Denoising Using Overcomplete Local PCA
+       doi:10.1371/journal.pone.0073021
     """
 
     print('\nLCaT denoising')

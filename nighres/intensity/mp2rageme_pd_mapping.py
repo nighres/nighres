@@ -8,17 +8,17 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def mp2rageme_pd_mapping(first_inversion, second_inversion, 
+def mp2rageme_pd_mapping(first_inversion, second_inversion,
                       t1map, r2smap, echo_times,
                       inversion_times, flip_angles, inversion_TR,
                       excitation_TR, N_excitations, efficiency=0.96,
-                      b1map=None, 
+                      b1map=None,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ MP2RAGEME PD mapping
 
     Estimate PD maps from MP2RAGEME data, combining T1 and R2* estimates
-    with the MPRAGE model of _[1].
+    with the MPRAGE model of [1]_ .
 
     Parameters
     ----------
@@ -49,7 +49,7 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     b1map: niimg
         Computed B1 map (optional)
     scale_phase: bool
-        Whether to rescale the phase image in [0,2PI] or to assume it is 
+        Whether to rescale the phase image in [0,2PI] or to assume it is
         already in radians
     save_data: bool
         Save output data to file (default is False)
@@ -68,15 +68,15 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
         (suffix of output files in brackets)
 
         * pd (niimg):  Map of estimated proton density ratio (_qpd-map)
-        
+
     Notes
     ----------
     Original Java module by Pierre-Louis Bazin.
-    
+
     References
     ----------
     .. [1] Marques, Kober, Krueger, van der Zwaag, Van de Moortele, Gruetter (2010)
-        MP2RAGE, a self bias-field corrected sequence for improved segmentation 
+        MP2RAGE, a self bias-field corrected sequence for improved segmentation
         and T1-mapping at high field. doi: 10.1016/j.neuroimage.2009.10.002.
     """
 
@@ -86,7 +86,7 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, first_inversion[0])
 
-        pd_file = os.path.join(output_dir, 
+        pd_file = os.path.join(output_dir,
                         _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=first_inversion[0],
                                    suffix='qpd-map'))
@@ -117,7 +117,7 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     qpdmap.setNumberExcitations(N_excitations)
     qpdmap.setInversionEfficiency(efficiency)
     qpdmap.setCorrectB1inhomogeneities(b1map!=None)
-     
+
     # load first image and use it to set dimensions and resolution
     img = load_volume(first_inversion[0])
     data = img.get_data()
@@ -133,32 +133,32 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     # input images
     qpdmap.setFirstInversionMagnitude(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
-    
+
     data = load_volume(first_inversion[1]).get_data()
     qpdmap.setFirstInversionPhase(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
-    
+
     data = load_volume(second_inversion[0]).get_data()
     qpdmap.setSecondInversionMagnitude(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
-    
+
     data = load_volume(second_inversion[1]).get_data()
     qpdmap.setSecondInversionPhase(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
- 
+
     data = load_volume(t1map).get_data()
     qpdmap.setT1mapImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
-    
+
     data = load_volume(r2smap).get_data()
     qpdmap.setR2smapImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
-    
+
     if (b1map!=None):
         data = load_volume(b1map).get_data()
         qpdmap.setB1mapImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
- 
+
     # execute the algorithm
     try:
         qpdmap.execute()
