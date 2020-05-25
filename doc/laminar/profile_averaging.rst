@@ -1,5 +1,5 @@
 profile\_averaging
-=================
+===================
 
 .. autofunction:: nighres.laminar.profile_averaging
 
