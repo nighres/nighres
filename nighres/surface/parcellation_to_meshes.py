@@ -1,7 +1,6 @@
 import os
 import sys
 import numpy
-import scipy.ndimage
 import nibabel
 import nighresjava
 from ..io import load_volume, save_volume, load_mesh, save_mesh

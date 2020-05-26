@@ -15,13 +15,13 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def levelset_thickness(input_image,
                     shape_image_type='signed_distance',
-                   save_data=False, 
-                   overwrite=False, 
+                   save_data=False,
+                   overwrite=False,
                    output_dir=None,
                    file_name=None):
 
     """ Levelset Thickness
-    
+
     Using a medial axis representation, derive a thickness map for a levelset surface
 
 
@@ -59,20 +59,20 @@ def levelset_thickness(input_image,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, input_image)
 
-        thickness_file = os.path.join(output_dir, 
+        thickness_file = os.path.join(output_dir,
                             _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
                                   suffix='lth-map'))
 
-        axis_file = os.path.join(output_dir, 
+        axis_file = os.path.join(output_dir,
                             _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='lth-ax'))    
+                                  suffix='lth-ax'))
 
-        dist_file = os.path.join(output_dir, 
+        dist_file = os.path.join(output_dir,
                             _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
-                                  suffix='lth-dist'))  
+                                  suffix='lth-dist'))
 
         if overwrite is False \
             and os.path.isfile(thickness_file) \
@@ -109,7 +109,7 @@ def levelset_thickness(input_image,
     algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
 
     data = load_volume(input_image).get_data()
-    if (shape_image_type is 'parcellation'):
+    if (shape_image_type == 'parcellation'):
         algorithm.setLabelImage(nighresjava.JArray('int')(
                                (data.flatten('F')).astype(int).tolist()))
     else:
@@ -159,10 +159,8 @@ def levelset_thickness(input_image,
         save_volume(dist_file, dist_img)
         save_volume(thickness_file, thickness_img)
 
-        return {'thickness': thickness_file, 
+        return {'thickness': thickness_file,
                 'axis': axis_file,
                 'dist': dist_file}
     else:
         return {'thickness': thickness_img, 'axis': axis_img, 'dist': dist_img}
-
-

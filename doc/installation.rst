@@ -14,7 +14,6 @@ To build Nighres you need:
 
 
 The following Python packages are automatically installed with Nighres
-
 * `numpy <http://www.numpy.org/>`_
 * `nibabel <http://nipy.org/nibabel/>`_
 * `psutils <https://pypi.org/project/psutil/>`_
@@ -70,12 +69,12 @@ Complete 1. and 2. to build Nighres as described above.
     mkdir -p /opt/quarantine/nighres/install/lib/python3.7/site-packages/
 
 4. Update your Python path environment variable and install to your custom directory::
-   
+
     export PYTHONPATH=/opt/quarantine/nighres/install/lib/python3.7/site-packages/:$PYTHONPATH
     python3 setup.py install --prefix /opt/quarantine/nighres/install/
-   
+
 5. Update PYTHONPATH for all users to point to Nighres::
-   
+
     PYTHONPATH=/opt/quarantine/nighres/install/lib/python3.7/site-packages/:$PYTHONPATH
 
 Testing the installation

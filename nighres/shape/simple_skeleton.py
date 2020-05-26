@@ -18,13 +18,13 @@ def simple_skeleton(input_image,
                    boundary_threshold = 0.0,
                    skeleton_threshold = 2.0,
                    topology_lut_dir = None,
-                   save_data=False, 
-                   overwrite=False, 
+                   save_data=False,
+                   overwrite=False,
                    output_dir=None,
                    file_name=None):
 
     """ Simple Skeleton
-    
+
     Create a skeleton for a levelset surface or a probability map (loosely adapted from Bouix et al., 2006)
 
 
@@ -56,7 +56,7 @@ def simple_skeleton(input_image,
 
         * medial (niimg): A 2D medial surface extracted from the shape (_ssk-med)
         * skeleton (niimg): The 1D skeleton extracted from the shape (_ssk-skel)
-        
+
     Notes
     ----------
     Original Java module by Pierre-Louis Bazin.
@@ -71,12 +71,12 @@ def simple_skeleton(input_image,
     if save_data:
         output_dir = _output_dir_4saving(output_dir, input_image)
 
-        MedialSurface_file = os.path.join(output_dir, 
+        MedialSurface_file = os.path.join(output_dir,
                                   _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
                                   suffix='ssk-med'))
 
-        Medial_Curve_file = os.path.join(output_dir, 
+        Medial_Curve_file = os.path.join(output_dir,
                                   _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
                                   suffix='ssk-skel'))
@@ -160,5 +160,3 @@ def simple_skeleton(input_image,
                 'skeleton': Medial_Curve_file}
     else:
         return {'medial': medialImage, 'skeleton': skelImage}
-
-

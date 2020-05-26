@@ -12,15 +12,14 @@ data by performing the following steps:
 2. Remove the skull and create a brain mask using
     :func:`nighres.brain.mp2rage_skullstripping`
 3. Atlas-guided tissue classification using MGDMfor first two subjects to
-    be used as an atlas using
-   :func:`nighres.brain.mgdm_segmentation` [1]_
-3. Co-register non-linearly the atlas brains the the third subject using
+    be used as an atlas using :func:`nighres.brain.mgdm_segmentation` [1]_
+4. Co-register non-linearly the atlas brains the the third subject using
     :func:`nighres.registration.embedded_syn` [2]_
-4. Deform segmentation labels using
+5. Deform segmentation labels using
     :func:`nighres.registration.apply_deformation`
-5. Turn individual labels into levelset surfaces using
+6. Turn individual labels into levelset surfaces using
     :func:`nighres.surface.probability_to_levelset`
-6. Build a final shape average using
+7. Build a final shape average using
     :func: `nighres.shape.levelset_fusion`
 
 Important note: this example is both computationally expensive (recomputing
@@ -164,7 +163,7 @@ ants_results1 = nighres.registration.embedded_antsreg(
                         medium_iterations=0, fine_iterations=0,
                         cost_function='MutualInformation',
                         interpolation='NearestNeighbor',
-                        ignore_affine=True, 
+                        ignore_affine=True,
                         save_data=True, file_name="sub001_sess1",
                         output_dir=out_dir)
 
@@ -176,7 +175,7 @@ ants_results2 = nighres.registration.embedded_antsreg(
                         medium_iterations=0, fine_iterations=0,
                         cost_function='MutualInformation',
                         interpolation='NearestNeighbor',
-                        ignore_affine=True, 
+                        ignore_affine=True,
                         save_data=True, file_name="sub002_sess1",
                         output_dir=out_dir)
 

@@ -5,7 +5,7 @@ multiscale\_vessel\_filter
 
 .. This snippet automatically includes a sphinx gallery below the
 .. documentation with examples that use the function
-.. include:: ../gen_modules/backreferences/nighres.multiscale_vessel_filter.examples
+.. include:: ../gen_modules/backreferences/nighres.filtering.multiscale_vessel_filter.examples
 .. raw:: html
 
     <div style='clear:both'></div>

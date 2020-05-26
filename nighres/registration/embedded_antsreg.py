@@ -123,7 +123,7 @@ def embedded_antsreg(source_image, target_image,
     """
 
     # just overloading the multi-channel version
-    return embedded_antsreg_multi([source_image], [target_image], 
+    return embedded_antsreg_multi([source_image], [target_image],
                     run_rigid, rigid_iterations, run_affine, affine_iterations,
                     run_syn, coarse_iterations, medium_iterations, fine_iterations,
 					cost_function, interpolation, regularization, convergence,
@@ -213,8 +213,8 @@ def embedded_antsreg_2d(source_image, target_image,
     Notes
     ----------
     Port of the CBSTools Java module by Pierre-Louis Bazin. The main algorithm
-    is part of the ANTs software by Brian Avants and colleagues [1]_. Parameters 
-    have been set to values commonly found in neuroimaging scripts online, but 
+    is part of the ANTs software by Brian Avants and colleagues [1]_. Parameters
+    have been set to values commonly found in neuroimaging scripts online, but
     not necessarily optimal.
 
     References
@@ -225,12 +225,23 @@ def embedded_antsreg_2d(source_image, target_image,
     """
 
     print('\nEmbedded ANTs Registration 2D')
+    # check if ants is installed to raise sensible error
+    try:
+        subprocess.run('antsRegistration', stdout=subprocess.DEVNULL)
+    except FileNotFoundError:
+        sys.exit("\nCould not find command 'antsRegistration'. Make sure ANTs is"
+                 " installed and can be accessed from the command line.")
+    try:
+        subprocess.run('antsApplyTransforms', stdout=subprocess.DEVNULL)
+    except FileNotFoundError:
+        sys.exit("\nCould not find command 'antsApplyTransforms'. Make sure ANTs"
+                 " is installed and can be accessed from the command line.")
 
     # make sure that saving related parameters are correct
-    
+
      # filenames needed for intermediate results
     output_dir = _output_dir_4saving(output_dir, source_image)
-    
+
     transformed_source_file = os.path.join(output_dir,
                     _fname_4saving(module=__name__,file_name=file_name,
                                rootfile=source_image,
@@ -395,7 +406,7 @@ def embedded_antsreg_2d(source_image, target_image,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordY'))
     save_volume(src_mapY_file, src_mapY)
-    
+
     for x in range(ntx):
         for y in range(nty):
             trg_coordX[x,y] = x
@@ -419,7 +430,7 @@ def embedded_antsreg_2d(source_image, target_image,
                                                             rootfile=source_image,
                                                             suffix='tmp_trgmask'))
         save_volume(trg_mask_file, trg_mask)
-        
+
         src_mask_data = (source.get_data()!=0)
         src_mask = nb.Nifti1Image(src_mask_data, source.affine, source.header)
         src_mask_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
@@ -464,15 +475,15 @@ def embedded_antsreg_2d(source_image, target_image,
     # set parameters for all the different types of transformations
     if run_rigid is True:
         reg = reg + ' --transform Rigid[0.1]'
-        if (cost_function=='CrossCorrelation'): 
+        if (cost_function=='CrossCorrelation'):
             reg = reg + ' --metric CC['+trgfile+', '+srcfile \
                             +', '+'1.0, 5, Random, 0.3 ]'
         else:
             reg = reg + ' --metric MI['+trgfile+', '+srcfile \
                             +', '+'1.0, 32, Random, 0.3 ]'
-            
+
         reg = reg + ' --convergence ['+iter_rigid+', '+str(convergence)+', 10 ]'
-                    
+
         reg = reg + ' --smoothing-sigmas '+smooth
         reg = reg + ' --shrink-factors '+shrink
         reg = reg + ' --use-histogram-matching 0'
@@ -480,46 +491,46 @@ def embedded_antsreg_2d(source_image, target_image,
 
     if run_affine is True:
         reg = reg + ' --transform Affine[0.1]'
-        if (cost_function=='CrossCorrelation'): 
+        if (cost_function=='CrossCorrelation'):
             reg = reg + ' --metric CC['+trgfile+', '+srcfile \
                             +', '+'1.0, 5, Random, 0.3 ]'
         else:
             reg = reg + ' --metric MI['+trgfile+', '+srcfile \
                             +', '+'1.0, 32, Random, 0.3 ]'
-            
+
         reg = reg + ' --convergence ['+iter_affine+', '+str(convergence)+', 10 ]'
-                    
+
         reg = reg + ' --smoothing-sigmas '+smooth
         reg = reg + ' --shrink-factors '+shrink
         reg = reg + ' --use-histogram-matching 0'
         reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
     if run_syn is True:
-        if regularization is 'Low': syn_param = [0.2, 1.0, 0.0]
-        elif regularization is 'Medium': syn_param = [0.2, 3.0, 0.0]
-        elif regularization is 'High': syn_param = [0.2, 4.0, 3.0]
+        if regularization == 'Low': syn_param = [0.2, 1.0, 0.0]
+        elif regularization == 'Medium': syn_param = [0.2, 3.0, 0.0]
+        elif regularization == 'High': syn_param = [0.2, 4.0, 3.0]
         else: syn_param = [0.2, 3.0, 0.0]
 
         reg = reg + ' --transform SyN'+str(syn_param)
-        if (cost_function=='CrossCorrelation'): 
+        if (cost_function=='CrossCorrelation'):
             reg = reg + ' --metric CC['+trgfile+', '+srcfile \
                             +', '+'1.0, 5, Random, 0.3 ]'
         else:
             reg = reg + ' --metric MI['+trgfile+', '+srcfile \
                             +', '+'1.0, 32, Random, 0.3 ]'
-            
+
         reg = reg + ' --convergence ['+iter_syn+', '+str(convergence)+', 5 ]'
-                    
+
         reg = reg + ' --smoothing-sigmas '+smooth
         reg = reg + ' --shrink-factors '+shrink
         reg = reg + ' --use-histogram-matching 0'
         reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
-        
+
     if run_rigid is False and run_affine is False and run_syn is False:
         reg = reg + ' --transform Rigid[0.1]'
         reg = reg + ' --metric CC['+trgfile+', '+srcfile \
                             +', '+'1.0, 5, Random, 0.3 ]'
-        reg = reg + ' --convergence [ 0, 1.0, 2 ]'   
+        reg = reg + ' --convergence [ 0, 1.0, 2 ]'
         reg = reg + ' --smoothing-sigmas 1.0'
         reg = reg + ' --shrink-factors 1'
         reg = reg + ' --use-histogram-matching 0'
@@ -527,7 +538,7 @@ def embedded_antsreg_2d(source_image, target_image,
 
     reg = reg + ' --write-composite-transform 0'
 
-    # run the ANTs command directly    
+    # run the ANTs command directly
     print(reg)
     try:
         subprocess.check_output(reg, shell=True, stderr=subprocess.STDOUT)
@@ -546,9 +557,9 @@ def embedded_antsreg_2d(source_image, target_image,
         elif res.endswith('Warp.nii.gz') and not res.endswith('InverseWarp.nii.gz'):
             forward.append(res)
             flag.append(False)
-        
-    #print('forward transforms: '+str(forward))    
-        
+
+    #print('forward transforms: '+str(forward))
+
     inverse = []
     linear = []
     for res in results[::-1]:
@@ -558,21 +569,21 @@ def embedded_antsreg_2d(source_image, target_image,
         elif res.endswith('InverseWarp.nii.gz'):
             inverse.append(res)
             linear.append(False)
-     
-    #print('inverse transforms: '+str(inverse))    
-        
+
+    #print('inverse transforms: '+str(inverse))
+
     # Transforms the moving image
     at = 'antsApplyTransforms --dimensionality 2 --input-image-type 0'
     at = at+' --input '+source.get_filename()
     at = at+' --reference-image '+target.get_filename()
     at = at+' --interpolation '+interpolation
     for idx,transform in enumerate(forward):
-        if flag[idx]: 
+        if flag[idx]:
             at = at+' --transform ['+transform+', 1]'
         else:
             at = at+' --transform ['+transform+', 0]'
     at = at+' --output '+transformed_source_file
-    
+
     print(at)
     try:
         subprocess.check_output(at, shell=True, stderr=subprocess.STDOUT)
@@ -586,7 +597,7 @@ def embedded_antsreg_2d(source_image, target_image,
     src_at = src_at+' --reference-image '+target.get_filename()
     src_at = src_at+' --interpolation Linear'
     for idx,transform in enumerate(forward):
-        if flag[idx]: 
+        if flag[idx]:
             src_at = src_at+' --transform ['+transform+', 1]'
         else:
             src_at = src_at+' --transform ['+transform+', 0]'
@@ -595,20 +606,20 @@ def embedded_antsreg_2d(source_image, target_image,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordX_map'))
     src_at = src_at+' --output '+src_mapX_trans
-    
+
     print(src_at)
     try:
         subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
         msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
         raise subprocess.CalledProcessError(msg)
-    
+
     src_at = 'antsApplyTransforms --dimensionality 2 --input-image-type 0'
     src_at = src_at+' --input '+src_mapY.get_filename()
     src_at = src_at+' --reference-image '+target.get_filename()
     src_at = src_at+' --interpolation Linear'
     for idx,transform in enumerate(forward):
-        if flag[idx]: 
+        if flag[idx]:
             src_at = src_at+' --transform ['+transform+', 1]'
         else:
             src_at = src_at+' --transform ['+transform+', 0]'
@@ -617,7 +628,7 @@ def embedded_antsreg_2d(source_image, target_image,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordY_map'))
     src_at = src_at+' --output '+src_mapY_trans
-    
+
     print(src_at)
     try:
         subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
@@ -631,7 +642,7 @@ def embedded_antsreg_2d(source_image, target_image,
     src_map = np.stack((mapX,mapY),axis=-1)
     mapping = nb.Nifti1Image(src_map, target.affine, target.header)
     save_volume(mapping_file, mapping)
-    
+
 
     trans_mapping = []
 
@@ -640,7 +651,7 @@ def embedded_antsreg_2d(source_image, target_image,
     trg_at = trg_at+' --reference-image '+source.get_filename()
     trg_at = trg_at+' --interpolation Linear'
     for idx,transform in enumerate(inverse):
-        if linear[idx]: 
+        if linear[idx]:
             trg_at = trg_at+' --transform ['+transform+', 1]'
         else:
             trg_at = trg_at+' --transform ['+transform+', 0]'
@@ -649,7 +660,7 @@ def embedded_antsreg_2d(source_image, target_image,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordX_map'))
     trg_at = trg_at+' --output '+trg_mapX_trans
-    
+
     print(trg_at)
     try:
         subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
@@ -662,7 +673,7 @@ def embedded_antsreg_2d(source_image, target_image,
     trg_at = trg_at+' --reference-image '+source.get_filename()
     trg_at = trg_at+' --interpolation Linear'
     for idx,transform in enumerate(inverse):
-        if linear[idx]: 
+        if linear[idx]:
             trg_at = trg_at+' --transform ['+transform+', 1]'
         else:
             trg_at = trg_at+' --transform ['+transform+', 0]'
@@ -671,7 +682,7 @@ def embedded_antsreg_2d(source_image, target_image,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordY_map'))
     trg_at = trg_at+' --output '+trg_mapY_trans
-    
+
     print(trg_at)
     try:
         subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
@@ -685,7 +696,7 @@ def embedded_antsreg_2d(source_image, target_image,
     trg_map = np.stack((mapX,mapY),axis=-1)
     inverse_mapping = nb.Nifti1Image(trg_map, source.affine, source.header)
     save_volume(inverse_mapping_file, inverse_mapping)
-    
+
     # pad coordinate mapping outside the image? hopefully not needed...
 
     # clean-up intermediate files
@@ -700,30 +711,30 @@ def embedded_antsreg_2d(source_image, target_image,
     if ignore_affine or ignore_header:
         if os.path.exists(src_img_file): os.remove(src_img_file)
         if os.path.exists(trg_img_file): os.remove(trg_img_file)
-        
-    for name in forward: 
+
+    for name in forward:
         if os.path.exists(name): os.remove(name)
-    for name in inverse: 
+    for name in inverse:
         if os.path.exists(name): os.remove(name)
 
     if not save_data:
-        # collect saved outputs 
-        output = {'transformed_source': load_volume(transformed_source_file), 
-              'mapping': load_volume(mapping_file), 
+        # collect saved outputs
+        output = {'transformed_source': load_volume(transformed_source_file),
+              'mapping': load_volume(mapping_file),
               'inverse': load_volume(inverse_mapping_file)}
-    
-        # remove output files if *not* saved 
-        if os.path.exists(transformed_source_file): os.remove(transformed_source_file)            
+
+        # remove output files if *not* saved
+        if os.path.exists(transformed_source_file): os.remove(transformed_source_file)
         if os.path.exists(mapping_file): os.remove(mapping_file)
         if os.path.exists(inverse_mapping_file): os.remove(inverse_mapping_file)
 
         return output
     else:
-        # collect saved outputs 
-        output = {'transformed_source': transformed_source_file, 
-              'mapping': mapping_file, 
+        # collect saved outputs
+        output = {'transformed_source': transformed_source_file,
+              'mapping': mapping_file,
               'inverse': inverse_mapping_file}
-    
+
         return output
 
 def embedded_antsreg_2d_multi(source_images, target_images,
@@ -786,7 +797,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         Ignore the orientation information and affine matrix information
         extracted from the image header (default is False)
     ignore_res: bool
-        Ignore the resolution information extracted from the image header 
+        Ignore the resolution information extracted from the image header
         (default is False)
     save_data: bool
         Save output data to file (default is False)
@@ -812,8 +823,8 @@ def embedded_antsreg_2d_multi(source_images, target_images,
     Notes
     ----------
     Port of the CBSTools Java module by Pierre-Louis Bazin. The main algorithm
-    is part of the ANTs software by Brian Avants and colleagues [1]_. Parameters 
-    have been set to values commonly found in neuroimaging scripts online, but 
+    is part of the ANTs software by Brian Avants and colleagues [1]_. Parameters
+    have been set to values commonly found in neuroimaging scripts online, but
     not necessarily optimal.
 
     References
@@ -824,15 +835,27 @@ def embedded_antsreg_2d_multi(source_images, target_images,
     """
 
     print('\nEmbedded ANTs Registration 2D Multi-contrasts')
+    # check if ants is installed to raise sensible error
+    try:
+        subprocess.run('antsRegistration', stdout=subprocess.DEVNULL)
+    except FileNotFoundError:
+        sys.exit("\nCould not find command 'antsRegistration'. Make sure ANTs is"
+                 " installed and can be accessed from the command line.")
+    try:
+        subprocess.run('antsApplyTransforms', stdout=subprocess.DEVNULL)
+    except FileNotFoundError:
+        sys.exit("\nCould not find command 'antsApplyTransforms'. Make sure ANTs"
+                 " is installed and can be accessed from the command line.")
+
 
     # make sure that saving related parameters are correct
-    
+
      # filenames needed for intermediate results
     output_dir = _output_dir_4saving(output_dir, source_images[0])
-    
+
     transformed_source_files = []
     for idx,source_image in enumerate(source_images):
-        transformed_source_files.append(os.path.join(output_dir, 
+        transformed_source_files.append(os.path.join(output_dir,
                                     _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=source_image,
                                    suffix='ants-def'+str(idx))))
@@ -855,15 +878,15 @@ def embedded_antsreg_2d_multi(source_images, target_images,
             for trans_file in transformed_source_files:
                 if not os.path.isfile(trans_file):
                     missing = True
-            
+
             if not missing:
                 print("skip computation (use existing results)")
                 transformed = []
                 for trans_file in transformed_source_files:
                     transformed.append(trans_file)
-                output = {'transformed_sources': transformed, 
-                      'transformed_source': transformed[0], 
-                      'mapping': mapping_file, 
+                output = {'transformed_sources': transformed,
+                      'transformed_source': transformed[0],
+                      'mapping': mapping_file,
                       'inverse': inverse_mapping_file}
                 return output
 
@@ -883,10 +906,10 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         rsx = source.header.get_zooms()[X]
         rsy = source.header.get_zooms()[Y]
         rsz = 1.0
-    
+
         orig_src_aff = source.affine
         orig_src_hdr = source.header
-    
+
         target = load_volume(target_images[idx])
         trg_affine = target.affine
         trg_header = target.header
@@ -896,7 +919,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         rtx = target.header.get_zooms()[X]
         rty = target.header.get_zooms()[Y]
         rtz = 1.0
-    
+
         orig_trg_aff = target.affine
         orig_trg_hdr = target.header
 
@@ -913,7 +936,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
                 rsx = 1.0
                 rsy = 1.0
                 rsz = 1.0
-    
+
             if ignore_orient:
                 new_affine[0][0] = rsx
                 new_affine[1][1] = rsy
@@ -929,12 +952,12 @@ def embedded_antsreg_2d_multi(source_images, target_images,
                     new_affine[0][3] = rsx*nsx/2.0
                 else:
                     new_affine[0][3] = -rsx*nsx/2.0
-    
+
                 if (np.sign(src_affine[1][my])<0):
                     new_affine[1][3] = rsy*nsy/2.0
                 else:
                     new_affine[1][3] = -rsy*nsy/2.0
-    
+
                 if (np.sign(src_affine[2][mz])<0):
                     new_affine[2][3] = rsz*nsz/2.0
                 else:
@@ -946,7 +969,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
             #new_affine[1][3] = nsy/2.0
             #new_affine[2][3] = nsz/2.0
             new_affine[3][3] = 1.0
-    
+
             src_img = nb.Nifti1Image(source.get_data(), new_affine, source.header)
             src_img.update_header()
             src_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
@@ -957,7 +980,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
             src_affine = source.affine
             src_header = source.header
             src_img_files.append(src_img_file)
-    
+
             # create generic affine aligned with the orientation for the target
             mx = np.argmax(np.abs(trg_affine[0][0:3]))
             my = np.argmax(np.abs(trg_affine[1][0:3]))
@@ -970,7 +993,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
                 rtx = 1.0
                 rty = 1.0
                 rtz = 1.0
-                
+
             if ignore_orient:
                 new_affine[0][0] = rtx
                 new_affine[1][1] = rty
@@ -986,12 +1009,12 @@ def embedded_antsreg_2d_multi(source_images, target_images,
                     new_affine[0][3] = rtx*ntx/2.0
                 else:
                     new_affine[0][3] = -rtx*ntx/2.0
-    
+
                 if (np.sign(trg_affine[1][my])<0):
                     new_affine[1][3] = rty*nty/2.0
                 else:
                     new_affine[1][3] = -rty*nty/2.0
-    
+
                 if (np.sign(trg_affine[2][mz])<0):
                     new_affine[2][3] = rtz*ntz/2.0
                 else:
@@ -1003,7 +1026,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
             #new_affine[1][3] = nty/2.0
             #new_affine[2][3] = ntz/2.0
             new_affine[3][3] = 1.0
-    
+
             trg_img = nb.Nifti1Image(target.get_data(), new_affine, target.header)
             trg_img.update_header()
             trg_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
@@ -1014,7 +1037,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
             trg_affine = target.affine
             trg_header = target.header
             trg_img_files.append(trg_img_file)
-        
+
         sources.append(source)
         targets.append(target)
 
@@ -1037,7 +1060,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
                                                         rootfile=source_images[0],
                                                         suffix='tmp_srccoordY'))
     save_volume(src_mapY_file, src_mapY)
-    
+
     for x in range(ntx):
         for y in range(nty):
             trg_coordX[x,y] = x
@@ -1062,7 +1085,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
                                                             rootfile=source_images[0],
                                                             suffix='tmp_trgmask'))
         save_volume(trg_mask_file, trg_mask)
-        
+
         source = sources[0]
         src_mask_data = (source.get_data()!=0)
         src_mask = nb.Nifti1Image(src_mask_data, source.affine, source.header)
@@ -1092,7 +1115,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         print("registering "+sources[idx].get_filename()+"\n to "+targets[idx].get_filename())
         srcfiles.append(sources[idx].get_filename())
         trgfiles.append(targets[idx].get_filename())
-    
+
     weight = 1.0/len(srcfiles)
 
     # figure out the number of scales, going with a factor of two
@@ -1114,7 +1137,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
     # set parameters for all the different types of transformations
     if run_rigid is True:
         reg = reg + ' --transform Rigid[0.1]'
-        if (cost_function=='CrossCorrelation'): 
+        if (cost_function=='CrossCorrelation'):
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric CC['+trgfiles[idx]+', '+srcfiles[idx] \
                             +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
@@ -1122,9 +1145,9 @@ def embedded_antsreg_2d_multi(source_images, target_images,
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric MI['+trgfiles[idx]+', '+srcfiles[idx] \
                             +', '+'{:.3f}'.format(weight)+', 32, Random, 0.3 ]'
-            
+
         reg = reg + ' --convergence ['+iter_rigid+', '+str(convergence)+', 10 ]'
-                    
+
         reg = reg + ' --smoothing-sigmas '+smooth
         reg = reg + ' --shrink-factors '+shrink
         reg = reg + ' --use-histogram-matching 0'
@@ -1132,7 +1155,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
 
     if run_affine is True:
         reg = reg + ' --transform Affine[0.1]'
-        if (cost_function=='CrossCorrelation'): 
+        if (cost_function=='CrossCorrelation'):
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric CC['+trgfiles[idx]+', '+srcfiles[idx] \
                             +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
@@ -1140,22 +1163,22 @@ def embedded_antsreg_2d_multi(source_images, target_images,
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric MI['+trgfiles[idx]+', '+srcfiles[idx] \
                             +', '+'{:.3f}'.format(weight)+', 32, Random, 0.3 ]'
-            
+
         reg = reg + ' --convergence ['+iter_affine+', '+str(convergence)+', 10 ]'
-                    
+
         reg = reg + ' --smoothing-sigmas '+smooth
         reg = reg + ' --shrink-factors '+shrink
         reg = reg + ' --use-histogram-matching 0'
         reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
     if run_syn is True:
-        if regularization is 'Low': syn_param = [0.2, 1.0, 0.0]
-        elif regularization is 'Medium': syn_param = [0.2, 3.0, 0.0]
-        elif regularization is 'High': syn_param = [0.2, 4.0, 3.0]
+        if regularization == 'Low': syn_param = [0.2, 1.0, 0.0]
+        elif regularization == 'Medium': syn_param = [0.2, 3.0, 0.0]
+        elif regularization == 'High': syn_param = [0.2, 4.0, 3.0]
         else: syn_param = [0.2, 3.0, 0.0]
 
         reg = reg + ' --transform SyN'+str(syn_param)
-        if (cost_function=='CrossCorrelation'): 
+        if (cost_function=='CrossCorrelation'):
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric CC['+trgfiles[idx]+', '+srcfiles[idx] \
                             +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
@@ -1163,20 +1186,20 @@ def embedded_antsreg_2d_multi(source_images, target_images,
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric MI['+trgfiles[idx]+', '+srcfiles[idx] \
                             +', '+'{:.3f}'.format(weight)+', 32, Random, 0.3 ]'
-            
+
         reg = reg + ' --convergence ['+iter_syn+', '+str(convergence)+', 5 ]'
-                    
+
         reg = reg + ' --smoothing-sigmas '+smooth
         reg = reg + ' --shrink-factors '+shrink
         reg = reg + ' --use-histogram-matching 0'
         reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
-        
+
     if run_rigid is False and run_affine is False and run_syn is False:
         reg = reg + ' --transform Rigid[0.1]'
         for idx,img in enumerate(srcfiles):
             reg = reg + ' --metric CC['+trgfiles[idx]+', '+srcfiles[idx] \
                             +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
-        reg = reg + ' --convergence [ 0, 1.0, 2 ]'   
+        reg = reg + ' --convergence [ 0, 1.0, 2 ]'
         reg = reg + ' --smoothing-sigmas 1.0'
         reg = reg + ' --shrink-factors 1'
         reg = reg + ' --use-histogram-matching 0'
@@ -1184,7 +1207,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
 
     reg = reg + ' --write-composite-transform 0'
 
-    # run the ANTs command directly    
+    # run the ANTs command directly
     print(reg)
     try:
         subprocess.check_output(reg, shell=True, stderr=subprocess.STDOUT)
@@ -1203,9 +1226,9 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         elif res.endswith('Warp.nii.gz') and not res.endswith('InverseWarp.nii.gz'):
             forward.append(res)
             flag.append(False)
-        
-    #print('forward transforms: '+str(forward))    
-        
+
+    #print('forward transforms: '+str(forward))
+
     inverse = []
     linear = []
     for res in results[::-1]:
@@ -1215,9 +1238,9 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         elif res.endswith('InverseWarp.nii.gz'):
             inverse.append(res)
             linear.append(False)
-     
-    #print('inverse transforms: '+str(inverse))    
-        
+
+    #print('inverse transforms: '+str(inverse))
+
     # Transforms the moving image
     for idx,source in enumerate(sources):
         at = 'antsApplyTransforms --dimensionality 2 --input-image-type 0'
@@ -1225,12 +1248,12 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         at = at+' --reference-image '+targets[idx].get_filename()
         at = at+' --interpolation '+interpolation
         for idx2,transform in enumerate(forward):
-            if flag[idx2]: 
+            if flag[idx2]:
                 at = at+' --transform ['+transform+', 1]'
             else:
                 at = at+' --transform ['+transform+', 0]'
         at = at+' --output '+transformed_source_files[idx]
-        
+
         print(at)
         try:
             subprocess.check_output(at, shell=True, stderr=subprocess.STDOUT)
@@ -1244,7 +1267,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
     src_at = src_at+' --reference-image '+target.get_filename()
     src_at = src_at+' --interpolation Linear'
     for idx,transform in enumerate(forward):
-        if flag[idx]: 
+        if flag[idx]:
             src_at = src_at+' --transform ['+transform+', 1]'
         else:
             src_at = src_at+' --transform ['+transform+', 0]'
@@ -1253,20 +1276,20 @@ def embedded_antsreg_2d_multi(source_images, target_images,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordX_map'))
     src_at = src_at+' --output '+src_mapX_trans
-    
+
     print(src_at)
     try:
         subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
         msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
         raise subprocess.CalledProcessError(msg)
-    
+
     src_at = 'antsApplyTransforms --dimensionality 2 --input-image-type 0'
     src_at = src_at+' --input '+src_mapY.get_filename()
     src_at = src_at+' --reference-image '+target.get_filename()
     src_at = src_at+' --interpolation Linear'
     for idx,transform in enumerate(forward):
-        if flag[idx]: 
+        if flag[idx]:
             src_at = src_at+' --transform ['+transform+', 1]'
         else:
             src_at = src_at+' --transform ['+transform+', 0]'
@@ -1275,7 +1298,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordY_map'))
     src_at = src_at+' --output '+src_mapY_trans
-    
+
     print(src_at)
     try:
         subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
@@ -1289,7 +1312,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
     src_map = np.stack((mapX,mapY),axis=-1)
     mapping = nb.Nifti1Image(src_map, target.affine, target.header)
     save_volume(mapping_file, mapping)
-    
+
 
     trans_mapping = []
 
@@ -1298,7 +1321,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
     trg_at = trg_at+' --reference-image '+source.get_filename()
     trg_at = trg_at+' --interpolation Linear'
     for idx,transform in enumerate(inverse):
-        if linear[idx]: 
+        if linear[idx]:
             trg_at = trg_at+' --transform ['+transform+', 1]'
         else:
             trg_at = trg_at+' --transform ['+transform+', 0]'
@@ -1307,7 +1330,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordX_map'))
     trg_at = trg_at+' --output '+trg_mapX_trans
-    
+
     print(trg_at)
     try:
         subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
@@ -1320,7 +1343,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
     trg_at = trg_at+' --reference-image '+source.get_filename()
     trg_at = trg_at+' --interpolation Linear'
     for idx,transform in enumerate(inverse):
-        if linear[idx]: 
+        if linear[idx]:
             trg_at = trg_at+' --transform ['+transform+', 1]'
         else:
             trg_at = trg_at+' --transform ['+transform+', 0]'
@@ -1329,7 +1352,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordY_map'))
     trg_at = trg_at+' --output '+trg_mapY_trans
-    
+
     print(trg_at)
     try:
         subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
@@ -1343,7 +1366,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
     trg_map = np.stack((mapX,mapY),axis=-1)
     inverse_mapping = nb.Nifti1Image(trg_map, source.affine, source.header)
     save_volume(inverse_mapping_file, inverse_mapping)
-    
+
     # pad coordinate mapping outside the image? hopefully not needed...
 
     # clean-up intermediate files
@@ -1358,12 +1381,12 @@ def embedded_antsreg_2d_multi(source_images, target_images,
     if ignore_affine or ignore_orient or ignore_res:
         for src_img_file in src_img_files:
             if os.path.exists(src_img_file): os.remove(src_img_file)
-        for trg_img_file in trg_img_files:    
+        for trg_img_file in trg_img_files:
             if os.path.exists(trg_img_file): os.remove(trg_img_file)
-        
-    for name in forward: 
+
+    for name in forward:
         if os.path.exists(name): os.remove(name)
-    for name in inverse: 
+    for name in inverse:
         if os.path.exists(name): os.remove(name)
 
     # if ignoring header and/or affine, must paste back the correct headers
@@ -1375,45 +1398,45 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         for trans_file in transformed_source_files:
             trans = load_volume(trans_file)
             save_volume(trans_file, nb.Nifti1Image(trans.get_data(), orig_trg_aff, orig_trg_hdr))
-        
+
     if not save_data:
-        # collect saved outputs 
+        # collect saved outputs
         transformed = []
         for trans_file in transformed_source_files:
-            transformed.append(load_volume(trans_file)) 
-        output = {'transformed_sources': transformed, 
-              'transformed_source': transformed[0], 
-              'mapping': load_volume(mapping_file), 
+            transformed.append(load_volume(trans_file))
+        output = {'transformed_sources': transformed,
+              'transformed_source': transformed[0],
+              'mapping': load_volume(mapping_file),
               'inverse': load_volume(inverse_mapping_file)}
-    
-        # remove output files if *not* saved 
+
+        # remove output files if *not* saved
         for idx,trans_image in enumerate(transformed_source_files):
-            if os.path.exists(trans_image): os.remove(trans_image)            
+            if os.path.exists(trans_image): os.remove(trans_image)
         if os.path.exists(mapping_file): os.remove(mapping_file)
         if os.path.exists(inverse_mapping_file): os.remove(inverse_mapping_file)
 
         return output
     else:
-        # collect saved outputs 
+        # collect saved outputs
         transformed = []
         for trans_file in transformed_source_files:
-            transformed.append(trans_file) 
-        output = {'transformed_sources': transformed, 
-              'transformed_source': transformed[0], 
-              'mapping': mapping_file, 
+            transformed.append(trans_file)
+        output = {'transformed_sources': transformed,
+              'transformed_source': transformed[0],
+              'mapping': mapping_file,
               'inverse': inverse_mapping_file}
-    
+
         return output
 
-def embedded_antsreg_multi(source_images, target_images, 
-                    run_rigid=True, 
+def embedded_antsreg_multi(source_images, target_images,
+                    run_rigid=True,
                     rigid_iterations=1000,
-                    run_affine=False, 
+                    run_affine=False,
                     affine_iterations=1000,
                     run_syn=True,
-                    coarse_iterations=40, 
+                    coarse_iterations=40,
                     medium_iterations=50, fine_iterations=40,
-					cost_function='MutualInformation', 
+					cost_function='MutualInformation',
 					interpolation='NearestNeighbor',
 					regularization='High',
 					convergence=1e-6,
@@ -1423,8 +1446,8 @@ def embedded_antsreg_multi(source_images, target_images,
                     file_name=None):
     """ Embedded ANTS Registration Multi-contrasts
 
-    Runs the rigid and/or Symmetric Normalization (SyN) algorithm of ANTs and 
-    formats the output deformations into voxel coordinate mappings as used in 
+    Runs the rigid and/or Symmetric Normalization (SyN) algorithm of ANTs and
+    formats the output deformations into voxel coordinate mappings as used in
     CBSTools registration and transformation routines. Uses all input contrasts
     with equal weights.
 
@@ -1465,7 +1488,7 @@ def embedded_antsreg_multi(source_images, target_images,
         Ignore the affine matrix information extracted from the image header
         (default is False)
     ignore_header: bool
-        Ignore the orientation information and affine matrix information 
+        Ignore the orientation information and affine matrix information
         extracted from the image header (default is False)
     save_data: bool
         Save output data to file (default is False)
@@ -1485,42 +1508,53 @@ def embedded_antsreg_multi(source_images, target_images,
 
         * transformed_source ([niimg]): Deformed source image list (_ants_def0,1,...)
         * mapping (niimg): Coordinate mapping from source to target (_ants_map)
-        * inverse (niimg): Inverse coordinate mapping from target to source (_ants_invmap) 
+        * inverse (niimg): Inverse coordinate mapping from target to source (_ants_invmap)
 
     Notes
     ----------
     Port of the CBSTools Java module by Pierre-Louis Bazin. The main algorithm
-    is part of the ANTs software by Brian Avants and colleagues [1]_. Parameters 
-    have been set to values commonly found in neuroimaging scripts online, but 
+    is part of the ANTs software by Brian Avants and colleagues [1]_. Parameters
+    have been set to values commonly found in neuroimaging scripts online, but
     not necessarily optimal.
 
     References
     ----------
-    .. [1] Avants et al (2008), Symmetric diffeomorphic 
-       image registration with cross-correlation: evaluating automated labeling 
+    .. [1] Avants et al (2008), Symmetric diffeomorphic
+       image registration with cross-correlation: evaluating automated labeling
        of elderly and neurodegenerative brain, Med Image Anal. 12(1):26-41
     """
 
     print('\nEmbedded ANTs Registration Multi-contrasts')
+    # check if ants is installed to raise sensible error
+    try:
+        subprocess.run('antsRegistration', stdout=subprocess.DEVNULL)
+    except FileNotFoundError:
+        sys.exit("\nCould not find command 'antsRegistration'. Make sure ANTs is"
+                 " installed and can be accessed from the command line.")
+    try:
+        subprocess.run('antsApplyTransforms', stdout=subprocess.DEVNULL)
+    except FileNotFoundError:
+        sys.exit("\nCould not find command 'antsApplyTransforms'. Make sure ANTs"
+                 " is installed and can be accessed from the command line.")
 
     # make sure that saving related parameters are correct
-    
+
      # output files needed for intermediate results
     output_dir = _output_dir_4saving(output_dir, source_images[0])
-    
+
     transformed_source_files = []
     for idx,source_image in enumerate(source_images):
-        transformed_source_files.append(os.path.join(output_dir, 
+        transformed_source_files.append(os.path.join(output_dir,
                                     _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=source_image,
                                    suffix='ants-def'+str(idx))))
 
-    mapping_file = os.path.join(output_dir, 
+    mapping_file = os.path.join(output_dir,
                     _fname_4saving(module=__name__,file_name=file_name,
                                rootfile=source_images[0],
                                suffix='ants-map'))
 
-    inverse_mapping_file = os.path.join(output_dir, 
+    inverse_mapping_file = os.path.join(output_dir,
                     _fname_4saving(module=__name__,file_name=file_name,
                                rootfile=source_images[0],
                                suffix='ants-invmap'))
@@ -1528,20 +1562,20 @@ def embedded_antsreg_multi(source_images, target_images,
         if overwrite is False \
             and os.path.isfile(mapping_file) \
             and os.path.isfile(inverse_mapping_file) :
-            
+
             missing = False
             for trans_file in transformed_source_files:
                 if not os.path.isfile(trans_file):
                     missing = True
-            
+
             if not missing:
                 print("skip computation (use existing results)")
                 transformed = []
                 for trans_file in transformed_source_files:
                     transformed.append(trans_file)
-                output = {'transformed_sources': transformed, 
-                      'transformed_source': transformed[0], 
-                      'mapping': mapping_file, 
+                output = {'transformed_sources': transformed,
+                      'transformed_source': transformed[0],
+                      'mapping': mapping_file,
                       'inverse': inverse_mapping_file}
                 return output
 
@@ -1558,10 +1592,10 @@ def embedded_antsreg_multi(source_images, target_images,
         rsx = source.header.get_zooms()[X]
         rsy = source.header.get_zooms()[Y]
         rsz = source.header.get_zooms()[Z]
-        
+
         orig_src_aff = source.affine
         orig_src_hdr = source.header
-    
+
         target = load_volume(target_images[idx])
         trg_affine = target.affine
         trg_header = target.header
@@ -1571,10 +1605,10 @@ def embedded_antsreg_multi(source_images, target_images,
         rtx = target.header.get_zooms()[X]
         rty = target.header.get_zooms()[Y]
         rtz = target.header.get_zooms()[Z]
-    
+
         orig_trg_aff = target.affine
         orig_trg_hdr = target.header
-    
+
         # in case the affine transformations are not to be trusted: make them equal
         if ignore_affine or ignore_header:
             # create generic affine aligned with the orientation for the source
@@ -1593,17 +1627,17 @@ def embedded_antsreg_multi(source_images, target_images,
                 #new_affine[0][mx] = rsx*np.sign(src_affine[0][mx])
                 #new_affine[1][my] = rsy*np.sign(src_affine[1][my])
                 #new_affine[2][mz] = rsz*np.sign(src_affine[2][mz])
-                #if (np.sign(src_affine[0][mx])<0): 
+                #if (np.sign(src_affine[0][mx])<0):
                 #    new_affine[0][3] = rsx*nsx/2.0
                 #else:
                 #    new_affine[0][3] = -rsx*nsx/2.0
-                #    
-                #if (np.sign(src_affine[1][my])<0): 
+                #
+                #if (np.sign(src_affine[1][my])<0):
                 #    new_affine[1][3] = rsy*nsy/2.0
                 #else:
                 #    new_affine[1][3] = -rsy*nsy/2.0
-                #    
-                #if (np.sign(src_affine[2][mz])<0): 
+                #
+                #if (np.sign(src_affine[2][mz])<0):
                 #    new_affine[2][3] = rsz*nsz/2.0
                 #else:
                 #    new_affine[2][3] = -rsz*nsz/2.0
@@ -1613,17 +1647,17 @@ def embedded_antsreg_multi(source_images, target_images,
                 new_affine[mx][0] = rsx*np.sign(src_affine[mx][0])
                 new_affine[my][1] = rsy*np.sign(src_affine[my][1])
                 new_affine[mz][2] = rsz*np.sign(src_affine[mz][2])
-                if (np.sign(src_affine[mx][0])<0): 
+                if (np.sign(src_affine[mx][0])<0):
                     new_affine[mx][3] = rsx*nsx/2.0
                 else:
                     new_affine[mx][3] = -rsx*nsx/2.0
-                    
-                if (np.sign(src_affine[my][1])<0): 
+
+                if (np.sign(src_affine[my][1])<0):
                     new_affine[my][3] = rsy*nsy/2.0
                 else:
                     new_affine[my][3] = -rsy*nsy/2.0
-                    
-                if (np.sign(src_affine[mz][2])<0): 
+
+                if (np.sign(src_affine[mz][2])<0):
                     new_affine[mz][3] = rsz*nsz/2.0
                 else:
                     new_affine[mz][3] = -rsz*nsz/2.0
@@ -1634,7 +1668,7 @@ def embedded_antsreg_multi(source_images, target_images,
             #new_affine[1][3] = nsy/2.0
             #new_affine[2][3] = nsz/2.0
             new_affine[3][3] = 1.0
-            
+
             src_img = nb.Nifti1Image(source.get_data(), new_affine, source.header)
             src_img.update_header()
             src_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
@@ -1644,7 +1678,7 @@ def embedded_antsreg_multi(source_images, target_images,
             source = load_volume(src_img_file)
             src_affine = source.affine
             src_header = source.header
-            
+
             # create generic affine aligned with the orientation for the target
             new_affine = np.zeros((4,4))
             if ignore_header:
@@ -1661,17 +1695,17 @@ def embedded_antsreg_multi(source_images, target_images,
                 #new_affine[0][mx] = rtx*np.sign(trg_affine[0][mx])
                 #new_affine[1][my] = rty*np.sign(trg_affine[1][my])
                 #new_affine[2][mz] = rtz*np.sign(trg_affine[2][mz])
-                #if (np.sign(trg_affine[0][mx])<0): 
+                #if (np.sign(trg_affine[0][mx])<0):
                 #    new_affine[0][3] = rtx*ntx/2.0
                 #else:
                 #    new_affine[0][3] = -rtx*ntx/2.0
-                #    
-                #if (np.sign(trg_affine[1][my])<0): 
+                #
+                #if (np.sign(trg_affine[1][my])<0):
                 #    new_affine[1][3] = rty*nty/2.0
                 #else:
                 #    new_affine[1][3] = -rty*nty/2.0
-                #    
-                #if (np.sign(trg_affine[2][mz])<0): 
+                #
+                #if (np.sign(trg_affine[2][mz])<0):
                 #    new_affine[2][3] = rtz*ntz/2.0
                 #else:
                 #    new_affine[2][3] = -rtz*ntz/2.0
@@ -1683,17 +1717,17 @@ def embedded_antsreg_multi(source_images, target_images,
                 new_affine[mx][0] = rtx*np.sign(trg_affine[mx][0])
                 new_affine[my][1] = rty*np.sign(trg_affine[my][1])
                 new_affine[mz][2] = rtz*np.sign(trg_affine[mz][2])
-                if (np.sign(trg_affine[mx][0])<0): 
+                if (np.sign(trg_affine[mx][0])<0):
                     new_affine[mx][3] = rtx*ntx/2.0
                 else:
                     new_affine[mx][3] = -rtx*ntx/2.0
-                    
-                if (np.sign(trg_affine[my][1])<0): 
+
+                if (np.sign(trg_affine[my][1])<0):
                     new_affine[my][3] = rty*nty/2.0
                 else:
                     new_affine[my][3] = -rty*nty/2.0
-                    
-                if (np.sign(trg_affine[mz][2])<0): 
+
+                if (np.sign(trg_affine[mz][2])<0):
                     new_affine[mz][3] = rtz*ntz/2.0
                 else:
                     new_affine[mz][3] = -rtz*ntz/2.0
@@ -1715,10 +1749,10 @@ def embedded_antsreg_multi(source_images, target_images,
             target = load_volume(trg_img_file)
             trg_affine = target.affine
             trg_header = target.header
-        
+
         sources.append(source)
         targets.append(target)
-    
+
     # build coordinate mapping matrices and save them to disk
     src_coord = np.zeros((nsx,nsy,nsz,3))
     trg_coord = np.zeros((ntx,nty,ntz,3))
@@ -1744,7 +1778,7 @@ def embedded_antsreg_multi(source_images, target_images,
                                                         rootfile=source_images[0],
                                                         suffix='tmp_trgcoord'))
     save_volume(trg_map_file, trg_map)
-       
+
     if mask_zero:
         # create and save temporary masks
         target = targets[0]
@@ -1754,7 +1788,7 @@ def embedded_antsreg_multi(source_images, target_images,
                                                             rootfile=source_images[0],
                                                             suffix='tmp_trgmask'))
         save_volume(trg_mask_file, trg_mask)
-        
+
         source = sources[0]
         src_mask_data = (source.get_data()!=0)
         src_mask = nb.Nifti1Image(src_mask_data, source.affine, source.header)
@@ -1766,7 +1800,7 @@ def embedded_antsreg_multi(source_images, target_images,
     # run the main ANTS software: here we directly build the command line call
     reg = 'antsRegistration --collapse-output-transforms 1 --dimensionality 3' \
             +' --initialize-transforms-per-stage 0 --interpolation Linear'
-    
+
      # add a prefix to avoid multiple names?
     prefix = _fname_4saving(module=__name__,file_name=file_name,
                             rootfile=source_images[0],
@@ -1785,13 +1819,13 @@ def embedded_antsreg_multi(source_images, target_images,
         print("registering "+sources[idx].get_filename()+"\n to "+targets[idx].get_filename())
         srcfiles.append(sources[idx].get_filename())
         trgfiles.append(targets[idx].get_filename())
-    
+
     weight = 1.0/len(srcfiles)
-    
+
     # set parameters for all the different types of transformations
     if run_rigid is True:
         reg = reg + ' --transform Rigid[0.1]'
-        if (cost_function=='CrossCorrelation'): 
+        if (cost_function=='CrossCorrelation'):
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric CC['+trgfiles[idx]+', '+srcfiles[idx] \
                             +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
@@ -1799,11 +1833,11 @@ def embedded_antsreg_multi(source_images, target_images,
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric MI['+trgfiles[idx]+', '+srcfiles[idx] \
                             +', '+'{:.3f}'.format(weight)+', 32, Random, 0.3 ]'
-            
+
         reg = reg + ' --convergence ['+str(rigid_iterations)+'x' \
                     +str(rigid_iterations)+'x'+str(rigid_iterations)  \
                     +', '+str(convergence)+', 10 ]'
-                    
+
         reg = reg + ' --smoothing-sigmas 3.0x2.0x1.0'
         reg = reg + ' --shrink-factors 4x2x1'
         reg = reg + ' --use-histogram-matching 0'
@@ -1811,7 +1845,7 @@ def embedded_antsreg_multi(source_images, target_images,
 
     if run_affine is True:
         reg = reg + ' --transform Affine[0.1]'
-        if (cost_function=='CrossCorrelation'): 
+        if (cost_function=='CrossCorrelation'):
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric CC['+trgfiles[idx]+', '+srcfiles[idx] \
                             +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
@@ -1819,24 +1853,24 @@ def embedded_antsreg_multi(source_images, target_images,
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric MI['+trgfiles[idx]+', '+srcfiles[idx] \
                             +', '+'{:.3f}'.format(weight)+', 32, Random, 0.3 ]'
-            
+
         reg = reg + ' --convergence ['+str(affine_iterations)+'x' \
                     +str(affine_iterations)+'x'+str(affine_iterations)  \
                     +', '+str(convergence)+', 10 ]'
-                    
+
         reg = reg + ' --smoothing-sigmas 3.0x2.0x1.0'
         reg = reg + ' --shrink-factors 4x2x1'
         reg = reg + ' --use-histogram-matching 0'
         reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
     if run_syn is True:
-        if regularization is 'Low': syn_param = [0.2, 1.0, 0.0]
-        elif regularization is 'Medium': syn_param = [0.2, 3.0, 0.0]
-        elif regularization is 'High': syn_param = [0.2, 4.0, 3.0]
+        if regularization == 'Low': syn_param = [0.2, 1.0, 0.0]
+        elif regularization == 'Medium': syn_param = [0.2, 3.0, 0.0]
+        elif regularization == 'High': syn_param = [0.2, 4.0, 3.0]
         else: syn_param = [0.2, 3.0, 0.0]
 
         reg = reg + ' --transform SyN'+str(syn_param)
-        if (cost_function=='CrossCorrelation'): 
+        if (cost_function=='CrossCorrelation'):
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric CC['+trgfiles[idx]+', '+srcfiles[idx] \
                             +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
@@ -1844,30 +1878,30 @@ def embedded_antsreg_multi(source_images, target_images,
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric MI['+trgfiles[idx]+', '+srcfiles[idx] \
                             +', '+'{:.3f}'.format(weight)+', 32, Random, 0.3 ]'
-            
+
         reg = reg + ' --convergence ['+str(coarse_iterations)+'x' \
                     +str(coarse_iterations)+'x'+str(medium_iterations)+'x'  \
                     +str(fine_iterations)+', '+str(convergence)+', 5 ]'
-                    
+
         reg = reg + ' --smoothing-sigmas 2.0x1.0x0.5x0.0'
         reg = reg + ' --shrink-factors 8x4x2x1'
         reg = reg + ' --use-histogram-matching 0'
         reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
-        
+
     if run_rigid is False and run_affine is False and run_syn is False:
         reg = reg + ' --transform Rigid[0.1]'
         for idx,img in enumerate(srcfiles):
             reg = reg + ' --metric CC['+trgfiles[idx]+', '+srcfiles[idx] \
                             +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
-        reg = reg + ' --convergence [ 0x0x0, 1.0, 2 ]'   
+        reg = reg + ' --convergence [ 0x0x0, 1.0, 2 ]'
         reg = reg + ' --smoothing-sigmas 3.0x2.0x1.0'
         reg = reg + ' --shrink-factors 4x2x1'
         reg = reg + ' --use-histogram-matching 0'
         reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
     reg = reg + ' --write-composite-transform 0'
-        
-    # run the ANTs command directly    
+
+    # run the ANTs command directly
     print(reg)
     try:
         subprocess.check_output(reg, shell=True, stderr=subprocess.STDOUT)
@@ -1886,9 +1920,9 @@ def embedded_antsreg_multi(source_images, target_images,
         elif res.endswith('Warp.nii.gz') and not res.endswith('InverseWarp.nii.gz'):
             forward.append(res)
             flag.append(False)
-        
-    #print('forward transforms: '+str(forward))    
-        
+
+    #print('forward transforms: '+str(forward))
+
     inverse = []
     linear = []
     for res in results[::-1]:
@@ -1898,9 +1932,9 @@ def embedded_antsreg_multi(source_images, target_images,
         elif res.endswith('InverseWarp.nii.gz'):
             inverse.append(res)
             linear.append(False)
-     
-    #print('inverse transforms: '+str(inverse))    
-        
+
+    #print('inverse transforms: '+str(inverse))
+
     # Transforms the moving image
     for idx,source in enumerate(sources):
         at = 'antsApplyTransforms --dimensionality 3 --input-image-type 0'
@@ -1908,12 +1942,12 @@ def embedded_antsreg_multi(source_images, target_images,
         at = at+' --reference-image '+targets[idx].get_filename()
         at = at+' --interpolation '+interpolation
         for idx2,transform in enumerate(forward):
-            if flag[idx2]: 
+            if flag[idx2]:
                 at = at+' --transform ['+transform+', 1]'
             else:
                 at = at+' --transform ['+transform+', 0]'
         at = at+' --output '+transformed_source_files[idx]
-        
+
         print(at)
         try:
             subprocess.check_output(at, shell=True, stderr=subprocess.STDOUT)
@@ -1927,12 +1961,12 @@ def embedded_antsreg_multi(source_images, target_images,
     src_at = src_at+' --reference-image '+target.get_filename()
     src_at = src_at+' --interpolation Linear'
     for idx,transform in enumerate(forward):
-        if flag[idx]: 
+        if flag[idx]:
             src_at = src_at+' --transform ['+transform+', 1]'
         else:
             src_at = src_at+' --transform ['+transform+', 0]'
     src_at = src_at+' --output '+mapping_file
-    
+
     print(src_at)
     try:
         subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
@@ -1946,12 +1980,12 @@ def embedded_antsreg_multi(source_images, target_images,
     trg_at = trg_at+' --reference-image '+source.get_filename()
     trg_at = trg_at+' --interpolation Linear'
     for idx,transform in enumerate(inverse):
-        if linear[idx]: 
+        if linear[idx]:
             trg_at = trg_at+' --transform ['+transform+', 1]'
         else:
             trg_at = trg_at+' --transform ['+transform+', 0]'
     trg_at = trg_at+' --output '+inverse_mapping_file
-    
+
     print(trg_at)
     try:
         subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
@@ -1967,10 +2001,10 @@ def embedded_antsreg_multi(source_images, target_images,
     if ignore_affine or ignore_header:
         if os.path.exists(src_img_file): os.remove(src_img_file)
         if os.path.exists(trg_img_file): os.remove(trg_img_file)
-        
-    for name in forward: 
+
+    for name in forward:
         if os.path.exists(name): os.remove(name)
-    for name in inverse: 
+    for name in inverse:
         if os.path.exists(name): os.remove(name)
 
     # if ignoring header and/or affine, must paste back the correct headers
@@ -1982,33 +2016,32 @@ def embedded_antsreg_multi(source_images, target_images,
         for trans_file in transformed_source_files:
             trans = load_volume(trans_file)
             save_volume(trans_file, nb.Nifti1Image(trans.get_data(), orig_trg_aff, orig_trg_hdr))
-        
+
     if not save_data:
-        # collect saved outputs 
+        # collect saved outputs
         transformed = []
         for trans_file in transformed_source_files:
-            transformed.append(load_volume(trans_file)) 
-        output = {'transformed_sources': transformed, 
-              'transformed_source': transformed[0], 
-              'mapping': load_volume(mapping_file), 
+            transformed.append(load_volume(trans_file))
+        output = {'transformed_sources': transformed,
+              'transformed_source': transformed[0],
+              'mapping': load_volume(mapping_file),
               'inverse': load_volume(inverse_mapping_file)}
 
-        # remove output files if *not* saved 
+        # remove output files if *not* saved
         for idx,trans_image in enumerate(transformed_source_files):
-            if os.path.exists(trans_image): os.remove(trans_image)            
+            if os.path.exists(trans_image): os.remove(trans_image)
         if os.path.exists(mapping_file): os.remove(mapping_file)
         if os.path.exists(inverse_mapping_file): os.remove(inverse_mapping_file)
 
         return output
     else:
-        # collect saved outputs 
+        # collect saved outputs
         transformed = []
         for trans_file in transformed_source_files:
-            transformed.append(trans_file) 
-        output = {'transformed_sources': transformed, 
-              'transformed_source': transformed[0], 
-              'mapping': mapping_file, 
+            transformed.append(trans_file)
+        output = {'transformed_sources': transformed,
+              'transformed_source': transformed[0],
+              'mapping': mapping_file,
               'inverse': inverse_mapping_file}
 
         return output
-        

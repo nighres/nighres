@@ -23,7 +23,6 @@ RUN sudo apt-get install -y jcc && \
     python3 -m pip install --upgrade pip \
                                      wheel \
                                      JCC \
-                                     twine \
                                      urllib3 && \
     python3 -m pip install jupyter \
                            nilearn \
