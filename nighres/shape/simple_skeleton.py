@@ -84,9 +84,11 @@ def simple_skeleton(input_image,
         if overwrite is False \
             and os.path.isfile(MedialSurface_file) \
             and os.path.isfile(Medial_Curve_file) :
-                output = {'medial': MedialSurface_file,
-                          'skeleton': Medial_Curve_file}
-                return output
+
+            print("skip computation (use existing results)")
+            output = {'medial': MedialSurface_file,
+                      'skeleton': Medial_Curve_file}
+            return output
 
     # start virtual machine, if not already running
     try:
@@ -142,7 +144,6 @@ def simple_skeleton(input_image,
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
- #   d_head['data_type'] = np.array(8).astype('int8') #convert the header as well
     header['cal_min'] = np.nanmin(medialImage_data)
     header['cal_max'] = np.nanmax(medialImage_data)
     medialImage = nb.Nifti1Image(medialImage_data, affine, header)
