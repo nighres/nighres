@@ -497,8 +497,8 @@ def surface_antsreg(source_surface, target_surface,
 
     # Transforms the moving image
     at = 'antsApplyTransforms --dimensionality 3 --input-image-type 0'
-    at = at+' --input '+source.get_filename()
-    at = at+' --reference-image '+target.get_filename()
+    at = at+' --input '+source_surface
+    at = at+' --reference-image '+target_surface
     at = at+' --interpolation '+interpolation
     for idx,transform in enumerate(forward):
         if flag[idx]:
@@ -557,9 +557,8 @@ def surface_antsreg(source_surface, target_surface,
     # clean-up intermediate files
     if os.path.exists(src_map_file): os.remove(src_map_file)
     if os.path.exists(trg_map_file): os.remove(trg_map_file)
-    if ignore_affine or ignore_header:
-        if os.path.exists(src_img_file): os.remove(src_img_file)
-        if os.path.exists(trg_img_file): os.remove(trg_img_file)
+    if os.path.exists(src_img_file): os.remove(src_img_file)
+    if os.path.exists(trg_img_file): os.remove(trg_img_file)
 
     for name in forward:
         if os.path.exists(name): os.remove(name)
