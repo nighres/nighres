@@ -25,16 +25,16 @@ def surface_antsreg(source_surface, target_surface,
                     max_dist=10.0,
                     run_rigid=True,
                     rigid_iterations=1000,
-                    run_affine=False,
+                    run_affine=True,
                     affine_iterations=1000,
                     run_syn=True,
                     coarse_iterations=40,
                     medium_iterations=50, fine_iterations=40,
-					cost_function='Demons',
+					cost_function='MeanSquares',
 					interpolation='Linear',
-					regularization='High',
+					regularization='Low',
 					convergence=1e-6,
-					mask_zero=False,
+					mask_zero=True,
 					ignore_affine=False, ignore_header=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
@@ -401,7 +401,7 @@ def surface_antsreg(source_surface, target_surface,
 
         reg = reg + ' --convergence ['+str(rigid_iterations)+'x' \
                     +str(rigid_iterations)+'x'+str(rigid_iterations)  \
-                    +', '+str(convergence)+', 10 ]'
+                    +', '+str(convergence)+', 5 ]'
 
         reg = reg + ' --smoothing-sigmas 4.0x2.0x0.0'
         reg = reg + ' --shrink-factors 16x4x1'
@@ -416,7 +416,7 @@ def surface_antsreg(source_surface, target_surface,
 
         reg = reg + ' --convergence ['+str(affine_iterations)+'x' \
                     +str(affine_iterations)+'x'+str(affine_iterations)  \
-                    +', '+str(convergence)+', 10 ]'
+                    +', '+str(convergence)+', 5 ]'
 
         reg = reg + ' --smoothing-sigmas 4.0x2.0x0.0'
         reg = reg + ' --shrink-factors 16x4x1'
