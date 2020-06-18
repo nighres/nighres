@@ -176,8 +176,8 @@ def surface_antsreg(source_surface, target_surface,
     orig_src_aff = source.affine
     orig_src_hdr = source.header
 
-    # flip the data around
-    source_ls = numpy.maximum(max_dist - source.get_data(),0.0)
+    # flip the data around, threshold
+    source_ls = numpy.minimum(numpy.maximum(max_dist - source.get_data(),0.0),2.0*max_dist)
     src_img = nibabel.Nifti1Image(source_ls, source.affine, source.header)
     src_img.update_header()
     src_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
@@ -200,7 +200,7 @@ def surface_antsreg(source_surface, target_surface,
     orig_trg_hdr = target.header
 
     # flip the data around
-    target_ls = numpy.maximum(max_dist - target.get_data(),0.0)
+    target_ls = numpy.minimum(numpy.maximum(max_dist - target.get_data(),0.0),2.0*max_dist)
     trg_img = nibabel.Nifti1Image(target_ls, target.affine, target.header)
     trg_img.update_header()
     trg_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
@@ -353,14 +353,14 @@ def surface_antsreg(source_surface, target_surface,
 
     if mask_zero:
         # create and save temporary masks
-        trg_mask_data = (target.get_data()!=0)
+        trg_mask_data = (target.get_data()!=0)*(target.get_data()!=2.0*max_dist)
         trg_mask = nibabel.Nifti1Image(trg_mask_data, target.affine, target.header)
         trg_mask_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_surface,
                                                             suffix='tmp_trgmask'))
         save_volume(trg_mask_file, trg_mask)
 
-        src_mask_data = (source.get_data()!=0)
+        src_mask_data = (source.get_data()!=0)*(source.get_data()!=2.0*max_dist)
         src_mask = nibabel.Nifti1Image(src_mask_data, source.affine, source.header)
         src_mask_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_surface,
@@ -440,11 +440,12 @@ def surface_antsreg(source_surface, target_surface,
                             +', '+'{:.3f}'.format(weight)+', 1, Random, 0.3 ]'
 
         reg = reg + ' --convergence ['+str(coarse_iterations)+'x' \
-                    +str(coarse_iterations)+'x'+str(medium_iterations)+'x'  \
+                    +str(coarse_iterations)+'x'+str(medium_iterations)+'x' \
+                    +str(medium_iterations)+'x'  \
                     +str(fine_iterations)+', '+str(convergence)+', 5 ]'
 
-        reg = reg + ' --smoothing-sigmas 4.0x2.0x1.0x0.0'
-        reg = reg + ' --shrink-factors 8x4x2x1'
+        reg = reg + ' --smoothing-sigmas 9.0x6.0x3.0x1.0x0.0'
+        reg = reg + ' --shrink-factors 16x8x4x2x1'
         reg = reg + ' --use-histogram-matching 0'
         #reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
