@@ -403,8 +403,8 @@ def surface_antsreg(source_surface, target_surface,
                     +str(rigid_iterations)+'x'+str(rigid_iterations)  \
                     +', '+str(convergence)+', 10 ]'
 
-        reg = reg + ' --smoothing-sigmas 3.0x2.0x1.0'
-        reg = reg + ' --shrink-factors 4x2x1'
+        reg = reg + ' --smoothing-sigmas 4.0x2.0x0.0'
+        reg = reg + ' --shrink-factors 16x4x1'
         reg = reg + ' --use-histogram-matching 0'
         #reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
@@ -418,8 +418,8 @@ def surface_antsreg(source_surface, target_surface,
                     +str(affine_iterations)+'x'+str(affine_iterations)  \
                     +', '+str(convergence)+', 10 ]'
 
-        reg = reg + ' --smoothing-sigmas 3.0x2.0x1.0'
-        reg = reg + ' --shrink-factors 4x2x1'
+        reg = reg + ' --smoothing-sigmas 4.0x2.0x0.0'
+        reg = reg + ' --shrink-factors 16x4x1'
         reg = reg + ' --use-histogram-matching 0'
         #reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
@@ -433,17 +433,17 @@ def surface_antsreg(source_surface, target_surface,
         if (cost_function=='Demons'):
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric Demons['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
+                            +', '+'{:.3f}'.format(weight)+', 1, Random, 0.3 ]'
         else:
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric MeanSquares['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 32, Random, 0.3 ]'
+                            +', '+'{:.3f}'.format(weight)+', 1, Random, 0.3 ]'
 
         reg = reg + ' --convergence ['+str(coarse_iterations)+'x' \
                     +str(coarse_iterations)+'x'+str(medium_iterations)+'x'  \
                     +str(fine_iterations)+', '+str(convergence)+', 5 ]'
 
-        reg = reg + ' --smoothing-sigmas 2.0x1.0x0.5x0.0'
+        reg = reg + ' --smoothing-sigmas 4.0x2.0x1.0x0.0'
         reg = reg + ' --shrink-factors 8x4x2x1'
         reg = reg + ' --use-histogram-matching 0'
         #reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
@@ -496,24 +496,23 @@ def surface_antsreg(source_surface, target_surface,
     #print('inverse transforms: '+str(inverse))
 
     # Transforms the moving image
-    for idx,source in enumerate(sources):
-        at = 'antsApplyTransforms --dimensionality 3 --input-image-type 0'
-        at = at+' --input '+sources[idx].get_filename()
-        at = at+' --reference-image '+targets[idx].get_filename()
-        at = at+' --interpolation '+interpolation
-        for idx2,transform in enumerate(forward):
-            if flag[idx2]:
-                at = at+' --transform ['+transform+', 1]'
-            else:
-                at = at+' --transform ['+transform+', 0]'
-        at = at+' --output '+transformed_source_files[idx]
+    at = 'antsApplyTransforms --dimensionality 3 --input-image-type 0'
+    at = at+' --input '+source.get_filename()
+    at = at+' --reference-image '+target.get_filename()
+    at = at+' --interpolation '+interpolation
+    for idx,transform in enumerate(forward):
+        if flag[idx]:
+            at = at+' --transform ['+transform+', 1]'
+        else:
+            at = at+' --transform ['+transform+', 0]'
+    at = at+' --output '+transformed_source_file
 
-        print(at)
-        try:
-            subprocess.check_output(at, shell=True, stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as e:
-            msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
-            raise subprocess.CalledProcessError(msg)
+    print(at)
+    try:
+        subprocess.check_output(at, shell=True, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        raise subprocess.CalledProcessError(msg)
 
     # Create coordinate mappings
     src_at = 'antsApplyTransforms --dimensionality 3 --input-image-type 3'
@@ -579,28 +578,21 @@ def surface_antsreg(source_surface, target_surface,
 
     if not save_data:
         # collect saved outputs
-        transformed = []
-        for trans_file in transformed_source_files:
-            transformed.append(load_volume(trans_file))
-        output = {'transformed_sources': transformed,
-              'transformed_source': transformed[0],
+        transformed = load_volume(transformed_source_file)
+        output = {'transformed_source': transformed,
               'mapping': load_volume(mapping_file),
               'inverse': load_volume(inverse_mapping_file)}
 
         # remove output files if *not* saved
-        for idx,trans_image in enumerate(transformed_source_files):
-            if os.path.exists(trans_image): os.remove(trans_image)
+        if os.path.exists(transformed_source_file): os.remove(transformed_source_file)
         if os.path.exists(mapping_file): os.remove(mapping_file)
         if os.path.exists(inverse_mapping_file): os.remove(inverse_mapping_file)
 
         return output
     else:
         # collect saved outputs
-        transformed = []
-        for trans_file in transformed_source_files:
-            transformed.append(trans_file)
-        output = {'transformed_sources': transformed,
-              'transformed_source': transformed[0],
+        transformed = transformed_source_file
+        output = {'transformed_source': transformed,
               'mapping': mapping_file,
               'inverse': inverse_mapping_file}
 
