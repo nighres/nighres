@@ -155,6 +155,9 @@ def surface_antsreg(source_surface, target_surface,
                           'inverse': inverse_mapping_file}
                 return output
 
+    # cropping and masking do not work well together?
+    if crop: mask_zero=False
+
     # load and get dimensions and resolution from input images
     source = load_volume(source_surface)
     # flip the data around, threshold
@@ -478,6 +481,25 @@ def surface_antsreg(source_surface, target_surface,
             linear.append(False)
 
     #print('inverse transforms: '+str(inverse))
+
+    #transform input (for checking)
+#    src_at = 'antsApplyTransforms --dimensionality 3 --input-image-type 3'
+#    src_at = src_at+' --input '+source.get_filename()
+#    src_at = src_at+' --reference-image '+target.get_filename()
+#    src_at = src_at+' --interpolation Linear'
+#    for idx,transform in enumerate(forward):
+#        if flag[idx]:
+#            src_at = src_at+' --transform ['+transform+', 1]'
+#        else:
+#            src_at = src_at+' --transform ['+transform+', 0]'
+#    src_at = src_at+' --output '+mapping_file
+#
+#    print(src_at)
+#    try:
+#        subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
+#    except subprocess.CalledProcessError as e:
+#        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+#        raise subprocess.CalledProcessError(msg)
 
     # Create forward coordinate mapping
     src_coord = numpy.zeros((nsx,nsy,nsz,3))
