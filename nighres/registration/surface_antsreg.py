@@ -35,6 +35,7 @@ def surface_antsreg(source_surface, target_surface,
 					regularization='Low',
 					convergence=1e-6,
 					mask_zero=True,
+					crop=True,
 					ignore_affine=False, ignore_header=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
@@ -100,7 +101,6 @@ def surface_antsreg(source_surface, target_surface,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * transformed_source ([niimg]): Deformed source image list (_ants_def0,1,...)
         * mapping (niimg): Coordinate mapping from source to target (_ants_map)
         * inverse (niimg): Inverse coordinate mapping from target to source (_ants_invmap)
 
@@ -136,11 +136,6 @@ def surface_antsreg(source_surface, target_surface,
      # output files needed for intermediate results
     output_dir = _output_dir_4saving(output_dir, source_surface)
 
-    transformed_source_file = os.path.join(output_dir,
-                                    _fname_4saving(module=__name__,file_name=file_name,
-                                   rootfile=source_surface,
-                                   suffix='ants-def'))
-
     mapping_file = os.path.join(output_dir,
                     _fname_4saving(module=__name__,file_name=file_name,
                                rootfile=source_surface,
@@ -153,17 +148,33 @@ def surface_antsreg(source_surface, target_surface,
     if save_data:
         if overwrite is False \
             and os.path.isfile(mapping_file) \
-            and os.path.isfile(inverse_mapping_file) \
-            and os.path.isfile(transformed_source_file) :
+            and os.path.isfile(inverse_mapping_file) :
 
                 print("skip computation (use existing results)")
-                output = {'transformed_source': transformed_source_file,
-                      'mapping': mapping_file,
-                      'inverse': inverse_mapping_file}
+                output = {'mapping': mapping_file,
+                          'inverse': inverse_mapping_file}
                 return output
 
     # load and get dimensions and resolution from input images
     source = load_volume(source_surface)
+    # flip the data around, threshold
+    source_ls = numpy.minimum(numpy.maximum(max_dist - source.get_data(),0.0),2.0*max_dist)
+    if crop:
+        # crop images for speed?
+        src_xmin, src_xmax = numpy.where(numpy.any(source_ls, axis=(1,2)))[0][[0, -1]]
+        src_ymin, src_ymax = numpy.where(numpy.any(source_ls, axis=(0,2)))[0][[0, -1]]
+        src_zmin, src_zmax = numpy.where(numpy.any(source_ls, axis=(0,1)))[0][[0, -1]]
+        
+        source_ls = source_ls[src_xmin:src_xmax+1, src_ymin:src_ymax+1, src_zmin:src_zmax+1]
+        
+    src_img = nibabel.Nifti1Image(source_ls, source.affine, source.header)
+    src_img.update_header()
+    src_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
+                                                    rootfile=source_surface,
+                                                    suffix='tmp_srcimg'))
+    save_volume(src_img_file, src_img)
+    source = load_volume(src_img_file)
+
     src_affine = source.affine
     src_header = source.header
     nsx = source.header.get_data_shape()[X]
@@ -176,17 +187,26 @@ def surface_antsreg(source_surface, target_surface,
     orig_src_aff = source.affine
     orig_src_hdr = source.header
 
-    # flip the data around, threshold
-    source_ls = numpy.minimum(numpy.maximum(max_dist - source.get_data(),0.0),2.0*max_dist)
-    src_img = nibabel.Nifti1Image(source_ls, source.affine, source.header)
-    src_img.update_header()
-    src_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
-                                                    rootfile=source_surface,
-                                                    suffix='tmp_srcimg'))
-    save_volume(src_img_file, src_img)
-    source = load_volume(src_img_file)
 
     target = load_volume(target_surface)
+    # flip the data around
+    target_ls = numpy.minimum(numpy.maximum(max_dist - target.get_data(),0.0),2.0*max_dist)
+    if crop:
+        # crop images for speed?
+        trg_xmin, trg_xmax = numpy.where(numpy.any(target_ls, axis=(1,2)))[0][[0, -1]]
+        trg_ymin, trg_ymax = numpy.where(numpy.any(target_ls, axis=(0,2)))[0][[0, -1]]
+        trg_zmin, trg_zmax = numpy.where(numpy.any(target_ls, axis=(0,1)))[0][[0, -1]]
+        
+        target_ls = target_ls[trg_xmin:trg_xmax+1, trg_ymin:trg_ymax+1, trg_zmin:trg_zmax+1]
+        
+    trg_img = nibabel.Nifti1Image(target_ls, target.affine, target.header)
+    trg_img.update_header()
+    trg_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
+                                                    rootfile=target_surface,
+                                                    suffix='tmp_trgimg'))
+    save_volume(trg_img_file, trg_img)
+    target = load_volume(trg_img_file)
+
     trg_affine = target.affine
     trg_header = target.header
     ntx = target.header.get_data_shape()[X]
@@ -198,16 +218,6 @@ def surface_antsreg(source_surface, target_surface,
 
     orig_trg_aff = target.affine
     orig_trg_hdr = target.header
-
-    # flip the data around
-    target_ls = numpy.minimum(numpy.maximum(max_dist - target.get_data(),0.0),2.0*max_dist)
-    trg_img = nibabel.Nifti1Image(target_ls, target.affine, target.header)
-    trg_img.update_header()
-    trg_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
-                                                    rootfile=target_surface,
-                                                    suffix='tmp_trgimg'))
-    save_volume(trg_img_file, trg_img)
-    target = load_volume(trg_img_file)
 
     # in case the affine transformations are not to be trusted: make them equal
     if ignore_affine or ignore_header:
@@ -323,33 +333,6 @@ def surface_antsreg(source_surface, target_surface,
         target = load_volume(trg_img_file)
         trg_affine = target.affine
         trg_header = target.header
-
-
-    # build coordinate mapping matrices and save them to disk
-    src_coord = numpy.zeros((nsx,nsy,nsz,3))
-    src_coord[:,:,:,0] = numpy.expand_dims(numpy.expand_dims(numpy.array(range(nsx)),1),2) \
-                        *numpy.ones((1,nsy,1))*numpy.ones((1,1,nsz))
-    src_coord[:,:,:,1] = numpy.ones((nsx,1,1))*numpy.expand_dims(numpy.expand_dims(numpy.array(range(nsy)),0),2) \
-                        *numpy.ones((1,1,nsz))
-    src_coord[:,:,:,2] = numpy.ones((nsx,1,1))*numpy.ones((1,nsy,1)) \
-                        *numpy.expand_dims(numpy.expand_dims(numpy.array(range(nsz)),0),1)
-    src_map = nibabel.Nifti1Image(src_coord, source.affine, source.header)
-    src_map_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
-                                                        rootfile=source_surface,
-                                                        suffix='tmp_srccoord'))
-    save_volume(src_map_file, src_map)
-    trg_coord = numpy.zeros((ntx,nty,ntz,3))
-    trg_coord[:,:,:,0] = numpy.expand_dims(numpy.expand_dims(numpy.array(range(ntx)),1),2) \
-                        *numpy.ones((1,nty,1))*numpy.ones((1,1,ntz))
-    trg_coord[:,:,:,1] = numpy.ones((ntx,1,1))*numpy.expand_dims(numpy.expand_dims(numpy.array(range(nty)),0),2) \
-                        *numpy.ones((1,1,ntz))
-    trg_coord[:,:,:,2] = numpy.ones((ntx,1,1))*numpy.ones((1,nty,1)) \
-                        *numpy.expand_dims(numpy.expand_dims(numpy.array(range(ntz)),0),1)
-    trg_map = nibabel.Nifti1Image(trg_coord, target.affine, target.header)
-    trg_map_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
-                                                        rootfile=source_surface,
-                                                        suffix='tmp_trgcoord'))
-    save_volume(trg_map_file, trg_map)
 
     if mask_zero:
         # create and save temporary masks
@@ -496,26 +479,20 @@ def surface_antsreg(source_surface, target_surface,
 
     #print('inverse transforms: '+str(inverse))
 
-    # Transforms the moving image
-    at = 'antsApplyTransforms --dimensionality 3 --input-image-type 0'
-    at = at+' --input '+source_surface
-    at = at+' --reference-image '+target_surface
-    at = at+' --interpolation '+interpolation
-    for idx,transform in enumerate(forward):
-        if flag[idx]:
-            at = at+' --transform ['+transform+', 1]'
-        else:
-            at = at+' --transform ['+transform+', 0]'
-    at = at+' --output '+transformed_source_file
+    # Create forward coordinate mapping
+    src_coord = numpy.zeros((nsx,nsy,nsz,3))
+    src_coord[:,:,:,0] = numpy.expand_dims(numpy.expand_dims(numpy.array(range(nsx)),1),2) \
+                        *numpy.ones((1,nsy,1))*numpy.ones((1,1,nsz))
+    src_coord[:,:,:,1] = numpy.ones((nsx,1,1))*numpy.expand_dims(numpy.expand_dims(numpy.array(range(nsy)),0),2) \
+                        *numpy.ones((1,1,nsz))
+    src_coord[:,:,:,2] = numpy.ones((nsx,1,1))*numpy.ones((1,nsy,1)) \
+                        *numpy.expand_dims(numpy.expand_dims(numpy.array(range(nsz)),0),1)
+    src_map = nibabel.Nifti1Image(src_coord, source.affine, source.header)
+    src_map_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
+                                                        rootfile=source_surface,
+                                                        suffix='tmp_srccoord'))
+    save_volume(src_map_file, src_map)
 
-    print(at)
-    try:
-        subprocess.check_output(at, shell=True, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
-        raise subprocess.CalledProcessError(msg)
-
-    # Create coordinate mappings
     src_at = 'antsApplyTransforms --dimensionality 3 --input-image-type 3'
     src_at = src_at+' --input '+src_map.get_filename()
     src_at = src_at+' --reference-image '+target.get_filename()
@@ -533,7 +510,34 @@ def surface_antsreg(source_surface, target_surface,
     except subprocess.CalledProcessError as e:
         msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
         raise subprocess.CalledProcessError(msg)
-    trans_mapping = []
+
+    # uncrop if needed
+    if crop:
+        orig = load_volume(target_surface)
+        nx = orig.header.get_data_shape()[X]
+        ny = orig.header.get_data_shape()[Y]
+        nz = orig.header.get_data_shape()[Z]
+        coord = numpy.zeros((nx,ny,nz,3))
+        mapping = load_volume(mapping_file).get_data()
+        coord[trg_xmin:trg_xmax+1, trg_ymin:trg_ymax+1, trg_zmin:trg_zmax+1, 0] = mapping[:,:,:,0] + src_xmin
+        coord[trg_xmin:trg_xmax+1, trg_ymin:trg_ymax+1, trg_zmin:trg_zmax+1, 1] = mapping[:,:,:,1] + src_ymin
+        coord[trg_xmin:trg_xmax+1, trg_ymin:trg_ymax+1, trg_zmin:trg_zmax+1, 2] = mapping[:,:,:,2] + src_zmin
+        coord_img = nibabel.Nifti1Image(coord, orig.affine, orig.header)
+        save_volume(mapping_file, coord_img)        
+
+    # Create backward coordinate mapping
+    trg_coord = numpy.zeros((ntx,nty,ntz,3))
+    trg_coord[:,:,:,0] = numpy.expand_dims(numpy.expand_dims(numpy.array(range(ntx)),1),2) \
+                        *numpy.ones((1,nty,1))*numpy.ones((1,1,ntz))
+    trg_coord[:,:,:,1] = numpy.ones((ntx,1,1))*numpy.expand_dims(numpy.expand_dims(numpy.array(range(nty)),0),2) \
+                        *numpy.ones((1,1,ntz))
+    trg_coord[:,:,:,2] = numpy.ones((ntx,1,1))*numpy.ones((1,nty,1)) \
+                        *numpy.expand_dims(numpy.expand_dims(numpy.array(range(ntz)),0),1)
+    trg_map = nibabel.Nifti1Image(trg_coord, target.affine, target.header)
+    trg_map_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
+                                                        rootfile=source_surface,
+                                                        suffix='tmp_trgcoord'))
+    save_volume(trg_map_file, trg_map)
 
     trg_at = 'antsApplyTransforms --dimensionality 3 --input-image-type 3'
     trg_at = trg_at+' --input '+trg_map.get_filename()
@@ -553,13 +557,28 @@ def surface_antsreg(source_surface, target_surface,
         msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
         raise subprocess.CalledProcessError(msg)
 
-    # pad coordinate mapping outside the image? hopefully not needed...
+    # uncrop if needed
+    if crop:
+        orig = load_volume(source_surface)
+        nx = orig.header.get_data_shape()[X]
+        ny = orig.header.get_data_shape()[Y]
+        nz = orig.header.get_data_shape()[Z]
+        coord = numpy.zeros((nx,ny,nz,3))
+        mapping = load_volume(inverse_mapping_file).get_data()
+        coord[src_xmin:src_xmax+1, src_ymin:src_ymax+1, src_zmin:src_zmax+1, 0] = mapping[:,:,:,0] + trg_xmin
+        coord[src_xmin:src_xmax+1, src_ymin:src_ymax+1, src_zmin:src_zmax+1, 1] = mapping[:,:,:,1] + trg_ymin
+        coord[src_xmin:src_xmax+1, src_ymin:src_ymax+1, src_zmin:src_zmax+1, 2] = mapping[:,:,:,2] + trg_zmin
+        coord_img = nibabel.Nifti1Image(coord, orig.affine, orig.header)
+        save_volume(inverse_mapping_file, coord_img)        
 
     # clean-up intermediate files
     if os.path.exists(src_map_file): os.remove(src_map_file)
     if os.path.exists(trg_map_file): os.remove(trg_map_file)
     if os.path.exists(src_img_file): os.remove(src_img_file)
     if os.path.exists(trg_img_file): os.remove(trg_img_file)
+    if mask_zero:
+        if os.path.exists(src_mask_file): os.remove(src_mask_file)
+        if os.path.exists(trg_mask_file): os.remove(trg_mask_file)
 
     for name in forward:
         if os.path.exists(name): os.remove(name)
@@ -572,28 +591,20 @@ def surface_antsreg(source_surface, target_surface,
         save_volume(mapping_file, nibabel.Nifti1Image(mapping.get_data(), orig_trg_aff, orig_trg_hdr))
         inverse = load_volume(inverse_mapping_file)
         save_volume(inverse_mapping_file, nibabel.Nifti1Image(inverse.get_data(), orig_src_aff, orig_src_hdr))
-        for trans_file in transformed_source_files:
-            trans = load_volume(trans_file)
-            save_volume(trans_file, nibabel.Nifti1Image(trans.get_data(), orig_trg_aff, orig_trg_hdr))
 
     if not save_data:
         # collect saved outputs
-        transformed = load_volume(transformed_source_file)
-        output = {'transformed_source': transformed,
-              'mapping': load_volume(mapping_file),
-              'inverse': load_volume(inverse_mapping_file)}
+        output = {'mapping': load_volume(mapping_file),
+                  'inverse': load_volume(inverse_mapping_file)}
 
         # remove output files if *not* saved
-        if os.path.exists(transformed_source_file): os.remove(transformed_source_file)
         if os.path.exists(mapping_file): os.remove(mapping_file)
         if os.path.exists(inverse_mapping_file): os.remove(inverse_mapping_file)
 
         return output
     else:
         # collect saved outputs
-        transformed = transformed_source_file
-        output = {'transformed_source': transformed,
-              'mapping': mapping_file,
-              'inverse': inverse_mapping_file}
+        output = {'mapping': mapping_file,
+                  'inverse': inverse_mapping_file}
 
         return output
