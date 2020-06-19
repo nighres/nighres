@@ -164,9 +164,9 @@ def surface_antsreg(source_surface, target_surface,
     source_ls = numpy.minimum(numpy.maximum(max_dist - source.get_data(),0.0),2.0*max_dist)
     if crop:
         # crop images for speed?
-        src_xmin, src_xmax = numpy.where(numpy.any(source_ls, axis=(1,2)))[0][[0, -1]]
-        src_ymin, src_ymax = numpy.where(numpy.any(source_ls, axis=(0,2)))[0][[0, -1]]
-        src_zmin, src_zmax = numpy.where(numpy.any(source_ls, axis=(0,1)))[0][[0, -1]]
+        src_xmin, src_xmax = numpy.where(numpy.any(source_ls>0.1, axis=(1,2)))[0][[0, -1]]
+        src_ymin, src_ymax = numpy.where(numpy.any(source_ls>0.1, axis=(0,2)))[0][[0, -1]]
+        src_zmin, src_zmax = numpy.where(numpy.any(source_ls>0.1, axis=(0,1)))[0][[0, -1]]
         
         source_ls = source_ls[src_xmin:src_xmax+1, src_ymin:src_ymax+1, src_zmin:src_zmax+1]
         
@@ -196,9 +196,9 @@ def surface_antsreg(source_surface, target_surface,
     target_ls = numpy.minimum(numpy.maximum(max_dist - target.get_data(),0.0),2.0*max_dist)
     if crop:
         # crop images for speed?
-        trg_xmin, trg_xmax = numpy.where(numpy.any(target_ls, axis=(1,2)))[0][[0, -1]]
-        trg_ymin, trg_ymax = numpy.where(numpy.any(target_ls, axis=(0,2)))[0][[0, -1]]
-        trg_zmin, trg_zmax = numpy.where(numpy.any(target_ls, axis=(0,1)))[0][[0, -1]]
+        trg_xmin, trg_xmax = numpy.where(numpy.any(target_ls>0.1, axis=(1,2)))[0][[0, -1]]
+        trg_ymin, trg_ymax = numpy.where(numpy.any(target_ls>0.1, axis=(0,2)))[0][[0, -1]]
+        trg_zmin, trg_zmax = numpy.where(numpy.any(target_ls>0.1, axis=(0,1)))[0][[0, -1]]
         
         target_ls = target_ls[trg_xmin:trg_xmax+1, trg_ymin:trg_ymax+1, trg_zmin:trg_zmax+1]
         
@@ -539,7 +539,7 @@ def surface_antsreg(source_surface, target_surface,
         nx = orig.header.get_data_shape()[X]
         ny = orig.header.get_data_shape()[Y]
         nz = orig.header.get_data_shape()[Z]
-        coord = numpy.zeros((nx,ny,nz,3))
+        coord = -numpy.ones((nx,ny,nz,3))
         mapping = load_volume(mapping_file).get_data()
         coord[trg_xmin:trg_xmax+1, trg_ymin:trg_ymax+1, trg_zmin:trg_zmax+1, 0] = mapping[:,:,:,0] + src_xmin
         coord[trg_xmin:trg_xmax+1, trg_ymin:trg_ymax+1, trg_zmin:trg_zmax+1, 1] = mapping[:,:,:,1] + src_ymin
@@ -585,7 +585,7 @@ def surface_antsreg(source_surface, target_surface,
         nx = orig.header.get_data_shape()[X]
         ny = orig.header.get_data_shape()[Y]
         nz = orig.header.get_data_shape()[Z]
-        coord = numpy.zeros((nx,ny,nz,3))
+        coord = -numpy.ones((nx,ny,nz,3))
         mapping = load_volume(inverse_mapping_file).get_data()
         coord[src_xmin:src_xmax+1, src_ymin:src_ymax+1, src_zmin:src_zmax+1, 0] = mapping[:,:,:,0] + trg_xmin
         coord[src_xmin:src_xmax+1, src_ymin:src_ymax+1, src_zmin:src_zmax+1, 1] = mapping[:,:,:,1] + trg_ymin
@@ -594,13 +594,13 @@ def surface_antsreg(source_surface, target_surface,
         save_volume(inverse_mapping_file, coord_img)        
 
     # clean-up intermediate files
-    if os.path.exists(src_map_file): os.remove(src_map_file)
-    if os.path.exists(trg_map_file): os.remove(trg_map_file)
-    if os.path.exists(src_img_file): os.remove(src_img_file)
-    if os.path.exists(trg_img_file): os.remove(trg_img_file)
-    if mask_zero:
-        if os.path.exists(src_mask_file): os.remove(src_mask_file)
-        if os.path.exists(trg_mask_file): os.remove(trg_mask_file)
+#    if os.path.exists(src_map_file): os.remove(src_map_file)
+#    if os.path.exists(trg_map_file): os.remove(trg_map_file)
+#    if os.path.exists(src_img_file): os.remove(src_img_file)
+#    if os.path.exists(trg_img_file): os.remove(trg_img_file)
+#    if mask_zero:
+#        if os.path.exists(src_mask_file): os.remove(src_mask_file)
+#        if os.path.exists(trg_mask_file): os.remove(trg_mask_file)
 
     for name in forward:
         if os.path.exists(name): os.remove(name)
