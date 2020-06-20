@@ -28,13 +28,13 @@ def surface_antsreg(source_surface, target_surface,
                     run_affine=True,
                     affine_iterations=1000,
                     run_syn=True,
-                    coarse_iterations=40,
-                    medium_iterations=50, fine_iterations=40,
-					cost_function='MeanSquares',
+                    coarse_iterations=100,
+                    medium_iterations=70, fine_iterations=20,
+					cost_function='Demons',
 					interpolation='Linear',
 					regularization='Low',
 					convergence=1e-6,
-					mask_zero=True,
+					mask_zero=False,
 					crop=True,
 					ignore_affine=False, ignore_header=False,
                     save_data=False, overwrite=False, output_dir=None,
@@ -383,7 +383,7 @@ def surface_antsreg(source_surface, target_surface,
         reg = reg + ' --transform Rigid[0.1]'
         for idx,img in enumerate(srcfiles):
             reg = reg + ' --metric MeanSquares['+trgfiles[idx]+', '+srcfiles[idx] \
-                        +', '+'{:.3f}'.format(weight)+', 1, Random, 0.3 ]'
+                        +', '+'{:.3f}'.format(weight)+', 0, Random, 0.3 ]'
 
         reg = reg + ' --convergence ['+str(rigid_iterations)+'x' \
                     +str(rigid_iterations)+'x'+str(rigid_iterations)  \
@@ -398,7 +398,7 @@ def surface_antsreg(source_surface, target_surface,
         reg = reg + ' --transform Affine[0.1]'
         for idx,img in enumerate(srcfiles):
             reg = reg + ' --metric MeanSquares['+trgfiles[idx]+', '+srcfiles[idx] \
-                        +', '+'{:.3f}'.format(weight)+', 1, Random, 0.3 ]'
+                        +', '+'{:.3f}'.format(weight)+', 0, Random, 0.3 ]'
 
         reg = reg + ' --convergence ['+str(affine_iterations)+'x' \
                     +str(affine_iterations)+'x'+str(affine_iterations)  \
@@ -410,20 +410,20 @@ def surface_antsreg(source_surface, target_surface,
         #reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
 
     if run_syn is True:
-        if regularization == 'Low': syn_param = [0.2, 1.0, 0.0]
-        elif regularization == 'Medium': syn_param = [0.2, 3.0, 0.0]
+        if regularization == 'Low': syn_param = [0.1, 1.0, 0.0]
+        elif regularization == 'Medium': syn_param = [0.1, 3.0, 0.0]
         elif regularization == 'High': syn_param = [0.2, 4.0, 3.0]
-        else: syn_param = [0.2, 3.0, 0.0]
+        else: syn_param = [0.1, 3.0, 0.0]
 
         reg = reg + ' --transform SyN'+str(syn_param)
         if (cost_function=='Demons'):
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric Demons['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 1, Random, 0.3 ]'
+                            +', '+'{:.3f}'.format(weight)+', 4, Random, 0.3 ]'
         else:
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric MeanSquares['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 1, Random, 0.3 ]'
+                            +', '+'{:.3f}'.format(weight)+', 0, Random, 0.3 ]'
 
         reg = reg + ' --convergence ['+str(coarse_iterations)+'x' \
                     +str(coarse_iterations)+'x'+str(medium_iterations)+'x' \
