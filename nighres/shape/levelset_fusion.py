@@ -10,6 +10,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def levelset_fusion(levelset_images,
                     correct_topology=True, topology_lut_dir=None,
+                    smooth_curvature=0.0,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
 
@@ -28,6 +29,8 @@ def levelset_fusion(levelset_images,
     topology_lut_dir: str, optional
         Path to directory in which topology files are stored (default is stored
         in TOPOLOGY_LUT_DIR)
+    smooth_curvature: float, optional
+        Curvature smoothing of the final average in [0,1] (default is 0)
     save_data: bool, optional
         Save output data to file (default is False)
     overwrite: bool, optional
@@ -80,7 +83,8 @@ def levelset_fusion(levelset_images,
         pass
 
     # initiate class
-    algorithm = nighresjava.ShapeLevelsetFusion()
+    algorithm = nighresjava.LevelsetShapeFusion()
+    #algorithm = nighresjava.ShapeLevelsetFusion()
 
     # load the data
     nsubjects = len(levelset_images)
@@ -105,6 +109,8 @@ def levelset_fusion(levelset_images,
     algorithm.setCorrectSkeletonTopology(correct_topology)
     algorithm.setTopologyLUTdirectory(topology_lut_dir)
 
+    algorithm.setCurvatureSmoothing(smooth_curvature)
+    
     # execute class
     try:
         algorithm.execute()
