@@ -9,8 +9,8 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 
 def levelset_fusion(levelset_images,
-                    correct_topology=True, topology_lut_dir=None,
-                    smooth_curvature=0.0,
+                    correct_topology=True, topology_lut_dir=None, max_distance=10.0,
+                    smooth_curvature=0.1, follow_stdev=False, sharpen=0.0,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
 
@@ -29,8 +29,14 @@ def levelset_fusion(levelset_images,
     topology_lut_dir: str, optional
         Path to directory in which topology files are stored (default is stored
         in TOPOLOGY_LUT_DIR)
+    max_distance: float, optional
+        Maximum distance for levelset combination (default is 10.0 voxels)
     smooth_curvature: float, optional
         Curvature smoothing of the final average in [0,1] (default is 0)
+    follow_stdev: bool, optional
+        Grows preferrentially in regions of higher variance (default is False)
+    sharpen: float, optional
+        Sharpening of average by weighted average with a Laplacian filtered version [0,1] (default is 0)
     save_data: bool, optional
         Save output data to file (default is False)
     overwrite: bool, optional
@@ -109,7 +115,13 @@ def levelset_fusion(levelset_images,
     algorithm.setCorrectSkeletonTopology(correct_topology)
     algorithm.setTopologyLUTdirectory(topology_lut_dir)
 
+    algorithm.setLevelsetDistance(max_distance)
+    
     algorithm.setCurvatureSmoothing(smooth_curvature)
+    
+    algorithm.setSlopeSharpening(sharpen)
+    
+    algorithm.setIncludeVariance(follow_stdev)
     
     # execute class
     try:
