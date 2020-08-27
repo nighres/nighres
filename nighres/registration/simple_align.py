@@ -205,7 +205,7 @@ def simple_align(source_image, target_image,
             src_center = np.zeros(4)
             trg_center = np.zeros(4)
             
-            if data_type is 'intensity':
+            if data_type == 'intensity':
                  for x in range(nsx):
                     for y in range(nsy):
                         for z in range(nsz):
@@ -220,7 +220,7 @@ def simple_align(source_image, target_image,
                             trg_center[Y] += y*target.get_data()[x,y,z]
                             trg_center[Z] += z*target.get_data()[x,y,z]
                             trg_center[T] += target.get_data()[x,y,z]
-            elif data_type is 'nonzero':
+            elif data_type == 'nonzero':
                  for x in range(nsx):
                     for y in range(nsy):
                         for z in range(nsz):
@@ -237,7 +237,7 @@ def simple_align(source_image, target_image,
                                 trg_center[Y] += y
                                 trg_center[Z] += z
                                 trg_center[T] += 1
-            elif data_typ is 'boundingbox':
+            elif data_typ == 'boundingbox':
                 src_center[X] = nsx/2
                 src_center[Y] = nsy/2
                 src_center[Z] = nsz/2
@@ -264,7 +264,7 @@ def simple_align(source_image, target_image,
         if rescale:
             src_size=0
             trg_size=0
-            if data_type is 'intensity':
+            if data_type == 'intensity':
                  for x in range(nsx):
                     for y in range(nsy):
                         for z in range(nsz):
@@ -273,7 +273,7 @@ def simple_align(source_image, target_image,
                     for y in range(nty):
                         for z in range(ntz):
                             trg_size += target.get_data()[x,y,z]
-            elif data_type is 'nonzero':
+            elif data_type == 'nonzero':
                  for x in range(nsx):
                     for y in range(nsy):
                         for z in range(nsz):
@@ -284,7 +284,7 @@ def simple_align(source_image, target_image,
                         for z in range(ntz):
                             if target.get_data()[x,y,z]>0:
                                 trg_size += 1
-            elif data_typ is 'boundingbox':
+            elif data_typ == 'boundingbox':
                 src_size = nsx*nsy*nsz
                 trg_size = ntx*nty*ntz
             
