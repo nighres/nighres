@@ -1,10 +1,10 @@
 matrix:
   include:
-  - dist: focal
+  - dist: bionic
     language: java
-    jdk: openjdk11
+    jdk: openjdk10
     before_install:
-    - export JCC_JDK=/usr/lib/jvm/java-1.11.0-openjdk-amd64
+    - export JCC_JDK=/usr/lib/jvm/java-1.10.0-openjdk-amd64
     - sudo apt-get update
     - sudo apt-get install python3.6
     - sudo apt-get install python3-pip
