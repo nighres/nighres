@@ -5,6 +5,8 @@ matrix:
     jdk: openjdk11
     before_install:
     - export JCC_JDK=/usr/lib/jvm/java-11-openjdk-amd64
+    - sudo ln -s /usr/lib/jvm/java-11-openjdk-amd64/lib/server/libjvm.so /usr/lib/libjvm.so
+    - sudo ln -s /usr/lib/jvm/java-11-openjdk-amd64/lib/libjava.so /usr/lib/libjava.so
     - sudo apt-get update
     - sudo apt-get install python3.6
     - sudo apt-get install python3-pip
