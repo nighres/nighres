@@ -91,9 +91,13 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 
-    propag.setDimensions(dimensions[0], dimensions[1], dimensions[2])
-    propag.setResolutions(resolution[0], resolution[1], resolution[2])
-
+    if len(dimensions)>2:
+        propag.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+        propag.setResolutions(resolution[0], resolution[1], resolution[2])
+    else:
+        propag.setDimensions(dimensions[0], dimensions[1])
+        propag.setResolutions(resolution[0], resolution[1])
+        
     propag.setInputImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     

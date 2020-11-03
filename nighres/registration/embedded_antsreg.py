@@ -737,7 +737,7 @@ def embedded_antsreg_2d(source_image, target_image,
 
         return output
 
-def embedded_antsreg_2d_multi(source_images, target_images,
+def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
                     run_rigid=False,
                     rigid_iterations=1000,
                     run_affine=False,
@@ -767,6 +767,8 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         Images to register
     target_images: [niimg]
         Reference images to match
+    image_weights: [float]
+        Relative weights to give each pair of images (default is equal)
     run_rigid: bool
         Whether or not to run a rigid registration first (default is False)
     rigid_iterations: float
@@ -1116,7 +1118,16 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         srcfiles.append(sources[idx].get_filename())
         trgfiles.append(targets[idx].get_filename())
 
-    weight = 1.0/len(srcfiles)
+    weights = []    
+    if image_weights is not None:
+        weight_sum = 0.0
+        for idx,img in enumerate(sources):
+            weight_sum = weight_sum + image_weights[idx]
+        for idx,img in enumerate(sources):
+            weights.append(image_weights[idx]/weight_sum)
+    else:        
+        for idx,img in enumerate(sources):
+            weights.append(1.0/len(srcfiles))
 
     # figure out the number of scales, going with a factor of two
     n_scales = math.ceil(math.log(scaling_factor)/math.log(2.0))
@@ -1140,11 +1151,11 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         if (cost_function=='CrossCorrelation'):
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric CC['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
+                            +', '+'{:.3f}'.format(weights[idx])+', 5, Random, 0.3 ]'
         else:
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric MI['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 32, Random, 0.3 ]'
+                            +', '+'{:.3f}'.format(weights[idx])+', 32, Random, 0.3 ]'
 
         reg = reg + ' --convergence ['+iter_rigid+', '+str(convergence)+', 10 ]'
 
@@ -1158,11 +1169,11 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         if (cost_function=='CrossCorrelation'):
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric CC['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
+                            +', '+'{:.3f}'.format(weights[idx])+', 5, Random, 0.3 ]'
         else:
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric MI['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 32, Random, 0.3 ]'
+                            +', '+'{:.3f}'.format(weights[idx])+', 32, Random, 0.3 ]'
 
         reg = reg + ' --convergence ['+iter_affine+', '+str(convergence)+', 10 ]'
 
@@ -1181,11 +1192,11 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         if (cost_function=='CrossCorrelation'):
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric CC['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
+                            +', '+'{:.3f}'.format(weights[idx])+', 5, Random, 0.3 ]'
         else:
             for idx,img in enumerate(srcfiles):
                 reg = reg + ' --metric MI['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 32, Random, 0.3 ]'
+                            +', '+'{:.3f}'.format(weights[idx])+', 32, Random, 0.3 ]'
 
         reg = reg + ' --convergence ['+iter_syn+', '+str(convergence)+', 5 ]'
 
@@ -1198,7 +1209,7 @@ def embedded_antsreg_2d_multi(source_images, target_images,
         reg = reg + ' --transform Rigid[0.1]'
         for idx,img in enumerate(srcfiles):
             reg = reg + ' --metric CC['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
+                            +', '+'{:.3f}'.format(weights[idx])+', 5, Random, 0.3 ]'
         reg = reg + ' --convergence [ 0, 1.0, 2 ]'
         reg = reg + ' --smoothing-sigmas 1.0'
         reg = reg + ' --shrink-factors 1'

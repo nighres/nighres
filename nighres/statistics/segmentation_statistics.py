@@ -114,9 +114,13 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 
-    stats.setDimensions(dimensions[0], dimensions[1], dimensions[2])
-    stats.setResolutions(resolution[0], resolution[1], resolution[2])
-
+    if len(dimensions)>2:
+        stats.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+        stats.setResolutions(resolution[0], resolution[1], resolution[2])
+    else:
+        stats.setDimensions(dimensions[0], dimensions[1], 1)
+        stats.setResolutions(resolution[0], resolution[1], 1.0)
+        
     stats.setSegmentationImage(nighresjava.JArray('int')(
                                     (data.flatten('F')).astype(int).tolist()))
     stats.setSegmentationName(_fname_4saving(module=__name__,rootfile=segmentation))

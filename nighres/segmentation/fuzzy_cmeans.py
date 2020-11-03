@@ -15,7 +15,7 @@ def fuzzy_cmeans(image, clusters=3, max_iterations=50, max_difference=0.01,
     """ Fuzzy C-means image segmentation
 
     Estimates intensity clusters with spatial smoothness and partial voluming.
-    Based on the RFCM algorithm of (Pham, 2001).
+    Based on the RFCM algorithm of (Pham, 2001) [1]_.
 
     Parameters
     ----------
@@ -55,6 +55,11 @@ def fuzzy_cmeans(image, clusters=3, max_iterations=50, max_difference=0.01,
     Notes
     ----------
     Original Java module by Pierre-Louis Bazin.
+
+    References
+    ----------
+    .. [1] D.L. Pham, Spatial Models for Fuzzy Clustering,
+       CVIU, vol. 84, pp. 285--297, 2001
     """
 
     print('\nFuzzy C-means')

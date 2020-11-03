@@ -72,7 +72,7 @@ echo "Compiling..."
 #cd cbstools-public
 cd $cbstools_local
 #mkdir -p build
-javac -cp ${deps_list} ${javac_opts[@]} ca/concordia/qpi/*/*.java de/mpg/cbs/core/*/*.java $cbstools_list
+$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} ca/concordia/qpi/*/*.java de/mpg/cbs/core/*/*.java $cbstools_list
 
 echo "Assembling..."
 mkdir -p $nighres_local/nighresjava/src
@@ -117,12 +117,12 @@ echo "Compiling..."
 #cd cbstools-public
 cd $imcntk_local
 #mkdir -p build
-javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java $imcntk_list
+$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java $imcntk_list
 
 echo "Assembling..."
 #jar cf imcntk.jar     nl/uva/imcn/algorithms/*.class
-jar uf $nighres_local/nighresjava/src/nighresjava.jar nl/uva/imcn/algorithms/*.class
-jar cf $nighres_local/nighresjava/src/imcntk-lib.jar nl/uva/imcn/libraries/*.class nl/uva/imcn/methods/*.class nl/uva/imcn/structures/*.class nl/uva/imcn/utilities/*.class
+$JAVA_HOME/bin/jar uf $nighres_local/nighresjava/src/nighresjava.jar nl/uva/imcn/algorithms/*.class
+$JAVA_HOME/bin/jar cf $nighres_local/nighresjava/src/imcntk-lib.jar nl/uva/imcn/libraries/*.class nl/uva/imcn/methods/*.class nl/uva/imcn/structures/*.class nl/uva/imcn/utilities/*.class
 
 cp lib/*.jar $nighres_local/nighresjava/lib/
 
