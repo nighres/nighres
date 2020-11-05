@@ -27,9 +27,9 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     second_inversion: [niimg]
         List of {magnitude, phase} images for the second inversion
     t1map: niimg
-        Quantitative T1 map image, in milliseconds
+        Quantitative T1 map image, in seconds
     r2smap: niimg
-        Quantitative R2* map image, in kHz
+        Quantitative R2* map image, in Hz
     echo_times: [float]
         List of {te1, te2, te3, te4, te5} echo times, in seconds
     inversion_times: [float]
@@ -47,7 +47,7 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     correct_B1: bool
         Whether to correct for B1 inhomogeneities (default is False)
     b1map: niimg
-        Computed B1 map (optional)
+        Computed B1 map (ratio ~1, optional)
     scale_phase: bool
         Whether to rescale the phase image in [0,2PI] or to assume it is
         already in radians

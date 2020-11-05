@@ -1005,7 +1005,7 @@ def conditional_shape_map_intensities(structures, contrasts, targets,
     for target in range(targets):
         print("load: "+str(target_images[target]))
         data = load_volume(target_images[target]).get_data()
-        cspmax.setAvgAtlasImageAt(target, nighresjava.JArray('float')(
+        cspmax.setAvgTargetImageAt(target, nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
 
     # execute the transfer
@@ -1020,7 +1020,7 @@ def conditional_shape_map_intensities(structures, contrasts, targets,
         return
 
     # reshape output to what nibabel likes
-    intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+6,contrasts)
+    intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+6,targets)
 
     intens_hist_data = np.reshape(np.array(cspmax.getTargetConditionalHistogram(),
                                        dtype=np.float32), intens_hist_dims, 'F')
