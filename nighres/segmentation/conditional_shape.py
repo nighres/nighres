@@ -859,3 +859,181 @@ def conditional_shape_updating(subjects, structures, contrasts,
                  'max_skeleton_proba': skeleton_proba, 
                  'max_skeleton_label': skeleton_label}
         return output
+
+def conditional_shape_map_intensities(structures, contrasts, targets,
+                      contrast_images=None, target_images=None,
+                      shape_atlas_probas=None, shape_atlas_labels=None, 
+                      intensity_atlas_hist=None,
+                      skeleton_atlas_probas=None, skeleton_atlas_labels=None, 
+                      save_data=False, overwrite=False, output_dir=None,
+                      file_name=None):
+    """ Conditioanl Shape Parcellation Intensity Mapping
+
+    Maps intensity priors between contrasts for conditional shape parcellation
+
+    Parameters
+    ----------
+    structures: int
+        Number of structures to parcellate
+    contrasts: int
+       Number of atlas image intensity contrasts
+    targets: int
+       Number of target image intensity contrasts
+    contrast_images: [niimg]
+        Average atlas images (per atlas contrast)
+    target_images: [niimg]
+        Average target images (per target contrast)
+    shape_atlas_probas: niimg
+        Pre-computed shape atlas from the shape levelsets (replacing them)
+    shape_atlas_labels: niimg
+        Pre-computed shape atlas from the shape levelsets (replacing them)
+    intensity_atlas_hist: niimg
+        Pre-computed intensity atlas from the contrast images (replacing them)
+    skeleton_atlas_probas: niimg
+        Pre-computed skeleton atlas from the shape levelsets (replacing them)
+    skeleton_atlas_labels: niimg
+        Pre-computed skeleton atlas from the shape levelsets (replacing them)
+    save_data: bool
+        Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
+    output_dir: str, optional
+        Path to desired output directory, will be created if it doesn't exist
+    file_name: str, optional
+        Desired base name for output files with file extension
+        (suffixes will be added)
+
+    Returns
+    ----------
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files in brackets)
+
+        * cond_hist (niimg): Conditional intensity histograms (_cspmax-chist)
+
+    Notes
+    ----------
+    Original Java module by Pierre-Louis Bazin.
+    """
+
+    print('\nConditional Shape Intensity Mapping')
+
+    # make sure that saving related parameters are correct
+    if save_data:
+        output_dir = _output_dir_4saving(output_dir, target_images[0])
+
+        condhist_file = os.path.join(output_dir, 
+                        _fname_4saving(module=__name__,file_name=file_name,
+                                   rootfile=target_images[0],
+                                   suffix='cspmax-chist'))
+                
+        if overwrite is False \
+            and os.path.isfile(condhist_file):
+            
+            print("skip computation (use existing results)")
+            output = {'cond_hist': condhist_file}
+
+            return output
+
+
+    # start virtual machine, if not already running
+    try:
+        mem = _check_available_memory()
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
+    except ValueError:
+        pass
+    # create instance
+    cspmax = nighresjava.ConditionalShapeSegmentation()
+
+    # set parameters
+    cspmax.setNumberOfSubjectsObjectsBgAndContrasts(1,structures,1,contrasts)
+    cspmax.setOptions(True, False, False, False, True)
+    cspmax.setNumberOfTargetContrasts(targets)
+     
+    # load target image for parameters
+    # load a first image for dim, res
+    img = load_volume(contrast_images[0])
+    data = img.get_data()
+    header = img.get_header()
+    affine = img.get_affine()
+    trg_resolution = [x.item() for x in header.get_zooms()]
+    trg_dimensions = data.shape
+    
+    cspmax.setTargetDimensions(trg_dimensions[0], trg_dimensions[1], trg_dimensions[2])
+    cspmax.setTargetResolutions(trg_resolution[0], trg_resolution[1], trg_resolution[2])
+
+    resolution = trg_resolution
+    dimensions = trg_dimensions
+        
+    cspmax.setAtlasDimensions(dimensions[0], dimensions[1], dimensions[2])
+    cspmax.setAtlasResolutions(resolution[0], resolution[1], resolution[2])
+    
+    # load the shape and intensity atlases
+    print("load: "+str(os.path.join(output_dir,intensity_atlas_hist)))
+    hist = load_volume(os.path.join(output_dir,intensity_atlas_hist)).get_data()
+    cspmax.setConditionalHistogram(nighresjava.JArray('float')(
+                                        (hist.flatten('F')).astype(float)))
+
+    print("load: "+str(os.path.join(output_dir,shape_atlas_probas)))
+    pdata = load_volume(os.path.join(output_dir,shape_atlas_probas)).get_data()
+    print("load: "+str(os.path.join(output_dir,shape_atlas_labels)))
+    ldata = load_volume(os.path.join(output_dir,shape_atlas_labels)).get_data()
+    
+    cspmax.setShapeAtlasProbasAndLabels(nighresjava.JArray('float')(
+                                (pdata.flatten('F')).astype(float)),
+                                nighresjava.JArray('int')(
+                                (ldata.flatten('F')).astype(int).tolist()))
+
+    print("load: "+str(os.path.join(output_dir,skeleton_atlas_probas)))
+    pdata = load_volume(os.path.join(output_dir,skeleton_atlas_probas)).get_data()
+    
+    print("load: "+str(os.path.join(output_dir,skeleton_atlas_labels)))
+    ldata = load_volume(os.path.join(output_dir,skeleton_atlas_labels)).get_data()
+
+    cspmax.setSkeletonAtlasProbasAndLabels(nighresjava.JArray('float')(
+                                (pdata.flatten('F')).astype(float)),
+                                nighresjava.JArray('int')(
+                                (ldata.flatten('F')).astype(int).tolist()))
+
+    # load the atlas and target images
+    for contrast in range(contrasts):
+        print("load: "+str(contrast_images[contrast]))
+        data = load_volume(contrast_images[contrast]).get_data()
+        cspmax.setAvgAtlasImageAt(contrast, nighresjava.JArray('float')(
+                                            (data.flatten('F')).astype(float)))
+
+    for target in range(targets):
+        print("load: "+str(target_images[target]))
+        data = load_volume(target_images[target]).get_data()
+        cspmax.setAvgTargetImageAt(target, nighresjava.JArray('float')(
+                                            (data.flatten('F')).astype(float)))
+
+    # execute the transfer
+    try:
+        cspmax.mapAtlasTargetIntensityPriors()
+ 
+    except:
+        # if the Java module fails, reraise the error it throws
+        print("\n The underlying Java code did not execute cleanly: ")
+        print(sys.exc_info()[0])
+        raise
+        return
+
+    # reshape output to what nibabel likes
+    intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+6,targets)
+
+    intens_hist_data = np.reshape(np.array(cspmax.getTargetConditionalHistogram(),
+                                       dtype=np.float32), intens_hist_dims, 'F')
+
+
+    # adapt header max for each image so that correct max is displayed
+    # and create nifiti objects
+    chist = nb.Nifti1Image(intens_hist_data, None, None)
+
+    if save_data:
+        save_volume(condhist_file, chist)
+        output= {'cond_hist': condhist_file}
+        return output
+    else:
+        output= {'cond_hist': chist}
+        return output
