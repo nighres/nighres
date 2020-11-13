@@ -588,7 +588,7 @@ def embedded_antsreg_2d(source_image, target_image,
     try:
         subprocess.check_output(at, shell=True, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
         raise subprocess.CalledProcessError(msg)
 
     # Create coordinate mappings
@@ -611,7 +611,7 @@ def embedded_antsreg_2d(source_image, target_image,
     try:
         subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
         raise subprocess.CalledProcessError(msg)
 
     src_at = 'antsApplyTransforms --dimensionality 2 --input-image-type 0'
@@ -633,7 +633,7 @@ def embedded_antsreg_2d(source_image, target_image,
     try:
         subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
         raise subprocess.CalledProcessError(msg)
 
     # combine X,Y mappings
@@ -665,7 +665,7 @@ def embedded_antsreg_2d(source_image, target_image,
     try:
         subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
         raise subprocess.CalledProcessError(msg)
 
     trg_at = 'antsApplyTransforms --dimensionality 2 --input-image-type 0'
@@ -687,7 +687,7 @@ def embedded_antsreg_2d(source_image, target_image,
     try:
         subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
         raise subprocess.CalledProcessError(msg)
 
     # combine X,Y mappings
@@ -1269,7 +1269,7 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
         try:
             subprocess.check_output(at, shell=True, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
-            msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+            msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
             raise subprocess.CalledProcessError(msg)
 
     # Create coordinate mappings
@@ -1292,7 +1292,7 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
     try:
         subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
         raise subprocess.CalledProcessError(msg)
 
     src_at = 'antsApplyTransforms --dimensionality 2 --input-image-type 0'
@@ -1314,7 +1314,7 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
     try:
         subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
         raise subprocess.CalledProcessError(msg)
 
     # combine X,Y mappings
@@ -1346,7 +1346,7 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
     try:
         subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
         raise subprocess.CalledProcessError(msg)
 
     trg_at = 'antsApplyTransforms --dimensionality 2 --input-image-type 0'
@@ -1368,7 +1368,7 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
     try:
         subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
         raise subprocess.CalledProcessError(msg)
 
     # combine X,Y mappings
@@ -1963,7 +1963,7 @@ def embedded_antsreg_multi(source_images, target_images,
         try:
             subprocess.check_output(at, shell=True, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
-            msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+            msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
             raise subprocess.CalledProcessError(msg)
 
     # Create coordinate mappings
@@ -1982,7 +1982,7 @@ def embedded_antsreg_multi(source_images, target_images,
     try:
         subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
         raise subprocess.CalledProcessError(msg)
     trans_mapping = []
 
@@ -2001,7 +2001,7 @@ def embedded_antsreg_multi(source_images, target_images,
     try:
         subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+e.returncode+')\n Output: '+e.output
+        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
         raise subprocess.CalledProcessError(msg)
 
     # pad coordinate mapping outside the image? hopefully not needed...
