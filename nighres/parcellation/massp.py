@@ -19,15 +19,17 @@ labels_17structures = ['Str-l','Str-r','STN-l','STN-r','SN-l','SN-r',\
                        'PPN-l','PPN-r','Cl-l','Cl-r']
 
 def massp_17structures_label(name):
-    return labels_17structures.index(name)
- 
+    return 1+labels_17structures.index(name)
+
+def massp_17structures_list():
+    return labels_17structures
  
 def massp(target_images, structures=31,
                       shape_atlas_probas=None, shape_atlas_labels=None, 
                       intensity_atlas_hist=None,
                       skeleton_atlas_probas=None, skeleton_atlas_labels=None, 
                       map_to_target=None,
-                      max_iterations=80, max_difference=0.1,
+                      max_iterations=80, max_difference=0.1, volume_scaling=1.0,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Multi-contrast Anatomical Subcortical Structure parcellation (MASSP)
@@ -56,6 +58,8 @@ def massp(target_images, structures=31,
         Maximum number of diffusion iterations to perform
     max_difference: float
         Maximum difference between diffusion steps
+    volume_scaling: float
+        Scaling of the volume prior distribution in [0,1] (0 means no prior. 1 full prior, default is 1) 
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -148,19 +152,24 @@ def massp(target_images, structures=31,
                                             (data.flatten('F')).astype(float)))
 
     # if not specified, check if standard atlases are available or download them
-    if ( (intensity_atlas_hist is None) or (shape_atlas_probas is None) or (shape_atlas_labels is None)
+    if ( (shape_atlas_probas is None) or (shape_atlas_labels is None)
         or (skeleton_atlas_probas is None) or (skeleton_atlas_labels is None)):
         
         if (not os.path.exists(DEFAULT_MASSP_ATLAS)):
             download_MASSP_atlas(overwrite=False)
             
-        intensity_atlas_hist = DEFAULT_MASSP_HIST
         shape_atlas_probas = DEFAULT_MASSP_SPATIAL_PROBA
         shape_atlas_labels = DEFAULT_MASSP_SPATIAL_LABEL
         skeleton_atlas_probas = DEFAULT_MASSP_SKEL_PROBA
         skeleton_atlas_labels = DEFAULT_MASSP_SKEL_LABEL
-        
 
+    # allow for diffrent default atlases for intensities
+    if (intensity_atlas_hist is not None):
+        if not os.path.isfile(intensity_atlas_hist):
+            intensity_atlas_hist = os.path.join(DEFAULT_MASSP_ATLAS,intensity_atlas_hist)
+    else:
+        intensity_atlas_hist = DEFAULT_MASSP_HIST
+        
     # load the shape and intensity atlases
     print("load: "+str(intensity_atlas_hist))
     hist = load_volume(intensity_atlas_hist).get_data()
@@ -211,7 +220,7 @@ def massp(target_images, structures=31,
         massp.estimateTarget()
         massp.fastSimilarityDiffusion(4)
         massp.collapseToJointMaps()
-        massp.precomputeStoppingStatistics(3.0)
+        massp.precomputeStoppingStatistics(3.0,volume_scaling)
         massp.topologyBoundaryDefinition("wcs", topology_lut_dir)
         massp.conditionalPrecomputedDirectVolumeGrowth(3.0)
         massp.collapseSpatialPriorMaps()
