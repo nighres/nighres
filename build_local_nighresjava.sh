@@ -28,8 +28,9 @@ echo "${pip_modules}" | grep wheel > /dev/null || fatal 'This script requires wh
 
 # Set the JAVA_HOME variable if it is not set
 detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=')
+detected_home=${detected_home/jre/""}
 export JAVA_HOME=${JAVA_HOME:-"$detected_home"}
-# echo "After detection: $JAVA_HOME"
+echo "After detection: $JAVA_HOME"
 
 # Check that JCC is installed
 echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.\nInstall with `apt-get install jcc` or equivalent and `pip install jcc`'
