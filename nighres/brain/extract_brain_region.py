@@ -194,7 +194,10 @@ def extract_brain_region(segmentation, levelset_boundary,
 
     xbr.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     xbr.setResolutions(resolution[0], resolution[1], resolution[2])
-    xbr.setComponents(load_volume(maximum_membership).header.get_data_shape()[3])
+    if (len(load_volume(maximum_membership).header.get_data_shape())>3):
+        xbr.setComponents(load_volume(maximum_membership).header.get_data_shape()[3])
+    else:
+        xbr.setComponents(1)
 
     xbr.setSegmentationImage(nighresjava.JArray('int')(
         (data.flatten('F')).astype(int).tolist()))

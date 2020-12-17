@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def stack_intensity_regularisation(image, ratio=50,
+def stack_intensity_regularisation(image, cutoff=50,
                             save_data=False, overwrite=False, output_dir=None,
                             file_name=None):
     """ Stack intensity regularisation
@@ -19,8 +19,8 @@ def stack_intensity_regularisation(image, ratio=50,
     ----------
     image: niimg
         Input 2D images, stacked in the Z dimension
-    ratio: float, optional 
-        Ratio of image differences to keep (default is 50%)
+    cutoff: float, optional 
+        Range of image differences to keep (default is middle 50%)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -87,7 +87,7 @@ def stack_intensity_regularisation(image, ratio=50,
                                     (data.flatten('F')).astype(float)))
     
     # set algorithm parameters
-    sir.setVariationRatio(float(ratio))
+    sir.setVariationRatio(float(cutoff))
     
     # execute the algorithm
     try:
