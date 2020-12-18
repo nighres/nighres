@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def stack_intensity_regularisation(image, cutoff=50,
+def stack_intensity_regularisation(image, cutoff=50, mask=None,
                             save_data=False, overwrite=False, output_dir=None,
                             file_name=None):
     """ Stack intensity regularisation
@@ -21,6 +21,8 @@ def stack_intensity_regularisation(image, cutoff=50,
         Input 2D images, stacked in the Z dimension
     cutoff: float, optional 
         Range of image differences to keep (default is middle 50%)
+    mask: niimg
+        Input mask or probability image of the data to use (optional)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -84,6 +86,10 @@ def stack_intensity_regularisation(image, cutoff=50,
     sir.setDimensions(dimensions[0], dimensions[1], dimensions[2])
        
     sir.setInputImage(nighresjava.JArray('float')(
+                                    (data.flatten('F')).astype(float)))
+    
+    if mask is not None:
+        sir.setForegroundImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
     # set algorithm parameters
