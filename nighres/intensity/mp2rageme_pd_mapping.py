@@ -12,7 +12,7 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
                       t1map, r2smap, echo_times,
                       inversion_times, flip_angles, inversion_TR,
                       excitation_TR, N_excitations, efficiency=0.96,
-                      b1map=None,
+                      uni=None, b1map=None, b1scaling=1.0,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ MP2RAGEME PD mapping
@@ -44,10 +44,12 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
         Number of excitations
     efficiency: float
         Inversion efficiency (default is 0.96)
-    correct_B1: bool
-        Whether to correct for B1 inhomogeneities (default is False)
+    uni: niimg
+        UNI image to use instead of phase data (optional)
     b1map: niimg
         Computed B1 map (ratio ~1, optional)
+    b1scaling: float
+        B1 map scaling factor (default is 1.0)
     scale_phase: bool
         Whether to rescale the phase image in [0,2PI] or to assume it is
         already in radians
@@ -117,6 +119,7 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     qpdmap.setNumberExcitations(N_excitations)
     qpdmap.setInversionEfficiency(efficiency)
     qpdmap.setCorrectB1inhomogeneities(b1map!=None)
+    dpdmap.setB1mapScaling(b1scaling)
 
     # load first image and use it to set dimensions and resolution
     img = load_volume(first_inversion[0])
@@ -134,18 +137,23 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     qpdmap.setFirstInversionMagnitude(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
 
-    data = load_volume(first_inversion[1]).get_data()
-    qpdmap.setFirstInversionPhase(nighresjava.JArray('float')(
-                                    (data.flatten('F')).astype(float)))
-
     data = load_volume(second_inversion[0]).get_data()
     qpdmap.setSecondInversionMagnitude(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
 
-    data = load_volume(second_inversion[1]).get_data()
-    qpdmap.setSecondInversionPhase(nighresjava.JArray('float')(
-                                    (data.flatten('F')).astype(float)))
-
+    if (uni is None):
+        data = load_volume(first_inversion[1]).get_data()
+        qpdmap.setFirstInversionPhase(nighresjava.JArray('float')(
+                                        (data.flatten('F')).astype(float)))
+    
+        data = load_volume(second_inversion[1]).get_data()
+        qpdmap.setSecondInversionPhase(nighresjava.JArray('float')(
+                                        (data.flatten('F')).astype(float)))
+    else:
+        data = load_volume(uni).get_data()
+        qpdmap.setUniformImage(nighresjava.JArray('float')(
+                                        (data.flatten('F')).astype(float)))
+        
     data = load_volume(t1map).get_data()
     qpdmap.setT1mapImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))

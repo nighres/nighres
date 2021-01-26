@@ -58,8 +58,6 @@ def massp(target_images, structures=31,
         Maximum number of diffusion iterations to perform
     max_difference: float
         Maximum difference between diffusion steps
-    volume_scaling: float
-        Scaling of the volume prior distribution in [0,1] (0 means no prior. 1 full prior, default is 1) 
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -220,7 +218,7 @@ def massp(target_images, structures=31,
         massp.estimateTarget()
         massp.fastSimilarityDiffusion(4)
         massp.collapseToJointMaps()
-        massp.precomputeStoppingStatistics(3.0,volume_scaling)
+        massp.precomputeStoppingStatistics(3.0)
         massp.topologyBoundaryDefinition("wcs", topology_lut_dir)
         massp.conditionalPrecomputedDirectVolumeGrowth(3.0)
         massp.collapseSpatialPriorMaps()

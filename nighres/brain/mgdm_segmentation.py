@@ -253,7 +253,8 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     # set mgdm parameters
     mgdm.setAtlasFile(atlas_file)
     mgdm.setTopologyLUTdirectory(topology_lut_dir)
-    mgdm.setOutputImages('label_memberships')
+    #mgdm.setOutputImages('label_memberships')
+    mgdm.setOutputImages('segmentation')
     mgdm.setAdjustIntensityPriors(adjust_intensity_priors)
     mgdm.setComputePosterior(compute_posterior)
     mgdm.setPosteriorScale_mm(posterior_scale)
@@ -322,12 +323,14 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     dist_data = np.reshape(np.array(mgdm.getLevelsetBoundaryImage(),
                                     dtype=np.float32), dimensions, 'F')
 
+    # if using label_memberships output, 
     # membership and labels output has a 4th dimension, set to 6
     dimensions4d = [dimensions[0], dimensions[1], dimensions[2], 6]
+    
     lbl_data = np.reshape(np.array(mgdm.getPosteriorMaximumLabels4D(),
-                                   dtype=np.int32), dimensions4d, 'F')
+                                   dtype=np.int32), dimensions, 'F')
     mems_data = np.reshape(np.array(mgdm.getPosteriorMaximumMemberships4D(),
-                                    dtype=np.float32), dimensions4d, 'F')
+                                    dtype=np.float32), dimensions, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

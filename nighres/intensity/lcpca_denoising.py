@@ -11,7 +11,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def lcpca_denoising(image_list, phase_list=None, 
                     ngb_size=4, stdev_cutoff=1.05,
                     min_dimension=0, max_dimension=-1,
-                    unwrap=True, process_2d=False, use_rmt=False,
+                    unwrap=True, rescale_phs=True, process_2d=False, use_rmt=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_names=None):
     """ LCPCA denoising
@@ -37,7 +37,10 @@ def lcpca_denoising(image_list, phase_list=None,
         Maximum number of kept PCA components
         (default is -1 for all components)
     unwrap: bool, optional
-        Whether to unwrap the phase data of keep it as is, assuming radians
+        Whether to unwrap the phase data of keep it as is
+        (default is True)
+    rescale_phs: bool, optional
+        Whether to rescale the phase data of keep it as is, assuming radians
         (default is True)
     process_2d: bool, optional
         Whether to denoise in 2D, for instance when acquiring a thin slab of 
@@ -196,6 +199,7 @@ def lcpca_denoising(image_list, phase_list=None,
     lcpca.setMinimumDimension(min_dimension)
     lcpca.setMaximumDimension(max_dimension)
     lcpca.setUnwrapPhase(unwrap) 
+    lcpca.setRescalePhase(rescale_phs) 
     lcpca.setProcessSlabIn2D(process_2d)
     lcpca.setRandomMatrixTheory(use_rmt)
 
