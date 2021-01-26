@@ -119,7 +119,7 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     qpdmap.setNumberExcitations(N_excitations)
     qpdmap.setInversionEfficiency(efficiency)
     qpdmap.setCorrectB1inhomogeneities(b1map!=None)
-    dpdmap.setB1mapScaling(b1scaling)
+    qpdmap.setB1mapScaling(b1scaling)
 
     # load first image and use it to set dimensions and resolution
     img = load_volume(first_inversion[0])
