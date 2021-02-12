@@ -5,7 +5,7 @@ import sys
 import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
-                    _check_topology_lut_dir, _check_atlas_file, \
+                    _check_topology_lut_dir, _check_mgdm_atlas_file, \
                     _check_available_memory
 
 
@@ -114,18 +114,18 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
         Topology setting, choose 'wcs' (well-composed surfaces) for strongest
         topology constraint, 'no' for no topology constraint (default is 'wcs')
     atlas_file: str, optional
-        Path to plain text atlas file (default is stored in DEFAULT_ATLAS)
-        or atlas name to be searched in ATLAS_DIR
+        Path to plain text atlas file (default is stored in DEFAULT_MGDM_ATLAS)
+        or atlas name to be searched in MGDM_ATLAS_DIR
     topology_lut_dir: str, optional
         Path to directory in which topology files are stored (default is stored
         in TOPOLOGY_LUT_DIR)
     normalize_qmaps: bool
-        Normalize quantitative maps into [0,1] (default is False)
+        Normalize quantitative maps into [0,1] (default is True)
     adjust_intensity_priors: bool
         Adjust intensity priors based on dataset (default is False)
     normalize_qmaps: bool
         Normalize quantitative maps in [0,1] (default in True, change this if using
-        one of the -quant atlas text files in ATLAS_DIR) 
+        one of the -quant atlas text files in MGDM_ATLAS_DIR) 
     compute_posterior: bool
         Compute posterior probabilities for segmented structures
         (default is False)
@@ -179,7 +179,7 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
     print('\nMGDM Segmentation')
 
     # check atlas_file and set default if not given
-    atlas_file = _check_atlas_file(atlas_file)
+    atlas_file = _check_mgdm_atlas_file(atlas_file)
 
     # check topology_lut_dir and set default if not given
     topology_lut_dir = _check_topology_lut_dir(topology_lut_dir)

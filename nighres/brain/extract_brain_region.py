@@ -5,7 +5,7 @@ import sys
 import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
-    _check_topology_lut_dir, _check_atlas_file, _check_available_memory
+    _check_topology_lut_dir, _check_mgdm_atlas_file, _check_available_memory
 
 
 def extract_brain_region(segmentation, levelset_boundary,
@@ -33,8 +33,8 @@ def extract_brain_region(segmentation, levelset_boundary,
     maximum_label: niimg
         4D imageof the maximum labels from MGDM.
     atlas_file: str, optional
-        Path to plain text atlas file (default is stored in DEFAULT_ATLAS).
-        or atlas name to be searched in ATLAS_DIR
+        Path to plain text atlas file (default is stored in DEFAULT_MGDM_ATLAS).
+        or atlas name to be searched in MGDM_ATLAS_DIR
     extracted_region: {'left_cerebrum', 'right_cerebrum', 'cerebrum',
         'cerebellum', 'cerebellum_brainstem', 'subcortex', 'tissues(anat)',
         'tissues(func)', 'brain_mask'}
@@ -93,7 +93,7 @@ def extract_brain_region(segmentation, levelset_boundary,
     print('\nExtract Brain Region')
 
     # check atlas_file and set default if not given
-    atlas_file = _check_atlas_file(atlas_file)
+    atlas_file = _check_mgdm_atlas_file(atlas_file)
 
     # make sure that saving related parameters are correct
     if save_data:
