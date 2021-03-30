@@ -1,7 +1,8 @@
-import numpy as np
-import nibabel as nb
+import numpy
+import nibabel
 import os
 import sys
+import json
 import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
@@ -13,7 +14,9 @@ def conditional_shape(target_images, structures, contrasts, background=1,
                       intensity_atlas_hist=None,
                       skeleton_atlas_probas=None, skeleton_atlas_labels=None, 
                       map_to_atlas=None, map_to_target=None,
+                      atlas_file=None,
                       max_iterations=80, max_difference=0.1, ngb_size=4,
+                      intensity_prior=1.0,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Conditioanl Shape Parcellation
@@ -44,10 +47,16 @@ def conditional_shape(target_images, structures, contrasts, background=1,
         Coordinate mapping from the target to the atlas (opt)
     map_to_target: niimg
         Coordinate mapping from the atlas to the target (opt)
+    atlas_file: json
+        File with atlas labels and metadata (opt)
     max_iterations: int
         Maximum number of diffusion iterations to perform
     max_difference: float
         Maximum difference between diffusion steps
+    ngb_size: int
+        Number of neighbors to consider in the diffusion (default is 4)
+    intensity_prior: float
+        Importance scaling factor for the intensities in [0,1] (default is 1.0)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -147,12 +156,28 @@ def conditional_shape(target_images, structures, contrasts, background=1,
         pass
     # create instance
     cspmax = nighresjava.ConditionalShapeSegmentation()
-
-    # set parameters
     cspmax.setNumberOfSubjectsObjectsBgAndContrasts(1,structures,background,contrasts)
+    
+    # set parameters
     cspmax.setOptions(True, False, False, False, True)
     cspmax.setDiffusionParameters(max_iterations, max_difference)
+    cspmax.setIntensityImportancePrior(intensity_prior)
     
+    # load atlas metadata, if given (after setting up the numbers above!!)
+    if atlas_file is not None:
+        f = open(atlas_file)
+        metadata = json.load(f)
+        f.close()
+        
+        # structures = metadata['MASSP Labels']
+        contrastList = numpy.zeros(structures*contrasts, dtype=int)
+        for st in range(structures):
+            print('Label '+str(st+1)+": "+str(metadata[metadata['Label '+str(st+1)][1]]))
+            for c in metadata[metadata['Label '+str(st+1)][1]]:
+                contrastList[st*contrasts+c] = 1
+        cspmax.setContrastList(nighresjava.JArray('int')(
+                                (contrastList.flatten('F')).astype(int).tolist()))
+
     # load target image for parameters
     print("load: "+str(target_images[0]))
     img = load_volume(target_images[0])
@@ -268,56 +293,56 @@ def conditional_shape(target_images, structures, contrasts, background=1,
 
     intens_hist_dims = ((structures+background)*(structures+background),cspmax.getNumberOfBins()+6,contrasts)
 
-    spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(1),
-                                   dtype=np.float32), dims3Dtrg, 'F')
+    spatial_proba_data = numpy.reshape(numpy.array(cspmax.getBestSpatialProbabilityMaps(1),
+                                   dtype=numpy.float32), dims3Dtrg, 'F')
 
-    spatial_label_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityLabels(1),
-                                    dtype=np.int32), dims3Dtrg, 'F')    
+    spatial_label_data = numpy.reshape(numpy.array(cspmax.getBestSpatialProbabilityLabels(1),
+                                    dtype=numpy.int32), dims3Dtrg, 'F')    
 
-#    combined_proba_data = np.reshape(np.array(cspmax.getBestProbabilityMaps(1),
-#                                   dtype=np.float32), dims3Dtrg, 'F')
+#    combined_proba_data = numpy.reshape(numpy.array(cspmax.getBestProbabilityMaps(1),
+#                                   dtype=numpy.float32), dims3Dtrg, 'F')
 
-#    combined_label_data = np.reshape(np.array(cspmax.getBestProbabilityLabels(1),
-#                                    dtype=np.int32), dims3Dtrg, 'F')
+#    combined_label_data = numpy.reshape(numpy.array(cspmax.getBestProbabilityLabels(1),
+#                                    dtype=numpy.int32), dims3Dtrg, 'F')
 
-    combined_proba_data = np.reshape(np.array(cspmax.getJointProbabilityMaps(4),
-                                   dtype=np.float32), dims_extra, 'F')
+    combined_proba_data = numpy.reshape(numpy.array(cspmax.getJointProbabilityMaps(4),
+                                   dtype=numpy.float32), dims_extra, 'F')
 
-    combined_label_data = np.reshape(np.array(cspmax.getJointProbabilityLabels(4),
-                                    dtype=np.int32), dims_extra, 'F')
+    combined_label_data = numpy.reshape(numpy.array(cspmax.getJointProbabilityLabels(4),
+                                    dtype=numpy.int32), dims_extra, 'F')
 
-    proba_data = np.reshape(np.array(cspmax.getFinalProba(),
-                                    dtype=np.float32), dims3Dtrg, 'F')
+    proba_data = numpy.reshape(numpy.array(cspmax.getFinalProba(),
+                                    dtype=numpy.float32), dims3Dtrg, 'F')
 
-    label_data = np.reshape(np.array(cspmax.getFinalLabel(),
-                                    dtype=np.int32), dims3Dtrg, 'F')
+    label_data = numpy.reshape(numpy.array(cspmax.getFinalLabel(),
+                                    dtype=numpy.int32), dims3Dtrg, 'F')
 
-    neighbor_data = np.reshape(np.array(cspmax.getNeighborhoodMaps(ngb_size),
-                                        dtype=np.float32), dims_ngb, 'F')
+    neighbor_data = numpy.reshape(numpy.array(cspmax.getNeighborhoodMaps(ngb_size),
+                                        dtype=numpy.float32), dims_ngb, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
-    header['cal_max'] = np.nanmax(spatial_proba_data)
-    spatial_proba = nb.Nifti1Image(spatial_proba_data, trg_affine, trg_header)
+    header['cal_max'] = numpy.nanmax(spatial_proba_data)
+    spatial_proba = nibabel.Nifti1Image(spatial_proba_data, trg_affine, trg_header)
 
-    header['cal_max'] = np.nanmax(spatial_label_data)
-    spatial_label = nb.Nifti1Image(spatial_label_data, trg_affine, trg_header)
+    header['cal_max'] = numpy.nanmax(spatial_label_data)
+    spatial_label = nibabel.Nifti1Image(spatial_label_data, trg_affine, trg_header)
 
-    header['cal_max'] = np.nanmax(combined_proba_data)
-    combined_proba = nb.Nifti1Image(combined_proba_data, trg_affine, trg_header)
+    header['cal_max'] = numpy.nanmax(combined_proba_data)
+    combined_proba = nibabel.Nifti1Image(combined_proba_data, trg_affine, trg_header)
 
-    header['cal_max'] = np.nanmax(combined_label_data)
-    combined_label = nb.Nifti1Image(combined_label_data, trg_affine, trg_header)
+    header['cal_max'] = numpy.nanmax(combined_label_data)
+    combined_label = nibabel.Nifti1Image(combined_label_data, trg_affine, trg_header)
 
-    trg_header['cal_max'] = np.nanmax(proba_data)
-    proba = nb.Nifti1Image(proba_data, trg_affine, trg_header)
+    trg_header['cal_max'] = numpy.nanmax(proba_data)
+    proba = nibabel.Nifti1Image(proba_data, trg_affine, trg_header)
 
-    trg_header['cal_max'] = np.nanmax(label_data)
-    label = nb.Nifti1Image(label_data, trg_affine, trg_header)
+    trg_header['cal_max'] = numpy.nanmax(label_data)
+    label = nibabel.Nifti1Image(label_data, trg_affine, trg_header)
 
-    header['cal_min'] = np.nanmin(neighbor_data)
-    header['cal_max'] = np.nanmax(neighbor_data)
-    neighbors = nb.Nifti1Image(neighbor_data, trg_affine, trg_header)
+    header['cal_min'] = numpy.nanmin(neighbor_data)
+    header['cal_max'] = numpy.nanmax(neighbor_data)
+    neighbors = nibabel.Nifti1Image(neighbor_data, trg_affine, trg_header)
 
     if save_data:
         save_volume(spatial_proba_file, spatial_proba)
@@ -526,37 +551,37 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
     intens_dims = (structures+background,structures+background,contrasts)
     intens_hist_dims = ((structures+background)*(structures+background),cspmax.getNumberOfBins()+6,contrasts)
 
-    spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(dimensions[3]),
-                                   dtype=np.float32), dimensions, 'F')
+    spatial_proba_data = numpy.reshape(numpy.array(cspmax.getBestSpatialProbabilityMaps(dimensions[3]),
+                                   dtype=numpy.float32), dimensions, 'F')
 
-    spatial_label_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityLabels(dimensions[3]),
-                                    dtype=np.int32), dimensions, 'F')    
+    spatial_label_data = numpy.reshape(numpy.array(cspmax.getBestSpatialProbabilityLabels(dimensions[3]),
+                                    dtype=numpy.int32), dimensions, 'F')    
 
-    intens_hist_data = np.reshape(np.array(cspmax.getConditionalHistogram(),
-                                       dtype=np.float32), intens_hist_dims, 'F')
+    intens_hist_data = numpy.reshape(numpy.array(cspmax.getConditionalHistogram(),
+                                       dtype=numpy.float32), intens_hist_dims, 'F')
 
-    skeleton_proba_data = np.reshape(np.array(cspmax.getBestSkeletonProbabilityMaps(dimskel[3]),
-                                   dtype=np.float32), dimskel, 'F')
+    skeleton_proba_data = numpy.reshape(numpy.array(cspmax.getBestSkeletonProbabilityMaps(dimskel[3]),
+                                   dtype=numpy.float32), dimskel, 'F')
 
-    skeleton_label_data = np.reshape(np.array(cspmax.getBestSkeletonProbabilityLabels(dimskel[3]),
-                                    dtype=np.int32), dimskel, 'F')    
+    skeleton_label_data = numpy.reshape(numpy.array(cspmax.getBestSkeletonProbabilityLabels(dimskel[3]),
+                                    dtype=numpy.int32), dimskel, 'F')    
 
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
-    header['cal_max'] = np.nanmax(spatial_proba_data)
-    spatial_proba = nb.Nifti1Image(spatial_proba_data, affine, header)
+    header['cal_max'] = numpy.nanmax(spatial_proba_data)
+    spatial_proba = nibabel.Nifti1Image(spatial_proba_data, affine, header)
 
-    header['cal_max'] = np.nanmax(spatial_label_data)
-    spatial_label = nb.Nifti1Image(spatial_label_data, affine, header)
+    header['cal_max'] = numpy.nanmax(spatial_label_data)
+    spatial_label = nibabel.Nifti1Image(spatial_label_data, affine, header)
 
-    chist = nb.Nifti1Image(intens_hist_data, None, None)
+    chist = nibabel.Nifti1Image(intens_hist_data, None, None)
 
-    header['cal_max'] = np.nanmax(skeleton_proba_data)
-    skeleton_proba = nb.Nifti1Image(skeleton_proba_data, affine, header)
+    header['cal_max'] = numpy.nanmax(skeleton_proba_data)
+    skeleton_proba = nibabel.Nifti1Image(skeleton_proba_data, affine, header)
 
-    header['cal_max'] = np.nanmax(skeleton_label_data)
-    skeleton_label = nb.Nifti1Image(skeleton_label_data, affine, header)
+    header['cal_max'] = numpy.nanmax(skeleton_label_data)
+    skeleton_label = nibabel.Nifti1Image(skeleton_label_data, affine, header)
 
     if save_data:
         save_volume(spatial_proba_file, spatial_proba)
@@ -808,37 +833,37 @@ def conditional_shape_updating(subjects, structures, contrasts,
     intens_dims = (structures+1,structures+1,contrasts)
     intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+6,contrasts)
 
-    spatial_proba_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityMaps(dimensions[3]),
-                                   dtype=np.float32), dimensions, 'F')
+    spatial_proba_data = numpy.reshape(numpy.array(cspmax.getBestSpatialProbabilityMaps(dimensions[3]),
+                                   dtype=numpy.float32), dimensions, 'F')
 
-    spatial_label_data = np.reshape(np.array(cspmax.getBestSpatialProbabilityLabels(dimensions[3]),
-                                    dtype=np.int32), dimensions, 'F')    
+    spatial_label_data = numpy.reshape(numpy.array(cspmax.getBestSpatialProbabilityLabels(dimensions[3]),
+                                    dtype=numpy.int32), dimensions, 'F')    
 
-    intens_hist_data = np.reshape(np.array(cspmax.getConditionalHistogram(),
-                                       dtype=np.float32), intens_hist_dims, 'F')
+    intens_hist_data = numpy.reshape(numpy.array(cspmax.getConditionalHistogram(),
+                                       dtype=numpy.float32), intens_hist_dims, 'F')
 
-    skeleton_proba_data = np.reshape(np.array(cspmax.getBestSkeletonProbabilityMaps(dimskel[3]),
-                                   dtype=np.float32), dimskel, 'F')
+    skeleton_proba_data = numpy.reshape(numpy.array(cspmax.getBestSkeletonProbabilityMaps(dimskel[3]),
+                                   dtype=numpy.float32), dimskel, 'F')
 
-    skeleton_label_data = np.reshape(np.array(cspmax.getBestSkeletonProbabilityLabels(dimskel[3]),
-                                    dtype=np.int32), dimskel, 'F')    
+    skeleton_label_data = numpy.reshape(numpy.array(cspmax.getBestSkeletonProbabilityLabels(dimskel[3]),
+                                    dtype=numpy.int32), dimskel, 'F')    
 
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
-    header['cal_max'] = np.nanmax(spatial_proba_data)
-    spatial_proba = nb.Nifti1Image(spatial_proba_data, affine, header)
+    header['cal_max'] = numpy.nanmax(spatial_proba_data)
+    spatial_proba = nibabel.Nifti1Image(spatial_proba_data, affine, header)
 
-    header['cal_max'] = np.nanmax(spatial_label_data)
-    spatial_label = nb.Nifti1Image(spatial_label_data, affine, header)
+    header['cal_max'] = numpy.nanmax(spatial_label_data)
+    spatial_label = nibabel.Nifti1Image(spatial_label_data, affine, header)
 
-    chist = nb.Nifti1Image(intens_hist_data, None, None)
+    chist = nibabel.Nifti1Image(intens_hist_data, None, None)
 
-    header['cal_max'] = np.nanmax(skeleton_proba_data)
-    skeleton_proba = nb.Nifti1Image(skeleton_proba_data, affine, header)
+    header['cal_max'] = numpy.nanmax(skeleton_proba_data)
+    skeleton_proba = nibabel.Nifti1Image(skeleton_proba_data, affine, header)
 
-    header['cal_max'] = np.nanmax(skeleton_label_data)
-    skeleton_label = nb.Nifti1Image(skeleton_label_data, affine, header)
+    header['cal_max'] = numpy.nanmax(skeleton_label_data)
+    skeleton_label = nibabel.Nifti1Image(skeleton_label_data, affine, header)
 
     if save_data:
         save_volume(spatial_proba_file, spatial_proba)
@@ -1022,13 +1047,13 @@ def conditional_shape_map_intensities(structures, contrasts, targets,
     # reshape output to what nibabel likes
     intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+6,targets)
 
-    intens_hist_data = np.reshape(np.array(cspmax.getTargetConditionalHistogram(),
-                                       dtype=np.float32), intens_hist_dims, 'F')
+    intens_hist_data = numpy.reshape(numpy.array(cspmax.getTargetConditionalHistogram(),
+                                       dtype=numpy.float32), intens_hist_dims, 'F')
 
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
-    chist = nb.Nifti1Image(intens_hist_data, None, None)
+    chist = nibabel.Nifti1Image(intens_hist_data, None, None)
 
     if save_data:
         save_volume(condhist_file, chist)

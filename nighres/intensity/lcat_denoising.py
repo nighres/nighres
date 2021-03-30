@@ -176,6 +176,8 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
             lcat.setTimeSeriePhaseAt(idx, nighresjava.JArray('float')(
                                         (data.flatten('F')).astype(float)))
 
+    data = None
+
     # set algorithm parameters
     lcat.setPatchSize(ngb_size)
     lcat.setWindowSize(ngb_time)
