@@ -20,7 +20,7 @@ ENV JAVA_HOME=/docker-java-home \
     JCC_JDK=/docker-java-home
 
 RUN sudo apt-get install -y jcc && \
-    python3 -m pip install --upgrade pip \
+    python3 -m pip install --upgrade "pip < 21.0" \
                                      wheel \
                                      JCC \
                                      urllib3 && \
