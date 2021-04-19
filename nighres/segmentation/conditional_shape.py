@@ -172,7 +172,7 @@ def conditional_shape(target_images, structures, contrasts, background=1,
         # structures = metadata['MASSP Labels']
         contrastList = numpy.zeros(structures*contrasts, dtype=int)
         for st in range(structures):
-            print('Label '+str(st+1)+": "+str(metadata[metadata['Label '+str(st+1)][1]]))
+            #print('Label '+str(st+1)+": "+str(metadata[metadata['Label '+str(st+1)][1]]))
             for c in metadata[metadata['Label '+str(st+1)][1]]:
                 contrastList[st*contrasts+c] = 1
         cspmax.setContrastList(nighresjava.JArray('int')(

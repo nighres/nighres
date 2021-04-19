@@ -1,7 +1,8 @@
-import numpy as np
-import nibabel as nb
+import numpy
+import nibabel
 import os
 import sys
+import json
 import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
@@ -30,6 +31,7 @@ def massp(target_images, structures=31,
                       skeleton_atlas_probas=None, skeleton_atlas_labels=None, 
                       map_to_target=None,
                       max_iterations=80, max_difference=0.1, volume_scaling=1.0,
+                      atlas_file=None, intensity_prior=1.0,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Multi-contrast Anatomical Subcortical Structure parcellation (MASSP)
@@ -58,6 +60,10 @@ def massp(target_images, structures=31,
         Maximum number of diffusion iterations to perform
     max_difference: float
         Maximum difference between diffusion steps
+    atlas_file: json
+        File with atlas labels and metadata (opt)
+    intensity_prior: float
+        Importance scaling factor for the intensities in [0,1] (default is 1.0)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -125,7 +131,23 @@ def massp(target_images, structures=31,
     massp.setNumberOfSubjectsObjectsBgAndContrasts(1,structures,1,contrasts)
     massp.setOptions(True, False, False, False, True)
     massp.setDiffusionParameters(max_iterations, max_difference)
+    massp.setIntensityImportancePrior(intensity_prior)
     
+    # load atlas metadata, if given (after setting up the numbers above!!)
+    if atlas_file is not None:
+        f = open(atlas_file)
+        metadata = json.load(f)
+        f.close()
+        
+        # structures = metadata['MASSP Labels']
+        contrastList = numpy.zeros(structures*contrasts, dtype=int)
+        for st in range(structures):
+            #print('Label '+str(st+1)+": "+str(metadata[metadata['Label '+str(st+1)][1]]))
+            for c in metadata[metadata['Label '+str(st+1)][1]]:
+                contrastList[st*contrasts+c] = 1
+        massp.setContrastList(nighresjava.JArray('int')(
+                                (contrastList.flatten('F')).astype(int).tolist()))
+
     # load target image for parameters
     print("load: "+str(target_images[0]))
     img = load_volume(target_images[0])
@@ -233,19 +255,19 @@ def massp(target_images, structures=31,
     # reshape output to what nibabel likes
     dims3Dtrg = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2])
 
-    proba_data = np.reshape(np.array(massp.getFinalProba(),
-                                    dtype=np.float32), dims3Dtrg, 'F')
+    proba_data = numpy.reshape(numpy.array(massp.getFinalProba(),
+                                    dtype=numpy.float32), dims3Dtrg, 'F')
 
-    label_data = np.reshape(np.array(massp.getFinalLabel(),
-                                    dtype=np.int32), dims3Dtrg, 'F')
+    label_data = numpy.reshape(numpy.array(massp.getFinalLabel(),
+                                    dtype=numpy.int32), dims3Dtrg, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
-    trg_header['cal_max'] = np.nanmax(proba_data)
-    proba = nb.Nifti1Image(proba_data, trg_affine, trg_header)
+    trg_header['cal_max'] = numpy.nanmax(proba_data)
+    proba = nibabel.Nifti1Image(proba_data, trg_affine, trg_header)
 
-    trg_header['cal_max'] = np.nanmax(label_data)
-    label = nb.Nifti1Image(label_data, trg_affine, trg_header)
+    trg_header['cal_max'] = numpy.nanmax(label_data)
+    label = nibabel.Nifti1Image(label_data, trg_affine, trg_header)
 
     if save_data:
         save_volume(proba_file, proba)
@@ -443,37 +465,37 @@ def massp_atlasing(subjects, structures, contrasts,
     intens_dims = (structures+1,structures+1,contrasts)
     intens_hist_dims = ((structures+1)*(structures+1),massp.getNumberOfBins()+6,contrasts)
 
-    spatial_proba_data = np.reshape(np.array(massp.getBestSpatialProbabilityMaps(dimensions[3]),
-                                   dtype=np.float32), dimensions, 'F')
+    spatial_proba_data = numpy.reshape(numpy.array(massp.getBestSpatialProbabilityMaps(dimensions[3]),
+                                   dtype=numpy.float32), dimensions, 'F')
 
-    spatial_label_data = np.reshape(np.array(massp.getBestSpatialProbabilityLabels(dimensions[3]),
-                                    dtype=np.int32), dimensions, 'F')    
+    spatial_label_data = numpy.reshape(numpy.array(massp.getBestSpatialProbabilityLabels(dimensions[3]),
+                                    dtype=numpy.int32), dimensions, 'F')    
 
-    intens_hist_data = np.reshape(np.array(massp.getConditionalHistogram(),
-                                       dtype=np.float32), intens_hist_dims, 'F')
+    intens_hist_data = numpy.reshape(numpy.array(massp.getConditionalHistogram(),
+                                       dtype=numpy.float32), intens_hist_dims, 'F')
 
-    skeleton_proba_data = np.reshape(np.array(massp.getBestSkeletonProbabilityMaps(dimskel[3]),
-                                   dtype=np.float32), dimskel, 'F')
+    skeleton_proba_data = numpy.reshape(numpy.array(massp.getBestSkeletonProbabilityMaps(dimskel[3]),
+                                   dtype=numpy.float32), dimskel, 'F')
 
-    skeleton_label_data = np.reshape(np.array(massp.getBestSkeletonProbabilityLabels(dimskel[3]),
-                                    dtype=np.int32), dimskel, 'F')    
+    skeleton_label_data = numpy.reshape(numpy.array(massp.getBestSkeletonProbabilityLabels(dimskel[3]),
+                                    dtype=numpy.int32), dimskel, 'F')    
 
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
-    header['cal_max'] = np.nanmax(spatial_proba_data)
-    spatial_proba = nb.Nifti1Image(spatial_proba_data, affine, header)
+    header['cal_max'] = numpy.nanmax(spatial_proba_data)
+    spatial_proba = nibabel.Nifti1Image(spatial_proba_data, affine, header)
 
-    header['cal_max'] = np.nanmax(spatial_label_data)
-    spatial_label = nb.Nifti1Image(spatial_label_data, affine, header)
+    header['cal_max'] = numpy.nanmax(spatial_label_data)
+    spatial_label = nibabel.Nifti1Image(spatial_label_data, affine, header)
 
-    chist = nb.Nifti1Image(intens_hist_data, None, None)
+    chist = nibabel.Nifti1Image(intens_hist_data, None, None)
 
-    header['cal_max'] = np.nanmax(skeleton_proba_data)
-    skeleton_proba = nb.Nifti1Image(skeleton_proba_data, affine, header)
+    header['cal_max'] = numpy.nanmax(skeleton_proba_data)
+    skeleton_proba = nibabel.Nifti1Image(skeleton_proba_data, affine, header)
 
-    header['cal_max'] = np.nanmax(skeleton_label_data)
-    skeleton_label = nb.Nifti1Image(skeleton_label_data, affine, header)
+    header['cal_max'] = numpy.nanmax(skeleton_label_data)
+    skeleton_label = nibabel.Nifti1Image(skeleton_label_data, affine, header)
 
     if save_data:
         save_volume(spatial_proba_file, spatial_proba)

@@ -1453,7 +1453,7 @@ def embedded_antsreg_multi(source_images, target_images,
 					interpolation='NearestNeighbor',
 					regularization='High',
 					convergence=1e-6,
-					mask_zero=False,
+					mask_zero=False, smooth_mask=0.0,
 					ignore_affine=False, ignore_header=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
@@ -1495,8 +1495,10 @@ def embedded_antsreg_multi(source_images, target_images,
     convergence: float
         Threshold for convergence, can make the algorithm very slow (default is convergence)
     mask_zero: bool
-        Mask regions with zero value
-        (default is False)
+        Mask regions with zero value using ANTs masking option (default is False)
+    smooth_mask: float
+        Smoothly mask regions within a given ratio of the object's thickness,
+        in [0.0, 1.0] (default is 0.0). This does not use ANTs masking.
     ignore_affine: bool
         Ignore the affine matrix information extracted from the image header
         (default is False)
@@ -1519,7 +1521,7 @@ def embedded_antsreg_multi(source_images, target_images,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * transformed_source ([niimg]): Deformed source image list (_ants_def0,1,...)
+        * transformed_sources ([niimg]): Deformed source image list (_ants_def0,1,...)
         * mapping (niimg): Coordinate mapping from source to target (_ants_map)
         * inverse (niimg): Inverse coordinate mapping from target to source (_ants_invmap)
 
@@ -1763,9 +1765,6 @@ def embedded_antsreg_multi(source_images, target_images,
             trg_affine = target.affine
             trg_header = target.header
 
-        sources.append(source)
-        targets.append(target)
-
     # build coordinate mapping matrices and save them to disk
     src_coord = np.zeros((nsx,nsy,nsz,3))
     trg_coord = np.zeros((ntx,nty,ntz,3))
@@ -1809,6 +1808,57 @@ def embedded_antsreg_multi(source_images, target_images,
                                                             rootfile=source_images[0],
                                                             suffix='tmp_srcmask'))
         save_volume(src_mask_file, src_mask)
+
+    # if mask boundary regions need to be smoothed away
+    if smooth_mask>0:
+        # get mask
+        mask = nibabel.Nifti1Image(sources[0].get_fdata()>0,sources[0].affine, sources[0].header)
+        
+        # compute levelset and skeleton
+        lvl = nighres.surface.probability_to_levelset(mask)['result']
+        thk = nighres.shape.levelset_thickness(lvl)['dist']
+        
+        # compute ratio
+        ratio = -lvl.get_fdata()/(thk.get_fdata()-lvl.get_fdata())
+        ratio[lvl.get_fdata()>0] = 0
+        ratio[thk.get_fdata()<=0] = 1
+        
+        ratio[ratio>smooth_mask] = 1
+        ratio[ratio<=smooth_mask] = ratio[ratio<=smooth_mask]/smooth_mask
+        
+        # multiply all inputs
+        for idx,img in enumerate(sources):
+            img = nibabel.Nifti1Image(img.get_fdata()*ratio,img.affine, img.header)
+            src_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
+                                                            rootfile=source_images[0],
+                                                            suffix='tmp_srcimg'+str(idx)))
+            nighres.io.save_volume(src_img_file, img)
+            sources[idx] = img
+
+        # get mask
+        mask = nibabel.Nifti1Image(targets[0].get_fdata()>0,targets[0].affine, targets[0].header)
+        
+        # compute levelset and skeleton
+        lvl = nighres.surface.probability_to_levelset(mask)['result']
+        thk = nighres.shape.levelset_thickness(lvl)['dist']
+        
+        # compute ratio
+        ratio = -lvl.get_fdata()/(thk.get_fdata()-lvl.get_fdata())
+        ratio[lvl.get_fdata()>0] = 0
+        ratio[thk.get_fdata()<=0] = 1
+        
+        ratio[ratio>smooth_mask] = 1
+        ratio[ratio<=smooth_mask] = ratio[ratio<=smooth_mask]/smooth_mask
+        
+        # multiply all inputs
+        for idx,img in enumerate(targets):
+            img = nibabel.Nifti1Image(img.get_fdata()*ratio,img.affine, img.header)
+            trg_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
+                                                            rootfile=source_images[0],
+                                                            suffix='tmp_trgimg'+str(idx)))
+            nighres.io.save_volume(trg_img_file, img)
+            targets[idx] = img
+
 
     # run the main ANTS software: here we directly build the command line call
     reg = 'antsRegistration --collapse-output-transforms 1 --dimensionality 3' \
