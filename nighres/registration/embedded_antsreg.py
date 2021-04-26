@@ -6,14 +6,16 @@ from glob import glob
 import math
 
 # main dependencies: numpy, nibabel
-import numpy as np
-import nibabel as nb
+import numpy
+import nibabel
 
 # nighresjava and nighres functions
 import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir
+from ..surface import probability_to_levelset
+from ..shape import levelset_thickness
 
 # convenience labels
 X=0
@@ -34,7 +36,7 @@ def embedded_antsreg(source_image, target_image,
 					interpolation='NearestNeighbor',
 					regularization='High',
 					convergence=1e-6,
-					mask_zero=False,
+					mask_zero=False,smooth_mask=0.0,
 					ignore_affine=False, ignore_header=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
@@ -76,8 +78,10 @@ def embedded_antsreg(source_image, target_image,
         Threshold for convergence, can make the algorithm very slow
         (default is convergence)
     mask_zero: bool
-        Mask regions with zero value
-        (default is False)
+        Mask regions with zero value using ANTs masking option (default is False)
+    smooth_mask: float
+        Smoothly mask regions within a given ratio of the object's thickness,
+        in [0.0, 1.0] (default is 0.0). This does not use ANTs masking.
     ignore_affine: bool
         Ignore the affine matrix information extracted from the image header
         (default is False)
@@ -293,10 +297,10 @@ def embedded_antsreg_2d(source_image, target_image,
 
     # in case the affine transformations are not to be trusted: make them equal
     if ignore_affine or ignore_header:
-        mx = np.argmax(np.abs(src_affine[0][0:3]))
-        my = np.argmax(np.abs(src_affine[1][0:3]))
-        mz = np.argmax(np.abs(src_affine[2][0:3]))
-        new_affine = np.zeros((4,4))
+        mx = numpy.argmax(numpy.abs(src_affine[0][0:3]))
+        my = numpy.argmax(numpy.abs(src_affine[1][0:3]))
+        mz = numpy.argmax(numpy.abs(src_affine[2][0:3]))
+        new_affine = numpy.zeros((4,4))
         if ignore_header:
             new_affine[0][0] = rsx
             new_affine[1][1] = rsy
@@ -305,32 +309,32 @@ def embedded_antsreg_2d(source_image, target_image,
             new_affine[1][3] = -rsy*nsy/2.0
             new_affine[2][3] = -rsz*nsz/2.0
         else:
-            new_affine[0][mx] = rsx*np.sign(src_affine[0][mx])
-            new_affine[1][my] = rsy*np.sign(src_affine[1][my])
-            new_affine[2][mz] = rsz*np.sign(src_affine[2][mz])
-            if (np.sign(src_affine[0][mx])<0):
+            new_affine[0][mx] = rsx*numpy.sign(src_affine[0][mx])
+            new_affine[1][my] = rsy*numpy.sign(src_affine[1][my])
+            new_affine[2][mz] = rsz*numpy.sign(src_affine[2][mz])
+            if (numpy.sign(src_affine[0][mx])<0):
                 new_affine[0][3] = rsx*nsx/2.0
             else:
                 new_affine[0][3] = -rsx*nsx/2.0
 
-            if (np.sign(src_affine[1][my])<0):
+            if (numpy.sign(src_affine[1][my])<0):
                 new_affine[1][3] = rsy*nsy/2.0
             else:
                 new_affine[1][3] = -rsy*nsy/2.0
 
-            if (np.sign(src_affine[2][mz])<0):
+            if (numpy.sign(src_affine[2][mz])<0):
                 new_affine[2][3] = rsz*nsz/2.0
             else:
                 new_affine[2][3] = -rsz*nsz/2.0
-        #if (np.sign(src_affine[0][mx])<0): new_affine[mx][3] = rsx*nsx
-        #if (np.sign(src_affine[1][my])<0): new_affine[my][3] = rsy*nsy
-        #if (np.sign(src_affine[2][mz])<0): new_affine[mz][3] = rsz*nsz
+        #if (numpy.sign(src_affine[0][mx])<0): new_affine[mx][3] = rsx*nsx
+        #if (numpy.sign(src_affine[1][my])<0): new_affine[my][3] = rsy*nsy
+        #if (numpy.sign(src_affine[2][mz])<0): new_affine[mz][3] = rsz*nsz
         #new_affine[0][3] = nsx/2.0
         #new_affine[1][3] = nsy/2.0
         #new_affine[2][3] = nsz/2.0
         new_affine[3][3] = 1.0
 
-        src_img = nb.Nifti1Image(source.get_data(), new_affine, source.header)
+        src_img = nibabel.Nifti1Image(source.get_fdata(), new_affine, source.header)
         src_img.update_header()
         src_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_image,
@@ -341,10 +345,10 @@ def embedded_antsreg_2d(source_image, target_image,
         src_header = source.header
 
         # create generic affine aligned with the orientation for the target
-        mx = np.argmax(np.abs(trg_affine[0][0:3]))
-        my = np.argmax(np.abs(trg_affine[1][0:3]))
-        mz = np.argmax(np.abs(trg_affine[2][0:3]))
-        new_affine = np.zeros((4,4))
+        mx = numpy.argmax(numpy.abs(trg_affine[0][0:3]))
+        my = numpy.argmax(numpy.abs(trg_affine[1][0:3]))
+        mz = numpy.argmax(numpy.abs(trg_affine[2][0:3]))
+        new_affine = numpy.zeros((4,4))
         if ignore_header:
             new_affine[0][0] = rtx
             new_affine[1][1] = rty
@@ -353,32 +357,32 @@ def embedded_antsreg_2d(source_image, target_image,
             new_affine[1][3] = -rty*nty/2.0
             new_affine[2][3] = -rtz*ntz/2.0
         else:
-            new_affine[0][mx] = rtx*np.sign(trg_affine[0][mx])
-            new_affine[1][my] = rty*np.sign(trg_affine[1][my])
-            new_affine[2][mz] = rtz*np.sign(trg_affine[2][mz])
-            if (np.sign(trg_affine[0][mx])<0):
+            new_affine[0][mx] = rtx*numpy.sign(trg_affine[0][mx])
+            new_affine[1][my] = rty*numpy.sign(trg_affine[1][my])
+            new_affine[2][mz] = rtz*numpy.sign(trg_affine[2][mz])
+            if (numpy.sign(trg_affine[0][mx])<0):
                 new_affine[0][3] = rtx*ntx/2.0
             else:
                 new_affine[0][3] = -rtx*ntx/2.0
 
-            if (np.sign(trg_affine[1][my])<0):
+            if (numpy.sign(trg_affine[1][my])<0):
                 new_affine[1][3] = rty*nty/2.0
             else:
                 new_affine[1][3] = -rty*nty/2.0
 
-            if (np.sign(trg_affine[2][mz])<0):
+            if (numpy.sign(trg_affine[2][mz])<0):
                 new_affine[2][3] = rtz*ntz/2.0
             else:
                 new_affine[2][3] = -rtz*ntz/2.0
-        #if (np.sign(trg_affine[0][mx])<0): new_affine[mx][3] = rtx*ntx
-        #if (np.sign(trg_affine[1][my])<0): new_affine[my][3] = rty*nty
-        #if (np.sign(trg_affine[2][mz])<0): new_affine[mz][3] = rtz*ntz
+        #if (numpy.sign(trg_affine[0][mx])<0): new_affine[mx][3] = rtx*ntx
+        #if (numpy.sign(trg_affine[1][my])<0): new_affine[my][3] = rty*nty
+        #if (numpy.sign(trg_affine[2][mz])<0): new_affine[mz][3] = rtz*ntz
         #new_affine[0][3] = ntx/2.0
         #new_affine[1][3] = nty/2.0
         #new_affine[2][3] = ntz/2.0
         new_affine[3][3] = 1.0
 
-        trg_img = nb.Nifti1Image(target.get_data(), new_affine, target.header)
+        trg_img = nibabel.Nifti1Image(target.get_fdata(), new_affine, target.header)
         trg_img.update_header()
         trg_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_image,
@@ -389,20 +393,20 @@ def embedded_antsreg_2d(source_image, target_image,
         trg_header = target.header
 
     # build coordinate mapping matrices and save them to disk
-    src_coordX = np.zeros((nsx,nsy))
-    src_coordY = np.zeros((nsx,nsy))
-    trg_coordX = np.zeros((ntx,nty))
-    trg_coordY = np.zeros((ntx,nty))
+    src_coordX = numpy.zeros((nsx,nsy))
+    src_coordY = numpy.zeros((nsx,nsy))
+    trg_coordX = numpy.zeros((ntx,nty))
+    trg_coordY = numpy.zeros((ntx,nty))
     for x in range(nsx):
         for y in range(nsy):
             src_coordX[x,y] = x
             src_coordY[x,y] = y
-    src_mapX = nb.Nifti1Image(src_coordX, source.affine, source.header)
+    src_mapX = nibabel.Nifti1Image(src_coordX, source.affine, source.header)
     src_mapX_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordX'))
     save_volume(src_mapX_file, src_mapX)
-    src_mapY = nb.Nifti1Image(src_coordY, source.affine, source.header)
+    src_mapY = nibabel.Nifti1Image(src_coordY, source.affine, source.header)
     src_mapY_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_srccoordY'))
@@ -412,12 +416,12 @@ def embedded_antsreg_2d(source_image, target_image,
         for y in range(nty):
             trg_coordX[x,y] = x
             trg_coordY[x,y] = y
-    trg_mapX = nb.Nifti1Image(trg_coordX, target.affine, target.header)
+    trg_mapX = nibabel.Nifti1Image(trg_coordX, target.affine, target.header)
     trg_mapX_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_trgcoordX'))
     save_volume(trg_mapX_file, trg_mapX)
-    trg_mapY = nb.Nifti1Image(trg_coordY, target.affine, target.header)
+    trg_mapY = nibabel.Nifti1Image(trg_coordY, target.affine, target.header)
     trg_mapY_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_image,
                                                         suffix='tmp_trgcoordY'))
@@ -425,15 +429,15 @@ def embedded_antsreg_2d(source_image, target_image,
 
     if mask_zero:
         # create and save temporary masks
-        trg_mask_data = (target.get_data()!=0)
-        trg_mask = nb.Nifti1Image(trg_mask_data, target.affine, target.header)
+        trg_mask_data = (target.get_fdata()!=0)
+        trg_mask = nibabel.Nifti1Image(trg_mask_data, target.affine, target.header)
         trg_mask_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_image,
                                                             suffix='tmp_trgmask'))
         save_volume(trg_mask_file, trg_mask)
 
-        src_mask_data = (source.get_data()!=0)
-        src_mask = nb.Nifti1Image(src_mask_data, source.affine, source.header)
+        src_mask_data = (source.get_fdata()!=0)
+        src_mask = nibabel.Nifti1Image(src_mask_data, source.affine, source.header)
         src_mask_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_image,
                                                             suffix='tmp_srcmask'))
@@ -467,7 +471,7 @@ def embedded_antsreg_2d(source_image, target_image,
     for n in range(n_scales):
         iter_rigid = iter_rigid+'x'+str(rigid_iterations)
         iter_affine = iter_affine+'x'+str(affine_iterations)
-        if n<n_scales/2: iter_syn = iter_syn+'x'+str(coarse_iterations)
+        if n<(n_scales-1)/2: iter_syn = iter_syn+'x'+str(coarse_iterations)
         elif n<n_scales-1: iter_syn = iter_syn+'x'+str(medium_iterations)
         else: iter_syn = iter_syn+'x'+str(fine_iterations)
         smooth = smooth+'x'+str(scaling_factor/math.pow(2.0,n+1))
@@ -638,10 +642,10 @@ def embedded_antsreg_2d(source_image, target_image,
         raise subprocess.CalledProcessError(msg)
 
     # combine X,Y mappings
-    mapX = load_volume(src_mapX_trans).get_data()
-    mapY = load_volume(src_mapY_trans).get_data()
-    src_map = np.stack((mapX,mapY),axis=-1)
-    mapping = nb.Nifti1Image(src_map, target.affine, target.header)
+    mapX = load_volume(src_mapX_trans).get_fdata()
+    mapY = load_volume(src_mapY_trans).get_fdata()
+    src_map = numpy.stack((mapX,mapY),axis=-1)
+    mapping = nibabel.Nifti1Image(src_map, target.affine, target.header)
     save_volume(mapping_file, mapping)
 
 
@@ -692,10 +696,10 @@ def embedded_antsreg_2d(source_image, target_image,
         raise subprocess.CalledProcessError(msg)
 
     # combine X,Y mappings
-    mapX = load_volume(trg_mapX_trans).get_data()
-    mapY = load_volume(trg_mapY_trans).get_data()
-    trg_map = np.stack((mapX,mapY),axis=-1)
-    inverse_mapping = nb.Nifti1Image(trg_map, source.affine, source.header)
+    mapX = load_volume(trg_mapX_trans).get_fdata()
+    mapY = load_volume(trg_mapY_trans).get_fdata()
+    trg_map = numpy.stack((mapX,mapY),axis=-1)
+    inverse_mapping = nibabel.Nifti1Image(trg_map, source.affine, source.header)
     save_volume(inverse_mapping_file, inverse_mapping)
 
     # pad coordinate mapping outside the image? hopefully not needed...
@@ -928,10 +932,10 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
 
         # in case the affine transformations are not to be trusted: make them equal
         if ignore_affine or ignore_orient or ignore_res:
-            mx = np.argmax(np.abs(src_affine[0][0:3]))
-            my = np.argmax(np.abs(src_affine[1][0:3]))
-            mz = np.argmax(np.abs(src_affine[2][0:3]))
-            new_affine = np.zeros((4,4))
+            mx = numpy.argmax(numpy.abs(src_affine[0][0:3]))
+            my = numpy.argmax(numpy.abs(src_affine[1][0:3]))
+            mz = numpy.argmax(numpy.abs(src_affine[2][0:3]))
+            new_affine = numpy.zeros((4,4))
             if ignore_res:
                 new_affine[0][:] = src_affine[0][:]/rsx
                 new_affine[1][:] = src_affine[1][:]/rsy
@@ -948,32 +952,32 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
                 new_affine[1][3] = -rsy*nsy/2.0
                 new_affine[2][3] = -rsz*nsz/2.0
             elif ignore_affine:
-                new_affine[0][mx] = rsx*np.sign(src_affine[0][mx])
-                new_affine[1][my] = rsy*np.sign(src_affine[1][my])
-                new_affine[2][mz] = rsz*np.sign(src_affine[2][mz])
-                if (np.sign(src_affine[0][mx])<0):
+                new_affine[0][mx] = rsx*numpy.sign(src_affine[0][mx])
+                new_affine[1][my] = rsy*numpy.sign(src_affine[1][my])
+                new_affine[2][mz] = rsz*numpy.sign(src_affine[2][mz])
+                if (numpy.sign(src_affine[0][mx])<0):
                     new_affine[0][3] = rsx*nsx/2.0
                 else:
                     new_affine[0][3] = -rsx*nsx/2.0
 
-                if (np.sign(src_affine[1][my])<0):
+                if (numpy.sign(src_affine[1][my])<0):
                     new_affine[1][3] = rsy*nsy/2.0
                 else:
                     new_affine[1][3] = -rsy*nsy/2.0
 
-                if (np.sign(src_affine[2][mz])<0):
+                if (numpy.sign(src_affine[2][mz])<0):
                     new_affine[2][3] = rsz*nsz/2.0
                 else:
                     new_affine[2][3] = -rsz*nsz/2.0
-            #if (np.sign(src_affine[0][mx])<0): new_affine[mx][3] = rsx*nsx
-            #if (np.sign(src_affine[1][my])<0): new_affine[my][3] = rsy*nsy
-            #if (np.sign(src_affine[2][mz])<0): new_affine[mz][3] = rsz*nsz
+            #if (numpy.sign(src_affine[0][mx])<0): new_affine[mx][3] = rsx*nsx
+            #if (numpy.sign(src_affine[1][my])<0): new_affine[my][3] = rsy*nsy
+            #if (numpy.sign(src_affine[2][mz])<0): new_affine[mz][3] = rsz*nsz
             #new_affine[0][3] = nsx/2.0
             #new_affine[1][3] = nsy/2.0
             #new_affine[2][3] = nsz/2.0
             new_affine[3][3] = 1.0
 
-            src_img = nb.Nifti1Image(source.get_data(), new_affine, source.header)
+            src_img = nibabel.Nifti1Image(source.get_fdata(), new_affine, source.header)
             src_img.update_header()
             src_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_images[0],
@@ -985,10 +989,10 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
             src_img_files.append(src_img_file)
 
             # create generic affine aligned with the orientation for the target
-            mx = np.argmax(np.abs(trg_affine[0][0:3]))
-            my = np.argmax(np.abs(trg_affine[1][0:3]))
-            mz = np.argmax(np.abs(trg_affine[2][0:3]))
-            new_affine = np.zeros((4,4))
+            mx = numpy.argmax(numpy.abs(trg_affine[0][0:3]))
+            my = numpy.argmax(numpy.abs(trg_affine[1][0:3]))
+            mz = numpy.argmax(numpy.abs(trg_affine[2][0:3]))
+            new_affine = numpy.zeros((4,4))
             if ignore_res:
                 new_affine[0][:] = trg_affine[0][:]/rtx
                 new_affine[1][:] = trg_affine[1][:]/rty
@@ -1005,32 +1009,32 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
                 new_affine[1][3] = -rty*nty/2.0
                 new_affine[2][3] = -rtz*ntz/2.0
             elif ignore_affine:
-                new_affine[0][mx] = rtx*np.sign(trg_affine[0][mx])
-                new_affine[1][my] = rty*np.sign(trg_affine[1][my])
-                new_affine[2][mz] = rtz*np.sign(trg_affine[2][mz])
-                if (np.sign(trg_affine[0][mx])<0):
+                new_affine[0][mx] = rtx*numpy.sign(trg_affine[0][mx])
+                new_affine[1][my] = rty*numpy.sign(trg_affine[1][my])
+                new_affine[2][mz] = rtz*numpy.sign(trg_affine[2][mz])
+                if (numpy.sign(trg_affine[0][mx])<0):
                     new_affine[0][3] = rtx*ntx/2.0
                 else:
                     new_affine[0][3] = -rtx*ntx/2.0
 
-                if (np.sign(trg_affine[1][my])<0):
+                if (numpy.sign(trg_affine[1][my])<0):
                     new_affine[1][3] = rty*nty/2.0
                 else:
                     new_affine[1][3] = -rty*nty/2.0
 
-                if (np.sign(trg_affine[2][mz])<0):
+                if (numpy.sign(trg_affine[2][mz])<0):
                     new_affine[2][3] = rtz*ntz/2.0
                 else:
                     new_affine[2][3] = -rtz*ntz/2.0
-            #if (np.sign(trg_affine[0][mx])<0): new_affine[mx][3] = rtx*ntx
-            #if (np.sign(trg_affine[1][my])<0): new_affine[my][3] = rty*nty
-            #if (np.sign(trg_affine[2][mz])<0): new_affine[mz][3] = rtz*ntz
+            #if (numpy.sign(trg_affine[0][mx])<0): new_affine[mx][3] = rtx*ntx
+            #if (numpy.sign(trg_affine[1][my])<0): new_affine[my][3] = rty*nty
+            #if (numpy.sign(trg_affine[2][mz])<0): new_affine[mz][3] = rtz*ntz
             #new_affine[0][3] = ntx/2.0
             #new_affine[1][3] = nty/2.0
             #new_affine[2][3] = ntz/2.0
             new_affine[3][3] = 1.0
 
-            trg_img = nb.Nifti1Image(target.get_data(), new_affine, target.header)
+            trg_img = nibabel.Nifti1Image(target.get_fdata(), new_affine, target.header)
             trg_img.update_header()
             trg_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_images[0],
@@ -1045,20 +1049,20 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
         targets.append(target)
 
     # build coordinate mapping matrices and save them to disk
-    src_coordX = np.zeros((nsx,nsy))
-    src_coordY = np.zeros((nsx,nsy))
-    trg_coordX = np.zeros((ntx,nty))
-    trg_coordY = np.zeros((ntx,nty))
+    src_coordX = numpy.zeros((nsx,nsy))
+    src_coordY = numpy.zeros((nsx,nsy))
+    trg_coordX = numpy.zeros((ntx,nty))
+    trg_coordY = numpy.zeros((ntx,nty))
     for x in range(nsx):
         for y in range(nsy):
             src_coordX[x,y] = x
             src_coordY[x,y] = y
-    src_mapX = nb.Nifti1Image(src_coordX, source.affine, source.header)
+    src_mapX = nibabel.Nifti1Image(src_coordX, source.affine, source.header)
     src_mapX_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_images[0],
                                                         suffix='tmp_srccoordX'))
     save_volume(src_mapX_file, src_mapX)
-    src_mapY = nb.Nifti1Image(src_coordY, source.affine, source.header)
+    src_mapY = nibabel.Nifti1Image(src_coordY, source.affine, source.header)
     src_mapY_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_images[0],
                                                         suffix='tmp_srccoordY'))
@@ -1068,12 +1072,12 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
         for y in range(nty):
             trg_coordX[x,y] = x
             trg_coordY[x,y] = y
-    trg_mapX = nb.Nifti1Image(trg_coordX, target.affine, target.header)
+    trg_mapX = nibabel.Nifti1Image(trg_coordX, target.affine, target.header)
     trg_mapX_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_images[0],
                                                         suffix='tmp_trgcoordX'))
     save_volume(trg_mapX_file, trg_mapX)
-    trg_mapY = nb.Nifti1Image(trg_coordY, target.affine, target.header)
+    trg_mapY = nibabel.Nifti1Image(trg_coordY, target.affine, target.header)
     trg_mapY_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_images[0],
                                                         suffix='tmp_trgcoordY'))
@@ -1082,16 +1086,16 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
     if mask_zero:
         # create and save temporary masks
         target = targets[0]
-        trg_mask_data = (target.get_data()!=0)
-        trg_mask = nb.Nifti1Image(trg_mask_data, target.affine, target.header)
+        trg_mask_data = (target.get_fdata()!=0)
+        trg_mask = nibabel.Nifti1Image(trg_mask_data, target.affine, target.header)
         trg_mask_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_images[0],
                                                             suffix='tmp_trgmask'))
         save_volume(trg_mask_file, trg_mask)
 
         source = sources[0]
-        src_mask_data = (source.get_data()!=0)
-        src_mask = nb.Nifti1Image(src_mask_data, source.affine, source.header)
+        src_mask_data = (source.get_fdata()!=0)
+        src_mask = nibabel.Nifti1Image(src_mask_data, source.affine, source.header)
         src_mask_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_images[0],
                                                             suffix='tmp_srcmask'))
@@ -1140,7 +1144,7 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
     for n in range(n_scales):
         iter_rigid = iter_rigid+'x'+str(rigid_iterations)
         iter_affine = iter_affine+'x'+str(affine_iterations)
-        if n<n_scales/2: iter_syn = iter_syn+'x'+str(coarse_iterations)
+        if n<(n_scales-1)/2: iter_syn = iter_syn+'x'+str(coarse_iterations)
         elif n<n_scales-1: iter_syn = iter_syn+'x'+str(medium_iterations)
         else: iter_syn = iter_syn+'x'+str(fine_iterations)
         smooth = smooth+'x'+str(scaling_factor/math.pow(2.0,n+1))
@@ -1319,10 +1323,10 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
         raise subprocess.CalledProcessError(msg)
 
     # combine X,Y mappings
-    mapX = load_volume(src_mapX_trans).get_data()
-    mapY = load_volume(src_mapY_trans).get_data()
-    src_map = np.stack((mapX,mapY),axis=-1)
-    mapping = nb.Nifti1Image(src_map, target.affine, target.header)
+    mapX = load_volume(src_mapX_trans).get_fdata()
+    mapY = load_volume(src_mapY_trans).get_fdata()
+    src_map = numpy.stack((mapX,mapY),axis=-1)
+    mapping = nibabel.Nifti1Image(src_map, target.affine, target.header)
     save_volume(mapping_file, mapping)
 
 
@@ -1373,10 +1377,10 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
         raise subprocess.CalledProcessError(msg)
 
     # combine X,Y mappings
-    mapX = load_volume(trg_mapX_trans).get_data()
-    mapY = load_volume(trg_mapY_trans).get_data()
-    trg_map = np.stack((mapX,mapY),axis=-1)
-    inverse_mapping = nb.Nifti1Image(trg_map, source.affine, source.header)
+    mapX = load_volume(trg_mapX_trans).get_fdata()
+    mapY = load_volume(trg_mapY_trans).get_fdata()
+    trg_map = numpy.stack((mapX,mapY),axis=-1)
+    inverse_mapping = nibabel.Nifti1Image(trg_map, source.affine, source.header)
     save_volume(inverse_mapping_file, inverse_mapping)
 
     # pad coordinate mapping outside the image? hopefully not needed...
@@ -1404,12 +1408,12 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
     # if ignoring header and/or affine, must paste back the correct headers
     if ignore_affine or ignore_orient or ignore_res:
         mapping = load_volume(mapping_file)
-        save_volume(mapping_file, nb.Nifti1Image(mapping.get_data(), orig_trg_aff, orig_trg_hdr))
+        save_volume(mapping_file, nibabel.Nifti1Image(mapping.get_fdata(), orig_trg_aff, orig_trg_hdr))
         inverse = load_volume(inverse_mapping_file)
-        save_volume(inverse_mapping_file, nb.Nifti1Image(inverse.get_data(), orig_src_aff, orig_src_hdr))
+        save_volume(inverse_mapping_file, nibabel.Nifti1Image(inverse.get_fdata(), orig_src_aff, orig_src_hdr))
         for trans_file in transformed_source_files:
             trans = load_volume(trans_file)
-            save_volume(trans_file, nb.Nifti1Image(trans.get_data(), orig_trg_aff, orig_trg_hdr))
+            save_volume(trans_file, nibabel.Nifti1Image(trans.get_fdata(), orig_trg_aff, orig_trg_hdr))
 
     if not save_data:
         # collect saved outputs
@@ -1627,7 +1631,7 @@ def embedded_antsreg_multi(source_images, target_images,
         # in case the affine transformations are not to be trusted: make them equal
         if ignore_affine or ignore_header:
             # create generic affine aligned with the orientation for the source
-            new_affine = np.zeros((4,4))
+            new_affine = numpy.zeros((4,4))
             if ignore_header:
                 new_affine[0][0] = rsx
                 new_affine[1][1] = rsy
@@ -1636,55 +1640,55 @@ def embedded_antsreg_multi(source_images, target_images,
                 new_affine[1][3] = -rsy*nsy/2.0
                 new_affine[2][3] = -rsz*nsz/2.0
             else:
-                #mx = np.argmax(np.abs(src_affine[0][0:3]))
-                #my = np.argmax(np.abs(src_affine[1][0:3]))
-                #mz = np.argmax(np.abs(src_affine[2][0:3]))
-                #new_affine[0][mx] = rsx*np.sign(src_affine[0][mx])
-                #new_affine[1][my] = rsy*np.sign(src_affine[1][my])
-                #new_affine[2][mz] = rsz*np.sign(src_affine[2][mz])
-                #if (np.sign(src_affine[0][mx])<0):
+                #mx = numpy.argmax(numpy.abs(src_affine[0][0:3]))
+                #my = numpy.argmax(numpy.abs(src_affine[1][0:3]))
+                #mz = numpy.argmax(numpy.abs(src_affine[2][0:3]))
+                #new_affine[0][mx] = rsx*numpy.sign(src_affine[0][mx])
+                #new_affine[1][my] = rsy*numpy.sign(src_affine[1][my])
+                #new_affine[2][mz] = rsz*numpy.sign(src_affine[2][mz])
+                #if (numpy.sign(src_affine[0][mx])<0):
                 #    new_affine[0][3] = rsx*nsx/2.0
                 #else:
                 #    new_affine[0][3] = -rsx*nsx/2.0
                 #
-                #if (np.sign(src_affine[1][my])<0):
+                #if (numpy.sign(src_affine[1][my])<0):
                 #    new_affine[1][3] = rsy*nsy/2.0
                 #else:
                 #    new_affine[1][3] = -rsy*nsy/2.0
                 #
-                #if (np.sign(src_affine[2][mz])<0):
+                #if (numpy.sign(src_affine[2][mz])<0):
                 #    new_affine[2][3] = rsz*nsz/2.0
                 #else:
                 #    new_affine[2][3] = -rsz*nsz/2.0
-                mx = np.argmax(np.abs([src_affine[0][0],src_affine[1][0],src_affine[2][0]]))
-                my = np.argmax(np.abs([src_affine[0][1],src_affine[1][1],src_affine[2][1]]))
-                mz = np.argmax(np.abs([src_affine[0][2],src_affine[1][2],src_affine[2][2]]))
-                new_affine[mx][0] = rsx*np.sign(src_affine[mx][0])
-                new_affine[my][1] = rsy*np.sign(src_affine[my][1])
-                new_affine[mz][2] = rsz*np.sign(src_affine[mz][2])
-                if (np.sign(src_affine[mx][0])<0):
+                mx = numpy.argmax(numpy.abs([src_affine[0][0],src_affine[1][0],src_affine[2][0]]))
+                my = numpy.argmax(numpy.abs([src_affine[0][1],src_affine[1][1],src_affine[2][1]]))
+                mz = numpy.argmax(numpy.abs([src_affine[0][2],src_affine[1][2],src_affine[2][2]]))
+                new_affine[mx][0] = rsx*numpy.sign(src_affine[mx][0])
+                new_affine[my][1] = rsy*numpy.sign(src_affine[my][1])
+                new_affine[mz][2] = rsz*numpy.sign(src_affine[mz][2])
+                if (numpy.sign(src_affine[mx][0])<0):
                     new_affine[mx][3] = rsx*nsx/2.0
                 else:
                     new_affine[mx][3] = -rsx*nsx/2.0
 
-                if (np.sign(src_affine[my][1])<0):
+                if (numpy.sign(src_affine[my][1])<0):
                     new_affine[my][3] = rsy*nsy/2.0
                 else:
                     new_affine[my][3] = -rsy*nsy/2.0
 
-                if (np.sign(src_affine[mz][2])<0):
+                if (numpy.sign(src_affine[mz][2])<0):
                     new_affine[mz][3] = rsz*nsz/2.0
                 else:
                     new_affine[mz][3] = -rsz*nsz/2.0
-            #if (np.sign(src_affine[0][mx])<0): new_affine[mx][3] = rsx*nsx
-            #if (np.sign(src_affine[1][my])<0): new_affine[my][3] = rsy*nsy
-            #if (np.sign(src_affine[2][mz])<0): new_affine[mz][3] = rsz*nsz
+            #if (numpy.sign(src_affine[0][mx])<0): new_affine[mx][3] = rsx*nsx
+            #if (numpy.sign(src_affine[1][my])<0): new_affine[my][3] = rsy*nsy
+            #if (numpy.sign(src_affine[2][mz])<0): new_affine[mz][3] = rsz*nsz
             #new_affine[0][3] = nsx/2.0
             #new_affine[1][3] = nsy/2.0
             #new_affine[2][3] = nsz/2.0
             new_affine[3][3] = 1.0
 
-            src_img = nb.Nifti1Image(source.get_data(), new_affine, source.header)
+            src_img = nibabel.Nifti1Image(source.get_fdata(), new_affine, source.header)
             src_img.update_header()
             src_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_images[0],
@@ -1695,7 +1699,7 @@ def embedded_antsreg_multi(source_images, target_images,
             src_header = source.header
 
             # create generic affine aligned with the orientation for the target
-            new_affine = np.zeros((4,4))
+            new_affine = numpy.zeros((4,4))
             if ignore_header:
                 new_affine[0][0] = rtx
                 new_affine[1][1] = rty
@@ -1704,58 +1708,58 @@ def embedded_antsreg_multi(source_images, target_images,
                 new_affine[1][3] = -rty*nty/2.0
                 new_affine[2][3] = -rtz*ntz/2.0
             else:
-                #mx = np.argmax(np.abs(trg_affine[0][0:3]))
-                #my = np.argmax(np.abs(trg_affine[1][0:3]))
-                #mz = np.argmax(np.abs(trg_affine[2][0:3]))
-                #new_affine[0][mx] = rtx*np.sign(trg_affine[0][mx])
-                #new_affine[1][my] = rty*np.sign(trg_affine[1][my])
-                #new_affine[2][mz] = rtz*np.sign(trg_affine[2][mz])
-                #if (np.sign(trg_affine[0][mx])<0):
+                #mx = numpy.argmax(numpy.abs(trg_affine[0][0:3]))
+                #my = numpy.argmax(numpy.abs(trg_affine[1][0:3]))
+                #mz = numpy.argmax(numpy.abs(trg_affine[2][0:3]))
+                #new_affine[0][mx] = rtx*numpy.sign(trg_affine[0][mx])
+                #new_affine[1][my] = rty*numpy.sign(trg_affine[1][my])
+                #new_affine[2][mz] = rtz*numpy.sign(trg_affine[2][mz])
+                #if (numpy.sign(trg_affine[0][mx])<0):
                 #    new_affine[0][3] = rtx*ntx/2.0
                 #else:
                 #    new_affine[0][3] = -rtx*ntx/2.0
                 #
-                #if (np.sign(trg_affine[1][my])<0):
+                #if (numpy.sign(trg_affine[1][my])<0):
                 #    new_affine[1][3] = rty*nty/2.0
                 #else:
                 #    new_affine[1][3] = -rty*nty/2.0
                 #
-                #if (np.sign(trg_affine[2][mz])<0):
+                #if (numpy.sign(trg_affine[2][mz])<0):
                 #    new_affine[2][3] = rtz*ntz/2.0
                 #else:
                 #    new_affine[2][3] = -rtz*ntz/2.0
-                mx = np.argmax(np.abs([trg_affine[0][0],trg_affine[1][0],trg_affine[2][0]]))
-                my = np.argmax(np.abs([trg_affine[0][1],trg_affine[1][1],trg_affine[2][1]]))
-                mz = np.argmax(np.abs([trg_affine[0][2],trg_affine[1][2],trg_affine[2][2]]))
+                mx = numpy.argmax(numpy.abs([trg_affine[0][0],trg_affine[1][0],trg_affine[2][0]]))
+                my = numpy.argmax(numpy.abs([trg_affine[0][1],trg_affine[1][1],trg_affine[2][1]]))
+                mz = numpy.argmax(numpy.abs([trg_affine[0][2],trg_affine[1][2],trg_affine[2][2]]))
                 #print('mx: '+str(mx)+', my: '+str(my)+', mz: '+str(mz))
                 #print('rx: '+str(rtx)+', ry: '+str(rty)+', rz: '+str(rtz))
-                new_affine[mx][0] = rtx*np.sign(trg_affine[mx][0])
-                new_affine[my][1] = rty*np.sign(trg_affine[my][1])
-                new_affine[mz][2] = rtz*np.sign(trg_affine[mz][2])
-                if (np.sign(trg_affine[mx][0])<0):
+                new_affine[mx][0] = rtx*numpy.sign(trg_affine[mx][0])
+                new_affine[my][1] = rty*numpy.sign(trg_affine[my][1])
+                new_affine[mz][2] = rtz*numpy.sign(trg_affine[mz][2])
+                if (numpy.sign(trg_affine[mx][0])<0):
                     new_affine[mx][3] = rtx*ntx/2.0
                 else:
                     new_affine[mx][3] = -rtx*ntx/2.0
 
-                if (np.sign(trg_affine[my][1])<0):
+                if (numpy.sign(trg_affine[my][1])<0):
                     new_affine[my][3] = rty*nty/2.0
                 else:
                     new_affine[my][3] = -rty*nty/2.0
 
-                if (np.sign(trg_affine[mz][2])<0):
+                if (numpy.sign(trg_affine[mz][2])<0):
                     new_affine[mz][3] = rtz*ntz/2.0
                 else:
                     new_affine[mz][3] = -rtz*ntz/2.0
-            #if (np.sign(trg_affine[0][mx])<0): new_affine[mx][3] = rtx*ntx
-            #if (np.sign(trg_affine[1][my])<0): new_affine[my][3] = rty*nty
-            #if (np.sign(trg_affine[2][mz])<0): new_affine[mz][3] = rtz*ntz
+            #if (numpy.sign(trg_affine[0][mx])<0): new_affine[mx][3] = rtx*ntx
+            #if (numpy.sign(trg_affine[1][my])<0): new_affine[my][3] = rty*nty
+            #if (numpy.sign(trg_affine[2][mz])<0): new_affine[mz][3] = rtz*ntz
             #new_affine[0][3] = ntx/2.0
             #new_affine[1][3] = nty/2.0
             #new_affine[2][3] = ntz/2.0
             new_affine[3][3] = 1.0
             #print("\nbefore: "+str(trg_affine))
             #print("\nafter: "+str(new_affine))
-            trg_img = nb.Nifti1Image(target.get_data(), new_affine, target.header)
+            trg_img = nibabel.Nifti1Image(target.get_fdata(), new_affine, target.header)
             trg_img.update_header()
             trg_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_images[0],
@@ -1764,17 +1768,20 @@ def embedded_antsreg_multi(source_images, target_images,
             target = load_volume(trg_img_file)
             trg_affine = target.affine
             trg_header = target.header
+            
+        sources.append(source)
+        targets.append(target)
 
     # build coordinate mapping matrices and save them to disk
-    src_coord = np.zeros((nsx,nsy,nsz,3))
-    trg_coord = np.zeros((ntx,nty,ntz,3))
+    src_coord = numpy.zeros((nsx,nsy,nsz,3))
+    trg_coord = numpy.zeros((ntx,nty,ntz,3))
     for x in range(nsx):
         for y in range(nsy):
             for z in range(nsz):
                 src_coord[x,y,z,X] = x
                 src_coord[x,y,z,Y] = y
                 src_coord[x,y,z,Z] = z
-    src_map = nb.Nifti1Image(src_coord, source.affine, source.header)
+    src_map = nibabel.Nifti1Image(src_coord, source.affine, source.header)
     src_map_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_images[0],
                                                         suffix='tmp_srccoord'))
@@ -1785,7 +1792,7 @@ def embedded_antsreg_multi(source_images, target_images,
                 trg_coord[x,y,z,X] = x
                 trg_coord[x,y,z,Y] = y
                 trg_coord[x,y,z,Z] = z
-    trg_map = nb.Nifti1Image(trg_coord, target.affine, target.header)
+    trg_map = nibabel.Nifti1Image(trg_coord, target.affine, target.header)
     trg_map_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                         rootfile=source_images[0],
                                                         suffix='tmp_trgcoord'))
@@ -1794,16 +1801,16 @@ def embedded_antsreg_multi(source_images, target_images,
     if mask_zero:
         # create and save temporary masks
         target = targets[0]
-        trg_mask_data = (target.get_data()!=0)
-        trg_mask = nb.Nifti1Image(trg_mask_data, target.affine, target.header)
+        trg_mask_data = (target.get_fdata()!=0)
+        trg_mask = nibabel.Nifti1Image(trg_mask_data, target.affine, target.header)
         trg_mask_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_images[0],
                                                             suffix='tmp_trgmask'))
         save_volume(trg_mask_file, trg_mask)
 
         source = sources[0]
-        src_mask_data = (source.get_data()!=0)
-        src_mask = nb.Nifti1Image(src_mask_data, source.affine, source.header)
+        src_mask_data = (source.get_fdata()!=0)
+        src_mask = nibabel.Nifti1Image(src_mask_data, source.affine, source.header)
         src_mask_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_images[0],
                                                             suffix='tmp_srcmask'))
@@ -1815,8 +1822,8 @@ def embedded_antsreg_multi(source_images, target_images,
         mask = nibabel.Nifti1Image(sources[0].get_fdata()>0,sources[0].affine, sources[0].header)
         
         # compute levelset and skeleton
-        lvl = nighres.surface.probability_to_levelset(mask)['result']
-        thk = nighres.shape.levelset_thickness(lvl)['dist']
+        lvl = probability_to_levelset(mask)['result']
+        thk = levelset_thickness(lvl)['dist']
         
         # compute ratio
         ratio = -lvl.get_fdata()/(thk.get_fdata()-lvl.get_fdata())
@@ -1832,15 +1839,15 @@ def embedded_antsreg_multi(source_images, target_images,
             src_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_images[0],
                                                             suffix='tmp_srcimg'+str(idx)))
-            nighres.io.save_volume(src_img_file, img)
+            save_volume(src_img_file, img)
             sources[idx] = img
 
         # get mask
         mask = nibabel.Nifti1Image(targets[0].get_fdata()>0,targets[0].affine, targets[0].header)
         
         # compute levelset and skeleton
-        lvl = nighres.surface.probability_to_levelset(mask)['result']
-        thk = nighres.shape.levelset_thickness(lvl)['dist']
+        lvl = probability_to_levelset(mask)['result']
+        thk = levelset_thickness(lvl)['dist']
         
         # compute ratio
         ratio = -lvl.get_fdata()/(thk.get_fdata()-lvl.get_fdata())
@@ -1856,7 +1863,7 @@ def embedded_antsreg_multi(source_images, target_images,
             trg_img_file = os.path.join(output_dir, _fname_4saving(module=__name__,file_name=file_name,
                                                             rootfile=source_images[0],
                                                             suffix='tmp_trgimg'+str(idx)))
-            nighres.io.save_volume(trg_img_file, img)
+            save_volume(trg_img_file, img)
             targets[idx] = img
 
 
@@ -1895,7 +1902,7 @@ def embedded_antsreg_multi(source_images, target_images,
     for n in range(n_scales):
         iter_rigid = iter_rigid+'x'+str(rigid_iterations)
         iter_affine = iter_affine+'x'+str(affine_iterations)
-        if n<n_scales/2: iter_syn = iter_syn+'x'+str(coarse_iterations)
+        if n<(n_scales-1)/2: iter_syn = iter_syn+'x'+str(coarse_iterations)
         elif n<n_scales-1: iter_syn = iter_syn+'x'+str(medium_iterations)
         else: iter_syn = iter_syn+'x'+str(fine_iterations)
         smooth = smooth+'x'+str(scaling_factor/math.pow(2.0,n+1))
@@ -2083,12 +2090,12 @@ def embedded_antsreg_multi(source_images, target_images,
     # if ignoring header and/or affine, must paste back the correct headers
     if ignore_affine or ignore_header:
         mapping = load_volume(mapping_file)
-        save_volume(mapping_file, nb.Nifti1Image(mapping.get_data(), orig_trg_aff, orig_trg_hdr))
+        save_volume(mapping_file, nibabel.Nifti1Image(mapping.get_fdata(), orig_trg_aff, orig_trg_hdr))
         inverse = load_volume(inverse_mapping_file)
-        save_volume(inverse_mapping_file, nb.Nifti1Image(inverse.get_data(), orig_src_aff, orig_src_hdr))
+        save_volume(inverse_mapping_file, nibabel.Nifti1Image(inverse.get_fdata(), orig_src_aff, orig_src_hdr))
         for trans_file in transformed_source_files:
             trans = load_volume(trans_file)
-            save_volume(trans_file, nb.Nifti1Image(trans.get_data(), orig_trg_aff, orig_trg_hdr))
+            save_volume(trans_file, nibabel.Nifti1Image(trans.get_fdata(), orig_trg_aff, orig_trg_hdr))
 
     if not save_data:
         # collect saved outputs

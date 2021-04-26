@@ -366,7 +366,7 @@ def conditional_shape(target_images, structures, contrasts, background=1,
 
 def conditional_shape_atlasing(subjects, structures, contrasts, 
                       levelset_images=None, skeleton_images=None, 
-                      contrast_images=None, background=1,
+                      contrast_images=None, background=1, smoothing=1.0,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Conditioanl Shape Parcellation Atlasing
@@ -389,6 +389,9 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
         Atlas images to use in the parcellation, indexed by (subjects, contrasts)
     background: int
         Number of separate tissue classes for the background (default is 1)
+    smoothing: float
+        Standard deviation in number of bins used in histogram smoothing 
+        (default is 1)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -477,6 +480,7 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
     # set parameters
     cspmax.setNumberOfSubjectsObjectsBgAndContrasts(subjects,structures,background,contrasts)
     cspmax.setOptions(True, False, False, False, True)
+    cspmax.setHistogramSmoothing(smoothing)
      
     # load target image for parameters
     # load a first image for dim, res
