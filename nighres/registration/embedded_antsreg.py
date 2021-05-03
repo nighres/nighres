@@ -132,7 +132,7 @@ def embedded_antsreg(source_image, target_image,
                     run_rigid, rigid_iterations, run_affine, affine_iterations,
                     run_syn, coarse_iterations, medium_iterations, fine_iterations,
 					scaling_factor, cost_function, interpolation, regularization, 
-					convergence, mask_zero, ignore_affine, ignore_header,
+					convergence, mask_zero, smooth_mask, ignore_affine, ignore_header,
 					save_data, overwrite, output_dir, file_name)
 
 
@@ -230,7 +230,7 @@ def embedded_antsreg_2d(source_image, target_image,
     """
 
     return embedded_antsreg_2d_multi([source_image], [target_image], 
-                    image_weights=None,
+                    None,
                     run_rigid, rigid_iterations,
                     run_affine, affine_iterations,
                     run_syn, coarse_iterations, medium_iterations, 
@@ -1595,6 +1595,8 @@ def embedded_antsreg_multi(source_images, target_images,
         for trans_file in transformed_source_files:
             trans = load_volume(trans_file)
             save_volume(trans_file, nibabel.Nifti1Image(trans.get_fdata(), orig_trg_aff, orig_trg_hdr))
+    else:
+        print("done")
 
     if not save_data:
         # collect saved outputs
