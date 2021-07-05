@@ -10,7 +10,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def directional_line_clustering(labels, scales, directions, thickness,
                             distance=20.0, angle=15.0, probability=0.5, anisotropy=0.0,
-                            relabel=True,
+                            relabel=True, voxels=False, across=False, mip=0,
                             save_data=False, overwrite=False, output_dir=None,
                             file_name=None):
     """ Directional line clustering
@@ -37,7 +37,13 @@ def directional_line_clustering(labels, scales, directions, thickness,
     anisotropy: float
         Anisotropy of the distance function relative to the lines direction
     relabel: bool
-        Relabel input label image into separate 8-connected components (default is True)
+        Relabel input label image into separate 8/26-connected components (default is True)
+    voxels: bool
+        Use individual voxels from input image as components (default is False)
+    across: bool
+        Only group across images, not inside each one (default is False)
+    mip: int
+        Compute a maximum intensity projection of the grouping (default is 0)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -113,7 +119,7 @@ def directional_line_clustering(labels, scales, directions, thickness,
         dim3d = (dimensions[0], dimensions[1], 3*nimg)
     else:
         print("3D version")
-        dlc.setDimensions(dimensions[0], dimensions[1], 1)
+        dlc.setDimensions(dimensions[0], dimensions[1], dimensions[2])
         dim2d = (dimensions[0], dimensions[1], dimensions[2], nimg)
         dim3d = (dimensions[0], dimensions[1], dimensions[2], 3*nimg)       
     
@@ -137,13 +143,22 @@ def directional_line_clustering(labels, scales, directions, thickness,
     dlc.setProbabilityThreshold(probability)
     dlc.setDistanceAnisotropy(anisotropy)
     dlc.setRecomputeLabels(relabel)
+    dlc.setMaxIntensityProjection(mip)
     
     # execute the algorithm
     try:
         if (len(dimensions)==2 or dimensions[2]==1):
             dlc.execute2D()
         else:
-            dlc.execute3D()
+            if voxels:
+                print('building lines out of voxels')
+                dlc.buildLines3D()
+            elif across:
+                print('combining lines from images')
+                dlc.combineAcrossDimensions3D()
+            else:
+                print('grouping lines in all images')
+                dlc.execute3D()
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")

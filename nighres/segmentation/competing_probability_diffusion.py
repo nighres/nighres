@@ -59,16 +59,16 @@ def competing_probability_diffusion(probas, prior,
 
     # make sure that saving related parameters are correct
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, labels[0])
+        output_dir = _output_dir_4saving(output_dir, prior)
 
         post_file = os.path.join(output_dir, 
                         _fname_4saving(module=__name__,file_name=file_name,
-                                   rootfile=labels[0],
+                                   rootfile=prior,
                                    suffix='cpd-post'))
 
         class_file = os.path.join(output_dir, 
                         _fname_4saving(module=__name__,file_name=file_name,
-                                   rootfile=labels[0],
+                                   rootfile=prior,
                                    suffix='cpd-class'))
 
         if overwrite is False \
@@ -113,7 +113,7 @@ def competing_probability_diffusion(probas, prior,
     
     # set algorithm parameters
     cpd.setDiffusionRatio(ratio)
-    cpd.setNeighborhoodSize(neighborhood)
+    cpd.setNeighborhoodSize(neighbors)
     cpd.setMaxIterations(maxiter)
     cpd.setMaxDifference(maxdiff)
     
