@@ -8,6 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving,_check_available_memory
 
 
 def surface_inflation(surface_mesh, step_size=0.75, max_iter=2000, max_curv=10.0,
+                        method='area', regularization=0.0,
                         save_data=False, overwrite=False, output_dir=None,
                         file_name=None):
 
@@ -25,7 +26,13 @@ def surface_inflation(surface_mesh, step_size=0.75, max_iter=2000, max_curv=10.0
     max_iter: int
         Maximum number of iterations (default is 2000)
     max_curv: float
-        Desired maximum curvature (default is 10.0)        
+        Desired maximum curvature (default is 10.0)   
+    method: str
+        Method used for averaging: 'area' based on the area of the triangle,
+        'dist' based on the vertex distance, 'numv' based on number of vertices
+        (default is 'area')
+    regularization: float
+        Regularization parameter for reducing local singularities (default is 0.0)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -90,7 +97,15 @@ def surface_inflation(surface_mesh, step_size=0.75, max_iter=2000, max_curv=10.0
     algorithm.setStepSize(step_size)
     algorithm.setMaxIter(max_iter)
     algorithm.setMaxCurv(max_curv)
-    
+    if method=='area':
+        algorithm.setWeightingMethod(algorithm.AREA)
+    elif method=='dist':
+        algorithm.setWeightingMethod(algorithm.DIST)
+    else:
+        algorithm.setWeightingMethod(algorithm.NUMV)
+        
+    algorithm.setRegularization(regularization)
+        
     # execute class
     try:
         algorithm.execute()

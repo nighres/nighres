@@ -146,7 +146,7 @@ Cerebrum-WMR	0.75	0.10	1.00
 Intensity Prior:	bflidark
 Background		0.0	100.0	1.00
 Dura			100.0	100.0	1.00
-Arteries		640.0	100.0	1.00
+Arteries		200.0	140.0	1.00
 Sulcal-CSF		200.0	140.0	1.00
 VentricleL		800.0	200.0	1.00
 VentricleR		800.0	200.0	1.00
@@ -155,13 +155,13 @@ Ventricle4		100.0	100.0	1.00
 ChoroidPlexusL	100.0	100.0	1.00
 ChoroidPlexusR	100.0	100.0	1.00
 Sinuses			100.0	100.0	1.00
-Cerebellum-GM	550.0	40.0	1.00
+Cerebellum-GM	580.0	60.0	1.00
 Cerebrum-GML	540.0	60.0	1.00
 Cerebrum-GMR	540.0	60.0	1.00
 AmygdalaL		520.0	60.0	1.00
 AmygdalaR		520.0	60.0	1.00
-CaudateL		540.0	30.0	1.00
-CaudateR		540.0	30.0	1.00
+CaudateL		560.0	50.0	1.00
+CaudateR		560.0	50.0	1.00
 HippocampusL	520.0	60.0	1.00
 HippocampusR	520.0	60.0	1.00
 PutamenL		540.0	30.0	1.00
@@ -170,10 +170,74 @@ ThalamusL		500.0	60.0	1.00
 ThalamusR		500.0	60.0	1.00
 GlobusPallidusL	520.0	30.0	1.00
 GlobusPallidusR	520.0	30.0	1.00
-Brainstem		500.0	120.0	1.00
+Brainstem		520.0	100.0	1.00
 Cerebellum-WM	440.0	60.0	1.00
 Cerebrum-WML	420.0	80.0	1.00
 Cerebrum-WMR	420.0	80.0	1.00
+ 
+Intensity Prior:	bflidark03
+Background		0.0	100.0	1.00
+Dura			100.0	100.0	1.00
+Arteries		200.0	200.0	1.00
+Sulcal-CSF		200.0	200.0	1.00
+VentricleL		800.0	200.0	1.00
+VentricleR		800.0	200.0	1.00
+Ventricle3		800.0	200.0	1.00
+Ventricle4		100.0	100.0	1.00
+ChoroidPlexusL	100.0	100.0	1.00
+ChoroidPlexusR	100.0	100.0	1.00
+Sinuses			100.0	100.0	1.00
+Cerebellum-GM	560.0	80.0	1.00
+Cerebrum-GML	560.0	80.0	1.00
+Cerebrum-GMR	560.0	80.0	1.00
+AmygdalaL		520.0	60.0	1.00
+AmygdalaR		520.0	60.0	1.00
+CaudateL		560.0	50.0	1.00
+CaudateR		560.0	50.0	1.00
+HippocampusL	520.0	60.0	1.00
+HippocampusR	520.0	60.0	1.00
+PutamenL		540.0	30.0	1.00
+PutamenR		540.0	30.0	1.00
+ThalamusL		500.0	60.0	1.00
+ThalamusR		500.0	60.0	1.00
+GlobusPallidusL	520.0	30.0	1.00
+GlobusPallidusR	520.0	30.0	1.00
+Brainstem		540.0	120.0	1.00
+Cerebellum-WM	440.0	60.0	1.00
+Cerebrum-WML	420.0	80.0	1.00
+Cerebrum-WMR	420.0	80.0	1.00
+ 
+Intensity Prior:	bflidark08
+Background		0.0	    20.0	1.00
+Dura			20.0	20.0	1.00
+Arteries		30.0	20.0	1.00
+Sulcal-CSF		30.0	20.0	1.00
+VentricleL		160.0	40.0	1.00
+VentricleR		160.0	40.0	1.00
+Ventricle3		160.0	40.0	1.00
+Ventricle4		20.0	20.0	1.00
+ChoroidPlexusL	20.0	20.0	1.00
+ChoroidPlexusR	20.0	20.0	1.00
+Sinuses			20.0	20.0	1.00
+Cerebellum-GM	90.0	10.0	1.00
+Cerebrum-GML	90.0	10.0	1.00
+Cerebrum-GMR	90.0	10.0	1.00
+AmygdalaL		80.0	10.0	1.00
+AmygdalaR		80.0	10.0	1.00
+CaudateL		90.0	10.0	1.00
+CaudateR		90.0	10.0	1.00
+HippocampusL	80.0	10.0	1.00
+HippocampusR	80.0	10.0	1.00
+PutamenL		90.0	10.0	1.00
+PutamenR		90.0	10.0	1.00
+ThalamusL		80.0	10.0	1.00
+ThalamusR		80.0	10.0	1.00
+GlobusPallidusL	80.0	10.0	1.00
+GlobusPallidusR	80.0	10.0	1.00
+Brainstem		80.0	10.0	1.00
+Cerebellum-WM	60.0	10.0	1.00
+Cerebrum-WML	60.0	10.0	1.00
+Cerebrum-WMR	60.0	10.0	1.00
  
 Intensity Prior:	bfiqrlog
 Background		0.0	0.5	1.00
