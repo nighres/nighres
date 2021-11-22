@@ -1,7 +1,7 @@
 import os
 import warnings
 import psutil
-from nighres.global_settings import TOPOLOGY_LUT_DIR, ATLAS_DIR, DEFAULT_ATLAS
+from nighres.global_settings import TOPOLOGY_LUT_DIR, MGDM_ATLAS_DIR, DEFAULT_MGDM_ATLAS
 
 
 def _output_dir_4saving(output_dir=None, rootfile=None):
@@ -178,18 +178,18 @@ def _check_topology_lut_dir(topology_lut_dir):
     return topology_lut_dir
 
 
-def _check_atlas_file(atlas_file):
+def _check_mgdm_atlas_file(atlas_file):
 
     if atlas_file is None:
-        atlas_file = DEFAULT_ATLAS
+        atlas_file = DEFAULT_MGDM_ATLAS
     else:
         # check if file exists, if not try search atlas in default atlas dir
         if not os.path.isfile(atlas_file):
-            if not os.path.isfile(os.path.join(ATLAS_DIR, atlas_file)):
+            if not os.path.isfile(os.path.join(MGDM_ATLAS_DIR, atlas_file)):
                 raise ValueError('The atlas_file you have specified ({0}) '
                                  'does not exist'.format(atlas_file))
             else:
-                atlas_file = os.path.join(ATLAS_DIR, atlas_file)
+                atlas_file = os.path.join(MGDM_ATLAS_DIR, atlas_file)
 
     return atlas_file
 

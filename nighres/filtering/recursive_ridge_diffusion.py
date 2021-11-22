@@ -5,7 +5,7 @@ import sys
 import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
-                    _check_topology_lut_dir, _check_atlas_file, \
+                    _check_topology_lut_dir, \
                     _check_available_memory
 
 
@@ -16,7 +16,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
                               diffusion_factor=1.0,
                               similarity_scale=0.1,
                               max_iter=100, max_diff=1e-3,
-                              threshold=0.5,
+                              threshold=0.5, 
                               save_data=False, overwrite=False, output_dir=None,
                               file_name=None):
 
@@ -179,6 +179,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     rrd.setMaxIterations(max_iter)
     rrd.setMaxDifference(max_diff)
     rrd.setDetectionThreshold(threshold)
+    #rrd.setUseRatio(use_ratio)
 
     rrd.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     rrd.setResolutions(resolution[0], resolution[1], resolution[2])

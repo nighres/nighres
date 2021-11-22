@@ -1,4 +1,6 @@
 from nighres.segmentation.conditional_shape import conditional_shape
 from nighres.segmentation.conditional_shape import conditional_shape_atlasing
 from nighres.segmentation.conditional_shape import conditional_shape_updating
+from nighres.segmentation.conditional_shape import conditional_shape_map_intensities
 from nighres.segmentation.fuzzy_cmeans import fuzzy_cmeans
+from nighres.segmentation.competing_probability_diffusion import competing_probability_diffusion

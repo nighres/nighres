@@ -5,7 +5,7 @@ import sys
 import nighresjava
 from ..io import load_volume, save_volume
 from ..utils import _output_dir_4saving, _fname_4saving, \
-    _check_topology_lut_dir, _check_atlas_file, _check_available_memory
+    _check_topology_lut_dir, _check_available_memory
 
 def filter_ridge_structures(input_image,
                             structure_intensity='bright',

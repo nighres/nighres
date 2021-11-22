@@ -11,7 +11,8 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def mp2rage_t1_mapping(first_inversion, second_inversion, 
                       inversion_times, flip_angles, inversion_TR,
                       excitation_TR, N_excitations, efficiency=0.96,
-                      correct_B1=False, B1_map=None, scale_phase=True,
+                      correct_B1=False, B1_map=None, B1_scale=1.0,
+                      scale_phase=True,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ MP2RAGE T1 mapping
@@ -31,7 +32,7 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
     inversion_TR: float
         Inversion repetition time, in seconds
     excitation_TR: [float]
-        List of {first,second} repetition times,in seconds
+        List of {first,second} repetition times, in seconds
     N_excitations: int
         Number of excitations
     efficiency: float
@@ -40,6 +41,8 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
         Whether to correct for B1 inhomogeneities (default is False)
     B1_map: niimg
         Computed B1 map
+    B1_scale: float
+        B1 map scaling factor (default is 1.0)
     scale_phase: bool
         Whether to rescale the phase image in [0,2PI] or to assume it is 
         already in radians
@@ -59,9 +62,9 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * t1 (niimg): Map of estimated T1 times (_qt1map-t1)
-        * r1 (niimg): Map of estimated R1 relaxation rate (_qt1map-r1)
-        * uni (niimg): Estimated PD weighted image at TE=0 (_qt1map-uni)
+        * t1 (niimg): Map of estimated T1 times in seconds (_qt1map-t1)
+        * r1 (niimg): Map of estimated R1 relaxation rate in hertz (_qt1map-r1)
+        * uni (niimg): Estimated T1 weighted image at TE=0 (_qt1map-uni)
         
     Notes
     ----------
@@ -157,6 +160,7 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
         data = load_volume(B1_map).get_data()
         qt1map.setB1mapImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
+        qt1map.setB1mapScaling(B1_scale)
  
     # execute the algorithm
     try:
@@ -204,7 +208,8 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
 def mp2rage_t1_from_uni(uniform_image, 
                       inversion_times, flip_angles, inversion_TR,
                       excitation_TR, N_excitations, efficiency=0.96,
-                      correct_B1=False, B1_map=None, scale_phase=True,
+                      correct_B1=False, B1_map=None, B1_scale=1.0,
+                      scale_phase=True,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ MP2RAGE uniform image to T1 mapping
@@ -231,6 +236,8 @@ def mp2rage_t1_from_uni(uniform_image,
         Whether to correct for B1 inhomogeneities (default is False)
     B1_map: niimg
         Computed B1 map
+    B1_scale: float
+        B1 map scaling factor (default is 1.0)
     scale_phase: bool
         Whether to rescale the phase image in [0,2PI] or to assume it is 
         already in radians
@@ -250,8 +257,8 @@ def mp2rage_t1_from_uni(uniform_image,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * t1 (niimg): Map of estimated T1 times (_qt1map-t1)
-        * r1 (niimg): Map of estimated R1 relaxation rate (_qt1map-r1)
+        * t1 (niimg): Map of estimated T1 times in seconds (_qt1map-t1)
+        * r1 (niimg): Map of estimated R1 relaxation rate in hertz (_qt1map-r1)
         
     Notes
     ----------
@@ -328,6 +335,7 @@ def mp2rage_t1_from_uni(uniform_image,
         data = load_volume(B1_map).get_data()
         qt1map.setB1mapImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
+        qt1map.setB1mapScaling(B1_scale)
  
     # execute the algorithm
     try:

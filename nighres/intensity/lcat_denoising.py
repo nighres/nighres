@@ -9,7 +9,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 
 def lcat_denoising(image_list, image_mask, phase_list=None,
-                    ngb_size=3, ngb_time=3, stdev_cutoff=1.05,
+                    ngb_size=3, ngb_time=10, stdev_cutoff=1.05,
                       min_dimension=0, max_dimension=-1,
                       save_data=False, overwrite=False, output_dir=None,
                       file_names=None):
@@ -29,7 +29,7 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
         Size of the local PCA neighborhood, to be increased with number of
         inputs (default is 3)
     ngb_time: int, optional
-        Size of the time window to use (default is 3)
+        Size of the time window to use (default is 10)
     stdev_cutoff: float, optional
         Factor of local noise level to remove PCA components. Higher
         values remove more components (default is 1.05)
@@ -175,6 +175,8 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
             #data = data[0:10,0:10,0:10]
             lcat.setTimeSeriePhaseAt(idx, nighresjava.JArray('float')(
                                         (data.flatten('F')).astype(float)))
+
+    data = None
 
     # set algorithm parameters
     lcat.setPatchSize(ngb_size)

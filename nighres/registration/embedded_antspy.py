@@ -5,9 +5,10 @@ import subprocess
 from glob import glob
 import math
 
-# main dependencies: numpy, nibabel
+# main dependencies: numpy, nibabel, ants
 import numpy
 import nibabel
+import ants
 
 # nighresjava and nighres functions
 import nighresjava
@@ -23,7 +24,7 @@ Y=1
 Z=2
 T=3
 
-def embedded_antsreg(source_image, target_image,
+def embedded_antspy(source_image, target_image,
                     run_rigid=False,
                     rigid_iterations=1000,
                     run_affine=False,
@@ -40,7 +41,7 @@ def embedded_antsreg(source_image, target_image,
 					ignore_affine=False, ignore_header=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
-    """ Embedded ANTS Registration
+    """ Embedded ANTSpy Registration
 
     Runs the rigid and/or Symmetric Normalization (SyN) algorithm of ANTs and
     formats the output deformations into voxel coordinate mappings as used in
@@ -128,7 +129,7 @@ def embedded_antsreg(source_image, target_image,
     """
 
     # just overloading the multi-channel version
-    return embedded_antsreg_multi([source_image], [target_image],
+    return embedded_antspy_multi([source_image], [target_image],
                     run_rigid, rigid_iterations, run_affine, affine_iterations,
                     run_syn, coarse_iterations, medium_iterations, fine_iterations,
 					scaling_factor, cost_function, interpolation, regularization, 
@@ -136,7 +137,7 @@ def embedded_antsreg(source_image, target_image,
 					save_data, overwrite, output_dir, file_name)
 
 
-def embedded_antsreg_2d(source_image, target_image,
+def embedded_antspy_2d(source_image, target_image,
                     run_rigid=False,
                     rigid_iterations=1000,
                     run_affine=False,
@@ -153,7 +154,7 @@ def embedded_antsreg_2d(source_image, target_image,
 					ignore_affine=False, ignore_header=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
-    """ Embedded ANTS Registration 2D
+    """ Embedded ANTSpy Registration 2D
 
     Runs the rigid and/or Symmetric Normalization (SyN) algorithm of ANTs and
     formats the output deformations into voxel coordinate mappings as used in
@@ -229,7 +230,7 @@ def embedded_antsreg_2d(source_image, target_image,
        of elderly and neurodegenerative brain, Med Image Anal. 12(1):26-41
     """
 
-    return embedded_antsreg_2d_multi([source_image], [target_image], 
+    return embedded_antspy_2d_multi([source_image], [target_image], 
                     None,
                     run_rigid, rigid_iterations,
                     run_affine, affine_iterations,
@@ -241,7 +242,7 @@ def embedded_antsreg_2d(source_image, target_image,
                     save_data, overwrite, output_dir,file_name)
 
 
-def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
+def embedded_antspy_2d_multi(source_images, target_images, image_weights=None,
                     run_rigid=False,
                     rigid_iterations=1000,
                     run_affine=False,
@@ -258,7 +259,7 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
 					ignore_affine=False, ignore_orient=False, ignore_res=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
-    """ Embedded ANTS Registration 2D Multi-contrasts
+    """ Embedded ANTSpy Registration 2D Multi-contrasts
 
     Runs the rigid and/or Symmetric Normalization (SyN) algorithm of ANTs and
     formats the output deformations into voxel coordinate mappings as used in
@@ -943,7 +944,7 @@ def embedded_antsreg_2d_multi(source_images, target_images, image_weights=None,
 
         return output
 
-def embedded_antsreg_multi(source_images, target_images,
+def embedded_antspy_multi(source_images, target_images,
                     run_rigid=True,
                     rigid_iterations=1000,
                     run_affine=False,
@@ -960,7 +961,7 @@ def embedded_antsreg_multi(source_images, target_images,
 					ignore_affine=False, ignore_header=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
-    """ Embedded ANTS Registration Multi-contrasts
+    """ Embedded ANTSpy Registration Multi-contrasts
 
     Runs the rigid and/or Symmetric Normalization (SyN) algorithm of ANTs and
     formats the output deformations into voxel coordinate mappings as used in
@@ -1367,20 +1368,24 @@ def embedded_antsreg_multi(source_images, target_images,
 
 
     # run the main ANTS software: here we directly build the command line call
-    reg = 'antsRegistration --collapse-output-transforms 1 --dimensionality 3' \
-            +' --initialize-transforms-per-stage 0 --interpolation Linear'
+    args = ['--collapse-output-transforms','1',
+           '--dimensionality','3',
+           '--initialize-transforms-per-stage','0',
+           '--interpolation','Linear']
 
-     # add a prefix to avoid multiple names?
+    # add a prefix to avoid multiple names?
     prefix = _fname_4saving(module=__name__,file_name=file_name,
                             rootfile=source_images[0],
                             suffix='tmp_syn')
     prefix = os.path.basename(prefix)
     prefix = prefix.split(".")[0]
     #reg.inputs.output_transform_prefix = prefix
-    reg = reg+' --output '+prefix
+    args.append('--output')
+    args.append(prefix)
 
     if mask_zero:
-        reg = reg+' --masks ['+trg_mask_file+', '+src_mask_file+']'
+        args.append('--masks')
+        args.append('['+trg_mask_file+', '+src_mask_file+']')
 
     srcfiles = []
     trgfiles = []
@@ -1409,40 +1414,62 @@ def embedded_antsreg_multi(source_images, target_images,
 
     # set parameters for all the different types of transformations
     if run_rigid is True:
-        reg = reg + ' --transform Rigid[0.1]'
+        args.append('--transform')
+        args.append('Rigid[0.1]')
         if (cost_function=='CrossCorrelation'):
             for idx,img in enumerate(srcfiles):
-                reg = reg + ' --metric CC['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
+                args.append('--metric')
+                args.append('CC['+trgfiles[idx]+','+srcfiles[idx] \
+                            +','+'{:.3f}'.format(weight)+',5,Random,0.3]')
         else:
             for idx,img in enumerate(srcfiles):
-                reg = reg + ' --metric MI['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 32, Random, 0.3 ]'
+                args.append('--metric')
+                args.append('MI['+trgfiles[idx]+','+srcfiles[idx] \
+                            +','+'{:.3f}'.format(weight)+',32,Random,0.3]')
 
-        reg = reg + ' --convergence ['+iter_rigid+', '+str(convergence)+', 10 ]'
+        args.append('--convergence') 
+        args.append('['+iter_rigid+','+str(convergence)+',10]')
 
-        reg = reg + ' --smoothing-sigmas '+smooth
-        reg = reg + ' --shrink-factors '+shrink
-        reg = reg + ' --use-histogram-matching 0'
-        reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
+        args.append('--smoothing-sigmas')
+        args.append(smooth)
+        
+        args.append('--shrink-factors')
+        args.append(shrink)
+        
+        args.append('--use-histogram-matching')
+        args.append('0')
+        
+        args.append('--winsorize-image-intensities')
+        args.append('[ 0.001, 0.999 ]')
 
     if run_affine is True:
-        reg = reg + ' --transform Affine[0.1]'
+        args.append('--transform')
+        args.append('Affine[0.1]')
         if (cost_function=='CrossCorrelation'):
             for idx,img in enumerate(srcfiles):
-                reg = reg + ' --metric CC['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
+                args.append('--metric')
+                args.append('CC['+trgfiles[idx]+','+srcfiles[idx] \
+                            +','+'{:.3f}'.format(weight)+',5,Random,0.3]')
         else:
             for idx,img in enumerate(srcfiles):
-                reg = reg + ' --metric MI['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 32, Random, 0.3 ]'
+                args.append('--metric')
+                args.append('MI['+trgfiles[idx]+','+srcfiles[idx] \
+                            +','+'{:.3f}'.format(weight)+',32,Random,0.3]')
 
-        reg = reg + ' --convergence ['+iter_affine+', '+str(convergence)+', 10 ]'
+        args.append('--convergence')
+        args.append('['+iter_affine+','+str(convergence)+',10]')
 
-        reg = reg + ' --smoothing-sigmas '+smooth
-        reg = reg + ' --shrink-factors '+shrink
-        reg = reg + ' --use-histogram-matching 0'
-        reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
+        args.append('--smoothing-sigmas')
+        args.append(smooth)
+        
+        args.append('--shrink-factors')
+        args.append(shrink)
+        
+        args.append('--use-histogram-matching')
+        args.append('0')
+        
+        args.append('--winsorize-image-intensities')
+        args.append('[0.001,0.999]')
 
     if run_syn is True:
         if regularization == 'Low': syn_param = [0.2, 1.0, 0.0]
@@ -1450,44 +1477,67 @@ def embedded_antsreg_multi(source_images, target_images,
         elif regularization == 'High': syn_param = [0.2, 4.0, 3.0]
         else: syn_param = [0.2, 3.0, 0.0]
 
-        reg = reg + ' --transform SyN'+str(syn_param)
+        args.append('--transform')
+        args.append('SyN'+str(syn_param))
         if (cost_function=='CrossCorrelation'):
             for idx,img in enumerate(srcfiles):
-                reg = reg + ' --metric CC['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
+                args.append('--metric')
+                args.append('CC['+trgfiles[idx]+','+srcfiles[idx] \
+                            +','+'{:.3f}'.format(weight)+',5,Random,0.3]')
         else:
             for idx,img in enumerate(srcfiles):
-                reg = reg + ' --metric MI['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 32, Random, 0.3 ]'
+                args.append('--metric')
+                args.append('MI['+trgfiles[idx]+','+srcfiles[idx] \
+                            +','+'{:.3f}'.format(weight)+',32,Random,0.3]')
 
-        reg = reg + ' --convergence ['+iter_syn+', '+str(convergence)+', 5 ]'
+        args.append('--convergence')
+        args.append('['+iter_syn+','+str(convergence)+',5]')
 
-        reg = reg + ' --smoothing-sigmas '+smooth
-        reg = reg + ' --shrink-factors '+shrink
-        reg = reg + ' --use-histogram-matching 0'
-        reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
+        args.append('--smoothing-sigmas')
+        args.append(smooth)
+        
+        args.append('--shrink-factors')
+        args.append(shrink)
+        
+        args.append('--use-histogram-matching')
+        args.append('0')
+        
+        args.append('--winsorize-image-intensities')
+        args.append('[0.001,0.999]')
 
     if run_rigid is False and run_affine is False and run_syn is False:
-        reg = reg + ' --transform Rigid[0.1]'
+        args.append('--transform')
+        args.append('Rigid[0.1]')
         for idx,img in enumerate(srcfiles):
-            reg = reg + ' --metric CC['+trgfiles[idx]+', '+srcfiles[idx] \
-                            +', '+'{:.3f}'.format(weight)+', 5, Random, 0.3 ]'
-        reg = reg + ' --convergence [ 0, 1.0, 2 ]'
-        reg = reg + ' --smoothing-sigmas 0.0'
-        reg = reg + ' --shrink-factors 1'
-        reg = reg + ' --use-histogram-matching 0'
-        reg = reg + ' --winsorize-image-intensities [ 0.001, 0.999 ]'
+            args.append('--metric')
+            args.append('CC['+trgfiles[idx]+','+srcfiles[idx] \
+                            +','+'{:.3f}'.format(weight)+',5,Random,0.3]')
+        args.append(' --convergence')
+        args.append('[0,1.0,2]')
+        
+        args.append('--smoothing-sigmas')
+        args.append('0.0')
+        args.append('--shrink-factors')
+        args.append('1')
+        args.append('--use-histogram-matching')
+        args.append('0')
+        args.append('--winsorize-image-intensities')
+        args.append('[0.001,0.999]')
 
-    reg = reg + ' --write-composite-transform 0'
+    args.append('--write-composite-transform')
+    args.append('0')
 
     # run the ANTs command directly
-    print(reg)
-    try:
-        subprocess.check_output(reg, shell=True, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
-        raise subprocess.CalledProcessError(msg)
-
+    #try:
+    #    subprocess.check_output(reg, shell=True, stderr=subprocess.STDOUT)
+    #except subprocess.CalledProcessError as e:
+    #    msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
+    #    raise subprocess.CalledProcessError(msg)
+    processed_args = ants.utils._int_antsProcessArguments(args)
+    print(processed_args)
+    libfn = ants.utils.get_lib_fn("antsRegistration")
+    libfn(processed_args)
+                
     # output file names
     results = sorted(glob(prefix+'*'))
     forward = []
@@ -1516,75 +1566,105 @@ def embedded_antsreg_multi(source_images, target_images,
 
     # Transforms the moving image
     for idx,source in enumerate(sources):
-        at = 'antsApplyTransforms --dimensionality 3 --input-image-type 0'
-        at = at+' --input '+sources[idx].get_filename()
-        at = at+' --reference-image '+targets[idx].get_filename()
-        at = at+' --interpolation '+interpolation
+        at = ['--dimensionality','3','--input-image-type','0']
+        at.append('--input')
+        at.append(sources[idx].get_filename())
+        at.append('--reference-image')
+        at.append(targets[idx].get_filename())
+        at.append('--interpolation')
+        at.append(interpolation)
         for idx2,transform in enumerate(forward):
             if flag[idx2]:
-                at = at+' --transform ['+transform+', 1]'
+                at.append('--transform')
+                at.append('['+transform+',1]')
             else:
-                at = at+' --transform ['+transform+', 0]'
-        at = at+' --output '+transformed_source_files[idx]
+                at.append('--transform')
+                at.append('['+transform+',0]')
+        at.append('--output')
+        at.append(transformed_source_files[idx])
 
-        print(at)
-        try:
-            subprocess.check_output(at, shell=True, stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as e:
-            msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
-            raise subprocess.CalledProcessError(msg)
+        processed_at = ants.utils._int_antsProcessArguments(at)
+        print(processed_at)
+        libfn = ants.utils.get_lib_fn("antsApplyTransforms")
+        libfn(processed_at)
+#        print(at)
+#        try:
+#            subprocess.check_output(at, shell=True, stderr=subprocess.STDOUT)
+#        except subprocess.CalledProcessError as e:
+#            msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
+#            raise subprocess.CalledProcessError(msg)
 
     # Create coordinate mappings
-    src_at = 'antsApplyTransforms --dimensionality 3 --input-image-type 3'
-    src_at = src_at+' --input '+src_map.get_filename()
-    src_at = src_at+' --reference-image '+target.get_filename()
-    src_at = src_at+' --interpolation Linear'
+    src_at = ['--dimensionality','3','--input-image-type','3']
+    src_at.append('--input')
+    src_at.append(src_map.get_filename())
+    src_at.append('--reference-image')
+    src_at.append(target.get_filename())
+    src_at.append('--interpolation')
+    src_at.append('Linear')
     for idx,transform in enumerate(forward):
         if flag[idx]:
-            src_at = src_at+' --transform ['+transform+', 1]'
+            src_at.append('--transform')
+            src_at.append('['+transform+',1]')
         else:
-            src_at = src_at+' --transform ['+transform+', 0]'
-    src_at = src_at+' --output '+mapping_file
+            src_at.append('--transform')
+            src_at.append('['+transform+',0]')
+    src_at.append('--output')
+    src_at.append(mapping_file)
 
-    print(src_at)
-    try:
-        subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
-        raise subprocess.CalledProcessError(msg)
-    trans_mapping = []
+    processed_src_at = ants.utils._int_antsProcessArguments(src_at)
+    print(processed_src_at)
+    libfn = ants.utils.get_lib_fn("antsApplyTransforms")
+    libfn(processed_src_at)
+#    print(src_at)
+#    try:
+#        subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
+#    except subprocess.CalledProcessError as e:
+#        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
+#        raise subprocess.CalledProcessError(msg)
+#    trans_mapping = []
 
-    trg_at = 'antsApplyTransforms --dimensionality 3 --input-image-type 3'
-    trg_at = trg_at+' --input '+trg_map.get_filename()
-    trg_at = trg_at+' --reference-image '+source.get_filename()
-    trg_at = trg_at+' --interpolation Linear'
+    trg_at = ['--dimensionality','3','--input-image-type','3']
+    trg_at.append('--input')
+    trg_at.append(trg_map.get_filename())
+    trg_at.append('--reference-image')
+    trg_at.append(source.get_filename())
+    trg_at.append('--interpolation')
+    trg_at.append('Linear')
     for idx,transform in enumerate(inverse):
         if linear[idx]:
-            trg_at = trg_at+' --transform ['+transform+', 1]'
+            trg_at.append('--transform')
+            trg_at.append('['+transform+',1]')
         else:
-            trg_at = trg_at+' --transform ['+transform+', 0]'
-    trg_at = trg_at+' --output '+inverse_mapping_file
+            trg_at.append('--transform')
+            trg_at.append('['+transform+',0]')
+    trg_at.append('--output')
+    trg_at.append(inverse_mapping_file)
 
-    print(trg_at)
-    try:
-        subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError as e:
-        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
-        raise subprocess.CalledProcessError(msg)
+    processed_trg_at = ants.utils._int_antsProcessArguments(trg_at)
+    print(processed_trg_at)
+    libfn = ants.utils.get_lib_fn("antsApplyTransforms")
+    libfn(processed_trg_at)
+#    print(trg_at)
+#    try:
+#        subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
+#    except subprocess.CalledProcessError as e:
+#        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
+#        raise subprocess.CalledProcessError(msg)
 
     # pad coordinate mapping outside the image? hopefully not needed...
 
     # clean-up intermediate files
-    if os.path.exists(src_map_file): os.remove(src_map_file)
-    if os.path.exists(trg_map_file): os.remove(trg_map_file)
-    if ignore_affine or ignore_header:
-        if os.path.exists(src_img_file): os.remove(src_img_file)
-        if os.path.exists(trg_img_file): os.remove(trg_img_file)
+#    if os.path.exists(src_map_file): os.remove(src_map_file)
+#    if os.path.exists(trg_map_file): os.remove(trg_map_file)
+#    if ignore_affine or ignore_header:
+#        if os.path.exists(src_img_file): os.remove(src_img_file)
+#        if os.path.exists(trg_img_file): os.remove(trg_img_file)
 
-    for name in forward:
-        if os.path.exists(name): os.remove(name)
-    for name in inverse:
-        if os.path.exists(name): os.remove(name)
+#    for name in forward:
+#        if os.path.exists(name): os.remove(name)
+#    for name in inverse:
+#        if os.path.exists(name): os.remove(name)
 
     # if ignoring header and/or affine, must paste back the correct headers
     if ignore_affine or ignore_header:
