@@ -60,8 +60,8 @@ dots_results = nighres.brain.dots_segmentation(tensor_image=dataset['dti'],
                                                output_dir=out_dir,
                                                file_name='example')
 
-segmentation = nighres.io.load_volume(dots_results['segmentation']).get_data()
-posterior = nighres.io.load_volume(dots_results['posterior']).get_data()
+segmentation = nighres.io.load_volume(dots_results['segmentation']).get_fdata()
+posterior = nighres.io.load_volume(dots_results['posterior']).get_fdata()
 
 ############################################################################
 # .. tip:: The parameter values of the DOTS algorithm can have a significant
@@ -109,7 +109,7 @@ newcmp = ListedColormap(newcolors)
 
 # Calculate FA
 tensor_img = nb.load(os.path.join(in_dir, 'DTI_2mm/DTI_2mm.nii.gz'))
-tensor_volume = tensor_img.get_data()
+tensor_volume = tensor_img.get_fdata()
 xs, ys, zs, _ = tensor_volume.shape
 tenfit = np.zeros((xs, ys, zs, 3, 3))
 tenfit[:,:,:,0,0] = tensor_volume[:,:,:,0]

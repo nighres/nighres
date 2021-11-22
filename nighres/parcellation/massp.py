@@ -175,7 +175,12 @@ def massp(target_images, structures=31,
     if ( (shape_atlas_probas is None) or (shape_atlas_labels is None)
         or (skeleton_atlas_probas is None) or (skeleton_atlas_labels is None)):
         
-        if (not os.path.exists(DEFAULT_MASSP_ATLAS)):
+        if (not (os.path.exists(DEFAULT_MASSP_ATLAS) 
+            and os.path.exists(DEFAULT_MASSP_SPATIAL_PROBA) 
+            and os.path.exists(DEFAULT_MASSP_SPATIAL_LABEL) 
+            and os.path.exists(DEFAULT_MASSP_SKEL_PROBA) 
+            and os.path.exists(DEFAULT_MASSP_SKEL_LABEL) 
+            and os.path.exists(DEFAULT_MASSP_HIST))):
             download_MASSP_atlas(overwrite=False)
             
         shape_atlas_probas = DEFAULT_MASSP_SPATIAL_PROBA

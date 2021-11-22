@@ -469,12 +469,6 @@ def embedded_antspy_2d_multi(source_images, target_images, image_weights=None,
                     new_affine[2][3] = rsz*nsz/2.0
                 else:
                     new_affine[2][3] = -rsz*nsz/2.0
-            #if (numpy.sign(src_affine[0][mx])<0): new_affine[mx][3] = rsx*nsx
-            #if (numpy.sign(src_affine[1][my])<0): new_affine[my][3] = rsy*nsy
-            #if (numpy.sign(src_affine[2][mz])<0): new_affine[mz][3] = rsz*nsz
-            #new_affine[0][3] = nsx/2.0
-            #new_affine[1][3] = nsy/2.0
-            #new_affine[2][3] = nsz/2.0
             new_affine[3][3] = 1.0
 
             src_img = nibabel.Nifti1Image(source.get_fdata(), new_affine, source.header)
@@ -526,12 +520,6 @@ def embedded_antspy_2d_multi(source_images, target_images, image_weights=None,
                     new_affine[2][3] = rtz*ntz/2.0
                 else:
                     new_affine[2][3] = -rtz*ntz/2.0
-            #if (numpy.sign(trg_affine[0][mx])<0): new_affine[mx][3] = rtx*ntx
-            #if (numpy.sign(trg_affine[1][my])<0): new_affine[my][3] = rty*nty
-            #if (numpy.sign(trg_affine[2][mz])<0): new_affine[mz][3] = rtz*ntz
-            #new_affine[0][3] = ntx/2.0
-            #new_affine[1][3] = nty/2.0
-            #new_affine[2][3] = ntz/2.0
             new_affine[3][3] = 1.0
 
             trg_img = nibabel.Nifti1Image(target.get_fdata(), new_affine, target.header)
@@ -1140,26 +1128,6 @@ def embedded_antspy_multi(source_images, target_images,
                 new_affine[1][3] = -rsy*nsy/2.0
                 new_affine[2][3] = -rsz*nsz/2.0
             else:
-                #mx = numpy.argmax(numpy.abs(src_affine[0][0:3]))
-                #my = numpy.argmax(numpy.abs(src_affine[1][0:3]))
-                #mz = numpy.argmax(numpy.abs(src_affine[2][0:3]))
-                #new_affine[0][mx] = rsx*numpy.sign(src_affine[0][mx])
-                #new_affine[1][my] = rsy*numpy.sign(src_affine[1][my])
-                #new_affine[2][mz] = rsz*numpy.sign(src_affine[2][mz])
-                #if (numpy.sign(src_affine[0][mx])<0):
-                #    new_affine[0][3] = rsx*nsx/2.0
-                #else:
-                #    new_affine[0][3] = -rsx*nsx/2.0
-                #
-                #if (numpy.sign(src_affine[1][my])<0):
-                #    new_affine[1][3] = rsy*nsy/2.0
-                #else:
-                #    new_affine[1][3] = -rsy*nsy/2.0
-                #
-                #if (numpy.sign(src_affine[2][mz])<0):
-                #    new_affine[2][3] = rsz*nsz/2.0
-                #else:
-                #    new_affine[2][3] = -rsz*nsz/2.0
                 mx = numpy.argmax(numpy.abs([src_affine[0][0],src_affine[1][0],src_affine[2][0]]))
                 my = numpy.argmax(numpy.abs([src_affine[0][1],src_affine[1][1],src_affine[2][1]]))
                 mz = numpy.argmax(numpy.abs([src_affine[0][2],src_affine[1][2],src_affine[2][2]]))
@@ -1180,12 +1148,6 @@ def embedded_antspy_multi(source_images, target_images,
                     new_affine[mz][3] = rsz*nsz/2.0
                 else:
                     new_affine[mz][3] = -rsz*nsz/2.0
-            #if (numpy.sign(src_affine[0][mx])<0): new_affine[mx][3] = rsx*nsx
-            #if (numpy.sign(src_affine[1][my])<0): new_affine[my][3] = rsy*nsy
-            #if (numpy.sign(src_affine[2][mz])<0): new_affine[mz][3] = rsz*nsz
-            #new_affine[0][3] = nsx/2.0
-            #new_affine[1][3] = nsy/2.0
-            #new_affine[2][3] = nsz/2.0
             new_affine[3][3] = 1.0
 
             src_img = nibabel.Nifti1Image(source.get_fdata(), new_affine, source.header)
@@ -1208,26 +1170,6 @@ def embedded_antspy_multi(source_images, target_images,
                 new_affine[1][3] = -rty*nty/2.0
                 new_affine[2][3] = -rtz*ntz/2.0
             else:
-                #mx = numpy.argmax(numpy.abs(trg_affine[0][0:3]))
-                #my = numpy.argmax(numpy.abs(trg_affine[1][0:3]))
-                #mz = numpy.argmax(numpy.abs(trg_affine[2][0:3]))
-                #new_affine[0][mx] = rtx*numpy.sign(trg_affine[0][mx])
-                #new_affine[1][my] = rty*numpy.sign(trg_affine[1][my])
-                #new_affine[2][mz] = rtz*numpy.sign(trg_affine[2][mz])
-                #if (numpy.sign(trg_affine[0][mx])<0):
-                #    new_affine[0][3] = rtx*ntx/2.0
-                #else:
-                #    new_affine[0][3] = -rtx*ntx/2.0
-                #
-                #if (numpy.sign(trg_affine[1][my])<0):
-                #    new_affine[1][3] = rty*nty/2.0
-                #else:
-                #    new_affine[1][3] = -rty*nty/2.0
-                #
-                #if (numpy.sign(trg_affine[2][mz])<0):
-                #    new_affine[2][3] = rtz*ntz/2.0
-                #else:
-                #    new_affine[2][3] = -rtz*ntz/2.0
                 mx = numpy.argmax(numpy.abs([trg_affine[0][0],trg_affine[1][0],trg_affine[2][0]]))
                 my = numpy.argmax(numpy.abs([trg_affine[0][1],trg_affine[1][1],trg_affine[2][1]]))
                 mz = numpy.argmax(numpy.abs([trg_affine[0][2],trg_affine[1][2],trg_affine[2][2]]))
@@ -1250,12 +1192,6 @@ def embedded_antspy_multi(source_images, target_images,
                     new_affine[mz][3] = rtz*ntz/2.0
                 else:
                     new_affine[mz][3] = -rtz*ntz/2.0
-            #if (numpy.sign(trg_affine[0][mx])<0): new_affine[mx][3] = rtx*ntx
-            #if (numpy.sign(trg_affine[1][my])<0): new_affine[my][3] = rty*nty
-            #if (numpy.sign(trg_affine[2][mz])<0): new_affine[mz][3] = rtz*ntz
-            #new_affine[0][3] = ntx/2.0
-            #new_affine[1][3] = nty/2.0
-            #new_affine[2][3] = ntz/2.0
             new_affine[3][3] = 1.0
             #print("\nbefore: "+str(trg_affine))
             #print("\nafter: "+str(new_affine))
@@ -1528,11 +1464,6 @@ def embedded_antspy_multi(source_images, target_images,
     args.append('0')
 
     # run the ANTs command directly
-    #try:
-    #    subprocess.check_output(reg, shell=True, stderr=subprocess.STDOUT)
-    #except subprocess.CalledProcessError as e:
-    #    msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
-    #    raise subprocess.CalledProcessError(msg)
     processed_args = ants.utils._int_antsProcessArguments(args)
     print(processed_args)
     libfn = ants.utils.get_lib_fn("antsRegistration")
@@ -1587,12 +1518,6 @@ def embedded_antspy_multi(source_images, target_images,
         print(processed_at)
         libfn = ants.utils.get_lib_fn("antsApplyTransforms")
         libfn(processed_at)
-#        print(at)
-#        try:
-#            subprocess.check_output(at, shell=True, stderr=subprocess.STDOUT)
-#        except subprocess.CalledProcessError as e:
-#            msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
-#            raise subprocess.CalledProcessError(msg)
 
     # Create coordinate mappings
     src_at = ['--dimensionality','3','--input-image-type','3']
@@ -1616,13 +1541,6 @@ def embedded_antspy_multi(source_images, target_images,
     print(processed_src_at)
     libfn = ants.utils.get_lib_fn("antsApplyTransforms")
     libfn(processed_src_at)
-#    print(src_at)
-#    try:
-#        subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
-#    except subprocess.CalledProcessError as e:
-#        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
-#        raise subprocess.CalledProcessError(msg)
-#    trans_mapping = []
 
     trg_at = ['--dimensionality','3','--input-image-type','3']
     trg_at.append('--input')
@@ -1645,26 +1563,20 @@ def embedded_antspy_multi(source_images, target_images,
     print(processed_trg_at)
     libfn = ants.utils.get_lib_fn("antsApplyTransforms")
     libfn(processed_trg_at)
-#    print(trg_at)
-#    try:
-#        subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
-#    except subprocess.CalledProcessError as e:
-#        msg = 'execution failed (error code '+str(e.returncode)+')\n Output: '+str(e.output)
-#        raise subprocess.CalledProcessError(msg)
 
     # pad coordinate mapping outside the image? hopefully not needed...
 
     # clean-up intermediate files
-#    if os.path.exists(src_map_file): os.remove(src_map_file)
-#    if os.path.exists(trg_map_file): os.remove(trg_map_file)
-#    if ignore_affine or ignore_header:
-#        if os.path.exists(src_img_file): os.remove(src_img_file)
-#        if os.path.exists(trg_img_file): os.remove(trg_img_file)
+    if os.path.exists(src_map_file): os.remove(src_map_file)
+    if os.path.exists(trg_map_file): os.remove(trg_map_file)
+    if ignore_affine or ignore_header:
+        if os.path.exists(src_img_file): os.remove(src_img_file)
+        if os.path.exists(trg_img_file): os.remove(trg_img_file)
 
-#    for name in forward:
-#        if os.path.exists(name): os.remove(name)
-#    for name in inverse:
-#        if os.path.exists(name): os.remove(name)
+    for name in forward:
+        if os.path.exists(name): os.remove(name)
+    for name in inverse:
+        if os.path.exists(name): os.remove(name)
 
     # if ignoring header and/or affine, must paste back the correct headers
     if ignore_affine or ignore_header:
