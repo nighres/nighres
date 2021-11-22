@@ -155,7 +155,7 @@ if not skip_plots:
 # ---------------------
 # Next, we use the masked data as input for co-registration. The T1 maps are
 # used here as they are supposed to be more similar
-ants_results1 = nighres.registration.embedded_antsreg(
+ants_results1 = nighres.registration.embedded_antspy(
                         source_image=skullstripping_results1['t1map_masked'],
                         target_image=skullstripping_results3['t1map_masked'],
                         run_rigid=True, run_affine=False, run_syn=False,
@@ -167,7 +167,7 @@ ants_results1 = nighres.registration.embedded_antsreg(
                         save_data=True, file_name="sub001_sess1",
                         output_dir=out_dir)
 
-ants_results2 = nighres.registration.embedded_antsreg(
+ants_results2 = nighres.registration.embedded_antspy(
                         source_image=skullstripping_results2['t1map_masked'],
                         target_image=skullstripping_results3['t1map_masked'],
                         run_rigid=True, run_affine=False, run_syn=False,
