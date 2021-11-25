@@ -4,6 +4,7 @@
 #
 ## SETUP
 #
+echo "Setup..."
 
 set -euo pipefail
 unset CDPATH; cd "$( dirname "${BASH_SOURCE[0]}" )"; cd "$(pwd -P)"
@@ -20,7 +21,7 @@ nighres_local="/home/pilou/Code/github/nighres"
 hash wget tar javac jar python3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3"
 
 # Check for setuptools and wheels
-pip_modules=$(python3 -m pip list | tr -s ' ' | cut -f 1 -d ' ')
+pip_modules=$(python3 -m pip list --format=columns | tr -s ' ' | cut -f 1 -d ' ')
 echo "${pip_modules}" | grep setuptools > /dev/null || fatal 'This script requires setuptools.\nInstall with `pip install --upgrade setuptools`'
 echo "${pip_modules}" | grep wheel > /dev/null || fatal 'This script requires wheel.\nInstall with `pip install --upgrade wheel`'
 
@@ -28,8 +29,9 @@ echo "${pip_modules}" | grep wheel > /dev/null || fatal 'This script requires wh
 
 # Set the JAVA_HOME variable if it is not set
 detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=')
+detected_home=${detected_home/jre/""}
 export JAVA_HOME=${JAVA_HOME:-"$detected_home"}
-# echo "After detection: $JAVA_HOME"
+echo "After detection: $JAVA_HOME"
 
 # Check that JCC is installed
 echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.\nInstall with `apt-get install jcc` or equivalent and `pip install jcc`'
@@ -72,7 +74,7 @@ echo "Compiling..."
 #cd cbstools-public
 cd $cbstools_local
 #mkdir -p build
-javac -cp ${deps_list} ${javac_opts[@]} ca/concordia/qpi/*/*.java de/mpg/cbs/core/*/*.java $cbstools_list
+$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} ca/concordia/qpi/*/*.java de/mpg/cbs/core/*/*.java $cbstools_list
 
 echo "Assembling..."
 mkdir -p $nighres_local/nighresjava/src
@@ -117,12 +119,12 @@ echo "Compiling..."
 #cd cbstools-public
 cd $imcntk_local
 #mkdir -p build
-javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java $imcntk_list
+$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java $imcntk_list
 
 echo "Assembling..."
 #jar cf imcntk.jar     nl/uva/imcn/algorithms/*.class
-jar uf $nighres_local/nighresjava/src/nighresjava.jar nl/uva/imcn/algorithms/*.class
-jar cf $nighres_local/nighresjava/src/imcntk-lib.jar nl/uva/imcn/libraries/*.class nl/uva/imcn/methods/*.class nl/uva/imcn/structures/*.class nl/uva/imcn/utilities/*.class
+$JAVA_HOME/bin/jar uf $nighres_local/nighresjava/src/nighresjava.jar nl/uva/imcn/algorithms/*.class
+$JAVA_HOME/bin/jar cf $nighres_local/nighresjava/src/imcntk-lib.jar nl/uva/imcn/libraries/*.class nl/uva/imcn/methods/*.class nl/uva/imcn/structures/*.class nl/uva/imcn/utilities/*.class
 
 cp lib/*.jar $nighres_local/nighresjava/lib/
 

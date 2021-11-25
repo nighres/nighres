@@ -56,21 +56,48 @@ template = nighres.data.download_AHEAD_template()
 # First we co-register the subject to the AHEAD template, and save the 
 # transformation mappings in the ``out_dir`` specified above, using a subject 
 # ID as the base file_name.
-ants = nighres.registration.embedded_antsreg_multi(
-                        source_images=[dataset['qr1'],dataset['qr2s'],dataset['qsm']],
-                        target_images=[template['qr1'],template['qr2s'],template['qsm']],
+# Note that we register the template to the subject here, as the subject space is smaller
+# (to limit memory usage)
+ants1 = nighres.registration.embedded_antspy_multi(
+                        source_images=[template['qr1'],template['qr2s'],template['qsm']],
+                        target_images=[dataset['qr1'],dataset['qr2s'],dataset['qsm']],
                         run_rigid=True, run_affine=True, run_syn=True,
-                        rigid_iterations=10000,
-                        affine_iterations=2000,
+                        rigid_iterations=1000,
+                        affine_iterations=500,
                         coarse_iterations=180, 
                         medium_iterations=60, fine_iterations=30,
                         cost_function='MutualInformation', 
                         interpolation='NearestNeighbor',
                         regularization='High',
                         ignore_affine=True, 
-                        save_data=True, file_name="sample-subject",
+                        save_data=True, file_name="mni2subject-step1",
                         output_dir=out_dir)
 
+# Co-registration to an atlas works better in two steps
+ants2 = nighres.registration.embedded_antspy_multi(
+                        source_images=[ants1['transformed_sources'][0],
+                                       ants1['transformed_sources'][1],
+                                       ants1['transformed_sources'][2]],
+                        target_images=[dataset['qr1'],dataset['qr2s'],dataset['qsm']],
+                        run_rigid=True, run_affine=True, run_syn=True,
+                        rigid_iterations=1000,
+                        affine_iterations=500,
+                        coarse_iterations=180, 
+                        medium_iterations=60, fine_iterations=30,
+                        cost_function='MutualInformation', 
+                        interpolation='NearestNeighbor',
+                        regularization='High',
+                        ignore_affine=True, 
+                        save_data=True, file_name="mni2subject-step2",
+                        output_dir=out_dir)
+
+# combine transformations
+mapping = nighres.registration.apply_coordinate_mappings(
+                        image=ants1['mapping'],
+                        mapping1=ants2['mapping'],
+                        interpolation='linear',
+                        save_data=True, file_name="mapping2subject",
+                        output_dir=out_dir)
 
 ############################################################################
 # .. tip:: in Nighres functions that have several outputs return a
@@ -88,10 +115,11 @@ ants = nighres.registration.embedded_antsreg_multi(
 # .
 
 if not skip_plots:
-    plotting.plot_anat(ants['transformed_source'],cut_coords=[0.0,0.0,0.0],
+    plotting.plot_anat(ants2['transformed_source'],cut_coords=[0.0,0.0,0.0],
                       annotate=False,  draw_cross=False)
     plotting.plot_anat(template['qr1'],cut_coords=[0.0,0.0,0.0],
                       annotate=False,  draw_cross=False)
+    plotting.show()
 ############################################################################
 
 
@@ -100,7 +128,7 @@ if not skip_plots:
 # ---------------------
 # Finally, we use the MASSP algorithm to parcellate the subcortex
 massp = nighres.parcellation.massp(target_images=[dataset['qr1'],dataset['qr2s'],dataset['qsm']],
-                                map_to_target=ants['inverse'], 
+                                map_to_target=mapping['result'], 
                                 max_iterations=120, max_difference=0.1,
                                 save_data=True, file_name="sample-subject",
                                 output_dir=out_dir, overwrite=False)

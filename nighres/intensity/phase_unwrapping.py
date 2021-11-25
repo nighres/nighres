@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def phase_unwrapping(image, mask=None, nquadrants=3,
+def phase_unwrapping(image, mask=None, nquadrants=3, rescale_phs=True,
                       tv_flattening=False, tv_scale=0.5,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
@@ -24,6 +24,9 @@ def phase_unwrapping(image, mask=None, nquadrants=3,
         Data mask to specify acceptable seeding regions
     nquadrants: int, optional
         Number of image quadrants to use (default is 3)
+    rescale_phs: bool, optional
+        Whether to rescale the phase data of keep it as is, assuming radians
+        (default is True)
     tv_flattening: bool, optional 
         Whether or not to run a post-processing step to remove background
         phase variations with a total variation filter (default is False)
@@ -110,6 +113,7 @@ def phase_unwrapping(image, mask=None, nquadrants=3,
     
     # set algorithm parameters
     unwrap.setQuadrantNumber(nquadrants)
+    unwrap.setRescalePhase(rescale_phs)
     if tv_flattening: unwrap.setTVPostProcessing("TV-residuals")
     unwrap.setTVScale(tv_scale)
     

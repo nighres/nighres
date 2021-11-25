@@ -30,6 +30,8 @@ the same pipeline
 import nighres
 import os
 import nibabel as nb
+import numpy as np
+import matplotlib.pyplot as plt
 
 in_dir = os.path.join(os.getcwd(), 'nighres_examples/data_sets')
 out_dir = os.path.join(os.getcwd(), 'nighres_examples/vascular_reconstruction')
@@ -107,7 +109,6 @@ if not skip_plots:
     plotting.plot_img(vessel_result['diameter'],
                       vmin=0, vmax=4, cmap='cubehelix',  colorbar=True,
                       annotate=False,  draw_cross=False)
-
 ############################################################################
 
 
@@ -115,6 +116,21 @@ if not skip_plots:
 # If the example is not run in a jupyter notebook, render the plots:
 if not skip_plots:
     plotting.show()
+
+############################################################################
+# Additional visualization: compute maximum intensity projections
+data = nighres.io.load_volume(vessel_result['pv']).get_fdata()
+fig, ax = plt.subplots(1, 3, figsize=(28,5))
+ax[0].imshow(np.rot90(np.max(data[100:130,:,:], axis=0)), cmap = 'gray')
+ax[1].imshow(np.rot90(np.max(data[:,170:200,:], axis=1)), cmap = 'gray')
+ax[2].imshow(np.rot90(np.max(data[:,:,170:200], axis=2)), cmap = 'gray')
+for i in range(3):
+    ax[i].set_xticks([])
+    ax[i].set_yticks([])
+fig.tight_layout()
+#fig.savefig('segmentation.png')
+plt.show()
+
 
 #############################################################################
 # References

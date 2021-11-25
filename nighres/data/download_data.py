@@ -1,6 +1,5 @@
 import os
 from urllib.request import urlretrieve
-from nighres.global_settings import DEFAULT_ATLAS
 from nighres.global_settings import ATLAS_DIR
 
 def download_7T_TRT(data_dir, overwrite=False, subject_id='sub001_sess1'):
