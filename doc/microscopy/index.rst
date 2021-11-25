@@ -6,3 +6,4 @@ Microscopy
 
    mgdm_cells
    stack_intensity_regularisation
+   stack_intensity_mapping
