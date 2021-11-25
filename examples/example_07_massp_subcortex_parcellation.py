@@ -119,6 +119,7 @@ if not skip_plots:
                       annotate=False,  draw_cross=False)
     plotting.plot_anat(template['qr1'],cut_coords=[0.0,0.0,0.0],
                       annotate=False,  draw_cross=False)
+    plotting.show()
 ############################################################################
 
 
