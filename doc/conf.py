@@ -50,7 +50,7 @@ sphinx_gallery_conf = {
                     # path where to save gallery generated examples
                     'gallery_dirs': 'auto_examples',
                     # if to download all examples in zip file
-                    'download_section_examples': False,
+                    'download_all_examples': False,
                     # default display for example field if none created by code
                     'default_thumb_file': '_static/nighres_logo_notext.png',
                     # directory where function granular galleries are stored
