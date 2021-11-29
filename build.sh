@@ -14,7 +14,7 @@ function join_by { local IFS="$1"; shift; echo "$*"; }
 cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
 imcntk_repo="https://github.com/piloubazin/imcn-imaging.git"
 
-release="release-1.3.0"
+release="release-1.4.0"
 
 # Check the system has the necessary commands
 hash wget tar javac jar python3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3"
@@ -189,10 +189,14 @@ sed -i -e 's/__dir__/__ndir__/g' build/nighresjava/__init__.py
 
 echo "Copying necessary files for nires pypi package..."
 
-cp -rv build/nighresjava/ ../
-# Find and copy the shared object file for the current architecture
-find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' ../nighresjava/_nighresjava.so
 cd ..
+#cp -rv build/nighresjava/ ../
+cp -rv nighresjava/build/nighresjava/* nighresjava/
+
+# Find and copy the shared object file for the current architecture
+#find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' ../nighresjava/_nighresjava.so
+find nighresjava/build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' nighresjava/_nighresjava.so
+#cd ..
 
 echo ""
 echo "======="

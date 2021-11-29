@@ -103,7 +103,7 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
     
     
     if mask is not None:
-        propag.setMaskImage(idx, nighresjava.JArray('int')(
+        propag.setMaskImage(nighresjava.JArray('int')(
                 (load_volume(mask).get_data().flatten('F')).astype(int).tolist()))
     
     # set algorithm parameters

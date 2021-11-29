@@ -14,7 +14,7 @@ data by performing the following steps:
 3. Atlas-guided tissue classification using MGDMfor first two subjects to
     be used as an atlas using :func:`nighres.brain.mgdm_segmentation` [1]_
 4. Co-register non-linearly the atlas brains the the third subject using
-    :func:`nighres.registration.embedded_syn` [2]_
+    :func:`nighres.registration.embedded_antspy` [2]_
 5. Deform segmentation labels using
     :func:`nighres.registration.apply_deformation`
 6. Turn individual labels into levelset surfaces using
