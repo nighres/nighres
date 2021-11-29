@@ -124,8 +124,10 @@ def simple_skeleton(input_image,
 
     # execute
     try:
-        skeleton.execute()
-
+        if dimensions[2]==1:
+            skeleton.execute2D()
+        else:
+            skeleton.execute3D()
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")
