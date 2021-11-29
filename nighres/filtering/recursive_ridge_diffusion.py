@@ -163,7 +163,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     except ValueError:
         pass
     # create extraction instance
-    if dimensions[2] is 1: rrd = nighresjava.FilterRecursiveRidgeDiffusion2D()
+    if dimensions[2]==1: rrd = nighresjava.FilterRecursiveRidgeDiffusion2D()
     else: rrd = nighresjava.FilterRecursiveRidgeDiffusion()
 
     # set parameters
@@ -226,7 +226,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     scale_data = np.reshape(np.array(rrd.getDetectionScaleImage(),
                                    dtype=np.int32), dimensions, 'F')
 
-    if dimensions[2] is 1:
+    if dimensions[2]==1:
         ridge_direction_data = np.reshape(np.array(rrd.getRidgeDirectionImage(),
                                     dtype=np.float32),
                                     (dimensions[0],dimensions[1],2),

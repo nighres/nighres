@@ -12,7 +12,7 @@ with the MASSP algorithm on MP2RAGEME data by performing the following steps:
 2. Downloading the open AHEAD template using
     :func:`nighres.data.download_AHEAD_template` [2]_
 3. Register the data to the AHEAD brain template
-    :func:`nighres.registration.embedded_antsreg` [3]_
+    :func:`nighres.registration.embedded_antspy` [3]_
 4. Subcortex parcellation with MASSP
    :func:`nighres.parcellation.massp` [4]_
 
@@ -119,6 +119,7 @@ if not skip_plots:
                       annotate=False,  draw_cross=False)
     plotting.plot_anat(template['qr1'],cut_coords=[0.0,0.0,0.0],
                       annotate=False,  draw_cross=False)
+    plotting.show()
 ############################################################################
 
 

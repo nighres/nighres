@@ -93,7 +93,7 @@ def apply_coordinate_mappings(image, mapping1,
     imgdim = data.shape
 
     # set parameters from input images
-    if len(imgdim) is 4:
+    if len(imgdim)==4:
         applydef.setImageDimensions(imgdim[0], imgdim[1], imgdim[2], imgdim[3])
     else:
         applydef.setImageDimensions(imgdim[0], imgdim[1], imgdim[2])
@@ -164,7 +164,7 @@ def apply_coordinate_mappings(image, mapping1,
         return
 
     # collect data
-    if len(imgdim) is 4:
+    if len(imgdim)==4:
         trgdim = [trgdim[0],trgdim[1],trgdim[2],imgdim[3]]
     else:
         trgdim = [trgdim[0],trgdim[1],trgdim[2]]
@@ -265,7 +265,7 @@ def apply_coordinate_mappings_2d(image, mapping1,
     imgdim = data.shape
 
     # set parameters from input images
-    if len(imgdim) is 3:
+    if len(imgdim)==3:
         applydef.setImageDimensions(imgdim[0], imgdim[1], imgdim[2])
     else:
         applydef.setImageDimensions(imgdim[0], imgdim[1])
@@ -336,7 +336,7 @@ def apply_coordinate_mappings_2d(image, mapping1,
         return
 
     # collect data
-    if len(imgdim) is 3:
+    if len(imgdim)==3:
         trgdim = [trgdim[0],trgdim[1],imgdim[2]]
     else:
         trgdim = [trgdim[0],trgdim[1]]

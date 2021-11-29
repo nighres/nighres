@@ -14,7 +14,7 @@ data by performing the following steps:
 3. Atlas-guided tissue classification using MGDMfor first two subjects to
     be used as an atlas using :func:`nighres.brain.mgdm_segmentation` [1]_
 4. Co-register non-linearly the atlas brains the the third subject using
-    :func:`nighres.registration.embedded_syn` [2]_
+    :func:`nighres.registration.embedded_antspy` [2]_
 5. Deform segmentation labels using
     :func:`nighres.registration.apply_deformation`
 6. Turn individual labels into levelset surfaces using
@@ -147,7 +147,7 @@ if not skip_plots:
     plotting.plot_img(mgdm_results2['segmentation'],
                       vmin=1, vmax=50, cmap='cubehelix',  colorbar=True,
                       annotate=False,  draw_cross=False)
-
+    plotting.show()
 ############################################################################
 
 #############################################################################
@@ -186,7 +186,6 @@ if not skip_plots:
                       annotate=False,  draw_cross=False)
     plotting.plot_img(ants_results2['transformed_source'],
                       annotate=False,  draw_cross=False)
-
 ############################################################################
 
 #############################################################################
@@ -213,6 +212,7 @@ if not skip_plots:
     plotting.plot_img(deformed2['result'],
                       annotate=False,  draw_cross=False)
 
+    plotting.show()
 ############################################################################
 
 #############################################################################
@@ -222,11 +222,11 @@ if not skip_plots:
 
 # label 32 = left caudate
 img1 = nighres.io.load_volume(deformed1['result'])
-struct1 = nb.Nifti1Image((img1.get_data()==32).astype(float),
+struct1 = nb.Nifti1Image((img1.get_fdata()==32).astype(float),
                             img1.affine, img1.header)
 
 img2 = nighres.io.load_volume(deformed2['result'])
-struct2 = nb.Nifti1Image((img2.get_data()==32).astype(float),
+struct2 = nb.Nifti1Image((img2.get_fdata()==32).astype(float),
                             img2.affine, img2.header)
 
 levelset1 = nighres.surface.probability_to_levelset(
@@ -249,21 +249,21 @@ final_seg = nighres.shape.levelset_fusion(levelset_images=[levelset1['result'],
 # Now we look at the final segmentation from shape fusion
 if not skip_plots:
     img = nighres.io.load_volume(levelset1['result'])
-    mask = nb.Nifti1Image((img.get_data()<0).astype(bool),
+    mask = nb.Nifti1Image((img.get_fdata()<0).astype(int),
                                 img.affine, img.header)
     plotting.plot_roi(mask, dataset3['t1map'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')
 
     img = nighres.io.load_volume(levelset2['result'])
-    mask = nb.Nifti1Image((img.get_data()<0).astype(bool),
+    mask = nb.Nifti1Image((img.get_fdata()<0).astype(int),
                                 img.affine, img.header)
     plotting.plot_roi(mask, dataset3['t1map'],
                       annotate=False, black_bg=False, draw_cross=False,
                       cmap='autumn')
 
     img = nighres.io.load_volume(final_seg['result'])
-    mask = nb.Nifti1Image((img.get_data()<0).astype(bool),
+    mask = nb.Nifti1Image((img.get_fdata()<0).astype(int),
                                 img.affine, img.header)
     plotting.plot_roi(mask, dataset3['t1map'],
                       annotate=False, black_bg=False, draw_cross=False,

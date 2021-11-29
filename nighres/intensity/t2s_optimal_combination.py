@@ -116,7 +116,7 @@ def t2s_optimal_combination(image_list, te_list, depth=None,
     dimensions = data.shape
     dim3d = (dimensions[0], dimensions[1], dimensions[2])
 
-    if len(dimensions) is 3:
+    if len(dimensions)==3:
         qt2scomb.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     else:
         qt2scomb.setDimensions(dimensions[0], dimensions[1], dimensions[2], dimensions[3])
