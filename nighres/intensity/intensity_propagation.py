@@ -9,7 +9,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 
 def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
-                      target='zero', scaling=1.0,
+                      target='zero', scaling=1.0, domain=None,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Intensity Propogation
@@ -31,6 +31,8 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
         Propagate into zero (default), masked out, lower or higher neighboring voxels
     scaling: float, optional
         Multiply the propagated values by a factor <=1 (default is 1)
+    domain: niimg, optional
+        Domain mask to specify acceptable regions to grow into
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -105,6 +107,10 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
     if mask is not None:
         propag.setMaskImage(nighresjava.JArray('int')(
                 (load_volume(mask).get_data().flatten('F')).astype(int).tolist()))
+    
+    if domain is not None:
+        propag.setDomainImage(nighresjava.JArray('int')(
+                (load_volume(domain).get_data().flatten('F')).astype(int).tolist()))
     
     # set algorithm parameters
     propag.setCombinationMethod(combine)
