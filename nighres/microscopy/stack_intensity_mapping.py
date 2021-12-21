@@ -9,7 +9,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 
 def stack_intensity_mapping(image, references, mapped, weights = None,
-                            patch=2, search=3,
+                            patch=2, search=3, median=False,
                             save_data=False, overwrite=False, output_dir=None,
                             file_name=None):
     """ Stack intensity mapping
@@ -30,6 +30,8 @@ def stack_intensity_mapping(image, references, mapped, weights = None,
         Maximum distance to define patch size (default is 2)
     search: int, optional 
         Maximum distance to define search window size (default is 3)
+    median: bool
+        Whether to use median instead of mean of the patches (default is False)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -120,6 +122,7 @@ def stack_intensity_mapping(image, references, mapped, weights = None,
     # set algorithm parameters
     sim.setPatchDistance(patch)
     sim.setSearchDistance(search)
+    sim.setUseMedian(median)
     
     # execute the algorithm
     try:
