@@ -150,7 +150,7 @@ def embedded_antsreg_2d(source_image, target_image,
 					regularization='High',
 					convergence=1e-6,
 					mask_zero=False,
-					ignore_affine=False, ignore_header=False,
+					ignore_affine=False, ignore_orient=False, ignore_res=False,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
     """ Embedded ANTS Registration 2D
