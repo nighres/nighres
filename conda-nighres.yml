@@ -1,0 +1,36 @@
+name: nighres
+channels:
+  - mrtrix3
+  - simpleitk
+  - itk
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.9
+  - pip
+  - numpy
+  - nibabel
+  - psutil
+  - jcc
+  - pandas
+  - pyyaml
+  - scikit-image
+  - scikit-learn
+  - Nilearn
+  - statsmodels
+  - matplotlib
+  - Pillow
+  - plotly
+  - charset-normalizer
+  - chart-studio
+  - idna
+  - requests
+  - retrying
+  - urllib3
+  - tenacity
+  - webcolors
+  - gcc_linux-64
+  - gxx_linux-64
+  - pip:
+    - antspyx
