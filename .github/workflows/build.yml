@@ -19,3 +19,6 @@ jobs:
         shell: bash -l {0}
         run: |
             ./build.sh
+      - name: Run pip install
+        run: |
+            python3 -m pip install .
