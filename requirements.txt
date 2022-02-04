@@ -1,0 +1,5 @@
+numpy
+nibabel
+psutil
+antspyx
+jcc
