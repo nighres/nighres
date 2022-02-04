@@ -1,0 +1,6 @@
+[submodule "cbstools-public"]
+	path = cbstools-public
+	url = https://github.com/piloubazin/cbstools-public.git
+[submodule "imcn-imaging"]
+	path = imcn-imaging
+	url = https://github.com/piloubazin/imcn-imaging.git

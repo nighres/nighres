@@ -11,9 +11,6 @@ unset CDPATH; cd "$( dirname "${BASH_SOURCE[0]}" )"; cd "$(pwd -P)"
 fatal() { echo -e "$1"; exit 1; }
 function join_by { local IFS="$1"; shift; echo "$*"; }
 
-cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
-imcntk_repo="https://github.com/piloubazin/imcn-imaging.git"
-
 release="release-1.4.0"
 
 # Check the system has the necessary commands
@@ -43,21 +40,6 @@ test -f "${python_include_path}/Python.h" || fatal 'This script requires python 
 ## COMPILE CBSTOOLS
 #
 
-# Get cbstools git clone
-test -d cbstools-public && (
-    cd cbstools-public
-	#git checkout $release
-	git checkout master
-	git pull
-	cd ..
-) || (
-	git clone $cbstools_repo
-	cd cbstools-public
-	#git checkout $release
-	git checkout master
-	git pull
-	cd ..
-)
 
 # Java dependencies. Order matters
 deps=(
@@ -103,20 +85,6 @@ cd ..
 #
 ## COMPILE IMCNTK
 #
-
-# Get imcntk git clone
-test -d imcn-imaging && (
-    cd imcn-imaging
-	git checkout master
-	git pull
-	cd ..
-) || (
-	git clone $imcntk_repo
-	cd imcn-imaging
-	git checkout master
-	git pull
-	cd ..
-)
 
 # Java dependencies. Order matters
 deps=(

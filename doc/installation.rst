@@ -32,7 +32,7 @@ From Github
 
 You can also get the latest version from Github ::
 
-   git clone https://github.com/nighres/nighres
+   git clone --recursive https://github.com/nighres/nighres
 
 Or download and unpack the zip file from Github under **Clone and download** ->
 **Download ZIP**
@@ -95,7 +95,7 @@ To quickly try out nighres in a preset, batteries-included environment, you can 
 
 To build the Docker image, do the following::
 
-    git clone https://github.com/nighres/nighres
+    git clone --recursive https://github.com/nighres/nighres
     cd nighres
     docker build . -t nighres
 
