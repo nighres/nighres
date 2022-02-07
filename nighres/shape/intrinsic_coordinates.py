@@ -92,7 +92,7 @@ def intrinsic_coordinates(label_image,
 
     # load images and set dimensions and resolution
     label_image = load_volume(label_image)
-    data = label_image.get_data()
+    data = label_image.get_fdata()
     affine = label_image.get_affine()
     header = label_image.get_header()
     resolution = [x.item() for x in header.get_zooms()]
@@ -103,7 +103,7 @@ def intrinsic_coordinates(label_image,
     algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
 
-    data = load_volume(label_image).get_data()
+    data = load_volume(label_image).get_fdata()
     algorithm.setLabelImage(nighresjava.JArray('int')(
                                (data.flatten('F')).astype(int).tolist()))
 

@@ -93,7 +93,7 @@ def phase_unwrapping(image, mask=None, nquadrants=3, rescale_phs=True,
     
     # load image and use it to set dimensions and resolution
     img = load_volume(image)
-    data = img.get_data()
+    data = img.get_fdata()
     affine = img.affine
     header = img.header
     resolution = [x.item() for x in header.get_zooms()]
@@ -109,7 +109,7 @@ def phase_unwrapping(image, mask=None, nquadrants=3, rescale_phs=True,
     
     if mask is not None:
         unwrap.setMaskImage(idx, nighresjava.JArray('int')(
-                (load_volume(mask).get_data().flatten('F')).astype(int).tolist()))
+                (load_volume(mask).get_fdata().flatten('F')).astype(int).tolist()))
     
     # set algorithm parameters
     unwrap.setQuadrantNumber(nquadrants)

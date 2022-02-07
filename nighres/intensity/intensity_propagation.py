@@ -87,7 +87,7 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
     
     # load image and use it to set dimensions and resolution
     img = load_volume(image)
-    data = img.get_data()
+    data = img.get_fdata()
     affine = img.affine
     header = img.header
     resolution = [x.item() for x in header.get_zooms()]
@@ -106,11 +106,11 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
     
     if mask is not None:
         propag.setMaskImage(nighresjava.JArray('int')(
-                (load_volume(mask).get_data().flatten('F')).astype(int).tolist()))
+                (load_volume(mask).get_fdata().flatten('F')).astype(int).tolist()))
     
     if domain is not None:
         propag.setDomainImage(nighresjava.JArray('int')(
-                (load_volume(domain).get_data().flatten('F')).astype(int).tolist()))
+                (load_volume(domain).get_fdata().flatten('F')).astype(int).tolist()))
     
     # set algorithm parameters
     propag.setCombinationMethod(combine)

@@ -79,7 +79,7 @@ def probability_to_levelset(probability_image, mask_image=None,
 
     # load the data
     prob_img = load_volume(probability_image)
-    prob_data = prob_img.get_data()
+    prob_data = prob_img.get_fdata()
     hdr = prob_img.header
     aff = prob_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
@@ -90,7 +90,7 @@ def probability_to_levelset(probability_image, mask_image=None,
                                     (prob_data.flatten('F')).astype(float)))
     
     if (mask_image is not None):
-        mask_data = load_volume(mask_image).get_data()
+        mask_data = load_volume(mask_image).get_fdata()
         prob2level.setMaskImage(nighresjava.JArray('int')(
                                     (mask_data.flatten('F')).astype(int).tolist()))
         

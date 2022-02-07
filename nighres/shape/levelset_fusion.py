@@ -99,7 +99,7 @@ def levelset_fusion(levelset_images,
     hdr = img.header
     aff = img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
-    dimensions = img.get_data().shape
+    dimensions = img.get_fdata().shape
 
     algorithm.setNumberOfImages(nsubjects)
     algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
@@ -108,7 +108,7 @@ def levelset_fusion(levelset_images,
     levelset_data = [];
     for idx in range(len(levelset_images)):
         img = load_volume(levelset_images[idx])
-        data = img.get_data()
+        data = img.get_fdata()
         algorithm.setLevelsetImageAt(idx, nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
 

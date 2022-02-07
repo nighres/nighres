@@ -151,7 +151,7 @@ def massp(target_images, structures=31,
     # load target image for parameters
     print("load: "+str(target_images[0]))
     img = load_volume(target_images[0])
-    data = img.get_data()
+    data = img.get_fdata()
     trg_affine = img.get_affine()
     trg_header = img.get_header()
     trg_resolution = [x.item() for x in trg_header.get_zooms()]
@@ -167,7 +167,7 @@ def massp(target_images, structures=31,
     # if further contrast are specified, input them
     for contrast in range(1,contrasts):    
         print("load: "+str(target_images[contrast]))
-        data = load_volume(target_images[contrast]).get_data()
+        data = load_volume(target_images[contrast]).get_fdata()
         massp.setTargetImageAt(contrast, nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
 
@@ -197,7 +197,7 @@ def massp(target_images, structures=31,
         
     # load the shape and intensity atlases
     print("load: "+str(intensity_atlas_hist))
-    hist = load_volume(intensity_atlas_hist).get_data()
+    hist = load_volume(intensity_atlas_hist).get_fdata()
     massp.setConditionalHistogram(nighresjava.JArray('float')(
                                         (hist.flatten('F')).astype(float)))
 
@@ -205,7 +205,7 @@ def massp(target_images, structures=31,
     
     # load a first image for dim, res
     img = load_volume(shape_atlas_probas)
-    pdata = img.get_data()
+    pdata = img.get_fdata()
     header = img.get_header()
     affine = img.get_affine()
     resolution = [x.item() for x in header.get_zooms()]
@@ -215,12 +215,12 @@ def massp(target_images, structures=31,
     massp.setAtlasResolutions(resolution[0], resolution[1], resolution[2])
 
     print("load: "+str(shape_atlas_labels))
-    ldata = load_volume(shape_atlas_labels).get_data()
+    ldata = load_volume(shape_atlas_labels).get_fdata()
     
     if map_to_target is not None:
         print("map atlas to subject")
         print("load: "+str(map_to_target))
-        mdata =  load_volume(map_to_target).get_data()
+        mdata =  load_volume(map_to_target).get_fdata()
         massp.setMappingToTarget(nighresjava.JArray('float')(
                                             (mdata.flatten('F')).astype(float)))
         
@@ -230,10 +230,10 @@ def massp(target_images, structures=31,
                                 (ldata.flatten('F')).astype(int).tolist()))
 
     print("load: "+str(skeleton_atlas_probas))
-    pdata = load_volume(skeleton_atlas_probas).get_data()
+    pdata = load_volume(skeleton_atlas_probas).get_fdata()
     
     print("load: "+str(skeleton_atlas_labels))
-    ldata = load_volume(skeleton_atlas_labels).get_data()
+    ldata = load_volume(skeleton_atlas_labels).get_fdata()
 
     massp.setSkeletonAtlasProbasAndLabels(nighresjava.JArray('float')(
                                 (pdata.flatten('F')).astype(float)),
@@ -400,7 +400,7 @@ def massp_atlasing(subjects, structures, contrasts,
     # load target image for parameters
     # load a first image for dim, res
     img = load_volume(contrast_images[0][0])
-    data = img.get_data()
+    data = img.get_fdata()
     header = img.get_header()
     affine = img.get_affine()
     trg_resolution = [x.item() for x in header.get_zooms()]
@@ -419,12 +419,12 @@ def massp_atlasing(subjects, structures, contrasts,
     for sub in range(subjects):
         for struct in range(structures):
             print("load: "+str(levelset_images[sub][struct]))
-            data = load_volume(levelset_images[sub][struct]).get_data()
+            data = load_volume(levelset_images[sub][struct]).get_fdata()
             massp.setLevelsetImageAt(sub, struct, nighresjava.JArray('float')(
                                                 (data.flatten('F')).astype(float)))
         for contrast in range(contrasts):
             print("load: "+str(contrast_images[sub][contrast]))
-            data = load_volume(contrast_images[sub][contrast]).get_data()
+            data = load_volume(contrast_images[sub][contrast]).get_fdata()
             massp.setContrastImageAt(sub, contrast, nighresjava.JArray('float')(
                                                 (data.flatten('F')).astype(float)))
     # execute first step
@@ -446,7 +446,7 @@ def massp_atlasing(subjects, structures, contrasts,
     for sub in range(subjects):
         for struct in range(structures):
             print("load: "+str(skeleton_images[sub][struct]))
-            data = load_volume(skeleton_images[sub][struct]).get_data()
+            data = load_volume(skeleton_images[sub][struct]).get_fdata()
             massp.setSkeletonImageAt(sub, struct, nighresjava.JArray('float')(
                                                 (data.flatten('F')).astype(float)))
                 

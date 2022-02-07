@@ -132,7 +132,7 @@ def intensity_based_skullstripping(main_image, extra_image=None,
 
     # get dimensions and resolution from second inversion image
     main_img = load_volume(main_image)
-    main_data = main_img.get_data()
+    main_data = main_img.get_fdata()
     main_affine = main_img.affine
     main_hdr = main_img.header
     resolution = [x.item() for x in main_hdr.get_zooms()]
@@ -145,7 +145,7 @@ def intensity_based_skullstripping(main_image, extra_image=None,
     # pass other inputs
     if extra_image is not None:
         extra_img = load_volume(extra_image)
-        extra_data = extra_img.get_data()
+        extra_data = extra_img.get_fdata()
         extra_affine = extra_img.affine
         extra_hdr = extra_img.header
         algo.setExtraIntensityImage(nighresjava.JArray('float')(

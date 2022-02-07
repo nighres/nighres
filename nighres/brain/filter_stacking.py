@@ -93,7 +93,7 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
 
     # add inputs
     if dura_img is not None:
-        dura_data = load_volume(dura_img).get_data()
+        dura_data = load_volume(dura_img).get_fdata()
         for x in range(nx):
             for y in range(ny):
                 for z in range(nz):
@@ -103,7 +103,7 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
         dura_img = None
 
     if pvcsf_img is not None:
-        pvcsf_data = load_volume(pvcsf_img).get_data()
+        pvcsf_data = load_volume(pvcsf_img).get_fdata()
         for x in range(nx):
             for y in range(ny):
                 for z in range(nz):
@@ -114,7 +114,7 @@ def filter_stacking(dura_img=None, pvcsf_img=None, arteries_img=None,
         pvcsf_img = None
 
     if arteries_img is not None:
-        arteries_data = load_volume(arteries_img).get_data()
+        arteries_data = load_volume(arteries_img).get_fdata()
         for x in range(nx):
             for y in range(ny):
                 for z in range(nz):

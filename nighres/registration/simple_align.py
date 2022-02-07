@@ -150,7 +150,7 @@ def simple_align(source_image, target_image,
         #new_affine[2][3] = nsz/2.0
         new_affine[3][3] = 1.0
         
-        source = nb.Nifti1Image(source.get_data(), new_affine, source.header)
+        source = nb.Nifti1Image(source.get_fdata(), new_affine, source.header)
         source.update_header()
         
         # create generic affine aligned with the orientation for the target
@@ -191,12 +191,12 @@ def simple_align(source_image, target_image,
         #new_affine[2][3] = ntz/2.0
         new_affine[3][3] = 1.0
         
-        target = nb.Nifti1Image(target.get_data(), new_affine, target.header)
+        target = nb.Nifti1Image(target.get_fdata(), new_affine, target.header)
         target.update_header()
     
     # compute the various options
     if copy_header:
-       result = nb.Nifti1Image(source.get_data(), target.affine, target.header)
+       result = nb.Nifti1Image(source.get_fdata(), target.affine, target.header)
        result.update_header()
          
     else:
@@ -209,22 +209,22 @@ def simple_align(source_image, target_image,
                  for x in range(nsx):
                     for y in range(nsy):
                         for z in range(nsz):
-                            src_center[X] += x*source.get_data()[x,y,z]
-                            src_center[Y] += y*source.get_data()[x,y,z]
-                            src_center[Z] += z*source.get_data()[x,y,z]
-                            src_center[T] += source.get_data()[x,y,z]
+                            src_center[X] += x*source.get_fdata()[x,y,z]
+                            src_center[Y] += y*source.get_fdata()[x,y,z]
+                            src_center[Z] += z*source.get_fdata()[x,y,z]
+                            src_center[T] += source.get_fdata()[x,y,z]
                  for x in range(ntx):
                     for y in range(nty):
                         for z in range(ntz):
-                            trg_center[X] += x*target.get_data()[x,y,z]
-                            trg_center[Y] += y*target.get_data()[x,y,z]
-                            trg_center[Z] += z*target.get_data()[x,y,z]
-                            trg_center[T] += target.get_data()[x,y,z]
+                            trg_center[X] += x*target.get_fdata()[x,y,z]
+                            trg_center[Y] += y*target.get_fdata()[x,y,z]
+                            trg_center[Z] += z*target.get_fdata()[x,y,z]
+                            trg_center[T] += target.get_fdata()[x,y,z]
             elif data_type == 'nonzero':
                  for x in range(nsx):
                     for y in range(nsy):
                         for z in range(nsz):
-                            if source.get_data()[x,y,z]>0:
+                            if source.get_fdata()[x,y,z]>0:
                                 src_center[X] += x
                                 src_center[Y] += y
                                 src_center[Z] += z
@@ -232,7 +232,7 @@ def simple_align(source_image, target_image,
                  for x in range(ntx):
                     for y in range(nty):
                         for z in range(ntz):
-                            if target.get_data()[x,y,z]>0:
+                            if target.get_fdata()[x,y,z]>0:
                                 trg_center[X] += x
                                 trg_center[Y] += y
                                 trg_center[Z] += z
@@ -268,21 +268,21 @@ def simple_align(source_image, target_image,
                  for x in range(nsx):
                     for y in range(nsy):
                         for z in range(nsz):
-                            src_size += source.get_data()[x,y,z]
+                            src_size += source.get_fdata()[x,y,z]
                  for x in range(ntx):
                     for y in range(nty):
                         for z in range(ntz):
-                            trg_size += target.get_data()[x,y,z]
+                            trg_size += target.get_fdata()[x,y,z]
             elif data_type == 'nonzero':
                  for x in range(nsx):
                     for y in range(nsy):
                         for z in range(nsz):
-                            if source.get_data()[x,y,z]>0:
+                            if source.get_fdata()[x,y,z]>0:
                                 src_size += 1
                  for x in range(ntx):
                     for y in range(nty):
                         for z in range(ntz):
-                            if target.get_data()[x,y,z]>0:
+                            if target.get_fdata()[x,y,z]>0:
                                 trg_size += 1
             elif data_typ == 'boundingbox':
                 src_size = nsx*nsy*nsz
@@ -291,7 +291,7 @@ def simple_align(source_image, target_image,
             source.affine = trg_size/src_size*source.affine
             source.affine[T,T] = 1
             
-        result = nb.Nifti1Image(source.get_data(), source.affine, source.header)
+        result = nb.Nifti1Image(source.get_fdata(), source.affine, source.header)
         result.update_header()
 
     if save_data:

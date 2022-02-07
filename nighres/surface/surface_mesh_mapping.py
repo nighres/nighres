@@ -98,7 +98,7 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
 
     # load the data
     int_img = load_volume(intensity_image)
-    int_data = int_img.get_data()
+    int_data = int_img.get_fdata()
     hdr = int_img.header
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = int_data.shape

@@ -70,7 +70,7 @@ def levelset_curvature(levelset_image, distance=1.0,
 
     # load the data
     lvl_img = load_volume(levelset_image)
-    lvl_data = lvl_img.get_data()
+    lvl_data = lvl_img.get_fdata()
     hdr = lvl_img.header
     aff = lvl_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
@@ -91,7 +91,7 @@ def levelset_curvature(levelset_image, distance=1.0,
 
     # load images and set dimensions and resolution
     input_image = load_volume(levelset_image)
-    data = input_image.get_data()
+    data = input_image.get_fdata()
     affine = input_image.get_affine()
     header = input_image.get_header()
     resolution = [x.item() for x in header.get_zooms()]

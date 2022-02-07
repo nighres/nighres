@@ -130,7 +130,7 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
      
     # load first image and use it to set dimensions and resolution
     img = load_volume(first_inversion[0])
-    data = img.get_data()
+    data = img.get_fdata()
     #data = data[0:10,0:10,0:10]
     affine = img.affine
     header = img.header
@@ -144,20 +144,20 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
     qt1map.setFirstInversionMagnitude(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
-    data = load_volume(first_inversion[1]).get_data()
+    data = load_volume(first_inversion[1]).get_fdata()
     qt1map.setFirstInversionPhase(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
-    data = load_volume(second_inversion[0]).get_data()
+    data = load_volume(second_inversion[0]).get_fdata()
     qt1map.setSecondInversionMagnitude(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
-    data = load_volume(second_inversion[1]).get_data()
+    data = load_volume(second_inversion[1]).get_fdata()
     qt1map.setSecondInversionPhase(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
  
     if (correct_B1):
-        data = load_volume(B1_map).get_data()
+        data = load_volume(B1_map).get_fdata()
         qt1map.setB1mapImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
         qt1map.setB1mapScaling(B1_scale)
@@ -317,7 +317,7 @@ def mp2rage_t1_from_uni(uniform_image,
      
     # load first image and use it to set dimensions and resolution
     img = load_volume(uniform_image)
-    data = img.get_data()
+    data = img.get_fdata()
     #data = data[0:10,0:10,0:10]
     affine = img.affine
     header = img.header
@@ -332,7 +332,7 @@ def mp2rage_t1_from_uni(uniform_image,
                                     (data.flatten('F')).astype(float)))
      
     if (correct_B1):
-        data = load_volume(B1_map).get_data()
+        data = load_volume(B1_map).get_fdata()
         qt1map.setB1mapImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
         qt1map.setB1mapScaling(B1_scale)

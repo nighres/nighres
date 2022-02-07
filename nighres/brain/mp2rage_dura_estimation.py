@@ -92,7 +92,7 @@ def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
 
     # get dimensions and resolution from second inversion image
     inv2_img = load_volume(second_inversion)
-    inv2_data = inv2_img.get_data()
+    inv2_data = inv2_img.get_fdata()
     inv2_affine = inv2_img.affine
     inv2_hdr = inv2_img.header
     resolution = [x.item() for x in inv2_hdr.get_zooms()]
@@ -103,7 +103,7 @@ def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
                                     (inv2_data.flatten('F')).astype(float)))
 
     # pass other inputs
-    mask_data = load_volume(skullstrip_mask).get_data()
+    mask_data = load_volume(skullstrip_mask).get_fdata()
     algo.setSkullStrippingMask(nighresjava.JArray('int')(
                                     (mask_data.flatten('F')).astype(int).tolist()))
 

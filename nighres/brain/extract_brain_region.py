@@ -186,7 +186,7 @@ def extract_brain_region(segmentation, levelset_boundary,
 
     # load images and set dimensions and resolution
     seg = load_volume(segmentation)
-    data = seg.get_data()
+    data = seg.get_fdata()
     affine = seg.affine
     header = seg.header
     resolution = [x.item() for x in header.get_zooms()]
@@ -202,15 +202,15 @@ def extract_brain_region(segmentation, levelset_boundary,
     xbr.setSegmentationImage(nighresjava.JArray('int')(
         (data.flatten('F')).astype(int).tolist()))
 
-    data = load_volume(levelset_boundary).get_data()
+    data = load_volume(levelset_boundary).get_fdata()
     xbr.setLevelsetBoundaryImage(nighresjava.JArray('float')(
         (data.flatten('F')).astype(float)))
 
-    data = load_volume(maximum_membership).get_data()
+    data = load_volume(maximum_membership).get_fdata()
     xbr.setMaximumMembershipImage(nighresjava.JArray('float')(
         (data.flatten('F')).astype(float)))
 
-    data = load_volume(maximum_label).get_data()
+    data = load_volume(maximum_label).get_fdata()
     xbr.setMaximumLabelImage(nighresjava.JArray('int')(
         (data.flatten('F')).astype(int).tolist()))
 

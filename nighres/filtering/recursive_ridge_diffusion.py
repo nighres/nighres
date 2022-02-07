@@ -148,7 +148,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
 
     # load input image and use it to set dimensions and resolution
     img = load_volume(input_image)
-    data = img.get_data()
+    data = img.get_fdata()
     affine = img.affine
     header = img.header
     resolution = [x.item() for x in header.get_zooms()]
@@ -190,7 +190,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
 
     # input surface_levelset : dirty fix for the case where surface image not input
     try:
-        data = load_volume(surface_levelset).get_data()
+        data = load_volume(surface_levelset).get_fdata()
         rrd.setSurfaceLevelSet(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
     except:
@@ -198,7 +198,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
 
     # input location prior image : loc_prior is optional
     try:
-        data = load_volume(loc_prior).get_data()
+        data = load_volume(loc_prior).get_fdata()
         rrd.setLocationPrior(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
     except:

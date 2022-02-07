@@ -64,7 +64,7 @@ def levelset_to_probability(levelset_image, distance_mm=5,
 
     # load the data
     lvl_img = load_volume(levelset_image)
-    lvl_data = lvl_img.get_data()
+    lvl_data = lvl_img.get_fdata()
     hdr = lvl_img.header
     aff = lvl_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]

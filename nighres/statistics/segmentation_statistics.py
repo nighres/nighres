@@ -108,7 +108,7 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
 
     # load first image and use it to set dimensions and resolution
     img = load_volume(segmentation)
-    data = img.get_data()
+    data = img.get_fdata()
     affine = img.affine
     header = img.header
     resolution = [x.item() for x in header.get_zooms()]
@@ -127,13 +127,13 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
 
     # other input images, if any
     if intensity is not None:
-        data = load_volume(intensity).get_data()
+        data = load_volume(intensity).get_fdata()
         stats.setIntensityImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
         stats.setIntensityName(_fname_4saving(module=__name__,rootfile=intensity))
 
     if template is not None:
-        data = load_volume(template).get_data()
+        data = load_volume(template).get_fdata()
         stats.setTemplateImage(nighresjava.JArray('int')(
                                     (data.flatten('F')).astype(int).tolist()))
         stats.setTemplateName(_fname_4saving(module=__name__,rootfile=template))

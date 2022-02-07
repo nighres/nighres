@@ -108,7 +108,7 @@ def t2s_optimal_combination(image_list, te_list, depth=None,
 
     # load first image and use it to set dimensions and resolution
     img = load_volume(image_list[0])
-    data = img.get_data()
+    data = img.get_fdata()
     #data = data[0:10,0:10,0:10]
     affine = img.affine
     header = img.header
@@ -126,7 +126,7 @@ def t2s_optimal_combination(image_list, te_list, depth=None,
     # important: set image number before adding images
     for idx, image in enumerate(image_list):
         #print('\nloading ('+str(idx)+'): '+image)
-        data = load_volume(image).get_data()
+        data = load_volume(image).get_fdata()
         #data = data[0:10,0:10,0:10]
         qt2scomb.setEchoImageAt(idx, nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))

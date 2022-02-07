@@ -137,7 +137,7 @@ def linear_fiber_mapping(input_image, ridge_intensities,
 
     # load input image and use it to set dimensions and resolution
     img = load_volume(input_image)
-    data = img.get_data()
+    data = img.get_fdata()
     affine = img.affine
     header = img.header
     resolution = [x.item() for x in header.get_zooms()]

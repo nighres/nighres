@@ -479,11 +479,11 @@ def dots_segmentation(tensor_image, mask, atlas_dir, wm_atlas = 1,
     
     
     # Load tensor image
-    tensor_volume = load_volume(tensor_image).get_data()
+    tensor_volume = load_volume(tensor_image).get_fdata()
     
     
     # Load brain mask
-    brain_mask = load_volume(mask).get_data().astype(bool)
+    brain_mask = load_volume(mask).get_fdata().astype(bool)
     
     
     # Get dimensions of diffusion data
@@ -532,10 +532,10 @@ def dots_segmentation(tensor_image, mask, atlas_dir, wm_atlas = 1,
         N_t = 23
         N_o = 50        
         atlas_path = os.path.join(atlas_dir, 'DOTS_atlas')
-        fiber_p = nb.load(os.path.join(atlas_path,'fiber_p.nii.gz')).get_data()
+        fiber_p = nb.load(os.path.join(atlas_path,'fiber_p.nii.gz')).get_fdata()
         max_p = np.nanmax(fiber_p[:,:,:,2::], axis = 3)
         fiber_dir = nb.load(os.path.join(atlas_path, 'fiber_dir.nii.gz')
-                            ).get_data()
+                            ).get_fdata()
         atlas_affine = nb.load(os.path.join(atlas_path,'fiber_p.nii.gz')).affine
         del_idx = [9,10,13,14,15,16,21,26,27,28,29,30,31,32,33,36,37,38]
         fiber_p = np.delete(fiber_p, del_idx, axis = 3)
@@ -553,10 +553,10 @@ def dots_segmentation(tensor_image, mask, atlas_dir, wm_atlas = 1,
         N_t = 41
         N_o = 185
         atlas_path = os.path.join(atlas_dir, 'DOTS_atlas')
-        fiber_p = nb.load(os.path.join(atlas_path,'fiber_p.nii.gz')).get_data()
+        fiber_p = nb.load(os.path.join(atlas_path,'fiber_p.nii.gz')).get_fdata()
         max_p = np.nanmax(fiber_p[:,:,:,2::], axis = 3)
         fiber_dir = nb.load(os.path.join(atlas_path, 'fiber_dir.nii.gz')
-                            ).get_data()
+                            ).get_fdata()
         atlas_affine = nb.load(os.path.join(atlas_path,'fiber_p.nii.gz')).affine
         tract_pair_sets = tract_pair_sets_2
 

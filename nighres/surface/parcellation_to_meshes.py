@@ -68,7 +68,7 @@ def parcellation_to_meshes(parcellation_image, connectivity="18/6",
     
     # load the data
     p_img = load_volume(parcellation_image)
-    p_data = p_img.get_data()
+    p_data = p_img.get_fdata()
     hdr = p_img.header
     aff = p_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
