@@ -1,0 +1,24 @@
+name: Build using conda environment
+on: [push, pull_request]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: nighres
+          environment-file: conda-nighres.yml
+          python-version: 3.9
+          auto-activate-base: false
+      - name: Run build process
+        shell: bash -l {0}
+        run: |
+            ./build.sh
+      - name: Run pip install
+        run: |
+            python3 -m pip install .
