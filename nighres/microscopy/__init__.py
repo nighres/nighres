@@ -5,3 +5,5 @@ from nighres.microscopy.directional_line_clustering import directional_line_clus
 from nighres.microscopy.shape_tensor_matching import shape_tensor_matching
 from nighres.microscopy.linear_fiber_mapping import linear_fiber_mapping
 from nighres.microscopy.linear_fiber_scaling import linear_fiber_scaling
+from nighres.microscopy.linear_fiber_interpolation import linear_fiber_interpolation
+from nighres.microscopy.linear_fiber_vector_averaging import linear_fiber_vector_averaging

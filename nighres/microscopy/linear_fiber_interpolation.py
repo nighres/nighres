@@ -94,7 +94,9 @@ def linear_fiber_interpolation(image, references, mapped_proba, mapped_theta,
                                    suffix='lfi-lambda'))
 
         if overwrite is False \
-            and os.path.isfile(result_file) :
+            and os.path.isfile(proba_file) \
+            and os.path.isfile(theta_file) \
+            and os.path.isfile(lambda_file) :
                 print("skip computation (use existing results)")
                 output = {'proba': proba_file, 'theta': theta_file, 'lambda': lambda_file}
                 return output
@@ -131,8 +133,16 @@ def linear_fiber_interpolation(image, references, mapped_proba, mapped_theta,
         lfi.setReferenceImageAt(idx,nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
 
-        data = load_volume(mapped[idx]).get_fdata()
-        lfi.setMappedImageAt(idx,nighresjava.JArray('float')(
+        data = load_volume(mapped_proba[idx]).get_fdata()
+        lfi.setMappedProbaAt(idx,nighresjava.JArray('float')(
+                                    (data.flatten('F')).astype(float)))
+
+        data = load_volume(mapped_theta[idx]).get_fdata()
+        lfi.setMappedThetaAt(idx,nighresjava.JArray('float')(
+                                    (data.flatten('F')).astype(float)))
+
+        data = load_volume(mapped_lambda[idx]).get_fdata()
+        lfi.setMappedLambdaAt(idx,nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
 
         if weights is not None:

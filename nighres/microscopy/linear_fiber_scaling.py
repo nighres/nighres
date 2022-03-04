@@ -12,7 +12,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def linear_fiber_scaling(proba_image, theta_image, length_image, 
                               scaling=7, kept=5,
-                              threshold=1e-9,
+                              threshold=1e-6,
                               save_data=False, overwrite=False, output_dir=None,
                               file_name=None):
 
@@ -33,7 +33,7 @@ def linear_fiber_scaling(proba_image, theta_image, length_image,
     kept: int
         Number of kept directions
     threshold: float
-        Detection threshold for grouping values (default is 1e-9)
+        Detection threshold for grouping values (default is 1e-6)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
