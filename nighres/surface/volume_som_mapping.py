@@ -88,7 +88,7 @@ def volume_som_mapping(proba_image,
 
     # load the data
     prob_img = load_volume(proba_image)
-    prob_data = prob_img.get_data()
+    prob_data = prob_img.get_fdata()
     hdr = prob_img.header
     aff = prob_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]

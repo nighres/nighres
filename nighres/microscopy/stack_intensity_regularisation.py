@@ -77,7 +77,7 @@ def stack_intensity_regularisation(image, cutoff=50, mask=None,
     
     # load image and use it to set dimensions and resolution
     img = load_volume(image)
-    data = img.get_data()
+    data = img.get_fdata()
     affine = img.affine
     header = img.header
     resolution = [x.item() for x in header.get_zooms()]

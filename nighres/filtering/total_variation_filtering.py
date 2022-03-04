@@ -95,7 +95,7 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
 
     # load image and use it to set dimensions and resolution
     img = load_volume(image)
-    data = img.get_data()
+    data = img.get_fdata()
     affine = img.affine
     header = img.header
     resolution = [x.item() for x in header.get_zooms()]
@@ -110,7 +110,7 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
 
     if mask is not None:
         algo.setMaskImage(idx, nighresjava.JArray('int')(
-                (load_volume(mask).get_data().flatten('F')).astype(int).tolist()))
+                (load_volume(mask).get_fdata().flatten('F')).astype(int).tolist()))
 
     # set algorithm parameters
     algo.setLambdaScale(lambda_scale)

@@ -203,7 +203,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
 
     # load images
     init = load_volume(init_image)
-    init_data = init.get_data()
+    init_data = init.get_fdata()
     affine = init.affine
     header = init.header
     resolution = [x.item() for x in header.get_zooms()]
@@ -213,20 +213,20 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
     cruise.importInitialWMSegmentationImage(nighresjava.JArray('int')(
                                 (init_data.flatten('F')).astype(int).tolist()))
 
-    wm_data = load_volume(wm_image).get_data()
+    wm_data = load_volume(wm_image).get_fdata()
     cruise.setFilledWMProbabilityImage(nighresjava.JArray('float')(
                                         (wm_data.flatten('F')).astype(float)))
 
-    gm_data = load_volume(gm_image).get_data()
+    gm_data = load_volume(gm_image).get_fdata()
     cruise.setGMProbabilityImage(nighresjava.JArray('float')(
                                         (gm_data.flatten('F')).astype(float)))
 
-    csf_data = load_volume(csf_image).get_data()
+    csf_data = load_volume(csf_image).get_fdata()
     cruise.setCSFandBGProbabilityImage(nighresjava.JArray('float')(
                                         (csf_data.flatten('F')).astype(float)))
 
     if vd_image is not None:
-        vd_data = load_volume(vd_image).get_data()
+        vd_data = load_volume(vd_image).get_fdata()
         cruise.setVeinsAndDuraProbabilityImage(nighresjava.JArray('float')(
                                         (vd_data.flatten('F')).astype(float)))
 

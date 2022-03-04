@@ -73,13 +73,13 @@ def profile_sampling(profile_surface_image, intensity_image,
 
     # load the data
     surface_img = load_volume(profile_surface_image)
-    surface_data = surface_img.get_data()
+    surface_data = surface_img.get_fdata()
     hdr = surface_img.header
     aff = surface_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = surface_data.shape
 
-    intensity_data = load_volume(intensity_image).get_data()
+    intensity_data = load_volume(intensity_image).get_fdata()
 
     # pass inputs
     sampler.setIntensityImage(nighresjava.JArray('float')(

@@ -86,7 +86,7 @@ def apply_coordinate_mappings(image, mapping1,
 
     # load the data
     img = load_volume(image)
-    data = img.get_data()
+    data = img.get_fdata()
     hdr = img.header
     aff = img.affine
     imgres = [x.item() for x in hdr.get_zooms()]
@@ -103,7 +103,7 @@ def apply_coordinate_mappings(image, mapping1,
                                     (data.flatten('F')).astype(float)))
 
     def1 = load_volume(mapping1)
-    def1data = def1.get_data()
+    def1data = def1.get_fdata()
     aff = def1.affine
     hdr = def1.header
     trgdim = def1data.shape
@@ -115,7 +115,7 @@ def apply_coordinate_mappings(image, mapping1,
 
     if not (mapping2==None):
         def2 = load_volume(mapping2)
-        def2data = def2.get_data()
+        def2data = def2.get_fdata()
         aff = def2.affine
         hdr = def2.header
         trgdim = def2data.shape
@@ -127,7 +127,7 @@ def apply_coordinate_mappings(image, mapping1,
 
         if not (mapping3==None):
             def3 = load_volume(mapping3)
-            def3data = def3.get_data()
+            def3data = def3.get_fdata()
             aff = def3.affine
             hdr = def3.header
             trgdim = def3data.shape
@@ -139,7 +139,7 @@ def apply_coordinate_mappings(image, mapping1,
 
             if not (mapping4==None):
                 def4 = load_volume(mapping4)
-                def4data = def4.get_data()
+                def4data = def4.get_fdata()
                 aff = def4.affine
                 hdr = def4.header
                 trgdim = def4data.shape
@@ -258,7 +258,7 @@ def apply_coordinate_mappings_2d(image, mapping1,
 
     # load the data
     img = load_volume(image)
-    data = img.get_data()
+    data = img.get_fdata()
     hdr = img.header
     aff = img.affine
     imgres = [x.item() for x in hdr.get_zooms()]
@@ -275,7 +275,7 @@ def apply_coordinate_mappings_2d(image, mapping1,
                                     (data.flatten('F')).astype(float)))
 
     def1 = load_volume(mapping1)
-    def1data = def1.get_data()
+    def1data = def1.get_fdata()
     aff = def1.affine
     hdr = def1.header
     trgdim = def1data.shape
@@ -287,7 +287,7 @@ def apply_coordinate_mappings_2d(image, mapping1,
 
     if not (mapping2==None):
         def2 = load_volume(mapping2)
-        def2data = def2.get_data()
+        def2data = def2.get_fdata()
         aff = def2.affine
         hdr = def2.header
         trgdim = def2data.shape
@@ -299,7 +299,7 @@ def apply_coordinate_mappings_2d(image, mapping1,
 
         if not (mapping3==None):
             def3 = load_volume(mapping3)
-            def3data = def3.get_data()
+            def3data = def3.get_fdata()
             aff = def3.affine
             hdr = def3.header
             trgdim = def3data.shape
@@ -311,7 +311,7 @@ def apply_coordinate_mappings_2d(image, mapping1,
 
             if not (mapping4==None):
                 def4 = load_volume(mapping4)
-                def4data = def4.get_data()
+                def4data = def4.get_fdata()
                 aff = def4.affine
                 hdr = def4.header
                 trgdim = def4data.shape
@@ -434,7 +434,7 @@ def apply_angular_coordinate_mappings_2d(image, mapping1,
 
     # load the data
     img = load_volume(image)
-    data = img.get_data()
+    data = img.get_fdata()
     hdr = img.header
     aff = img.affine
     imgres = [x.item() for x in hdr.get_zooms()]
@@ -455,7 +455,7 @@ def apply_angular_coordinate_mappings_2d(image, mapping1,
                                     (data.flatten('F')).astype(float)))
 
     def1 = load_volume(mapping1)
-    def1data = def1.get_data()
+    def1data = def1.get_fdata()
     aff = def1.affine
     hdr = def1.header
     trgdim = def1data.shape
@@ -467,7 +467,7 @@ def apply_angular_coordinate_mappings_2d(image, mapping1,
 
     if not (mapping2==None):
         def2 = load_volume(mapping2)
-        def2data = def2.get_data()
+        def2data = def2.get_fdata()
         aff = def2.affine
         hdr = def2.header
         trgdim = def2data.shape
@@ -479,7 +479,7 @@ def apply_angular_coordinate_mappings_2d(image, mapping1,
 
         if not (mapping3==None):
             def3 = load_volume(mapping3)
-            def3data = def3.get_data()
+            def3data = def3.get_fdata()
             aff = def3.affine
             hdr = def3.header
             trgdim = def3data.shape
@@ -491,7 +491,7 @@ def apply_angular_coordinate_mappings_2d(image, mapping1,
 
             if not (mapping4==None):
                 def4 = load_volume(mapping4)
-                def4data = def4.get_data()
+                def4data = def4.get_fdata()
                 aff = def4.affine
                 hdr = def4.header
                 trgdim = def4data.shape

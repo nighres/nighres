@@ -103,7 +103,7 @@ def flash_t2s_fitting(image_list, te_list, r2s_threshold=None,
 
     # load first image and use it to set dimensions and resolution
     img = load_volume(image_list[0])
-    data = img.get_data()
+    data = img.get_fdata()
     #data = data[0:10,0:10,0:10]
     affine = img.affine
     header = img.header
@@ -117,7 +117,7 @@ def flash_t2s_fitting(image_list, te_list, r2s_threshold=None,
     # important: set image number before adding images
     for idx, image in enumerate(image_list):
         #print('\nloading ('+str(idx)+'): '+image)
-        data = load_volume(image).get_data()
+        data = load_volume(image).get_fdata()
         #data = data[0:10,0:10,0:10]
         qt2fit.setEchoImageAt(idx, nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))

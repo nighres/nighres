@@ -86,7 +86,7 @@ def filter_ridge_structures(input_image,
 
     # load images and set dimensions and resolution
     input_image = load_volume(input_image)
-    data = input_image.get_data()
+    data = input_image.get_fdata()
     affine = input_image.affine
     header = input_image.header
     resolution = [x.item() for x in header.get_zooms()]
@@ -96,7 +96,7 @@ def filter_ridge_structures(input_image,
     filter_ridge.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     filter_ridge.setResolutions(resolution[0], resolution[1], resolution[2])
 
-    data = load_volume(input_image).get_data()
+    data = load_volume(input_image).get_fdata()
     filter_ridge.setInputImage(nighresjava.JArray('float')(
                                (data.flatten('F')).astype(float)))
 

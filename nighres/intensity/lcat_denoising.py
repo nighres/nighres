@@ -143,7 +143,7 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
 
     # load first image and use it to set dimensions and resolution
     img = load_volume(image_list[0])
-    data = img.get_data()
+    data = img.get_fdata()
     #data = data[0:10,0:10,0:10]
     affine = img.get_affine()
     header = img.get_header()
@@ -156,14 +156,14 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
 
     # input images
     # important: set image mask before adding images
-    data = load_volume(image_mask).get_data()
+    data = load_volume(image_mask).get_fdata()
     lcat.setMaskImage(nighresjava.JArray('int')(
                     (data.flatten('F')).astype(int).tolist()))
 
     # important: set image number before adding images
     for idx, image in enumerate(image_list):
         #print('\nloading ('+str(idx)+'): '+image)
-        data = load_volume(image).get_data()
+        data = load_volume(image).get_fdata()
         #data = data[0:10,0:10,0:10]
         lcat.setTimeSerieMagnitudeAt(idx, nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
@@ -171,7 +171,7 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
     if phase_list is not None:
         for idx,image in enumerate(phase_list):
             #print('\nloading ('+str(idx)+'): '+image)
-            data = load_volume(image).get_data()
+            data = load_volume(image).get_fdata()
             #data = data[0:10,0:10,0:10]
             lcat.setTimeSeriePhaseAt(idx, nighresjava.JArray('float')(
                                         (data.flatten('F')).astype(float)))

@@ -78,18 +78,18 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
 
     # load the data
     surface_img = load_volume(profile_surface_image)
-    surface_data = surface_img.get_data()
+    surface_data = surface_img.get_fdata()
     layers = surface_data.shape[3]-1
 
     intensity_img = load_volume(intensity_image)
-    intensity_data = intensity_img.get_data()
+    intensity_data = intensity_img.get_fdata()
     hdr = intensity_img.header
     aff = intensity_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = intensity_data.shape
 
     if (roi_mask_image!=None) :
-        roi_mask_data = load_volume(data_image).get_data()
+        roi_mask_data = load_volume(data_image).get_fdata()
     else :
         roi_mask_data = None
 

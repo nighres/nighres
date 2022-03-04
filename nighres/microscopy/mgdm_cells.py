@@ -160,7 +160,7 @@ def mgdm_cells(contrast_image1, contrast_type1,
 
     # load contrast image 1 and use it to set dimensions and resolution
     img = load_volume(contrast_image1)
-    data = img.get_data()
+    data = img.get_fdata()
     affine = img.affine
     header = img.header
     resolution = [x.item() for x in header.get_zooms()]
@@ -176,13 +176,13 @@ def mgdm_cells(contrast_image1, contrast_type1,
 
     # if further contrast are specified, input them
     if contrast_image2 is not None:
-        data = load_volume(contrast_image2).get_data()
+        data = load_volume(contrast_image2).get_fdata()
         mgdm.setContrastImage2(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
         mgdm.setContrastType2(contrast_type2)
 
         if contrast_image3 is not None:
-            data = load_volume(contrast_image3).get_data()
+            data = load_volume(contrast_image3).get_fdata()
             mgdm.setContrastImage3(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
             mgdm.setContrastType3(contrast_type3)

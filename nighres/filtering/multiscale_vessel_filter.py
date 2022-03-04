@@ -195,7 +195,7 @@ def multiscale_vessel_filter(input_image,
 
     # load images and set dimensions and resolution
     input_image = load_volume(input_image)
-    data = input_image.get_data()
+    data = input_image.get_fdata()
     affine = input_image.get_affine()
     header = input_image.get_header()
     resolution = [x.item() for x in header.get_zooms()]
@@ -207,13 +207,13 @@ def multiscale_vessel_filter(input_image,
     vessel_filter.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     vessel_filter.setResolutions(resolution[0], resolution[1], resolution[2])
 
-    data = load_volume(input_image).get_data()
+    data = load_volume(input_image).get_fdata()
     vessel_filter.setInputImage(nighresjava.JArray('float')(
                                (data.flatten('F')).astype(float)))
 
     if not (prior_image==None):
         prior = load_volume(prior_image)
-        data_prior = prior.get_data()
+        data_prior = prior.get_fdata()
         vessel_filter.setPriorImage(nighresjava.JArray('float')((data_prior.flatten('F')).astype(float)))
 
     # execute
