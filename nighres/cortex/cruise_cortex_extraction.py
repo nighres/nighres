@@ -93,7 +93,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
           cortex, use volumetric_layering if you want accurate
           depth measures) (_cruise-avg)
         * thickness (niimg): Simple cortical thickness estimate: distance to
-          the GWB and CGB surfaces, in mm (_cruise-thick)
+          the GWB and CGB surfaces, in voxels (_cruise-thick)
         * pwm (niimg): Optimized WM probability, including partial volume and
           distant values correction (_cruise-pwm)
         * pgm (niimg): Optimized GM probability, including CSF sulcal ridges
