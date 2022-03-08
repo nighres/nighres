@@ -19,7 +19,7 @@ RUN ln -svT "/usr/lib/jvm/java-8-openjdk-$(dpkg --print-architecture)" /docker-j
 ENV JAVA_HOME=/docker-java-home \
     JCC_JDK=/docker-java-home
 
-RUN sudo apt-get install -y jcc && \
+RUN apt-get install libffi-dev && \
     python3 -m pip install --upgrade "pip < 21.0" \
                                      wheel \
                                      JCC \
