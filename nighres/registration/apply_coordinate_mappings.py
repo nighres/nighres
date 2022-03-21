@@ -441,11 +441,11 @@ def apply_angular_coordinate_mappings_2d(image, mapping1,
     imgdim = data.shape
 
     # convert units if needed
-    if unit is 'deg':
+    if unit == 'deg':
         data = data/180.0*np.pi
 
     # set parameters from input images
-    if len(imgdim) is 3:
+    if len(imgdim) == 3:
         applydef.setImageDimensions(imgdim[0], imgdim[1], imgdim[2])
     else:
         applydef.setImageDimensions(imgdim[0], imgdim[1])
@@ -516,7 +516,7 @@ def apply_angular_coordinate_mappings_2d(image, mapping1,
         return
 
     # collect data
-    if len(imgdim) is 3:
+    if len(imgdim) == 3:
         trgdim = [trgdim[0],trgdim[1],imgdim[2]]
     else:
         trgdim = [trgdim[0],trgdim[1]]
@@ -524,7 +524,7 @@ def apply_angular_coordinate_mappings_2d(image, mapping1,
                                 applydef.getDeformedImage(),
                                 dtype=np.float32), trgdim, 'F')
     
-    if unit is 'deg':
+    if unit == 'deg':
         deformed_data = deformed_data/np.pi*180.0
     
     hdr['cal_min'] = np.nanmin(deformed_data)
