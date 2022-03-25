@@ -1,5 +1,5 @@
-import numpy as np
-import nibabel as nb
+import numpy
+import nibabel
 import os
 import sys
 import nighresjava
@@ -9,7 +9,8 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 
 def mesh_data_to_volume(surface_mesh, reference_image, 
-                      combine='mean', distance_mm=1.0,
+                      combine='mean', distance_mm=1.0, center=False,
+                      rescale=None,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Mesh data to volume
@@ -27,6 +28,10 @@ def mesh_data_to_volume(surface_mesh, reference_image,
     distance_mm: float, optional 
         Distance for the propagation (note: this algorithm will be slow for 
         large distances)
+    center: bool
+        Use image center as origin (default is False)
+    rescale: float or array
+        Rescale the data by a given factor (or factors for each axis, default is None)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -60,7 +65,7 @@ def mesh_data_to_volume(surface_mesh, reference_image,
         out_file = os.path.join(output_dir, 
                         _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=surface_mesh,
-                                   suffix='mdtv-img'))
+                                   suffix='mdtv-img', ext="nii.gz"))
 
         if overwrite is False \
             and os.path.isfile(out_file) :
@@ -89,15 +94,43 @@ def mesh_data_to_volume(surface_mesh, reference_image,
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = img.header.get_data_shape()
 
+    # recenter to middle of the image if required
+    cx = 0.0
+    cy = 0.0
+    cz = 0.0    
+    if center is not None:
+        if isinstance(center, list):
+            cx = center[0]
+            cy = center[1]
+            cz = center[2]
+        elif center:
+            cx = dimensions[0]/2.0
+            cy = dimensions[1]/2.0
+            cz = dimensions[2]/2.0       
+
+    #rescale if required
+    rx = 1.0
+    ry = 1.0
+    rz = 1.0
+    if rescale is not None:
+        if isinstance(rescale, list):
+            rx = rescale[0]
+            ry = rescale[1]
+            rz = rescale[2]
+        else:
+            rx = rescale
+            ry = rescale
+            rz = rescale
+
     # paste the mesh values onto the reference image space
     data = numpy.zeros(dimensions)
-    for val,idx in enumerate(mesh['data']):
-        x = math.round(mesh['points'][idx,0])
-        y = math.round(mesh['points'][idx,1])
-        z = math.round(mesh['points'][idx,2])
+    for idx,val in enumerate(mesh['points']):
+        x = int(round(mesh['points'][idx][0]*rx+cx))
+        y = int(round(mesh['points'][idx][1]*ry+cy))
+        z = int(round(mesh['points'][idx][2]*rz+cz))
         
         if (x>=0 and x<dimensions[0] and y>=0 and y<dimensions[1] and z>=0 and z<dimensions[2]):
-            data[x,y,z] = val
+            data[x,y,z] = mesh['data'][idx][0]
 
     propag.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     propag.setResolutions(resolution[0], resolution[1], resolution[2])
@@ -124,14 +157,14 @@ def mesh_data_to_volume(surface_mesh, reference_image,
         return
 
     # reshape output to what nibabel likes
-    propag_data = np.reshape(np.array(propag.getResultImage(),
-                                    dtype=np.float32), dimensions, 'F')
+    propag_data = numpy.reshape(numpy.array(propag.getResultImage(),
+                                    dtype=numpy.float32), dimensions, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
-    header['cal_min'] = np.nanmin(propag_data)
-    header['cal_max'] = np.nanmax(propag_data)
-    out = nb.Nifti1Image(propag_data, affine, header)
+    header['cal_min'] = numpy.nanmin(propag_data)
+    header['cal_max'] = numpy.nanmax(propag_data)
+    out = nibabel.Nifti1Image(propag_data, affine, header)
 
     if save_data:
         save_volume(out_file, out)
