@@ -20,6 +20,7 @@ travis.log
 doc/auto_examples
 doc/gen_modules
 doc/modules/generated
+doc/_build
 
 nighres_examples
 
