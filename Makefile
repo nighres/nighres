@@ -23,7 +23,7 @@ Dockerfile:
 		--install "openjdk-8-jdk git wget build-essential software-properties-common libffi-dev" \
 		--miniconda \
 			create_env="nighres" \
-			conda_install="python=3.9 pip jcc gcc_linux-64 gxx_linux-64" \
+			conda_install="python=3.9 pip jcc gcc_linux-64 gxx_linux-64 Nilearn" \
 			activate="true" \
 		--env JAVA_HOME="/docker-java-home" \
 		--env JCC_JDK="/docker-java-home" \
@@ -34,7 +34,7 @@ Dockerfile:
 		--run "conda init && . /root/.bashrc && conda activate nighres && conda info --envs && ./build.sh" \
 		--miniconda \
 			use_env="nighres" \
-			conda_install="jupyterlab Nilearn" \
+			conda_install="jupyter" \
 			pip_install="." \
 		--copy docker/jupyter_notebook_config.py /etc/jupyter \
 		--expose 8888 \
