@@ -11,7 +11,7 @@ install:
 	./build.sh
 	pip install .
 
-smoke_test:
+smoke_tests:
 	python3 examples/example_01_tissue_classification.py
 	python3 examples/example_02_cortical_depth_estimation.py
 	python3 examples/example_03_brain_coregistration.py
