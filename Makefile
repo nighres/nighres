@@ -21,7 +21,6 @@ Dockerfile:
 		--base debian:stretch-slim \
 		--pkg-manager apt \
 		--install "openjdk-8-jdk git wget build-essential software-properties-common libffi-dev" \
-		--copy conda-nighres.yml /tmp/conda-nighres.yml \
 		--miniconda \
 			create_env="nighres" \
 			conda_install="python=3.9 pip jcc gcc_linux-64 gxx_linux-64" \
