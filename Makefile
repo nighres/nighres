@@ -39,6 +39,7 @@ Dockerfile:
 		--copy docker/jupyter_notebook_config.py /etc/jupyter \
 		--expose 8888 \
 		--cmd "jupyter lab --port=8888 --no-browser --ip=0.0.0.0" \
+		--run 'rm -rf cbstools-public imcn-imaging nighresjava/build nighresjava/src' \
 		--user neuro > Dockerfile
 
 docker_build: Dockerfile
