@@ -14,16 +14,33 @@ install:
 # =============================================================================
 # Docker related content
 
-.PHONY: Dockerfile_dev docker_build
+.PHONY: Dockerfile docker_build
 
-Dockerfile_dev:
+Dockerfile:
 	docker run --rm repronim/neurodocker:0.7.0 generate docker \
 		--base debian:stretch-slim \
 		--pkg-manager apt \
 		--install "openjdk-8-jdk git wget build-essential software-properties-common libffi-dev" \
-		--copy requirements.txt /tmp \
-		--run 'python --version' \
-		--run "pip install -r /tmp/requirements.txt" > Dockerfile_dev
+		--copy conda-nighres.yml /tmp/conda-nighres.yml \
+		--miniconda \
+			create_env="nighres" \
+			conda_install="python=3.9 pip jcc gcc_linux-64 gxx_linux-64" \
+			activate="true" \
+		--env JAVA_HOME="/docker-java-home" \
+		--env JCC_JDK="/docker-java-home" \
+		--run 'ln -svT "/usr/lib/jvm/java-8-openjdk-$$(dpkg --print-architecture)" /docker-java-home' \
+		--copy Makefile build.sh cbstools-lib-files.sh setup.py MANIFEST.in README.rst LICENSE imcntk-lib-files.sh /home/neuro/nighres/ \
+		--copy nighres /home/neuro/nighres/nighres \
+		--workdir /home/neuro/nighres \
+		--run "conda init && . /root/.bashrc && conda activate nighres && conda info --envs && ./build.sh" \
+		--miniconda \
+			use_env="nighres" \
+			conda_install="jupyterlab Nilearn" \
+			pip_install="." \
+		--copy docker/jupyter_notebook_config.py /etc/jupyter \
+		--expose 8888 \
+		--cmd "jupyter lab --port=8888 --no-browser --ip=0.0.0.0" \
+		--user neuro > Dockerfile
 
-docker_dev:
-	docker build . -f Dockerfile_dev -t laynii:dev
+docker_build: Dockerfile
+	docker build . -t nighres:latest
