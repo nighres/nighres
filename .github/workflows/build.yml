@@ -22,3 +22,6 @@ jobs:
       - name: Run pip install
         run: |
             python3 -m pip install .
+      - name: run example 3
+        run: |
+            python3 examples/example_03_brain_coregistration.py            
