@@ -12,7 +12,6 @@ To build Nighres you need:
 * Java JDK 1.7 or higher
 * `JCC 3.0 <https://pypi.org/project/JCC/>`_ or higher
 
-
 The following Python packages are automatically installed with Nighres
 * `numpy <http://www.numpy.org/>`_
 * `nibabel <http://nipy.org/nibabel/>`_
@@ -25,7 +24,8 @@ From PyPI
 
 You can download the latest stable release of Nighres from `PyPI <https://pypi.python.org/pypi/nighres>`_.
 
-Because parts of the package have to be built locally it is currently not possible to use ``pip install`` directly from PyPI. Instead, please download and unpack the tarball to :ref:`build-nighres`. (Or use the :ref:`Docker image <docker-image>`)
+Because parts of the package have to be built locally it is currently not possible to use ``pip install`` directly from PyPI. 
+Instead, please download and unpack the tarball to :ref:`build-nighres`. (Or use the :ref:`Docker image <docker-image>`)
 
 From Github
 ------------
@@ -46,23 +46,38 @@ Build Nighres
 
     sudo apt-get install openjdk-8-jdk
     export JCC_JDK=/usr/lib/jvm/java-8-openjdk-amd64
-    python3 -m pip install jcc
 
-2. Navigate to the Nighres directory you downloaded and unpacked, and run the build script::
+2. Install the Python dependencies in a virtual environment with conda
+
+Make sure you have conda installed, otherwise see this 
+`page for the installation instruction <https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html#regular-installation>`_
+
+If you have conda on your computer then create and activate the environment with::
+
+    conda env create --file conda-nighres.yml
+    conda activate nighres
+
+3. Navigate to the Nighres directory you downloaded and unpacked, and run the build script::
 
     ./build.sh
 
+4. Install the Python package::
 
-3. Install the Python package::
+    pip install .
 
-    python3 -m pip install .
+Note that the 2 last commands can also be run at once with ``make install``.
+
+Reminder:
+
+    - to deactivate your conda current environment: ``conda deactivate``
+    - to remove the nighres conda environment: ``conda env remove --name nighres``
 
 Installation to a custom directory (e.g., servers and module-based systems)
 ---------------------------------------------------------------------------
 
 This is generally only useful for administrators supporting server installs and/or where it is necessary to retain support for multiple versions of Nighres.
 
-Complete 1. and 2. to build Nighres as described above.
+Complete 1., 2.and 3. to build Nighres as described above.
 
 3. Create an empty directory within your desired installation directory to satisfy Setuptools. This example will install to /opt/quarantine/nighres/install/ and use Python3.7::
 
@@ -91,6 +106,7 @@ If that works, you can try running one of the examples. You can find them inside
 
 Docker
 ------
+
 To quickly try out nighres in a preset, batteries-included environment, you can use the included Dockerfile, which includes Ubuntu 14 Trusty, openJDK-8, nighres, and Jupyter Notebook. The only thing you need to install is `Docker <https://www.docker.com/>`_, a lightweight container platform that runs on Linux, Windows and Mac OS X.
 
 To build the Docker image, do the following::
@@ -145,10 +161,17 @@ Building the documentation
 * `sphinx <http://www.sphinx-doc.org/en/stable/>`_
 * `sphinx-gallery <https://sphinx-gallery.github.io/>`_
 * `matplotlib <http://matplotlib.org/>`_
-* `sphinx-rtd-theme <http://docs.readthedocs.io/en/latest/theme.html>`_ (pip install sphinx-rtd-theme)
-* `pillow <https://python-pillow.org/>`_ (pip install pillow)
+* `sphinx-rtd-theme <http://docs.readthedocs.io/en/latest/theme.html>`_ 
+* `pillow <https://python-pillow.org/>`_ 
 * `mock <https://pypi.org/project/mock/>`_
 
+Note that those are listed in ``doc/requirements.txt`` and can be installed with::
+
+    pip install -r requirements.txt
+
+The doc can then be build from within the ``doc`` folder with::
+
+    make html
 
 .. _trouble:
 
@@ -170,13 +193,15 @@ If you get errors regarding missing java libraries (such as ljvm/libjvm or ljava
 Missing Python packages
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+First, if you are using a virtual environment, make sure it is activated.
+
 If you get errors about Python packages not being installed, it might be that you are trying to run a function that requires :ref:`add-deps`. If packages are reported missing that you think you have installed, make sure that they are installed under the same python installation as nighres. They should be listed when you run::
 
-    python3 -m pip list
+    conda list
 
 If they aren't, install them using::
 
-    python3 -m pip install <package_name>
+    conda install <package_name>
 
 If there is still confusion, make sure nighres is installed in the same directory that your python3 -m pip command points to. These two commands should give the same base directory::
 
