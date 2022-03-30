@@ -1,5 +1,1 @@
-numpy
-nibabel
-psutil
-antspyx
-jcc
+-r doc/requirements.txt
