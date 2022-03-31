@@ -47,6 +47,6 @@ setup(
     keywords='MRI high-resolution laminar subcortex',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['psutil', 'antspyx'],
+    install_requires=['numpy==1.22.3', 'nibabel==3.2.2', 'psutil==5.9.0', 'antspyx==0.3.2'],
     python_requires='>=3'
 )
