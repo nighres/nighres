@@ -28,4 +28,4 @@ jobs:
             python3 -m pip install .
 
       - name: Run smoke tests
-        run: make smoke_tests
+        run: make smoke_tests_CI
