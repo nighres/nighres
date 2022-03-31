@@ -1,8 +1,9 @@
 .. -*- mode: rst -*-
 
-.. image:: https://travis-ci.org/nighres/nighres.svg?branch=master
-    :target: https://travis-ci.org/nighres
-    :alt: Travis CI build status
+.. image:: https://github.com/nighres/nighres/actions/workflows/build.yml/badge.svg
+    :target: https://github.com/nighres/nighres/actions/workflows/build.yml
+    :alt: Build and test Status
+
 .. image:: https://readthedocs.org/projects/nighres/badge/?version=latest
     :target: http://nighres.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
