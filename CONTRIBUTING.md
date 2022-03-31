@@ -20,10 +20,6 @@ The test only run examples 1, 2 and 3 from the `examples` folder.
 
 The `conda-nighres.yml` specifies the version of ALL the dependencies.
 
-This can be generated with `conda env export > conda-nighres.yml`.
-
-Note that if you do this you will need to 
-
 The minimalist version of this file would look like this:
 
 ```yml
@@ -39,6 +35,15 @@ dependencies:
   - gxx_linux-64
 ```
 
+This can be generated with `conda env export > conda-nighres.yml`.
+
+Note that if you do this you will need to remove the line that concerns nighres
+as it is a local pacakage.
+
+```bash
+sed -i '/^ - nighres\*/d' ./conda-nighres.yml
+```
+
 If you need to update the following packages, do it in the
 [`setup.py`](./setup.py) file:
 
@@ -52,6 +57,7 @@ Then run to update `conda-nighres.yml`
 ```bash
 pip install .
 conda env export > conda-nighres.yml
+sed -i '/^ - nighres\*/d' ./conda-nighres.yml
 ```
 
 The following pacakages that are necessary for setting up the environment
@@ -69,4 +75,5 @@ This can be done with:
 conda update -n nighres pip jcc Nilearn gcc_linux-64 gxx_linux-64
 pip install .
 conda env export > conda-nighres.yml
+sed -i '/^ - nighres\*/d' ./conda-nighres.yml
 ```
