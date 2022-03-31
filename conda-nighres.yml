@@ -43,8 +43,6 @@ dependencies:
   - nibabel=3.2.2=pyhd8ed1ab_0
   - nilearn=0.9.0=pyhd8ed1ab_1
   - numexpr=2.8.1=py39h6abb31d_0
-  - numpy=1.21.2=py39h20f2e39_0
-  - numpy-base=1.21.2=py39h79a1101_0
   - openjdk=8.0.152=h7b6447c_3
   - openssl=1.1.1n=h7f8727e_0
   - packaging=21.3=pyhd3eb1b0_0
@@ -75,24 +73,26 @@ dependencies:
   - xz=5.2.5=h7b6447c_0
   - zlib=1.2.11=h7f8727e_4
   - pip:
-      - antspyx==0.3.2
-      - chart-studio==1.1.0
-      - cycler==0.11.0
-      - fonttools==4.31.2
-      - imageio==2.16.1
-      - kiwisolver==1.4.2
-      - matplotlib==3.5.1
-      - networkx==2.7.1
-      - nighres==1.4.0
-      - patsy==0.5.2
-      - pillow==9.0.1
-      - plotly==5.6.0
-      - psutil==5.9.0
-      - pywavelets==1.3.0
-      - pyyaml==6.0
-      - retrying==1.3.3
-      - scikit-image==0.19.2
-      - statsmodels==0.13.2
-      - tenacity==8.0.1
-      - tifffile==2022.3.25
-      - webcolors==1.11.1
+    - antspyx==0.3.2
+    - chart-studio==1.1.0
+    - cycler==0.11.0
+    - fonttools==4.31.2
+    - imageio==2.16.1
+    - kiwisolver==1.4.2
+    - matplotlib==3.5.1
+    - networkx==2.7.1
+    - nighres==1.4.0
+    - numpy==1.22.3
+    - patsy==0.5.2
+    - pillow==9.0.1
+    - plotly==5.6.0
+    - psutil==5.9.0
+    - pywavelets==1.3.0
+    - pyyaml==6.0
+    - retrying==1.3.3
+    - scikit-image==0.19.2
+    - statsmodels==0.13.2
+    - tenacity==8.0.1
+    - tifffile==2022.3.25
+    - webcolors==1.11.1
+prefix: /home/remi/miniconda3/envs/nighres

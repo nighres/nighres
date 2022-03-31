@@ -22,6 +22,8 @@ The `conda-nighres.yml` specifies the version of ALL the dependencies.
 
 This can be generated with `conda env export > conda-nighres.yml`.
 
+Note that if you do this you will need to 
+
 The minimalist version of this file would look like this:
 
 ```yml
@@ -65,4 +67,6 @@ This can be done with:
 
 ```bash
 conda update -n nighres pip jcc Nilearn gcc_linux-64 gxx_linux-64
+pip install .
+conda env export > conda-nighres.yml
 ```
