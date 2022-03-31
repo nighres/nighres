@@ -14,7 +14,7 @@ install:
 smoke_tests:
 	python3 examples/example_01_tissue_classification.py
 	python3 examples/example_02_cortical_depth_estimation.py
-    python3 examples/example_03_brain_coregistration.py
+	python3 examples/example_03_brain_coregistration.py
 	python3 examples/example_04_multiatlas_segmentation.py
 	python3 examples/example_05_vascular_reconstruction.py
 	python3 examples/example_06_dots_segmentation.py
