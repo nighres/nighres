@@ -26,7 +26,6 @@ Oriented Tract Segmentation (DOTS) algorithm [1]_:
 # (https://nipy.org/dipy/).
 
 import os
-import dipy
 import nighres
 
 in_dir = os.path.join(os.getcwd(), 'nighres_examples/data_sets')

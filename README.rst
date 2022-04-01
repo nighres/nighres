@@ -39,6 +39,7 @@ In order to run Nighres, you will need:
 For some functionalities you need extra packages
 
 * Nipype & ANTs (for registration using ANTs)
+* dipy (for dots segmentation)
 * Pandas (for working with surface meshes)
 * Nilearn (for plotting in the examples)
 

@@ -33,6 +33,8 @@ dependencies:
   - Nilearn
   - gcc_linux-64
   - gxx_linux-64
+  - pip:
+    - dipy
 ```
 
 This can be generated with `conda env export > conda-nighres.yml`.
@@ -58,6 +60,7 @@ Then run to update `conda-nighres.yml`
 pip install .
 conda env export > conda-nighres.yml
 sed -i '/^ - nighres\*/d' ./conda-nighres.yml
+sed -i '/^prefix:.*/d' ./conda-nighres.yml
 ```
 
 The following pacakages that are necessary for setting up the environment
@@ -66,14 +69,16 @@ building nighres JAVA or for running examples can updated directly.
 - `pip`
 - `jcc`
 - `Nilearn`
+- `dipy`
 - `gcc_linux-64`
 - `gxx_linux-64`
 
 This can be done with:
 
 ```bash
-conda update -n nighres pip jcc Nilearn gcc_linux-64 gxx_linux-64
+conda update -n nighres pip jcc Nilearn dipy gcc_linux-64 gxx_linux-64
 pip install .
 conda env export > conda-nighres.yml
 sed -i '/^ - nighres\*/d' ./conda-nighres.yml
+sed -i '/^prefix:.*/d' ./conda-nighres.yml
 ```
