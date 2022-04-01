@@ -110,7 +110,7 @@ test -d imcn-imaging && (
 	git pull
 	cd ..
 ) || (
-	git clone $imcntk_repo --depth
+	git clone $imcntk_repo --depth 1
 	cd imcn-imaging
 	git checkout ${imcntk_sha}
 	git pull
