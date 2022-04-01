@@ -50,7 +50,7 @@ Dockerfile:
 		--env JAVA_HOME="/docker-java-home" \
 		--env JCC_JDK="/docker-java-home" \
 		--run 'ln -svT "/usr/lib/jvm/java-8-openjdk-$$(dpkg --print-architecture)" /docker-java-home' \
-		--copy build.sh cbstools-lib-files.sh setup.py MANIFEST.in README.rst LICENSE imcntk-lib-files.sh /nighres/ \
+		--copy build.sh cbstools-lib-files.sh imcntk-lib-files.sh dependencies_sha.sh setup.py MANIFEST.in README.rst LICENSE /nighres/ \
 		--copy nighres /nighres/nighres \
 		--workdir /nighres \
 		--run "conda init && . /root/.bashrc && conda activate nighres && conda info --envs && ./build.sh && rm -rf cbstools-public imcn-imaging nighresjava/build nighresjava/src" \
