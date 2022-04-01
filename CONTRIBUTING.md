@@ -34,16 +34,16 @@ dependencies:
   - gcc_linux-64
   - gxx_linux-64
   - pip:
-    - dipy
+      - dipy
 ```
 
 This can be generated with `conda env export > conda-nighres.yml`.
 
-Note that if you do this you will need to remove the line that concerns nighres
-as it is a local pacakage.
+Note that if you do this you will need to remove somes lines (for example that
+concerns nighres as it is a local pacakage.)
 
 ```bash
-sed -i '/^ - nighres\*/d' ./conda-nighres.yml
+make clean_env_file
 ```
 
 If you need to update the following packages, do it in the
@@ -59,8 +59,7 @@ Then run to update `conda-nighres.yml`
 ```bash
 pip install .
 conda env export > conda-nighres.yml
-sed -i '/^ - nighres\*/d' ./conda-nighres.yml
-sed -i '/^prefix:.*/d' ./conda-nighres.yml
+make clean_env_file
 ```
 
 The following pacakages that are necessary for setting up the environment
@@ -79,6 +78,5 @@ This can be done with:
 conda update -n nighres pip jcc Nilearn dipy gcc_linux-64 gxx_linux-64
 pip install .
 conda env export > conda-nighres.yml
-sed -i '/^ - nighres\*/d' ./conda-nighres.yml
-sed -i '/^prefix:.*/d' ./conda-nighres.yml
+make clean_env_file
 ```

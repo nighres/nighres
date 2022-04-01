@@ -1,4 +1,3 @@
-name: nighres
 channels:
   - conda-forge
   - defaults
@@ -82,7 +81,6 @@ dependencies:
     - kiwisolver==1.4.2
     - matplotlib==3.5.1
     - networkx==2.7.1
-    - nighres==1.4.0
     - numpy==1.22.3
     - patsy==0.5.2
     - pillow==9.0.1

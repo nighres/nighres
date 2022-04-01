@@ -1,4 +1,4 @@
-.PHONY: clean install
+.PHONY: clean install clean_env_file
 
 clean:
 	rm -rf nighresjava/
@@ -10,6 +10,11 @@ clean:
 install:
 	./build.sh
 	pip install .
+
+clean_env_file: conda-nighres.yml
+	sed -i '/^.*nighres.*/d' ./conda-nighres.yml
+	sed -i '/^prefix:.*/d' ./conda-nighres.yml
+
 
 smoke_tests:
 	python3 examples/example_01_tissue_classification.py
