@@ -1,51 +1,83 @@
-name: Build and test using conda environment
+name: System test
+
+# Build and test using conda environment
+#
+# only "lightweight test in CI"
+# for example examples/example_03_brain_coregistration.py leas to an
+# out of memory error causing the workflow to be killed early
 
 on:
   push:
-    branches: ["*"] 
-  pull_request: 
+    branches: ["*"]
+  pull_request:
     branches: ["*"]
   schedule:
-  # Uses the cron schedule for github actions: runs at midnight on the 1rst and 15th of every month
-  #
-  # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#scheduled-events
-  #
-  # ┌───────────── minute (0 - 59)
-  # │ ┌───────────── hour (0 - 23)
-  # │ │ ┌───────────── day of the month (1 - 31)
-  # │ │ │ ┌───────────── month (1 - 12 or JAN-DEC)
-  # │ │ │ │ ┌───────────── day of the week (0 - 6 or SUN-SAT)
-  # │ │ │ │ │
-  # │ │ │ │ │
-  # │ │ │ │ │
-  # * * * * *
+    # Uses the cron schedule for github actions: 
+    #  runs at midnight on the 1rst and 15th of every month
+    #
+    # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#scheduled-events
+    #
+    # ┌───────────── minute (0 - 59)
+    # │ ┌───────────── hour (0 - 23)
+    # │ │ ┌───────────── day of the month (1 - 31)
+    # │ │ │ ┌───────────── month (1 - 12 or JAN-DEC)
+    # │ │ │ │ ┌───────────── day of the week (0 - 6 or SUN-SAT)
+    # │ │ │ │ │
+    # │ │ │ │ │
+    # │ │ │ │ │
+    # * * * * *
     - cron: "0 0 1,15 * *"
 
 jobs:
-  build-linux:
-    runs-on: ubuntu-latest
+  system-test:
+    continue-on-error: true
+
+    strategy:
+      matrix:
+        os: ["ubuntu-latest"]
+        python-version: [3.9]
+        cmd:
+          [
+            "python3 examples/example_01*.py",
+            "python3 examples/example_04*.py",
+            "python3 examples/example_05*.py",
+          ]
+
+    runs-on: ${{ matrix.os }}
+
+    # Make sure conda env is activated for every "run"
+    defaults:
+      run:
+        shell: bash -l {0}
 
     steps:
-
-      - uses: actions/checkout@v2
+      - name: Shallow clone of nighres repo
+        uses: actions/checkout@v3
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
+          fetch-depth: 0
 
-      - uses: conda-incubator/setup-miniconda@v2
+      - name: Set up Python ${{ matrix.python-version }} env with conda
+        uses: conda-incubator/setup-miniconda@v2
         with:
           activate-environment: nighres
           environment-file: conda-nighres.yml
-          python-version: 3.9
+          python-version: ${{ matrix.python-version }}
           auto-activate-base: false
 
-      - name: Run build process
-        shell: bash -l {0}
+      - name: Build java dependencies
         run: |
-            ./build.sh
+          ./build.sh
 
-      - name: Run pip install
+      - name: Install nighres
         run: |
-            python3 -m pip install .
+          pip install .
 
-      - name: Run smoke tests
-        run: make smoke_tests_CI
+      - name: Conda environment info
+        run: |
+          conda info
+          conda list
+
+      - name: Run ${{ matrix.cmd }}
+        run: |
+          ${{ matrix.cmd }}

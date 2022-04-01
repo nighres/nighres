@@ -20,16 +20,6 @@ smoke_tests:
 	python3 examples/example_06_dots_segmentation.py
 	python3 examples/example_07_massp_subcortex_parcellation.py 
 
-# only "lightweight test in CI"
-# for example examples/example_03_brain_coregistration.py leas to an
-# out of memory error causing the workflow to be killed early
-smoke_tests_CI:
-	python3 examples/example_01_tissue_classification.py
-	python3 examples/example_04_multiatlas_segmentation.py
-	python3 examples/example_05_vascular_reconstruction.py
-	python3 examples/example_06_dots_segmentation.py
-	python3 examples/example_07_massp_subcortex_parcellation.py 
-
 # =============================================================================
 # Docker related content
 
