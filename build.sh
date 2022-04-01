@@ -11,6 +11,7 @@ unset CDPATH; cd "$( dirname "${BASH_SOURCE[0]}" )"; cd "$(pwd -P)"
 fatal() { echo -e "$1"; exit 1; }
 function join_by { local IFS="$1"; shift; echo "$*"; }
 
+source dependencies_sha.sh
 cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
 imcntk_repo="https://github.com/piloubazin/imcn-imaging.git"
 
@@ -46,15 +47,13 @@ test -f "${python_include_path}/Python.h" || fatal 'This script requires python 
 # Get cbstools git clone
 test -d cbstools-public && (
     cd cbstools-public
-	#git checkout $release
-	git checkout master
+	git checkout ${cbstools_sha}
 	git pull
 	cd ..
 ) || (
-	git clone $cbstools_repo
+	git clone $cbstools_repo --depth 1
 	cd cbstools-public
-	#git checkout $release
-	git checkout master
+	git checkout ${cbstools_sha}
 	git pull
 	cd ..
 )
@@ -107,13 +106,13 @@ cd ..
 # Get imcntk git clone
 test -d imcn-imaging && (
     cd imcn-imaging
-	git checkout master
+	git checkout ${imcntk_sha}
 	git pull
 	cd ..
 ) || (
-	git clone $imcntk_repo
+	git clone $imcntk_repo --depth
 	cd imcn-imaging
-	git checkout master
+	git checkout ${imcntk_sha}
 	git pull
 	cd ..
 )

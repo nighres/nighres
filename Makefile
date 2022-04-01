@@ -15,6 +15,11 @@ clean_env_file: conda-nighres.yml
 	sed -i '/^.*nighres.*/d' ./conda-nighres.yml
 	sed -i '/^prefix:.*/d' ./conda-nighres.yml
 
+update_dep_shasum:
+	cbstools_sha=$$(git ls-remote https://github.com/piloubazin/cbstools-public.git master | head -n 1 | cut -c1-7) && \
+		echo cbstools_sha=$${cbstools_sha} > dependencies_sha.sh
+	imcntk_sha=$$(git ls-remote https://github.com/piloubazin/imcn-imaging.git master | head -n 1 | cut -c1-7) && \
+		echo imcntk_sha=$${imcntk_sha} >> dependencies_sha.sh
 
 smoke_tests:
 	python3 examples/example_01_tissue_classification.py

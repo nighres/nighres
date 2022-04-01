@@ -1,5 +1,10 @@
 # CONTRIBUTING
 
+- [CONTRIBUTING](#contributing)
+  - [Docker](#docker)
+  - [Dependencies version](#dependencies-version)
+  - [Java dependencies version](#java-dependencies-version)
+
 ## Docker
 
 The base recipe was generated using
@@ -80,3 +85,21 @@ pip install .
 conda env export > conda-nighres.yml
 make clean_env_file
 ```
+
+## Java dependencies version
+
+The versions of the Java dependencies for nighres are in `dependencies_sha.sh`.
+
+They contain the commit id (SHA1) from the cbstools and imcntk repo.
+
+For example.
+
+```bash
+cbstools_sha=7a34255
+imcntk_sha=ea901d8
+```
+
+Those values are then used by the build process (`build.sh`).
+
+To update those to the latest commit on the master branch simply use
+`make update_dep_shasum`.
