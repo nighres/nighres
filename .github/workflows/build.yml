@@ -7,8 +7,7 @@ name: System test
 # out of memory error causing the workflow to be killed early
 
 on:
-  push:
-    branches: ["*"]
+
   schedule:
     # Uses the cron schedule for github actions: 
     #  runs at midnight on the 1rst and 15th of every month
