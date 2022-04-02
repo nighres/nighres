@@ -127,7 +127,7 @@ deps_list=$(join_by ":" "${deps[@]}")
 
 # List of library files needed to run the cbstools core functions
 source imcntk-lib-files.sh
-echo $imcntk_files # result is in $cbstools_files
+echo ${imcntk_files} # result is in $cbstools_files
 
 imcntk_list=$(join_by " " "${imcntk_files[@]}")
 
@@ -144,7 +144,7 @@ javac_opts=(
 
 echo "Compiling..."
 cd imcn-imaging
-javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java $imcntk_list
+javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java ${imcntk_list}
 
 echo "Assembling..."
 jar uf ../nighresjava/src/nighresjava.jar nl/uva/imcn/algorithms/*.class
