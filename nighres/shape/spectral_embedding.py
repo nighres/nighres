@@ -28,7 +28,6 @@ def spectral_embedding(label_image,
     Derive a spectral Laplacian embedding from labelled regions, optionally taking underlying 
     contrasts into account (technique adapted from [1]).
 
-
     Parameters
     ----------
     label_image: niimg
