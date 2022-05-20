@@ -115,8 +115,9 @@ def spectral_embedding(label_image,
             data = load_volume(contrast).get_fdata()
             algorithm.setContrastImageAt(n, nighresjava.JArray('float')(
                                         (data.flatten('F')).astype(float)))
-        algorithm.setScaling(scaling)  
-        algorithm.setMatrixSize(msize)
+            algorithm.setContrastDevAt(n, scaling)  
+        
+    algorithm.setMatrixSize(msize)
 
     # execute
     try:
