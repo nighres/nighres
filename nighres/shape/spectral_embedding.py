@@ -18,6 +18,7 @@ def spectral_embedding(label_image,
                     dims=1,
                     scaling=1.0,
                     msize=800,
+                    ref="none",
                     save_data=False, 
                     overwrite=False, 
                     output_dir=None,
@@ -27,7 +28,6 @@ def spectral_embedding(label_image,
     
     Derive a spectral Laplacian embedding from labelled regions, optionally taking underlying 
     contrasts into account (technique adapted from [1]).
-
 
     Parameters
     ----------
@@ -41,6 +41,8 @@ def spectral_embedding(label_image,
         Scaling of intra-regional contrast differences to use (default is 1.0)
     msize: int
         Target matrix size for subsampling (default is 800)
+    ref: str
+        Reference direction to orient directions ('none', 'X', 'Y', 'Z', default is 'none')
     save_data: bool, optional
         Save output data to file (default is False)
     output_dir: str, optional
@@ -116,8 +118,12 @@ def spectral_embedding(label_image,
             data = load_volume(contrast).get_fdata()
             algorithm.setContrastImageAt(n, nighresjava.JArray('float')(
                                         (data.flatten('F')).astype(float)))
-        algorithm.setScaling(scaling)  
-        algorithm.setMatrixSize(msize)
+            algorithm.setContrastDevAt(n, scaling)  
+        
+    algorithm.setMatrixSize(msize)
+    algorithm.setReferenceAxis(ref)
+    algorithm.setEigenGame(True,0.1,0.1)
+    #algorithm.setEigenGame(True,0.2,0.2)
 
     # execute
     try:
