@@ -13,7 +13,8 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def linear_fiber_vector_estimation(proba_image, theta_image, lambda_image,
                               prior_image, mask_image=None,
                               orig_dim=7, prior_dim=3, vec_dim=3,
-                              neighbors=3,search_radius=2,init_threshold=0.25,
+                              neighbors=3,search_radius=2,iterations=0,
+                              init_threshold=0.25,thickness=15.0,offset=5.0,
                               delta_space=1.0, delta_depth=3.0, 
                               delta_theta=5.0, delta_prior=10.0,
                               save_data=False, overwrite=False, output_dir=None,
@@ -47,8 +48,14 @@ def linear_fiber_vector_estimation(proba_image, theta_image, lambda_image,
         Number of neighboring z slices to average on both sides (default is 3)
     search_radius: int
         Distance in voxels to look for best neighbors in each slice (default is 2)
+    iterations: int
+        Number of iterations of the diffusion step (default is 0)
     init_threshold: float
         Probability threshold for using prior (default is 0.25)
+    thickness: float
+        Image visible thickness for depth computation (default is 15.0)
+    offset: float
+        Image visible thickness  offsetfor depth computation (default is 5.0)
     delta_space: float
         Scaling factor for spatial distances in 2D images (default is 1.0 voxel)
     delta_depth: float
@@ -107,12 +114,11 @@ def linear_fiber_vector_estimation(proba_image, theta_image, lambda_image,
 
 
     # load input image and use it to set dimensions and resolution
-    img = load_volume(proba_image)
-    data = img.get_fdata()
+    img = load_volume(prior_image)
     affine = img.affine
     header = img.header
     resolution = [x.item() for x in header.get_zooms()]
-    dimensions = data.shape
+    dimensions = header.get_data_shape()
     dim4d = (dimensions[0],dimensions[1],dimensions[2],2)
     del img
 
@@ -132,7 +138,11 @@ def linear_fiber_vector_estimation(proba_image, theta_image, lambda_image,
     
     lfve.setNumberOfNeighbors(neighbors)
     lfve.setSearchRadius(search_radius)
+    lfve.setIterations(iterations)
+    
     lfve.setInitialThreshold(init_threshold)
+    lfve.setImageThickness(thickness)
+    lfve.setThicknessOffset(offset)
     
     lfve.setSpatialScale(delta_space)
     lfve.setDepthScale(delta_depth)
@@ -150,6 +160,7 @@ def linear_fiber_vector_estimation(proba_image, theta_image, lambda_image,
         
     # input image: generally too big to do in one go, so...
     print('load input files')
+    data = load_volume(proba_image).get_fdata()   
     for n in range(orig_dim):
         print('.',end='')
         lfve.setProbaImageAt(n, nighresjava.JArray('float')(
