@@ -158,7 +158,10 @@ def linear_fiber_mapping(input_image, ridge_intensities,
     except ValueError:
         pass
     # create extraction instance
-    lfm = nighresjava.LinearFiberMapping()
+    if (dimensions[2]>1):
+        lfm = nighresjava.LinearFiberMapping3D()
+    else:
+        lfm = nighresjava.LinearFiberMapping()
 
     # set parameters
     lfm.setRidgeIntensities(ridge_intensities)
@@ -192,6 +195,11 @@ def linear_fiber_mapping(input_image, ridge_intensities,
         raise
         return
 
+    if (dimensions[2]>1):
+        dim4d = (dimensions[0], dimensions[1], dimensions[2], 3)
+    else:
+        dim4d = dimensions
+        
     # reshape output to what nibabel likes
     proba_data = np.reshape(np.array(lfm.getProbabilityResponseImage(),
                                     dtype=np.float32), dimensions, 'F')
@@ -203,7 +211,7 @@ def linear_fiber_mapping(input_image, ridge_intensities,
                                    dtype=np.float32), dimensions, 'F')
 
     theta_data = np.reshape(np.array(lfm.getAngleImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), dim4d, 'F')
 
     ani_data = np.reshape(np.array(lfm.getAnisotropyImage(),
                                     dtype=np.float32), dimensions, 'F')
