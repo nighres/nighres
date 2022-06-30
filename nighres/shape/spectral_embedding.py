@@ -81,9 +81,14 @@ def spectral_embedding(label_image,
                                   rootfile=label_image,
                                   suffix='se-coord'))
 
+        flatmap_file = os.path.join(output_dir, 
+                            _fname_4saving(module=__name__,file_name=file_name,
+                                  rootfile=label_image,
+                                  suffix='se-map'))
+
         if overwrite is False \
-            and os.path.isfile(coord_file) :
-                output = {'result': coord_file}
+            and os.path.isfile(coord_file) and os.path.isfile(flatmap_file) :
+                output = {'coord': coord_file, 'map': flatmap_file}
                 return output
 
     # start virtual machine, if not already running
@@ -137,6 +142,8 @@ def spectral_embedding(label_image,
         return
 
     # Collect output
+    flatdim = (256,256,31)
+    
     coord_data = np.reshape(np.array(
                                     algorithm.getCoordinateImage(),
                                     dtype=np.float32), dimensions4, 'F')
@@ -147,11 +154,20 @@ def spectral_embedding(label_image,
     header['cal_max'] = np.nanmax(coord_data)
     coord_img = nb.Nifti1Image(coord_data, affine, header)
 
+    flat_data = np.reshape(np.array(
+                                    algorithm.getFlatMapImage(),
+                                    dtype=np.int32), flatdim, 'F')
+
+    # adapt header max for each image so that correct max is displayed
+    # and create nifiti objects
+    flat_img = nb.Nifti1Image(flat_data, none, none)
+
     if save_data:
         save_volume(coord_file, coord_img)
+        save_volume(flat_file, flat_img)
         
-        return {'result': coord_file}
+        return {'coord': coord_file, 'map': flatmap_file}
     else:
-        return {'result': coord_img}
+        return {'coord': coord_img, 'map': flatmap_img}
 
 
