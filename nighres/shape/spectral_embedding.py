@@ -159,6 +159,7 @@ def spectral_flatmap(label_image, coord_image,
                     dims=2,
                     size=1024,
                     combined=True,
+                    projection=False,
                     save_data=False, 
                     overwrite=False, 
                     output_dir=None,
@@ -181,6 +182,9 @@ def spectral_flatmap(label_image, coord_image,
     combined: bool, optional
         Whether to combine maps into a single representation (default is True)
         Note: this requires more than 3 labels to work properly
+    projection: bool, optional
+        Whether to use a planar projection along first gradient rather than direct gradient space
+        representations (default is False)
     save_data: bool, optional
         Save output data to file (default is False)
     output_dir: str, optional
@@ -250,7 +254,8 @@ def spectral_flatmap(label_image, coord_image,
                 
     # execute
     try:
-        algorithm.buildSpectralMaps(size, combined)
+        if projection: algorithm.buildSpectralProjectionMaps(size, combined)
+        else: algorithm.buildSpectralMaps(size, combined)
 
     except:
         # if the Java module fails, reraise the error it throws
