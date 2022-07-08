@@ -214,7 +214,7 @@ def spectral_flatmap(label_image, coord_image,
                                   suffix='sf-map'))
 
         if overwrite is False \
-            and os.path.isfile(result_file) :
+            and os.path.isfile(flatmap_file) :
                 output = {'result': flatmap_file}
                 return output
 
