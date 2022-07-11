@@ -17,20 +17,21 @@ The following Python packages are automatically installed with Nighres
 * `numpy <http://www.numpy.org/>`_
 * `nibabel <http://nipy.org/nibabel/>`_
 * `psutils <https://pypi.org/project/psutil/>`_
+* `antspyx <https://github.com/ANTsX/ANTsPy/>`_
 
 For further dependencies of specific interfaces see :ref:`add-deps`.
 
 From PyPI
 ----------
 
-You can download the latest stable release of Nighres from `PyPI <https://pypi.python.org/pypi/nighres>`_.
+You can download a recent stable release of Nighres from `PyPI <https://pypi.python.org/pypi/nighres>`_.
 
 Because parts of the package have to be built locally it is currently not possible to use ``pip install`` directly from PyPI. Instead, please download and unpack the tarball to :ref:`build-nighres`. (Or use the :ref:`Docker image <docker-image>`)
 
-From Github
+From Github (recommended)
 ------------
 
-You can also get the latest version from Github ::
+You can also get the latest stable version from Github ::
 
    git clone https://github.com/nighres/nighres
 
@@ -91,7 +92,7 @@ If that works, you can try running one of the examples. You can find them inside
 
 Docker
 ------
-To quickly try out nighres in a preset, batteries-included environment, you can use the included Dockerfile, which includes Ubuntu 14 Trusty, openJDK-8, nighres, and Jupyter Notebook. The only thing you need to install is `Docker <https://www.docker.com/>`_, a lightweight container platform that runs on Linux, Windows and Mac OS X.
+To quickly try out nighres in a preset, batteries-included environment, you can use the included Dockerfile, which includes Ubuntu 20, openJDK-11, nighres, and Jupyter Notebook. The only thing you need to install is `Docker <https://www.docker.com/>`_, a lightweight container platform that runs on Linux, Windows and Mac OS X.
 
 To build the Docker image, do the following::
 
@@ -117,6 +118,19 @@ access to a data folder on your host OS by using the `-v` tag when you start the
 
 Now, in your notebook you will be able to access your data on the path `/data`
 
+.. _singularity-image:
+
+Singularity
+-----------
+If Docker is not your container of choice we also have a Singularity version with the same specs.
+
+To build the Singularity image, do the following::
+
+    git clone https://github.com/nighres/nighres
+    cd nighres
+    singularity build ../nighres.simg NighresSingularity.def
+
+You can then run the nighres.simg using Singularity
 
 .. _add-deps:
 
@@ -127,11 +141,6 @@ Working with surface mesh files
 
 * `pandas <https://pandas.pydata.org/>`_
 
-Using the registration tools
-
-* `nipype <https://nipype.readthedocs.io/en/latest/>`_
-* `ANTs <https://github.com/ANTsX/ANTs>`_
-
 Plotting in the examples
 
 * `Nilearn <http://nilearn.github.io/>`_ and its dependencies, if Nilearn is not installed, plotting in the examples will be skipped and you can view the results in any other nifti viewer
@@ -139,6 +148,10 @@ Plotting in the examples
 Using the docker image
 
 * `Docker <https://www.docker.com/>`_
+
+Using the singularity image
+
+* `Singularity <https://singularityware.github.io/>`_
 
 Building the documentation
 
@@ -182,3 +195,4 @@ If there is still confusion, make sure nighres is installed in the same director
 
     python3 -m pip
     python3 -c 'import nighres; print(nighres.__file__)'
+
