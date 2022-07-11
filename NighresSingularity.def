@@ -1,0 +1,82 @@
+Bootstrap: docker
+From: ubuntu:20.04
+Stage: spython-base
+
+%files
+build.sh /home/neuro/nighres/
+cbstools-lib-files.sh /home/neuro/nighres/
+setup.py /home/neuro/nighres/
+MANIFEST.in /home/neuro/nighres/
+README.rst /home/neuro/nighres/
+LICENSE /home/neuro/nighres/
+imcntk-lib-files.sh /home/neuro/nighres/
+nighres /home/neuro/nighres/nighres
+docker/jupyter_notebook_config.py /etc/jupyter/
+%post
+
+TZ=Europe/Berlin
+ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+apt-get update && \
+apt-get -y install sudo && \
+sudo apt-get update -qq && \
+apt-get install -y python3 \
+python3-pip \
+python3-dev \
+build-essential \
+software-properties-common \
+openjdk-11-jdk \
+itk3 \
+itk3-dev \
+locate \
+curl \
+cmake \
+git \
+wget && \
+sudo add-apt-repository ppa:openjdk-r/ppa && \
+apt-get update -qq && \
+apt-get install -y openjdk-11-jdk
+
+ln -svT "/usr/lib/jvm/java-11-openjdk-$(dpkg --print-architecture)" /docker-java-home
+JAVA_HOME=/docker-java-home
+JCC_JDK=/docker-java-home
+export JCC_JDK=/usr/lib/jvm/java-11-openjdk-amd64
+ln -s /usr/lib/jvm/java-11-openjdk-amd64/lib/libjava.so /usr/lib/libjava.so && \
+ln -s /usr/lib/jvm/java-11-openjdk-amd64/lib/server/libjvm.so /usr/lib/libjvm.so
+
+apt-get install libffi-dev && \
+python3 -m pip install --upgrade "pip < 21.0" \
+wheel \
+JCC \
+urllib3 && \
+python3 -m pip install jupyter \
+nilearn \
+sklearn \
+nose \
+matplotlib \
+scipy \
+psutil \
+antspyx
+
+useradd --no-user-group --create-home --shell /bin/bash neuro && \
+cd /home/neuro/nighres && \
+./build.sh && \
+cd /home/neuro/nighres && python3 -m pip install . && \
+mkdir /home/neuro/notebooks && \
+chown -R neuro /home/neuro
+
+TINI_VERSION=v0.6.0
+wget https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini -O /usr/bin/tini
+chmod +x /usr/bin/tini
+
+su - neuro # USER neuro
+%environment
+export TZ=Europe/Berlin
+export JAVA_HOME=/docker-java-home
+export JCC_JDK=/docker-java-home
+export TINI_VERSION=v0.6.0
+%runscript
+exec /usr/bin/tini -- jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 "$@"
+%startscript
+exec /usr/bin/tini -- jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 "$@"
+
