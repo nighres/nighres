@@ -111,12 +111,6 @@ def parcellation_to_meshes(parcellation_image, connectivity="18/6",
     except ValueError:
         pass
 
-    # initiate class
-    algorithm = nighresjava.SurfaceLevelsetToMesh()
-
-    algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
-    algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
-
     # build a simplified levelset for each structure
     meshes = []
     for num,label in enumerate(labels):
@@ -124,6 +118,12 @@ def parcellation_to_meshes(parcellation_image, connectivity="18/6",
         if num>0:
             lvl_data = -1.0*(p_data==label) +1.0*(p_data!=label)
             
+            # initiate class inside the loop, to avoid garbage collection issues with many labels (??)
+            algorithm = nighresjava.SurfaceLevelsetToMesh()
+        
+            algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
+            algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+
             algorithm.setLevelsetImage(nighresjava.JArray('float')(
                                     (lvl_data.flatten('F')).astype(float)))
     
