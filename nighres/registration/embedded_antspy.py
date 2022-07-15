@@ -343,16 +343,17 @@ def embedded_antspy_2d_multi(source_images, target_images, image_weights=None,
 
     print('\nEmbedded ANTs Registration 2D Multi-contrasts')
     # check if ants is installed to raise sensible error
-    try:
-        subprocess.run('antsRegistration', stdout=subprocess.DEVNULL)
-    except FileNotFoundError:
-        sys.exit("\nCould not find command 'antsRegistration'. Make sure ANTs is"
-                 " installed and can be accessed from the command line.")
-    try:
-        subprocess.run('antsApplyTransforms', stdout=subprocess.DEVNULL)
-    except FileNotFoundError:
-        sys.exit("\nCould not find command 'antsApplyTransforms'. Make sure ANTs"
-                 " is installed and can be accessed from the command line.")
+    ## not needed here anymore :)
+    #try:
+    #    subprocess.run('antsRegistration', stdout=subprocess.DEVNULL)
+    #except FileNotFoundError:
+    #    sys.exit("\nCould not find command 'antsRegistration'. Make sure ANTs is"
+    #             " installed and can be accessed from the command line.")
+    #try:
+    #    subprocess.run('antsApplyTransforms', stdout=subprocess.DEVNULL)
+    #except FileNotFoundError:
+    #    sys.exit("\nCould not find command 'antsApplyTransforms'. Make sure ANTs"
+    #             " is installed and can be accessed from the command line.")
 
 
     # make sure that saving related parameters are correct
@@ -1093,16 +1094,17 @@ def embedded_antspy_multi(source_images, target_images,
 
     print('\nEmbedded ANTs Registration Multi-contrasts')
     # check if ants is installed to raise sensible error
-    try:
-        subprocess.run('antsRegistration', stdout=subprocess.DEVNULL)
-    except FileNotFoundError:
-        sys.exit("\nCould not find command 'antsRegistration'. Make sure ANTs is"
-                 " installed and can be accessed from the command line.")
-    try:
-        subprocess.run('antsApplyTransforms', stdout=subprocess.DEVNULL)
-    except FileNotFoundError:
-        sys.exit("\nCould not find command 'antsApplyTransforms'. Make sure ANTs"
-                 " is installed and can be accessed from the command line.")
+    ## not needed here anymore :)
+    #try:
+    #    subprocess.run('antsRegistration', stdout=subprocess.DEVNULL)
+    #except FileNotFoundError:
+    #    sys.exit("\nCould not find command 'antsRegistration'. Make sure ANTs is"
+    #             " installed and can be accessed from the command line.")
+    #try:
+    #    subprocess.run('antsApplyTransforms', stdout=subprocess.DEVNULL)
+    #except FileNotFoundError:
+    #    sys.exit("\nCould not find command 'antsApplyTransforms'. Make sure ANTs"
+    #             " is installed and can be accessed from the command line.")
 
     # make sure that saving related parameters are correct
 
