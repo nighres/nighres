@@ -7,3 +7,4 @@ from nighres.microscopy.linear_fiber_mapping import linear_fiber_mapping
 from nighres.microscopy.linear_fiber_scaling import linear_fiber_scaling
 from nighres.microscopy.linear_fiber_interpolation import linear_fiber_interpolation
 from nighres.microscopy.linear_fiber_vector_averaging import linear_fiber_vector_averaging
+from nighres.microscopy.linear_fiber_vector_estimation import linear_fiber_vector_estimation

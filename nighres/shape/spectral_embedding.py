@@ -18,6 +18,7 @@ def spectral_embedding(label_image,
                     dims=1,
                     scaling=1.0,
                     msize=800,
+                    ref="none",
                     save_data=False, 
                     overwrite=False, 
                     output_dir=None,
@@ -27,7 +28,6 @@ def spectral_embedding(label_image,
     
     Derive a spectral Laplacian embedding from labelled regions, optionally taking underlying 
     contrasts into account (technique adapted from [1]).
-
 
     Parameters
     ----------
@@ -41,6 +41,8 @@ def spectral_embedding(label_image,
         Scaling of intra-regional contrast differences to use (default is 1.0)
     msize: int
         Target matrix size for subsampling (default is 800)
+    ref: str
+        Reference direction to orient directions ('none', 'X', 'Y', 'Z', default is 'none')
     save_data: bool, optional
         Save output data to file (default is False)
     output_dir: str, optional
@@ -116,8 +118,12 @@ def spectral_embedding(label_image,
             data = load_volume(contrast).get_fdata()
             algorithm.setContrastImageAt(n, nighresjava.JArray('float')(
                                         (data.flatten('F')).astype(float)))
-        algorithm.setScaling(scaling)  
-        algorithm.setMatrixSize(msize)
+            algorithm.setContrastDevAt(n, scaling)  
+        
+    algorithm.setMatrixSize(msize)
+    algorithm.setReferenceAxis(ref)
+    algorithm.setEigenGame(True,0.1,0.1)
+    #algorithm.setEigenGame(True,0.05,0.05)
 
     # execute
     try:
@@ -147,5 +153,139 @@ def spectral_embedding(label_image,
         return {'result': coord_file}
     else:
         return {'result': coord_img}
+
+
+def spectral_flatmap(label_image, coord_image,
+                    dims=2,
+                    size=1024,
+                    combined=True,
+                    projection=False,
+                    offset=0,
+                    save_data=False, 
+                    overwrite=False, 
+                    output_dir=None,
+                    file_name=None):
+
+    """ Spectral flat map building
+    
+    Derive a 2D or 3D flatmap from spectral Laplacian coordinates of labelled regions
+
+    Parameters
+    ----------
+    label_image: niimg
+        Image of the object(s) of interest
+    coord_image: niimg
+        Corresponding map of coordinates
+    dims: int
+        Number of kept dimensions in the representation (2 or 3, default is 2)
+    size: int
+        Target image size to generate (default is 1024)
+    combined: bool, optional
+        Whether to combine maps into a single representation (default is True)
+        Note: this requires more than 3 labels to work properly
+    projection: bool, optional
+        Whether to use a planar projection along first gradient rather than direct gradient space
+        representations (default is False)
+    offset: int, optional
+        Offset to use different combinations of spectral coordinates (default is 0)
+    save_data: bool, optional
+        Save output data to file (default is False)
+    output_dir: str, optional
+        Path to desired output directory, will be created if it doesn't exist
+    file_name: str, optional
+        Desired base name for output files with file extension
+        (suffixes will be added)
+
+    Returns
+    ----------
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files in brackets)
+
+        * result (niimg): Flat map (_sf-map)
+
+    Notes
+    ----------
+    
+
+    """
+
+    print("\nSpectral Shape Flat Mapping")
+
+    if save_data:
+        output_dir = _output_dir_4saving(output_dir, label_image)
+
+        flatmap_file = os.path.join(output_dir, 
+                            _fname_4saving(module=__name__,file_name=file_name,
+                                  rootfile=label_image,
+                                  suffix='sf-map'))
+
+        if overwrite is False \
+            and os.path.isfile(flatmap_file) :
+                output = {'result': flatmap_file}
+                return output
+
+    # start virtual machine, if not already running
+    try:
+        mem = _check_available_memory()
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
+    except ValueError:
+        pass
+    # create algorithm instance
+    algorithm = nighresjava.SpectralShapeEmbedding()
+
+    # load images and set dimensions and resolution
+    label_image = load_volume(label_image)
+    data = label_image.get_fdata()
+    affine = label_image.get_affine()
+    header = label_image.get_header()
+    resolution = [x.item() for x in header.get_zooms()]
+    dimensions = label_image.shape
+    dimensions4 = (dimensions[0],dimensions[1],dimensions[2],4)
+
+
+    algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+    algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
+
+    data = load_volume(label_image).get_fdata()
+    algorithm.setLabelImage(nighresjava.JArray('int')(
+                               (data.flatten('F')).astype(int).tolist()))
+    
+    data = load_volume(coord_image).get_fdata()
+    algorithm.setCoordinateImage(nighresjava.JArray('float')(
+                               (data.flatten('F')).astype(float)))
+                
+    # execute
+    try:
+        if projection: algorithm.buildSpectralProjectionMaps(size, combined)
+        else: algorithm.buildSpectralMaps(size, combined, offset)
+
+    except:
+        # if the Java module fails, reraise the error it throws
+        print("\n The underlying Java code did not execute cleanly: ")
+        print(sys.exc_info()[0])
+        raise
+        return
+
+    # Collect output
+    if combined:
+        flatdim = (size,size)
+    else:       
+        flatdim = (size,size,algorithm.getLabelNumber()-1)
+    
+    flatmap_data = np.reshape(np.array(
+                                    algorithm.getFlatMapImage(),
+                                    dtype=np.int32), flatdim, 'F')
+
+    # adapt header max for each image so that correct max is displayed
+    # and create nifiti objects
+    flatmap_img = nb.Nifti1Image(flatmap_data, None, None)
+
+    if save_data:
+        save_volume(flatmap_file, flatmap_img)
+        
+        return {'result': flatmap_file}
+    else:
+        return {'result': flatmap_img}
 
 
