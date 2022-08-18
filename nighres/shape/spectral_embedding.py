@@ -18,6 +18,8 @@ def spectral_embedding(label_image,
                     dims=1,
                     scaling=1.0,
                     msize=800,
+                    alpha=0.01,
+                    multiscale=False,
                     ref="none",
                     save_data=False, 
                     overwrite=False, 
@@ -41,6 +43,10 @@ def spectral_embedding(label_image,
         Scaling of intra-regional contrast differences to use (default is 1.0)
     msize: int
         Target matrix size for subsampling (default is 800)
+    alpha: float
+        Optimization step size in [0.001,0.1] (default is 0.01)
+    multiscale: boolean
+        Whether to run a multiscale or single scale eigengame (default is True)
     ref: str
         Reference direction to orient directions ('none', 'X', 'Y', 'Z', default is 'none')
     save_data: bool, optional
@@ -122,13 +128,16 @@ def spectral_embedding(label_image,
         
     algorithm.setMatrixSize(msize)
     algorithm.setReferenceAxis(ref)
-    algorithm.setEigenGame(True,0.01,0.01)
+    algorithm.setEigenGame(True,alpha,alpha)
+    #algorithm.setEigenGame(True,0.01,0.01)
     #algorithm.setEigenGame(True,0.1,0.1)
     #algorithm.setEigenGame(True,0.05,0.05)
 
     # execute
     try:
-        algorithm.execute()
+        #algorithm.execute()
+        if multiscale: algorithm.singleShapeRecursiveEmbedding();
+        else: algorithm.singleShapeEmbedding();
 
     except:
         # if the Java module fails, reraise the error it throws
