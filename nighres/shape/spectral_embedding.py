@@ -166,6 +166,7 @@ def spectral_embedding(label_image,
 
 
 def spectral_flatmap(label_image, coord_image,
+                    contrast_image=None,
                     dims=2,
                     size=1024,
                     combined=True,
@@ -186,6 +187,8 @@ def spectral_flatmap(label_image, coord_image,
         Image of the object(s) of interest
     coord_image: niimg
         Corresponding map of coordinates
+    contrast_image: niimg
+        Image of contrast  to map onto the object(s), optional
     dims: int
         Number of kept dimensions in the representation (2 or 3, default is 2)
     size: int
@@ -264,7 +267,13 @@ def spectral_flatmap(label_image, coord_image,
     data = load_volume(coord_image).get_fdata()
     algorithm.setCoordinateImage(nighresjava.JArray('float')(
                                (data.flatten('F')).astype(float)))
-                
+    
+    if contrast_image is not None:
+        data = load_volume(contrast_image).get_fdata()
+        algorithm.setContrastNumber(1)
+        algorithm.setContrastImageAt(0,nighresjava.JArray('float')(
+                                   (data.flatten('F')).astype(float)))
+           
     # execute
     try:
         if projection: algorithm.buildSpectralProjectionMaps(size, combined)
@@ -285,7 +294,7 @@ def spectral_flatmap(label_image, coord_image,
     
     flatmap_data = np.reshape(np.array(
                                     algorithm.getFlatMapImage(),
-                                    dtype=np.int32), flatdim, 'F')
+                                    dtype=np.float32), flatdim, 'F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
