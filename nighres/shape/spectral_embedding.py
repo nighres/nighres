@@ -17,9 +17,12 @@ def spectral_embedding(label_image,
                     contrasts=None,
                     dims=1,
                     scaling=1.0,
+                    factor=1.0,
                     msize=800,
-                    alpha=0.01,
+                    step=0.01,
+                    alpha=0.0,
                     multiscale=False,
+                    bg="boundary",
                     ref="none",
                     save_data=False, 
                     overwrite=False, 
@@ -41,12 +44,18 @@ def spectral_embedding(label_image,
         Number of kept dimensions in the representation (default is 1)
     scaling: float
         Scaling of intra-regional contrast differences to use (default is 1.0)
+    factor: float
+        Factor of distances for boundaries vs. regions (default is 1.0)
     msize: int
         Target matrix size for subsampling (default is 800)
-    alpha: float
+    step: float
         Optimization step size in [0.001,0.1] (default is 0.01)
+    alpha: float
+        Laplacian norm parameter in [0:1] (default is 0.0)
     multiscale: boolean
-        Whether to run a multiscale or single scale eigengame (default is True)
+        Whether to run a multiscale or single scale eigengame (default is False)
+    bg: str
+        Choice of how to treat the contrast background ('boundary', 'object', 'neutral', default is 'boundary')
     ref: str
         Reference direction to orient directions ('none', 'X', 'Y', 'Z', default is 'none')
     save_data: bool, optional
@@ -89,6 +98,7 @@ def spectral_embedding(label_image,
 
         if overwrite is False \
             and os.path.isfile(coord_file) :
+                print("skip computation (use existing results)")
                 output = {'result': coord_file}
                 return output
 
@@ -125,10 +135,12 @@ def spectral_embedding(label_image,
             algorithm.setContrastImageAt(n, nighresjava.JArray('float')(
                                         (data.flatten('F')).astype(float)))
             algorithm.setContrastDevAt(n, scaling)  
-        
+    
+    algorithm.setSpatialDev(factor)
     algorithm.setMatrixSize(msize)
     algorithm.setReferenceAxis(ref)
-    algorithm.setEigenGame(True,alpha,alpha)
+    algorithm.setExponentAlpha(alpha)
+    algorithm.setEigenGame(True,step,step)
     #algorithm.setEigenGame(True,0.01,0.01)
     #algorithm.setEigenGame(True,0.1,0.1)
     #algorithm.setEigenGame(True,0.05,0.05)
@@ -235,6 +247,7 @@ def spectral_flatmap(label_image, coord_image,
 
         if overwrite is False \
             and os.path.isfile(flatmap_file) :
+                print("skip computation (use existing results)")
                 output = {'result': flatmap_file}
                 return output
 
