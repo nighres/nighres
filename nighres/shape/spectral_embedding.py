@@ -140,7 +140,10 @@ def spectral_embedding(label_image,
     algorithm.setMatrixSize(msize)
     algorithm.setReferenceAxis(ref)
     algorithm.setExponentAlpha(alpha)
-    algorithm.setEigenGame(True,step,step)
+    if step>0:
+        algorithm.setEigenGame(True,step,step)
+    else:
+        algorithm.setEigenGame(False,step,step)
     #algorithm.setEigenGame(True,0.01,0.01)
     #algorithm.setEigenGame(True,0.1,0.1)
     #algorithm.setEigenGame(True,0.05,0.05)
