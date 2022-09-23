@@ -5,3 +5,4 @@ from nighres.shape.levelset_thickness import levelset_thickness
 from nighres.shape.intrinsic_coordinates import intrinsic_coordinates
 from nighres.shape.spectral_embedding import spectral_embedding
 from nighres.shape.spectral_embedding import spectral_flatmap
+from nighres.shape.spectral_embedding import spectral_tsne

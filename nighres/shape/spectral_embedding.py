@@ -324,3 +324,140 @@ def spectral_flatmap(label_image, coord_image,
         return {'result': flatmap_img}
 
 
+def spectral_tsne(label_image, coord_image,
+                    contrast_image=None,
+                    step=100.0,
+                    momentum=0.5,
+                    relaxation=0.5,
+                    iterations=1000,
+                    save_data=False, 
+                    overwrite=False, 
+                    output_dir=None,
+                    file_name=None):
+
+    """ Spectral tSNE tuning
+    
+    Use a t-SNE approach to further spread the spectral map
+
+    Parameters
+    ----------
+    label_image: niimg
+        Image of the object(s) of interest
+    coord_image: niimg
+        Corresponding map of coordinates
+    contrast_image: niimg
+        Image of contrast  to map onto the object(s), optional
+    step: float, optional
+        Step size for the update (default is 100)
+    momentum: float, optional
+        Momentum parameter for smoothing the update trajectory (default is 0.5)
+    relaxation: float, optional
+        Relaxation parameter for keeping the update close to initial conditions (default is 0.5)
+    iterations: int, optional
+        Maximum number of iterations (default is 1000)
+    save_data: bool, optional
+        Save output data to file (default is False)
+    output_dir: str, optional
+        Path to desired output directory, will be created if it doesn't exist
+    file_name: str, optional
+        Desired base name for output files with file extension
+        (suffixes will be added)
+
+    Returns
+    ----------
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files in brackets)
+
+        * result (niimg): Updated coordinate map (_st-coord)
+
+    Notes
+    ----------
+    
+
+    """
+
+    print("\nSpectral t-SNE updating")
+
+    if save_data:
+        output_dir = _output_dir_4saving(output_dir, label_image)
+
+        coord_file = os.path.join(output_dir, 
+                            _fname_4saving(module=__name__,file_name=file_name,
+                                  rootfile=label_image,
+                                  suffix='st-coord'))
+
+        if overwrite is False \
+            and os.path.isfile(coord_file) :
+                print("skip computation (use existing results)")
+                output = {'result': coord_file}
+                return output
+
+    # start virtual machine, if not already running
+    try:
+        mem = _check_available_memory()
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
+    except ValueError:
+        pass
+    # create algorithm instance
+    algorithm = nighresjava.SpectralShapeEmbedding()
+
+    # load images and set dimensions and resolution
+    label_image = load_volume(label_image)
+    data = label_image.get_fdata()
+    affine = label_image.get_affine()
+    header = label_image.get_header()
+    resolution = [x.item() for x in header.get_zooms()]
+    dimensions = label_image.shape
+    dimensions4 = (dimensions[0],dimensions[1],dimensions[2],4)
+
+
+    algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+    algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
+
+    data = load_volume(label_image).get_fdata()
+    algorithm.setLabelImage(nighresjava.JArray('int')(
+                               (data.flatten('F')).astype(int).tolist()))
+    
+    data = load_volume(coord_image).get_fdata()
+    algorithm.setCoordinateImage(nighresjava.JArray('float')(
+                               (data.flatten('F')).astype(float)))
+    
+    if contrast_image is not None:
+        data = load_volume(contrast_image).get_fdata()
+        algorithm.setContrastNumber(1)
+        algorithm.setContrastImageAt(0,nighresjava.JArray('float')(
+                                   (data.flatten('F')).astype(float)))
+    
+    algorithm.setTSNE(True, step, momentum, relaxation, iterations)
+    
+    # execute
+    try:
+         algorithm.singleShapeEmbeddingOverlapMinimization()
+
+    except:
+        # if the Java module fails, reraise the error it throws
+        print("\n The underlying Java code did not execute cleanly: ")
+        print(sys.exc_info()[0])
+        raise
+        return
+
+    # Collect output
+    coord_data = np.reshape(np.array(
+                                    algorithm.getCoordinateImage(),
+                                    dtype=np.float32), dimensions4, 'F')
+
+    # adapt header max for each image so that correct max is displayed
+    # and create nifiti objects
+    header['cal_min'] = np.nanmin(coord_data)
+    header['cal_max'] = np.nanmax(coord_data)
+    coord_img = nb.Nifti1Image(coord_data, affine, header)
+
+    if save_data:
+        save_volume(coord_file, coord_img)
+        
+        return {'result': coord_file}
+    else:
+        return {'result': coord_img}
+
+
