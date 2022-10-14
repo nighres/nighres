@@ -130,8 +130,8 @@ def fuzzy_cmeans(image, clusters=3, max_iterations=50, max_difference=0.01,
     print("load: "+str(image))
     img = load_volume(image)
     data = img.get_data()
-    affine = img.get_affine()
-    header = img.get_header()
+    affine = img.affine
+    header = img.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 

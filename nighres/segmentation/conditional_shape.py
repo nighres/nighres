@@ -182,8 +182,8 @@ def conditional_shape(target_images, structures, contrasts, background=1,
     print("load: "+str(target_images[0]))
     img = load_volume(target_images[0])
     data = img.get_data()
-    trg_affine = img.get_affine()
-    trg_header = img.get_header()
+    trg_affine = img.affine
+    trg_header = img.header
     trg_resolution = [x.item() for x in trg_header.get_zooms()]
     trg_dimensions = data.shape
 
@@ -212,8 +212,8 @@ def conditional_shape(target_images, structures, contrasts, background=1,
     # load a first image for dim, res
     img = load_volume(os.path.join(output_dir,shape_atlas_probas))
     pdata = img.get_data()
-    header = img.get_header()
-    affine = img.get_affine()
+    header = img.header
+    affine = img.affine
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = pdata.shape
     
@@ -486,8 +486,8 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
     # load a first image for dim, res
     img = load_volume(contrast_images[0][0])
     data = img.get_data()
-    header = img.get_header()
-    affine = img.get_affine()
+    header = img.header
+    affine = img.affine
     trg_resolution = [x.item() for x in header.get_zooms()]
     trg_dimensions = data.shape
     
@@ -741,8 +741,8 @@ def conditional_shape_updating(subjects, structures, contrasts,
     # load a first image for dim, res
     img = load_volume(contrast_images[0][0])
     data = img.get_data()
-    header = img.get_header()
-    affine = img.get_affine()
+    header = img.header
+    affine = img.affine
     trg_resolution = [x.item() for x in header.get_zooms()]
     trg_dimensions = data.shape
     
@@ -983,8 +983,8 @@ def conditional_shape_map_intensities(structures, contrasts, targets,
     # load a first image for dim, res
     img = load_volume(contrast_images[0])
     data = img.get_data()
-    header = img.get_header()
-    affine = img.get_affine()
+    header = img.header
+    affine = img.affine
     trg_resolution = [x.item() for x in header.get_zooms()]
     trg_dimensions = data.shape
     
