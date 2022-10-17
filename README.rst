@@ -32,7 +32,7 @@ Required packages
 
 In order to run Nighres, you will need:
 
-* python >= 3.5
+* python >= 3.8
 * Java JDK >= 1.7
 * JCC >= 3.0
 
