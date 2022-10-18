@@ -3,11 +3,15 @@
 
 *.pyc
 *~
+
 *.zip
 *.nt.bz2
 *.tar.gz
 *.tgz
+
 *.sif
+
+*.mat
 
 cbstools-public/
 imcn-imaging/

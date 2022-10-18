@@ -49,3 +49,24 @@ docker run --rm repronim/neurodocker:0.7.0 generate "${container_type}" \
     "${expose}" \
     --user neuro \
     --workdir /home/neuro >"${output_file}"
+
+# Needed as the copy command does not work (yet?) in neurodocker for singularity 
+if [ "${container_type}" == "singularity" ]; then
+
+    files_to_copy="build.sh cbstools-lib-files.sh setup.py setup.cfg MANIFEST.in README.rst LICENSE imcntk-lib-files.sh dependencies_sha.sh"
+
+    dest_folder='\/nighres\/'
+
+    str="%files\n"
+    for file in ${files_to_copy}; do
+        str="${str}${file} ${dest_folder}\n"
+    done
+
+    str="${str}nighres ${dest_folder}nighres\/\n"
+    str="${str}docker\/jupyter_notebook_config.py \/etc\/jupyter\/\n"
+    replace="${str}\n%post"
+
+    search="%post"
+    sed -i "s/$search/$replace/" $output_file
+
+fi
