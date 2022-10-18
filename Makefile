@@ -33,7 +33,7 @@ smoke_tests:
 # =============================================================================
 # Docker related content
 
-.PHONY: Dockerfile docker_build clean_tests
+.PHONY: Dockerfile NighresSingularity.def docker_build clean_tests
 
 clean_tests:
 	rm -rf nighres_examples
@@ -41,8 +41,14 @@ clean_tests:
 Dockerfile:
 	bash create_container_recipe.sh docker
 
+NighresSingularity.def:
+	bash create_container_recipe.sh singularity
+
 docker_build: Dockerfile
 	docker build . -t nighres:latest
+
+NighresSingularity.sif:
+	sudo singularity build Nighres.sif NighresSingularity.def
 
 docker_run: docker_build
 	mkdir -p $$PWD/examples

@@ -1,17 +1,29 @@
 #!/usr/bin/env bash
 # set -e -x
 
-# mini script to call neurodocker to create a container recipe
+# script to call neurodocker to create container recipes
+# 
+#  USAGE:
+# 
+# bash create_container_recipe.sh docker
+# 
+# bash create_container_recipe.sh singularity
 
 container_type="${1:-docker}"
 
+expose=""
+
 if [ "${container_type}" == "docker" ]; then
     output_file="Dockerfile"
+    expose="--expose 8888"
+
 elif [ "${container_type}" == "singularity" ]; then
     output_file="NighresSingularity.def"
+
 else
     echo "Unknown container type: ${container_type}. Must be 'docker' or 'singularity'."
     exit 1
+
 fi
 
 docker run --rm repronim/neurodocker:0.7.0 generate "${container_type}" \
@@ -34,6 +46,6 @@ docker run --rm repronim/neurodocker:0.7.0 generate "${container_type}" \
         conda_install="jupyterlab" \
         pip_install="." \
     --copy docker/jupyter_notebook_config.py /etc/jupyter \
-    --expose 8888 \
+    "${expose}" \
     --user neuro \
     --workdir /home/neuro >"${output_file}"

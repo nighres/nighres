@@ -8,3 +8,5 @@ nighres.egg-info
 nighres_examples
 examples
 doc
+
+*.sif
