@@ -11,6 +11,10 @@ install:
 	./build.sh
 	pip install .
 
+clean_env_file: conda-nighres.yml
+	sed -i '/^.*nighres.*/d' ./conda-nighres.yml
+	sed -i '/^prefix:.*/d' ./conda-nighres.yml
+
 update_dep_shasum:
 	cbstools_sha=$$(git ls-remote https://github.com/piloubazin/cbstools-public.git master | head -n 1 | cut -c1-7) && \
 		echo cbstools_sha=$${cbstools_sha} > dependencies_sha.sh
@@ -41,12 +45,12 @@ Dockerfile:
 		--install "openjdk-8-jdk git wget build-essential software-properties-common libffi-dev" \
 		--miniconda \
 			create_env="nighres" \
-			conda_install="python=3.9 pip jcc gcc_linux-64 gxx_linux-64 Nilearn" \
+			conda_install="python=3.9 pip jcc Nilearn" \
 			activate="true" \
 		--env JAVA_HOME="/docker-java-home" \
 		--env JCC_JDK="/docker-java-home" \
 		--run 'ln -svT "/usr/lib/jvm/java-8-openjdk-$$(dpkg --print-architecture)" /docker-java-home' \
-		--copy build.sh cbstools-lib-files.sh imcntk-lib-files.sh dependencies_sha.sh setup.py MANIFEST.in README.rst LICENSE /nighres/ \
+		--copy build.sh cbstools-lib-files.sh imcntk-lib-files.sh dependencies_sha.sh setup.py setup.cfg MANIFEST.in README.rst LICENSE /nighres/ \
 		--copy nighres /nighres/nighres \
 		--workdir /nighres \
 		--run "conda init && . /root/.bashrc && conda activate nighres && conda info --envs && ./build.sh && rm -rf cbstools-public imcn-imaging nighresjava/build nighresjava/src" \
