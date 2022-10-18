@@ -39,29 +39,7 @@ clean_tests:
 	rm -rf nighres_examples
 
 Dockerfile:
-	docker run --rm repronim/neurodocker:0.7.0 generate docker \
-		--base debian:stretch-slim \
-		--pkg-manager apt \
-		--install "openjdk-8-jdk git wget build-essential software-properties-common libffi-dev" \
-		--miniconda \
-			create_env="nighres" \
-			conda_install="python=3.9 pip jcc Nilearn" \
-			activate="true" \
-		--env JAVA_HOME="/docker-java-home" \
-		--env JCC_JDK="/docker-java-home" \
-		--run 'ln -svT "/usr/lib/jvm/java-8-openjdk-$$(dpkg --print-architecture)" /docker-java-home' \
-		--copy build.sh cbstools-lib-files.sh imcntk-lib-files.sh dependencies_sha.sh setup.py setup.cfg MANIFEST.in README.rst LICENSE /nighres/ \
-		--copy nighres /nighres/nighres \
-		--workdir /nighres \
-		--run "conda init && . /root/.bashrc && conda activate nighres && conda info --envs && ./build.sh && rm -rf cbstools-public imcn-imaging nighresjava/build nighresjava/src" \
-		--miniconda \
-			use_env="nighres" \
-			conda_install="jupyterlab" \
-			pip_install="." \
-		--copy docker/jupyter_notebook_config.py /etc/jupyter \
-		--expose 8888 \
-		--user neuro \
-		--workdir /home/neuro > Dockerfile
+	bash create_container_recipe.sh docker
 
 docker_build: Dockerfile
 	docker build . -t nighres:latest
