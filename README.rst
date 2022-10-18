@@ -36,13 +36,6 @@ In order to run Nighres, you will need:
 * Java JDK >= 1.7
 * JCC >= 3.0
 
-For some functionalities you need extra packages
-
-* Nipype & ANTs (for registration using ANTs)
-* dipy (for dots segmentation)
-* Pandas (for working with surface meshes)
-* Nilearn (for plotting in the examples)
-
 For more information on how to install Nighres or use its docker version, please see
 the `installation page of the documentation<https://nighres.readthedocs.io/en/latest/installation.html#installing-nighres>`_.
 
