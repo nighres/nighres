@@ -55,7 +55,7 @@ Make sure you have conda installed, otherwise see this
 
 If you have conda on your computer then create and activate the environment with::
 
-    conda env create --file conda-nighres.yml
+    conda env create --file conda-nighres.yml python=3.9
     conda activate nighres
 
 3. Navigate to the Nighres directory you downloaded and unpacked, and run the build script::
@@ -165,14 +165,6 @@ You can then run the nighres.simg using Singularity
 Optional dependencies
 ----------------------
 
-Working with surface mesh files
-
-* `pandas <https://pandas.pydata.org/>`_
-
-Plotting in the examples
-
-* `Nilearn <http://nilearn.github.io/>`_ and its dependencies, if Nilearn is not installed, plotting in the examples will be skipped and you can view the results in any other nifti viewer
-
 Using the docker image
 
 * `Docker <https://www.docker.com/>`_
@@ -181,18 +173,9 @@ Using the singularity image
 
 * `Singularity <https://singularityware.github.io/>`_
 
-Building the documentation
+The documentation dependencies can be installed with::
 
-* `sphinx <http://www.sphinx-doc.org/en/stable/>`_
-* `sphinx-gallery <https://sphinx-gallery.github.io/>`_
-* `matplotlib <http://matplotlib.org/>`_
-* `sphinx-rtd-theme <http://docs.readthedocs.io/en/latest/theme.html>`_ 
-* `pillow <https://python-pillow.org/>`_ 
-* `mock <https://pypi.org/project/mock/>`_
-
-Note that those are listed in ``doc/requirements.txt`` and can be installed with::
-
-    pip install -r requirements.txt
+    pip install .[doc]
 
 The doc can then be build from within the ``doc`` folder with::
 
