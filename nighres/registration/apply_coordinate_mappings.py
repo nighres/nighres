@@ -381,7 +381,7 @@ def apply_coordinate_mappings_2d(image, mapping1,
         Third coordinate mapping to apply
     mapping4 : niimg, optional
         Fourth coordinate mapping to apply
-    interpolation: {'nearest', 'linear'}
+    interpolation: {'nearest', 'linear', 'non-zero'}
         Interpolation method (default is 'nearest')
     padding: {'closest', 'zero', 'max'}
         Image padding method (default is 'closest')
