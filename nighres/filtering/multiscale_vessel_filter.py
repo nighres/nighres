@@ -196,8 +196,8 @@ def multiscale_vessel_filter(input_image,
     # load images and set dimensions and resolution
     input_image = load_volume(input_image)
     data = input_image.get_fdata()
-    affine = input_image.get_affine()
-    header = input_image.get_header()
+    affine = input_image.affine
+    header = input_image.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = input_image.shape
 

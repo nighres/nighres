@@ -114,8 +114,8 @@ def spectral_embedding(label_image,
     # load images and set dimensions and resolution
     label_image = load_volume(label_image)
     data = label_image.get_fdata()
-    affine = label_image.get_affine()
-    header = label_image.get_header()
+    affine = label_image.affine
+    header = label_image.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = label_image.shape
     dimensions4 = (dimensions[0],dimensions[1],dimensions[2],4)
@@ -271,8 +271,8 @@ def spectral_flatmap(label_image, coord_image,
     # load images and set dimensions and resolution
     label_image = load_volume(label_image)
     data = label_image.get_fdata()
-    affine = label_image.get_affine()
-    header = label_image.get_header()
+    affine = label_image.affine
+    header = label_image.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = label_image.shape
     dimensions4 = (dimensions[0],dimensions[1],dimensions[2],4)
@@ -423,8 +423,8 @@ def spectral_tsne(label_image, coord_image,
     # load images and set dimensions and resolution
     label_image = load_volume(label_image)
     data = label_image.get_fdata()
-    affine = label_image.get_affine()
-    header = label_image.get_header()
+    affine = label_image.affine
+    header = label_image.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = label_image.shape
     dimensions4 = (dimensions[0],dimensions[1],dimensions[2],4)

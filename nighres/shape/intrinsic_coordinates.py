@@ -93,8 +93,8 @@ def intrinsic_coordinates(label_image,
     # load images and set dimensions and resolution
     label_image = load_volume(label_image)
     data = label_image.get_fdata()
-    affine = label_image.get_affine()
-    header = label_image.get_header()
+    affine = label_image.affine
+    header = label_image.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = label_image.shape
     dimensions4 = (dimensions[0],dimensions[1],dimensions[2],3)

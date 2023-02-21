@@ -152,8 +152,8 @@ def massp(target_images, structures=31,
     print("load: "+str(target_images[0]))
     img = load_volume(target_images[0])
     data = img.get_fdata()
-    trg_affine = img.get_affine()
-    trg_header = img.get_header()
+    trg_affine = img.affine
+    trg_header = img.header
     trg_resolution = [x.item() for x in trg_header.get_zooms()]
     trg_dimensions = data.shape
 
@@ -206,8 +206,8 @@ def massp(target_images, structures=31,
     # load a first image for dim, res
     img = load_volume(shape_atlas_probas)
     pdata = img.get_fdata()
-    header = img.get_header()
-    affine = img.get_affine()
+    header = img.header
+    affine = img.affine
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = pdata.shape
     
@@ -401,8 +401,8 @@ def massp_atlasing(subjects, structures, contrasts,
     # load a first image for dim, res
     img = load_volume(contrast_images[0][0])
     data = img.get_fdata()
-    header = img.get_header()
-    affine = img.get_affine()
+    header = img.header
+    affine = img.affine
     trg_resolution = [x.item() for x in header.get_zooms()]
     trg_dimensions = data.shape
     
