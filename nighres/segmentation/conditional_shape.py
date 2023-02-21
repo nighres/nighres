@@ -155,7 +155,7 @@ def conditional_shape(target_images, structures, contrasts, background=1,
     except ValueError:
         pass
     # create instance
-    cspmax = nighresjava.ConditionalShapeSegmentation()
+    cspmax = nighresjava.ConditionalShapeSegmentationSlabs()
     cspmax.setNumberOfSubjectsObjectsBgAndContrasts(1,structures,background,contrasts)
     
     # set parameters
@@ -475,7 +475,7 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
     except ValueError:
         pass
     # create instance
-    cspmax = nighresjava.ConditionalShapeSegmentation()
+    cspmax = nighresjava.ConditionalShapeSegmentationSlabs()
 
     # set parameters
     cspmax.setNumberOfSubjectsObjectsBgAndContrasts(subjects,structures,background,contrasts)
@@ -972,7 +972,7 @@ def conditional_shape_map_intensities(structures, contrasts, targets,
     except ValueError:
         pass
     # create instance
-    cspmax = nighresjava.ConditionalShapeSegmentation()
+    cspmax = nighresjava.ConditionalShapeSegmentationSlabs()
 
     # set parameters
     cspmax.setNumberOfSubjectsObjectsBgAndContrasts(1,structures,1,contrasts)

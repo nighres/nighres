@@ -11,6 +11,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def apply_coordinate_mappings(image, mapping1,
                         mapping2=None, mapping3=None, mapping4=None,
                         interpolation="nearest", padding="closest",
+                        zero_border=0,
                         save_data=False, overwrite=False, output_dir=None,
                         file_name=None):
 
@@ -32,6 +33,8 @@ def apply_coordinate_mappings(image, mapping1,
         Interpolation method (default is 'nearest')
     padding: {'closest', 'zero', 'max'}
         Image padding method (default is 'closest')
+    zero_border: int
+        Number of border voxels to remove, for partial slab images (default is 0)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -91,6 +94,15 @@ def apply_coordinate_mappings(image, mapping1,
     aff = img.affine
     imgres = [x.item() for x in hdr.get_zooms()]
     imgdim = data.shape
+
+    # for partial view images, include the option to mask the borders
+    if (zero_border>0):
+        data[:zero_border,...] = 0
+        data[:,:zero_border,...] = 0
+        data[:,:,:zero_border,...] = 0
+        data[-zero_border:,...] = 0
+        data[:,-zero_border:,...] = 0
+        data[:,:,-zero_border:,...] = 0        
 
     # set parameters from input images
     if len(imgdim)==4:

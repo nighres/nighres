@@ -140,6 +140,7 @@ def spectral_embedding(label_image,
     algorithm.setMatrixSize(msize)
     algorithm.setReferenceAxis(ref)
     algorithm.setExponentAlpha(alpha)
+    algorithm.setBackgroundType(bg)
     if step>0:
         algorithm.setEigenGame(True,step,step)
     else:
@@ -184,8 +185,9 @@ def spectral_flatmap(label_image, coord_image,
                     contrast_image=None,
                     dims=2,
                     size=1024,
-                    combined=True,
+                    combined=False,
                     projection=False,
+                    contrast_mode='max',
                     offset=0,
                     save_data=False, 
                     overwrite=False, 
@@ -209,11 +211,14 @@ def spectral_flatmap(label_image, coord_image,
     size: int
         Target image size to generate (default is 1024)
     combined: bool, optional
-        Whether to combine maps into a single representation (default is True)
+        Whether to combine maps into a single representation (default is False)
         Note: this requires more than 3 labels to work properly
     projection: bool, optional
         Whether to use a planar projection along first gradient rather than direct gradient space
         representations (default is False)
+    contrast_mode: str, optional
+        How to represent the contrast on the map ("min", "max" or "sum", 
+        with "-bound" for boundary view, default is "max")
     offset: int, optional
         Offset to use different combinations of spectral coordinates (default is 0)
     save_data: bool, optional
@@ -289,6 +294,7 @@ def spectral_flatmap(label_image, coord_image,
         algorithm.setContrastNumber(1)
         algorithm.setContrastImageAt(0,nighresjava.JArray('float')(
                                    (data.flatten('F')).astype(float)))
+        algorithm.setContrastMode(contrast_mode)
            
     # execute
     try:
@@ -323,9 +329,13 @@ def spectral_flatmap(label_image, coord_image,
     else:
         return {'result': flatmap_img}
 
-
+## do not use ##
 def spectral_tsne(label_image, coord_image,
-                    contrast_image=None,
+                    contrasts=None,
+                    scaling=1.0,
+                    factor=1.0,
+                    alpha=0.0,
+                    bg="boundary",
                     step=100.0,
                     momentum=0.5,
                     relaxation=0.5,
@@ -345,8 +355,16 @@ def spectral_tsne(label_image, coord_image,
         Image of the object(s) of interest
     coord_image: niimg
         Corresponding map of coordinates
-    contrast_image: niimg
-        Image of contrast  to map onto the object(s), optional
+    contrasts: [niimg], optional
+        Additional images with relevant intra-regional contrasts, if required
+    scaling: float
+        Scaling of intra-regional contrast differences to use (default is 1.0)
+    factor: float
+        Factor of distances for boundaries vs. regions (default is 1.0)
+    alpha: float
+        Laplacian norm parameter in [0:1] (default is 0.0)
+    bg: str
+        Choice of how to treat the contrast background ('boundary', 'object', 'neutral', default is 'boundary')
     step: float, optional
         Step size for the update (default is 100)
     momentum: float, optional
@@ -423,17 +441,24 @@ def spectral_tsne(label_image, coord_image,
     algorithm.setCoordinateImage(nighresjava.JArray('float')(
                                (data.flatten('F')).astype(float)))
     
-    if contrast_image is not None:
-        data = load_volume(contrast_image).get_fdata()
-        algorithm.setContrastNumber(1)
-        algorithm.setContrastImageAt(0,nighresjava.JArray('float')(
-                                   (data.flatten('F')).astype(float)))
+    if contrasts is not None:
+        algorithm.setContrastNumber(len(contrasts))
+        for n,contrast in enumerate(contrasts):
+            data = load_volume(contrast).get_fdata()
+            algorithm.setContrastImageAt(n, nighresjava.JArray('float')(
+                                        (data.flatten('F')).astype(float)))
+            algorithm.setContrastDevAt(n, scaling)  
+    
+    algorithm.setSpatialDev(factor)
+    algorithm.setExponentAlpha(alpha)
+    algorithm.setBackgroundType(bg)
     
     algorithm.setTSNE(True, step, momentum, relaxation, iterations)
     
     # execute
     try:
-         algorithm.singleShapeEmbeddingOverlapMinimization()
+         #algorithm.singleShapeEmbeddingOverlapMinimization()
+         algorithm.simpleEmbeddingOverlapMinimization()
 
     except:
         # if the Java module fails, reraise the error it throws
