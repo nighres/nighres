@@ -117,13 +117,13 @@ def volumetric_layering(inner_levelset, outer_levelset,
 
     # load the data
     inner_img = load_volume(inner_levelset)
-    inner_data = inner_img.get_data()
+    inner_data = inner_img.get_fdata()
     hdr = inner_img.header
     aff = inner_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = inner_data.shape
 
-    outer_data = load_volume(outer_levelset).get_data()
+    outer_data = load_volume(outer_levelset).get_fdata()
 
     # set parameters from input images
     lamination.setDimensions(dimensions[0], dimensions[1], dimensions[2])

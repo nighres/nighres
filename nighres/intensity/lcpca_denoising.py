@@ -149,7 +149,7 @@ def lcpca_denoising(image_list, phase_list=None,
 
     # load first image and use it to set dimensions and resolution
     img = load_volume(image_list[0])
-    data = img.get_data()
+    data = img.get_fdata()
     #data = data[0:10,0:10,0:10]
     affine = img.affine
     header = img.header
@@ -179,7 +179,7 @@ def lcpca_denoising(image_list, phase_list=None,
     # important: set image number before adding images
     for idx, image in enumerate(image_list):
             #print('\nloading ('+str(idx)+'): '+image)
-            data = load_volume(image).get_data()
+            data = load_volume(image).get_fdata()
             #data = data[0:10,0:10,0:10]
             lcpca.setMagnitudeImageAt(idx, nighresjava.JArray('float')(
                                         (data.flatten('F')).astype(float)))
@@ -188,7 +188,7 @@ def lcpca_denoising(image_list, phase_list=None,
     if (phase_list!=None):
         for idx, image in enumerate(phase_list):
             #print('\nloading '+image)
-            data = load_volume(image).get_data()
+            data = load_volume(image).get_fdata()
             #data = data[0:10,0:10,0:10]
             lcpca.setPhaseImageAt(idx, nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
@@ -219,9 +219,10 @@ def lcpca_denoising(image_list, phase_list=None,
     for idx, image in enumerate(image_list):
         den_data = np.reshape(np.array(lcpca.getDenoisedMagnitudeImageAt(idx),
                                    dtype=np.float32), dimensions, 'F')
-        header['cal_min'] = np.nanmin(den_data)
-        header['cal_max'] = np.nanmax(den_data)
-        denoised = nb.Nifti1Image(den_data, affine, header)
+        hdr = load_volume(image).header
+        hdr['cal_min'] = np.nanmin(den_data)
+        hdr['cal_max'] = np.nanmax(den_data)
+        denoised = nb.Nifti1Image(den_data, affine, hdr)
         denoised_list.append(denoised)
 
         if save_data:
@@ -231,9 +232,10 @@ def lcpca_denoising(image_list, phase_list=None,
         for idx, image in enumerate(phase_list):
             den_data = np.reshape(np.array(lcpca.getDenoisedPhaseImageAt(idx),
                                        dtype=np.float32), dimensions, 'F')
-            header['cal_min'] = np.nanmin(den_data)
-            header['cal_max'] = np.nanmax(den_data)
-            denoised = nb.Nifti1Image(den_data, affine, header)
+            hdr = load_volume(image).header
+            hdr['cal_min'] = np.nanmin(den_data)
+            hdr['cal_max'] = np.nanmax(den_data)
+            denoised = nb.Nifti1Image(den_data, affine, hdr)
             denoised_list.append(denoised)
 
             if save_data:

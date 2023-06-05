@@ -129,7 +129,7 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
 
     # get dimensions and resolution from second inversion image
     inv2_img = load_volume(second_inversion)
-    inv2_data = inv2_img.get_data()
+    inv2_data = inv2_img.get_fdata()
     inv2_affine = inv2_img.affine
     inv2_hdr = inv2_img.header
     resolution = [x.item() for x in inv2_hdr.get_zooms()]
@@ -145,14 +145,14 @@ def mp2rage_skullstripping(second_inversion, t1_weighted=None, t1_map=None,
                          't1_weighted and t1_map')
     if t1_weighted is not None:
         t1w_img = load_volume(t1_weighted)
-        t1w_data = t1w_img.get_data()
+        t1w_data = t1w_img.get_fdata()
         t1w_affine = t1w_img.affine
         t1w_hdr = t1w_img.header
         algo.setT1weightedImage(nighresjava.JArray('float')(
                                       (t1w_data.flatten('F')).astype(float)))
     if t1_map is not None:
         t1map_img = load_volume(t1_map)
-        t1map_data = t1map_img.get_data()
+        t1map_data = t1map_img.get_fdata()
         t1map_affine = t1map_img.affine
         t1map_hdr = t1map_img.header
         algo.setT1MapImage(nighresjava.JArray('float')(

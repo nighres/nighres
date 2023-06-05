@@ -123,7 +123,7 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
 
     # load first image and use it to set dimensions and resolution
     img = load_volume(first_inversion[0])
-    data = img.get_data()
+    data = img.get_fdata()
     #data = data[0:10,0:10,0:10]
     affine = img.affine
     header = img.header
@@ -137,33 +137,33 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
     qpdmap.setFirstInversionMagnitude(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
 
-    data = load_volume(second_inversion[0]).get_data()
+    data = load_volume(second_inversion[0]).get_fdata()
     qpdmap.setSecondInversionMagnitude(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
 
     if (uni is None):
-        data = load_volume(first_inversion[1]).get_data()
+        data = load_volume(first_inversion[1]).get_fdata()
         qpdmap.setFirstInversionPhase(nighresjava.JArray('float')(
                                         (data.flatten('F')).astype(float)))
     
-        data = load_volume(second_inversion[1]).get_data()
+        data = load_volume(second_inversion[1]).get_fdata()
         qpdmap.setSecondInversionPhase(nighresjava.JArray('float')(
                                         (data.flatten('F')).astype(float)))
     else:
-        data = load_volume(uni).get_data()
+        data = load_volume(uni).get_fdata()
         qpdmap.setUniformImage(nighresjava.JArray('float')(
                                         (data.flatten('F')).astype(float)))
         
-    data = load_volume(t1map).get_data()
+    data = load_volume(t1map).get_fdata()
     qpdmap.setT1mapImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
 
-    data = load_volume(r2smap).get_data()
+    data = load_volume(r2smap).get_fdata()
     qpdmap.setR2smapImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
 
     if (b1map!=None):
-        data = load_volume(b1map).get_data()
+        data = load_volume(b1map).get_fdata()
         qpdmap.setB1mapImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
 

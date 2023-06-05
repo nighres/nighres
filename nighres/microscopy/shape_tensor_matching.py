@@ -8,30 +8,35 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def stack_intensity_mapping(image, references, mapped, weights = None,
-                            patch=2, search=3, median=False,
+def shape_tensor_matching(ani, theta, images, references, img_types=None,
+                            patch=3, search_dist=10.0, search_angle=5.0, threshold=0.2,
                             save_data=False, overwrite=False, output_dir=None,
                             file_name=None):
-    """ Stack intensity mapping
+    """ Shape tensor mapping
 
-    Uses a simple non-local means approach adapted from [1]_
+    Estimates depth displacement from shape tensor images
 
     Parameters
     ----------
-    image: niimg
-        Input 2D image
+    ani: niimg
+        Input 2D anisotropy image
+    theta: niimg
+        Input 2D angle image
+    images: [niimg]
+        Input 2D images for matching
     references: [niimg]
-        Reference 2D images to use for intensity mapping
-    mapped: [niimg]
-        Corresponding mapped 2D images to use for intensity mapping
-    weights: [float], optional
-        Weight factors for the 2D images (default is 1 for all)
+        Reference 2D images for matching
+    img_types: [boolean]
+        Image types for matching: True if angle, False if regular intensities 
+        (default is all False)
     patch: int, optional 
-        Maximum distance to define patch size (default is 2)
-    search: int, optional 
-        Maximum distance to define search window size (default is 3)
-    median: bool
-        Whether to use median instead of mean of the patches (default is False)
+        Maximum distance to define patch size (default is 3)
+    search_dist: float, optional 
+        Maximum distance to search (default is 10.0)
+    search_angle: float, optional 
+        Maximum distance to search (default is 5.0 degrees)
+    threshold: float, optional
+        Minimum anisotropy threshold for computation (default is 0.2)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -48,30 +53,24 @@ def stack_intensity_mapping(image, references, mapped, weights = None,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
-        * result (niimg): The intensity mapped input
+        * result (niimg): The estimated distance offset
 
     Notes
     ----------
     Original Java module by Pierre-Louis Bazin.
-
-
-    References
-    ----------
-    .. [1] P. Coupé, J.V. Manjón, V. Fonov, J. Pruessner, M. Robles, D.L. Collins,
-       Patch-based segmentation using expert priors: Application to hippocampus 
-       and ventricle msegmentation, NeuroImage, vol. 54, pp. 940--954, 2011.
+    
     """
 
-    print('\nStack Intensity Mapping')
+    print('\nShape Tensor Matching')
 
     # make sure that saving related parameters are correct
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, image)
+        output_dir = _output_dir_4saving(output_dir, ani)
 
         result_file = os.path.join(output_dir, 
                         _fname_4saving(module=__name__,file_name=file_name,
-                                   rootfile=image,
-                                   suffix='sim-img'))
+                                   rootfile=ani,
+                                   suffix='stm-dz'))
 
         if overwrite is False \
             and os.path.isfile(result_file) :
@@ -86,47 +85,56 @@ def stack_intensity_mapping(image, references, mapped, weights = None,
     except ValueError:
         pass
     # create instance
-    sim = nighresjava.NonlocalIntensityMapping()
+    stm = nighresjava.ShapeTensorMatching()
 
     # set parameters
     
     # load image and use it to set dimensions and resolution
-    img = load_volume(image)
-    data = img.get_fdata()
-    affine = img.affine
-    header = img.header
+    ani = load_volume(ani)
+    data = ani.get_fdata()
+    affine = ani.affine
+    header = ani.header
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 
-    sim.setDimensions(dimensions[0], dimensions[1], 1)
+    stm.setDimensions(dimensions[0], dimensions[1], 1)
        
-    sim.setInputImage(nighresjava.JArray('float')(
+    stm.setInputAni(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
     
-    sim.setReferenceNumber(len(references))
+    data = load_volume(theta).get_fdata()
+    stm.setInputTheta(nighresjava.JArray('float')(
+                                    (data.flatten('F')).astype(float)))
     
-    for idx,ref in enumerate(references):
-        data = load_volume(ref).get_fdata()
-        sim.setReferenceImageAt(idx,nighresjava.JArray('float')(
+    
+    
+    stm.setImageNumber(len(images))
+    
+    for idx,img in enumerate(images):
+        data = load_volume(img).get_fdata()
+        stm.setInputImageAt(idx,nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
 
-        data = load_volume(mapped[idx]).get_fdata()
-        sim.setMappedImageAt(idx,nighresjava.JArray('float')(
+        data = load_volume(references[idx]).get_fdata()
+        stm.setReferenceImageAt(idx,nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
-
-        if weights is not None:
-            sim.setWeightAt(idx, weights[idx])
+        
+        if img_types is None:
+            stm.setImageTypeAt(idx, False)
         else:
-            sim.setWeightAt(idx, 1.0)
-            
+            stm.setImageTypeAt(idx, img_types[idx])
+
     # set algorithm parameters
-    sim.setPatchDistance(patch)
-    sim.setSearchDistance(search)
-    sim.setUseMedian(median)
+    stm.setPatchSize(patch)
+    
+    stm.setSearchDistance(search_dist)
+    stm.setSearchAngle(search_angle)
+    
+    stm.setAniThreshold(threshold)
     
     # execute the algorithm
     try:
-        sim.execute2D()
+        stm.execute2D()
 
     except:
         # if the Java module fails, reraise the error it throws
@@ -136,7 +144,7 @@ def stack_intensity_mapping(image, references, mapped, weights = None,
         return
 
     # reshape output to what nibabel likes
-    data = np.reshape(np.array(sim.getMappedImage(),
+    data = np.reshape(np.array(stm.getMatchingImage(),
                                     dtype=np.float32), dimensions, 'F')
 
     # adapt header max for each image so that correct max is displayed

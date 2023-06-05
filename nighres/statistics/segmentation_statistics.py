@@ -30,7 +30,9 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
         "Voxels", "Volume", "Center_of_mass", "Mean_intensity",
         "Std_intensity", "Sum_intensity", "10_intensity","25_intensity",
         "50_intensity", "75_intensity","90_intensity", "Median_intensity",
-        "IQR_intensity", "SNR_intensity","rSNR_intensity", "Volumes", 
+        "IQR_intensity", "SNR_intensity","rSNR_intensity", 
+        "Direction_tensor",
+        "Volumes", 
         "Dice_overlap", "Jaccard_overlap", "Volume_difference", "False_positives"
         "False_negatives", "Dilated_Dice_overlap","Dilated_false_positive",
         "Dilated_false_negative", "Dilated_false_negative_volume",
@@ -108,7 +110,7 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
 
     # load first image and use it to set dimensions and resolution
     img = load_volume(segmentation)
-    data = img.get_data()
+    data = img.get_fdata()
     affine = img.affine
     header = img.header
     resolution = [x.item() for x in header.get_zooms()]
@@ -127,13 +129,13 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
 
     # other input images, if any
     if intensity is not None:
-        data = load_volume(intensity).get_data()
+        data = load_volume(intensity).get_fdata()
         stats.setIntensityImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
         stats.setIntensityName(_fname_4saving(module=__name__,rootfile=intensity))
 
     if template is not None:
-        data = load_volume(template).get_data()
+        data = load_volume(template).get_fdata()
         stats.setTemplateImage(nighresjava.JArray('int')(
                                     (data.flatten('F')).astype(int).tolist()))
         stats.setTemplateName(_fname_4saving(module=__name__,rootfile=template))

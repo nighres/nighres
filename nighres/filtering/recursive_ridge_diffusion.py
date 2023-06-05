@@ -16,7 +16,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
                               diffusion_factor=1.0,
                               similarity_scale=0.1,
                               max_iter=100, max_diff=1e-3,
-                              threshold=0.5, 
+                              threshold=0.5, rescale=False,
                               save_data=False, overwrite=False, output_dir=None,
                               file_name=None):
 
@@ -54,6 +54,8 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
         Maximum difference to stop the diffusion
     threshold: float
         Detection threshold for the structures to keep (default is 0.5)
+    rescale: bool
+        Rescale filter responses by median intensity difference (default is False)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -148,7 +150,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
 
     # load input image and use it to set dimensions and resolution
     img = load_volume(input_image)
-    data = img.get_data()
+    data = img.get_fdata()
     affine = img.affine
     header = img.header
     resolution = [x.item() for x in header.get_zooms()]
@@ -179,7 +181,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     rrd.setMaxIterations(max_iter)
     rrd.setMaxDifference(max_diff)
     rrd.setDetectionThreshold(threshold)
-    #rrd.setUseRatio(use_ratio)
+    rrd.setUseScale(rescale)
 
     rrd.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     rrd.setResolutions(resolution[0], resolution[1], resolution[2])
@@ -190,7 +192,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
 
     # input surface_levelset : dirty fix for the case where surface image not input
     try:
-        data = load_volume(surface_levelset).get_data()
+        data = load_volume(surface_levelset).get_fdata()
         rrd.setSurfaceLevelSet(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
     except:
@@ -198,7 +200,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
 
     # input location prior image : loc_prior is optional
     try:
-        data = load_volume(loc_prior).get_data()
+        data = load_volume(loc_prior).get_fdata()
         rrd.setLocationPrior(nighresjava.JArray('float')(
                                             (data.flatten('F')).astype(float)))
     except:

@@ -180,7 +180,7 @@ def load_mesh_data(surf_data, gii_darray=None):
     if isinstance(surf_data, str):
         if (surf_data.endswith('nii') or surf_data.endswith('nii.gz') or
                 surf_data.endswith('mgz')):
-            data = np.squeeze(nb.load(surf_data).get_data())
+            data = np.squeeze(nb.load(surf_data).get_fdata())
         elif (surf_data.endswith('curv') or surf_data.endswith('sulc') or
                 surf_data.endswith('thickness')):
             data = nb.freesurfer.io.read_morph_data(surf_data)
@@ -484,7 +484,8 @@ def _write_gifti(surf_mesh, points, faces, data=None):
     else:
         gii = nb.gifti.GiftiImage(darrays=[coord_array, face_array])
 
-    nb.gifti.write(gii, surf_mesh)
+    #nb.gifti.write(gii, surf_mesh)
+    gii.to_filename(surf_mesh)
 
 
 def _write_obj(surf_mesh, points, faces):

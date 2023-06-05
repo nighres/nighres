@@ -106,7 +106,7 @@ def topology_correction(image, shape_type,
     img = load_volume(image)
     hdr = img.header
     aff = img.affine
-    data = img.get_data()
+    data = img.get_fdata()
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = data.shape
 

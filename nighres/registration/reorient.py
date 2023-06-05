@@ -18,12 +18,9 @@ Y=1
 Z=2
 T=3
 
-def simple_align(source_image, target_image,
-                    copy_header=False,
-                    align_center=False, 
-                    rescale=False,
-                    data_type='intensity',
-                    ignore_affine=False, ignore_header=False,
+def reorient(source_image, new_orient='LAI',
+                    ref_image=None,
+                    orig_orient=None,
                     save_data=False, overwrite=False, output_dir=None,
                     file_name=None):
     """ Simple alignment routines
@@ -81,7 +78,7 @@ def simple_align(source_image, target_image,
     output_dir = _output_dir_4saving(output_dir, source_image) # needed for intermediate results
     if save_data:
         result_file = os.path.join(output_dir, 
-                        _fname_4saving(module=__name__,file_name=file_name,
+                        _fname_4saving(file_name=file_name,
                                    rootfile=source_image,
                                    suffix='al-img'))
 
@@ -89,7 +86,7 @@ def simple_align(source_image, target_image,
             and os.path.isfile(result_file) :
             
             print("skip computation (use existing results)")
-            output = {'result': result_file}
+            output = {'result': load_volume(result_file)}
             return output
 
 
@@ -205,7 +202,7 @@ def simple_align(source_image, target_image,
             src_center = np.zeros(4)
             trg_center = np.zeros(4)
             
-            if data_type == 'intensity':
+            if data_type is 'intensity':
                  for x in range(nsx):
                     for y in range(nsy):
                         for z in range(nsz):
@@ -220,7 +217,7 @@ def simple_align(source_image, target_image,
                             trg_center[Y] += y*target.get_fdata()[x,y,z]
                             trg_center[Z] += z*target.get_fdata()[x,y,z]
                             trg_center[T] += target.get_fdata()[x,y,z]
-            elif data_type == 'nonzero':
+            elif data_type is 'nonzero':
                  for x in range(nsx):
                     for y in range(nsy):
                         for z in range(nsz):
@@ -237,7 +234,7 @@ def simple_align(source_image, target_image,
                                 trg_center[Y] += y
                                 trg_center[Z] += z
                                 trg_center[T] += 1
-            elif data_typ == 'boundingbox':
+            elif data_typ is 'boundingbox':
                 src_center[X] = nsx/2
                 src_center[Y] = nsy/2
                 src_center[Z] = nsz/2
@@ -264,7 +261,7 @@ def simple_align(source_image, target_image,
         if rescale:
             src_size=0
             trg_size=0
-            if data_type == 'intensity':
+            if data_type is 'intensity':
                  for x in range(nsx):
                     for y in range(nsy):
                         for z in range(nsz):
@@ -273,7 +270,7 @@ def simple_align(source_image, target_image,
                     for y in range(nty):
                         for z in range(ntz):
                             trg_size += target.get_fdata()[x,y,z]
-            elif data_type == 'nonzero':
+            elif data_type is 'nonzero':
                  for x in range(nsx):
                     for y in range(nsy):
                         for z in range(nsz):
@@ -284,7 +281,7 @@ def simple_align(source_image, target_image,
                         for z in range(ntz):
                             if target.get_fdata()[x,y,z]>0:
                                 trg_size += 1
-            elif data_typ == 'boundingbox':
+            elif data_typ is 'boundingbox':
                 src_size = nsx*nsy*nsz
                 trg_size = ntx*nty*ntz
             
@@ -294,10 +291,9 @@ def simple_align(source_image, target_image,
         result = nb.Nifti1Image(source.get_fdata(), source.affine, source.header)
         result.update_header()
 
+    outputs = {'result': result}
+
     if save_data:
         save_volume(result_file, result)
-        outputs = {'result': result_file}
-    else:
-        outputs = {'result': result}
 
     return outputs

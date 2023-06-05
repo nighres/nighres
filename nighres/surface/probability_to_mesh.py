@@ -8,8 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving,_check_available_memory
 
 
 def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
-                     inclusive=True, use_resolutions=False,
-                     save_data=False, overwrite=False,
+                     inclusive=True, save_data=False, overwrite=False,
                      output_dir=None, file_name=None):
 
     """Levelset to mesh
@@ -28,9 +27,6 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
     inclusive: bool, optional
         Whether voxels at the exact 'level' value are inside the isosurface
         (default is True)
-    use_resolutions: bool, optional
-        Whether point coordinates are rescaled according to image resolutions
-        (default is False)
     save_data: bool, optional
         Save output data to file (default is False)
     overwrite: bool, optional
@@ -121,9 +117,6 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
         print(sys.exc_info()[0])
         raise
         return
-
-    # use the image scale for the points
-    if use_resolutions: algorithm.rescalePointList()
 
     # collect outputs
     npt = int(np.array(algorithm.getPointList(), dtype=np.float32).shape[0]/3)

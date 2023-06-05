@@ -98,7 +98,7 @@ def levelset_thickness(input_image,
 
     # load images and set dimensions and resolution
     input_image = load_volume(input_image)
-    data = input_image.get_data()
+    data = input_image.get_fdata()
     affine = input_image.affine
     header = input_image.header
     resolution = [x.item() for x in header.get_zooms()]
@@ -108,7 +108,7 @@ def levelset_thickness(input_image,
     algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
 
-    data = load_volume(input_image).get_data()
+    data = load_volume(input_image).get_fdata()
     if (shape_image_type == 'parcellation'):
         algorithm.setLabelImage(nighresjava.JArray('int')(
                                (data.flatten('F')).astype(int).tolist()))

@@ -108,7 +108,7 @@ def simple_skeleton(input_image,
 
     # load images and set dimensions and resolution
     input_image = load_volume(input_image)
-    data = input_image.get_data()
+    data = input_image.get_fdata()
     affine = input_image.affine
     header = input_image.header
     resolution = [x.item() for x in header.get_zooms()]
@@ -118,14 +118,16 @@ def simple_skeleton(input_image,
     skeleton.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     skeleton.setResolutions(resolution[0], resolution[1], resolution[2])
 
-    data = load_volume(input_image).get_data()
+    data = load_volume(input_image).get_fdata()
     skeleton.setShapeImage(nighresjava.JArray('float')(
                                (data.flatten('F')).astype(float)))
 
     # execute
     try:
-        skeleton.execute()
-
+        if dimensions[2]==1:
+            skeleton.execute2D()
+        else:
+            skeleton.execute3D()
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")
