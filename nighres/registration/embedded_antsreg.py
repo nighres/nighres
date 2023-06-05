@@ -1,10 +1,10 @@
-# basic dependencies
-import os
-import sys
-import subprocess
-from glob import glob
-import math
+from warnings import warn
 
+warn(
+    f"The module {__name__} is deprecated use 'embedded_antspy' instead.",
+    DeprecationWarning,
+    stacklevel=2,
+)
 # main dependencies: numpy, nibabel
 import numpy
 import nibabel

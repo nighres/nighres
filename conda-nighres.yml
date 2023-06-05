@@ -1,0 +1,11 @@
+name: nighres
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - pip
+  - jcc
+  - Nilearn
+

@@ -1,7 +1,6 @@
 # basic dependencies
 import os
 import sys
-import subprocess
 from glob import glob
 import math
 
