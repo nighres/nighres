@@ -14,7 +14,7 @@ PD from a MP2RAGEME dataset by performing the following steps:
    :func:`nighres.intensity.flash_t2s_fitting`, 
    :func:`nighres.intensity.mp2rageme_pd_mapping` [3]_
 4. Remove the skull and create a brain mask using
-   :func:`nighres.brain.mp2rage_skullstripping` [4]_
+   :func:`nighres.brain.intensity_based_skullstripping` [4]_
 """
 
 ############################################################################
@@ -29,6 +29,7 @@ import os
 
 in_dir = os.path.join(os.getcwd(), 'nighres_testing/data_sets')
 out_dir = os.path.join(os.getcwd(), 'nighres_testing/quantitative_mri')
+os.makedirs(out_dir, exist_ok=True)
 
 ############################################################################
 # We import the ``ants`` modules for inhomogeneity correction
@@ -95,9 +96,8 @@ denoising_results = nighres.intensity.lcpca_denoising(
 # .
 
 if not skip_plots:
-    plotting.plot_anat(dataset['inv1m'], cmap='gray')
-    plotting.plot_anat(denoising_results['denoised'][0], cmap='gray')
-
+    plotting.plot_anat(dataset['mp2rageme_mag'][0], vmax=100000.0, cmap='gray',cut_coords=[-75.0,90.0,-30.0])
+    plotting.plot_anat(denoising_results['denoised'][0], vmax=100000.0, cmap='gray',cut_coords=[-75.0,90.0,-30.0])
 
 
 ############################################################################
@@ -133,10 +133,6 @@ t1mapping_results = nighres.intensity.mp2rage_t1_mapping(
                                                  save_data=True,
                                                  output_dir=out_dir)
 
-if not skip_plots:
-    plotting.plot_anat(t1mapping_results['r1'], vmax=3.0, cmap='gray')
-    plotting.plot_anat(t1mapping_results['t1'], vmax=4.0, cmap='gray')
-
 ############################################################################
 # Quantitative T2* fitting
 # ----------------
@@ -153,10 +149,6 @@ t2sfitting_results = nighres.intensity.flash_t2s_fitting(
                                          save_data=True,
                                          output_dir=out_dir)
 
-if not skip_plots:
-    plotting.plot_anat(t2sfitting_results['r2s'], vmax=100.0 cmap='gray')
-    plotting.plot_anat(t2sfitting_results['t2s'], vmax=0.1, cmap='gray')
-
 ############################################################################
 # Semi-quantitative PD mapping
 # ----------------
@@ -165,7 +157,7 @@ if not skip_plots:
 # region value (e.g. ventricles, white matter...)
 
 pdmapping_results = nighres.intensity.mp2rageme_pd_mapping(
-                                        first_inversion=[inv1m,inv1p]                                  
+                                        first_inversion=[inv1m,inv1p],                                  
                                         second_inversion=[inv2e1m,inv2e1p],
                                         t1map=t1mapping_results['t1'], 
                                         r2smap=t2sfitting_results['r2s'],
@@ -177,10 +169,6 @@ pdmapping_results = nighres.intensity.mp2rageme_pd_mapping(
                                         N_excitations=150,
                                         save_data=True,
                                         output_dir=out_dir)
-
-if not skip_plots:
-    plotting.plot_anat(pdmapping_results['pd'], cmap='gray')
-
 
 ############################################################################
 # Quantitative susceptibility mapping (QSM)
@@ -199,17 +187,11 @@ if not skip_plots:
 # Only the second inversion, first echo image is required to calculate the brain mask. 
 # But if we input the T1map and/or T1w image as well, they will help refine the CSF
 # boundary.
-skullstripping_results = nighres.brain.mp2rage_skullstripping(
-                                            second_inversion=inv2e1m,
-                                            t1_weighted=t1mapping_results['uni'],
-                                            t1_map=t1mapping_results['t1'],
+skullstripping_results = nighres.brain.intensity_based_skullstripping(
+                                            main_image=inv2e1m,
+                                            extra_image=t1mapping_results['t1'],
                                             save_data=True,
                                             output_dir=out_dir)
-
-if not skip_plots:
-    plotting.plot_roi(skullstripping_results['brain_mask'], t1mapping_results['r1'],
-                      annotate=False, black_bg=False, draw_cross=False,
-                      cmap='gray')
 
 ############################################################################
 # Masking, Thresholding, and Reorientation
@@ -223,7 +205,7 @@ if not skip_plots:
 brainmask_file = skullstripping_results['brain_mask']
 brainmask = nighres.io.load_volume(brainmask_file).get_fdata()
 
-r1strip_file = t1mapping_results.replace('.nii','_brain.nii')
+r1strip_file = t1mapping_results['r1'].replace('.nii','_brain.nii')
 if not os.path.isfile(r1strip_file):
     print("Mask qR1")
     r1 = nighres.io.load_volume(t1mapping_results['r1'])
@@ -237,7 +219,7 @@ if not os.path.isfile(r2strip_file):
     r2 = nighres.io.load_volume(t2sfitting_results['r2s'])
     r2strip = nibabel.Nifti1Image(numpy.maximum(0.0,numpy.minimum(200.0,brainmask*r2.get_fdata())), r2.affine, r2.header)
     r2strip = nibabel.as_closest_canonical(r2strip)
-    nighres.io.save_volume(r2strip_file, r2strip)t2s_img = nighres.io.load_volume(t2smapping['t2s'])
+    nighres.io.save_volume(r2strip_file, r2strip)
 
 # for PD, we also need to run some inhomogeneity correction with N4
 pdn4_file = pdmapping_results['pd'].replace('.nii','_n4.nii')
@@ -261,9 +243,9 @@ if not os.path.isfile(pdstrip_file):
 # And we are done! Let's have a look at the final maps:
 
 if not skip_plots:
-    plotting.plot_anat(r1strip_file, cmap='gray')
-    plotting.plot_anat(r2strip_file, cmap='gray')
-    plotting.plot_anat(pdstrip_file, cmap='gray')
+    plotting.plot_anat(r1strip_file, vmax=2.0, cut_coords=[-75.0,90.0,-30.0], cmap='gray')
+    plotting.plot_anat(r2strip_file, vmax=100.0, cut_coords=[-75.0,90.0,-30.0], cmap='gray')
+    plotting.plot_anat(pdstrip_file, vmax=5.0, cut_coords=[-75.0,90.0,-30.0], cmap='gray')
     
 
 #############################################################################

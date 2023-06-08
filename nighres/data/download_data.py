@@ -317,7 +317,7 @@ def download_MP2RAGEME_testdata(data_dir, overwrite=False):
     sequence at 7 tesla. doi:10.1002/hbm.24490
     """
 
-    data_dir = os.path.join(data_dir, 'mp2rageme')
+    data_dir = os.path.join(data_dir, 'test_data')
     if not os.path.isdir(data_dir):
         os.makedirs(data_dir)
 
@@ -341,7 +341,7 @@ def download_MP2RAGEME_testdata(data_dir, overwrite=False):
                      'test-subject_mp2rageme-inv2e3p.nii.gz',
                      'test-subject_mp2rageme-inv2e4p.nii.gz',
                      'test-subject_mp2rageme-qt1.nii.gz',
-                     'test-subject_slab-inv2e1p.nii.gz',
+                     'test-subject_slab-inv2e1m.nii.gz',
                      'test-subject_slab-qt1.nii.gz',
                      ]]
 

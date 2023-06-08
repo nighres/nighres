@@ -38,10 +38,11 @@ require more memory than available on a typical laptop.
 
 import nighres
 import os
-import nibabel as nb
+import glob
 
 in_dir = os.path.join(os.getcwd(), 'nighres_testing/quantitative_mri')
 out_dir = os.path.join(os.getcwd(), 'nighres_testing/massp_parcellation')
+os.makedirs(out_dir, exist_ok=True)
 
 ############################################################################
 # We also try to import Nilearn plotting functions. If Nilearn is not
@@ -56,8 +57,8 @@ except ImportError:
 ############################################################################
 # Now we import data from the first testing pipeline, which processed a MP2RAGEME dataset, 
 # to generate quantitative R1, R2* and PD-weighted images, reoriented and skullstripped.
-qr1_file = glob.glob(in_dir+'*r1*_brain.nii*')
-qr2s_file = glob.glob(in_dir+'*r2s*_brain.nii*')
+qr1_file = glob.glob(in_dir+'/*r1_brain.nii*')
+qr2s_file = glob.glob(in_dir+'/*r2s_brain.nii*')
 if len(qr1_file)*len(qr2s_file)==0:
     print("input files not found: did you run the 'testing_01_quantitative_mri.py' script?")
     exit()
@@ -132,11 +133,10 @@ mapping = nighres.registration.apply_coordinate_mappings(
 # .
 
 if not skip_plots:
-    plotting.plot_anat(ants2['transformed_sources'][0],cut_coords=[0.0,0.0,0.0],
+    plotting.plot_anat(ants2['transformed_sources'][0],cut_coords=[-75.0,90.0,-30.0],
                       annotate=False,  draw_cross=False)
-    plotting.plot_anat(dataset['qr1'],cut_coords=[0.0,0.0,0.0],
+    plotting.plot_anat(dataset['qr1'],cut_coords=[-75.0,90.0,-30.0], vmax=2.0,
                       annotate=False,  draw_cross=False)
-    plotting.show()
 ############################################################################
 
 
@@ -147,6 +147,7 @@ if not skip_plots:
 massp = nighres.parcellation.massp(target_images=[dataset['qr1'],dataset['qr2s']],
                                 map_to_target=mapping['result'], 
                                 max_iterations=120, max_difference=0.1,
+                                intensity_prior=0.01,
                                 save_data=True, file_name="sample-subject",
                                 output_dir=out_dir, overwrite=False)
 
@@ -154,11 +155,11 @@ massp = nighres.parcellation.massp(target_images=[dataset['qr1'],dataset['qr2s']
 ############################################################################
 # Now we look at the topology-constrained segmentation MGDM created
 if not skip_plots:
-    plotting.plot_roi(massp['max_label'], dataset['qr1'],
-                      annotate=False, black_bg=False, draw_cross=False,
+    plotting.plot_roi(massp['max_label'], dataset['qr1'],cut_coords=[-75.0,90.0,-30.0],
+                      annotate=False, black_bg=True, draw_cross=False,
                       cmap='cubehelix')
-    plotting.plot_img(massp['max_proba'],
-                      vmin=0, vmax=1, cmap='gray',  colorbar=True,
+    plotting.plot_img(massp['max_proba'],cut_coords=[-75.0,90.0,-30.0],
+                      vmin=0, vmax=1, cmap='gray',  colorbar=False,
                       annotate=False,  draw_cross=False)
 
 ############################################################################

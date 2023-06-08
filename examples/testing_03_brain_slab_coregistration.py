@@ -29,6 +29,7 @@ import os
 
 in_dir = os.path.join(os.getcwd(), 'nighres_testing/data_sets')
 out_dir = os.path.join(os.getcwd(), 'nighres_testing/brain_registration')
+os.makedirs(out_dir, exist_ok=True)
 
 ############################################################################
 # We also try to import Nilearn plotting functions. If Nilearn is not
@@ -54,15 +55,15 @@ dataset = nighres.data.download_MP2RAGEME_testdata(in_dir)
 # to calculate the brain mask. But if we input the T1map and T1w image as well,
 # they will be masked for us. We also save the outputs in the ``out_dir``
 # specified above and use a subject ID as the base file_name.
-skullstripping_results1 = nighres.brain.mp2rage_skullstripping(
-                                            second_inversion=dataset['mp2rageme_inv2e1'],
-                                            t1_map=dataset['mp2rageme_qt1'],
+skullstripping_results1 = nighres.brain.intensity_based_skullstripping(
+                                            main_image=dataset['mp2rageme_inv2e1'],
+                                            extra_image=dataset['mp2rageme_qt1'],
                                             save_data=True,
                                             output_dir=out_dir)
 
-skullstripping_results2 = nighres.brain.mp2rage_skullstripping(
-                                            second_inversion=dataset['slab_inv2e1'],
-                                            t1_map=dataset['slab_qt1'],
+skullstripping_results2 = nighres.brain.intensity_based_skullstripping(
+                                            main_image=dataset['slab_inv2e1'],
+                                            extra_image=dataset['slab_qt1'],
                                             save_data=True,
                                             output_dir=out_dir)
 
@@ -83,10 +84,10 @@ skullstripping_results2 = nighres.brain.mp2rage_skullstripping(
 
 if not skip_plots:
     plotting.plot_roi(skullstripping_results1['brain_mask'], dataset['mp2rageme_qt1'],
-                      annotate=False, black_bg=False, draw_cross=False,
+                      annotate=False, black_bg=True, draw_cross=False,
                       cmap='autumn')
     plotting.plot_roi(skullstripping_results2['brain_mask'], dataset['slab_qt1'],
-                      annotate=False, black_bg=False, draw_cross=False,
+                      annotate=False, black_bg=True, draw_cross=False,
                       cmap='autumn')
 ############################################################################
 
@@ -95,26 +96,25 @@ if not skip_plots:
 # --------------------
 # Next, we use the masked data as input for co-registration. The T1 maps are
 # used here as they are supposed to be more similar
+#
+# Note: the SyN algorithm is fairly complex, and comes with a lot of options.
+# the nighres wrapper comes with presets and additional helper features that
+# aim to make the algorithm easier to work with, e.g. voxel-to-voxel mappings
+# or automated mask boundary smoothing.
 
 syn_results = nighres.registration.embedded_antspy(
-                        source_image=skullstripping_results1['t1map_masked'],
-                        target_image=skullstripping_results2['t1map_masked'],
+                        source_image=skullstripping_results1['extra_masked'],
+                        target_image=skullstripping_results2['extra_masked'],
                         run_rigid=True, run_affine=True, run_syn=True,
                         rigid_iterations=1000, affine_iterations=1000, 
                         coarse_iterations=40,
-                        medium_iterations=0, fine_iterations=0,
+                        medium_iterations=20, fine_iterations=10,
                         cost_function='MutualInformation',
-                        interpolation='NearestNeighbor',
+                        interpolation='Linear',
+                        mask_zero=False, smooth_mask=0.1,
+                        ignore_affine=True, ignore_header=False,
                         save_data=True, 
                         output_dir=out_dir)
-
-############################################################################
-# Now we look at the coregistered image that SyN created
-if not skip_plots:
-    plotting.plot_img(syn_results['transformed_source'],
-                      annotate=False,  draw_cross=False)
-
-############################################################################
 
 #############################################################################
 # Apply deformations to images
@@ -123,12 +123,16 @@ if not skip_plots:
 deformed = nighres.registration.apply_coordinate_mappings(
                         image=dataset['mp2rageme_qt1'],
                         mapping1=syn_results['mapping'],
+                        zero_border=1,
+                        interpolation='linear',
                         save_data=True, 
                         output_dir=out_dir)
 
 inverse = nighres.registration.apply_coordinate_mappings(
                         image=dataset['slab_qt1'],
                         mapping1=syn_results['inverse'],
+                        zero_border=2,
+                        interpolation='linear',
                         save_data=True, 
                         output_dir=out_dir)
 
@@ -136,9 +140,9 @@ inverse = nighres.registration.apply_coordinate_mappings(
 # Now we look at the coregistered images from applying the deformation
 if not skip_plots:
     plotting.plot_img(deformed['result'],
-                      annotate=False,  draw_cross=False)
+                      annotate=False,  black_bg=False, draw_cross=False)
     plotting.plot_img(inverse['result'],
-                      annotate=False,  draw_cross=False)
+                      annotate=False,  black_bg=False, draw_cross=False)
 
 ############################################################################
 

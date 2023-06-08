@@ -35,6 +35,7 @@ import glob
 
 in_dir = os.path.join(os.getcwd(), 'nighres_testing/quantitative_mri')
 out_dir = os.path.join(os.getcwd(), 'nighres_testing/cortical_laminar_analysis')
+os.makedirs(out_dir, exist_ok=True)
 
 ############################################################################
 # We also import the ``numpy`` and ``nibabel`` modules to perform basic image
@@ -64,10 +65,11 @@ except ImportError:
     skip_3d = True
     print('Pyvista could not be imported, 3D rendering will be skipped')
 
+
 ############################################################################
 # Now we import data from the first testing pipeline, which processed a MP2RAGEME dataset, 
 # to generate quantitative R1, R2* and PD-weighted images, reoriented and skullstripped.
-dataset = glob.glob(in_dir+'*r1*_brain.nii*')
+dataset = glob.glob(in_dir+'/*r1_brain.nii*')
 if len(dataset)==0:
     print("input file not found: did you run the 'testing_01_quantitative_mri.py' script?")
     exit()
@@ -101,7 +103,7 @@ mgdm_results = nighres.brain.mgdm_segmentation(
 ############################################################################
 # Now we look at the topology-constrained segmentation MGDM created
 if not skip_plots:
-    plotting.plot_img(mgdm_results['segmentation'],
+    plotting.plot_img(mgdm_results['segmentation'],cut_coords=[-75.0,90.0,-30.0],
                       vmin=1, vmax=50, cmap='cubehelix',  colorbar=True,
                       annotate=False,  draw_cross=False)
 
@@ -128,10 +130,10 @@ cortex = nighres.brain.extract_brain_region(segmentation=mgdm_results['segmentat
 # your favourite interactive viewer and scroll through the volume.
 #
 if not skip_plots:
-    plotting.plot_img(cortex['region_proba'],
+    plotting.plot_img(cortex['region_proba'],cut_coords=[-75.0,90.0,-30.0],
                       vmin=0, vmax=1, cmap='autumn',  colorbar=True,
                       annotate=False,  draw_cross=False)
-    plotting.plot_img(cortex['inside_proba'],
+    plotting.plot_img(cortex['inside_proba'],cut_coords=[-75.0,90.0,-30.0],
                       vmin=0, vmax=1, cmap='autumn',  colorbar=True,
                       annotate=False,  draw_cross=False)
 ############################################################################
@@ -156,7 +158,7 @@ cruise = nighres.cortex.cruise_cortex_extraction(
 ###########################################################################
 # Now we look at the topology-constrained segmentation CRUISE created
 if not skip_plots:
-    plotting.plot_img(cruise['cortex'],
+    plotting.plot_img(cruise['cortex'],cut_coords=[-75.0,90.0,-30.0],
                       vmin=0, vmax=2, cmap='cubehelix',  colorbar=True,
                       annotate=False,  draw_cross=False)
 
@@ -181,7 +183,7 @@ depth = nighres.laminar.volumetric_layering(
 ###########################################################################
 # Now we look at the laminar depth estimates
 if not skip_plots:
-    plotting.plot_img(depth['depth'],
+    plotting.plot_img(depth['depth'],cut_coords=[-75.0,90.0,-30.0],
                       vmin=0, vmax=1, cmap='autumn',  colorbar=True,
                       annotate=False,  draw_cross=False)
 
@@ -219,34 +221,43 @@ laminar_profile = nighres.laminar.profile_sampling(
                         save_data=True,
                         output_dir=out_dir)
 
-# now we display the result on the original and inflated surface.
-# We will use the T1 values from the central layer boundary
+# Now we display the result on the original and inflated surface.
+# We will use the T1 values sampled on  the layer boundaries, which is a 4D image (with the 4th
+# dimension the location along the cortical depth). As a result, the mesh will have multiple
+# values associated, which may not always be well handled by surface viewers.
+# For simplicity, we extract the values from the middle depth layer boundary.
+sample2_file = laminar_profile['result'].replace('.nii','_bound2.nii')
+if not os.path.isfile(sample2_file):
+    print("Extract values from boundary 2 (middle of the cortical depth)")
+    sample2 = nighres.io.load_volume(laminar_profile['result'])
+    sample2 = nibabel.Nifti1Image(sample2.get_fdata()[:,:,:,2], sample2.affine, sample2.header)
+    nighres.io.save_volume(sample2_file, sample2)
+    
 mapped_surface = nighres.surface.surface_mesh_mapping(
-                        intensity_image=laminar_profile['result'][2], 
+                        intensity_image=sample2_file, 
                         surface_mesh=cortical_surface['result'], 
                         inflated_mesh=inflated_surface['result'],
+                        mapping_method="highest_value",
                         save_data=True, 
                         output_dir=out_dir)
 
 #############################################################################
 
-
-#############################################################################
-# Now we plot the surface results
-if not skip_3d:
-    pyvista.start_xvfb()
-    surface = pyvista.read(mapped_surface['original'])
-    surface.plot(interactive=False,notebook=False,jupyter_backend='static')
     
-    surface = pyvista.read(mapped_surface['inflated'])
-    surface.plot(interactive=False,notebook=False,jupyter_backend='static')
-    
-
 #############################################################################
 # If the example is not run in a jupyter notebook, render the plots:
 if not skip_plots:
     plotting.show()
 
+#############################################################################
+# Now we plot the surface results
+if not skip_3d:
+    surface = pyvista.read(mapped_surface['original'])
+    surface.plot(interactive=True,window_size=[256,256])
+    
+    surface = pyvista.read(mapped_surface['inflated'])
+    surface.plot(interactive=True,window_size=[256,256])
+    
 #############################################################################
 # References
 # -----------
