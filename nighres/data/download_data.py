@@ -342,8 +342,7 @@ def download_MP2RAGEME_testdata(data_dir, overwrite=False):
                      'test-subject_mp2rageme-inv2e4p.nii.gz',
                      'test-subject_mp2rageme-qt1.nii.gz',
                      'test-subject_slab-inv2e1m.nii.gz',
-                     'test-subject_slab-qt1.nii.gz',
-                     ]]
+                     'test-subject_slab-qt1.nii.gz']]
 
     for source, target in zip(file_sources, file_targets):
 
