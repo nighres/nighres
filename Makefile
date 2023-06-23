@@ -22,13 +22,10 @@ update_dep_shasum:
 		echo imcntk_sha=$${imcntk_sha} >> dependencies_sha.sh
 
 smoke_tests:
-	python3 examples/example_01_tissue_classification.py
-	python3 examples/example_02_cortical_depth_estimation.py
-	python3 examples/example_03_brain_coregistration.py
-	python3 examples/example_04_multiatlas_segmentation.py
-	python3 examples/example_05_vascular_reconstruction.py
-	python3 examples/example_06_dots_segmentation.py
-	python3 examples/example_07_massp_subcortex_parcellation.py 
+	python3 examples/testing_01_quantitative_mri.py
+	python3 examples/testing_02_cortical_laminar_analysis.py
+	python3 examples/testing_03_brain_slab_coregistration.py
+	python3 examples/testing_04_massp_subcortex_parcellation.py 
 
 # =============================================================================
 # Docker related content
@@ -57,28 +54,28 @@ docker_run: docker_build
 		--volume $$PWD/examples:/home/neuro/examples \
 		nighres:latest \
 			jupyter-lab --no-browser --ip 0.0.0.0
-docker_test: docker_test_cortical_depth_estimation docker_test_coregistration
+docker_test: docker_test_cortical_laminar_analysis docker_test_slab_coregistration
 
-docker_test_classification: docker_build
-	mkdir -p $$PWD/nighres_examples
+docker_test_quantitative_mri: docker_build
+	mkdir -p $$PWD/nighres_testing
 	docker run -it --rm \
 		--volume $$PWD/examples:/examples \
-		--volume $$PWD/nighres_examples:/home/neuro/nighres_examples \
+		--volume $$PWD/nighres_testing:/home/neuro/nighres_testing \
 		nighres:latest \
-			python3 /examples/example_01_tissue_classification.py 
+			python3 /examples/testing_01_quantitative_mri.py 
 
-docker_test_cortical_depth_estimation: docker_test_classification
-	mkdir -p $$PWD/nighres_examples
+docker_test_cortical_laminar_analysis: docker_test_quantitative_mri
+	mkdir -p $$PWD/nighres_testing
 	docker run -it --rm \
 		--volume $$PWD/examples:/examples \
-		--volume $$PWD/nighres_examples:/home/neuro/nighres_examples \
+		--volume $$PWD/nighres_testing:/home/neuro/nighres_testing \
 		nighres:latest \
-			python3 /examples/example_02_cortical_depth_estimation.py 
+			python3 /examples/testing_02_cortical_laminar_analysis.py 
 
-docker_test_coregistration:
-	mkdir -p $$PWD/nighres_examples
+docker_test_slab_coregistration: 
+	mkdir -p $$PWD/nighres_testing
 	docker run -it --rm \
 		--volume $$PWD/examples:/examples \
-		--volume $$PWD/nighres_examples:/home/neuro/nighres_examples \
+		--volume $$PWD/nighres_testing:/home/neuro/nighres_testing \
 		nighres:latest \
-			python3 /examples/example_03_brain_coregistration.py
+			python3 /examples/testing_03_brain_slab_coregistration.py
