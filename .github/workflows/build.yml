@@ -37,9 +37,8 @@ jobs:
         python-version: ["3.8", "3.9", "3.10"]
         cmd:
           [
-            "python3 examples/example_01*.py",
-            "python3 examples/example_04*.py",
-            "python3 examples/example_05*.py",
+            "python3 examples/testing_01*.py",
+            "python3 examples/testing_03*.py",
           ]
 
     runs-on: ${{ matrix.os }}
