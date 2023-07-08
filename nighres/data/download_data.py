@@ -399,13 +399,17 @@ def download_AHEAD_template(data_dir=None, overwrite=False):
 
     figshare = 'https://uvaauas.figshare.com/ndownloader/files/'
 
+# older version of the template
+#    file_sources = [figshare + x for x in
+#                    ['22679537','22679543','22679546','']]
     file_sources = [figshare + x for x in
-                    ['22679537','22679543','22679546']]
+                    ['34892901','34892907','34892883','41498217']]
 
     file_targets = [os.path.join(data_dir, filename) for filename in
                     ['ahead_med_qr1.nii.gz',
                      'ahead_med_qr2s.nii.gz',
-                     'ahead_med_qsm.nii.gz']]
+                     'ahead_med_qsm.nii.gz',
+                     'ahead_med_qpd.nii.gz']]
 
     for source, target in zip(file_sources, file_targets):
 
@@ -418,4 +422,6 @@ def download_AHEAD_template(data_dir=None, overwrite=False):
 
     return {'qr1': file_targets[0],
             'qr2s': file_targets[1],
-            'qsm': file_targets[2]}
+            'qsm': file_targets[2],
+            'qpd': file_targets[3]}
+
