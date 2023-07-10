@@ -894,6 +894,7 @@ def conditional_shape_map_intensities(structures, contrasts, targets,
                       shape_atlas_probas=None, shape_atlas_labels=None, 
                       intensity_atlas_hist=None,
                       skeleton_atlas_probas=None, skeleton_atlas_labels=None, 
+                      smoothing=1.0,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Conditioanl Shape Parcellation Intensity Mapping
@@ -922,6 +923,9 @@ def conditional_shape_map_intensities(structures, contrasts, targets,
         Pre-computed skeleton atlas from the shape levelsets (replacing them)
     skeleton_atlas_labels: niimg
         Pre-computed skeleton atlas from the shape levelsets (replacing them)
+    smoothing: float
+        Standard deviation in number of bins used in histogram smoothing 
+        (default is 1)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -978,6 +982,7 @@ def conditional_shape_map_intensities(structures, contrasts, targets,
     cspmax.setNumberOfSubjectsObjectsBgAndContrasts(1,structures,1,contrasts)
     cspmax.setOptions(True, False, False, False, True)
     cspmax.setNumberOfTargetContrasts(targets)
+    cspmax.setHistogramSmoothing(smoothing)
      
     # load target image for parameters
     # load a first image for dim, res
