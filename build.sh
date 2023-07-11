@@ -11,10 +11,11 @@ unset CDPATH; cd "$( dirname "${BASH_SOURCE[0]}" )"; cd "$(pwd -P)"
 fatal() { echo -e "$1"; exit 1; }
 function join_by { local IFS="$1"; shift; echo "$*"; }
 
+source dependencies_sha.sh
 cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
 imcntk_repo="https://github.com/piloubazin/imcn-imaging.git"
 
-release="release-1.4.0"
+release="release-1.5.0"
 
 # Check the system has the necessary commands
 hash wget tar javac jar python3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3"
@@ -46,15 +47,13 @@ test -f "${python_include_path}/Python.h" || fatal 'This script requires python 
 # Get cbstools git clone
 test -d cbstools-public && (
     cd cbstools-public
-	#git checkout $release
-	git checkout master
+	git checkout ${cbstools_sha}
 	git pull
 	cd ..
 ) || (
-	git clone $cbstools_repo
+	git clone $cbstools_repo --depth 1
 	cd cbstools-public
-	#git checkout $release
-	git checkout master
+	git checkout ${cbstools_sha}
 	git pull
 	cd ..
 )
@@ -107,13 +106,13 @@ cd ..
 # Get imcntk git clone
 test -d imcn-imaging && (
     cd imcn-imaging
-	git checkout master
+	git checkout ${imcntk_sha}
 	git pull
 	cd ..
 ) || (
-	git clone $imcntk_repo
+	git clone $imcntk_repo --depth 1
 	cd imcn-imaging
-	git checkout master
+	git checkout ${imcntk_sha}
 	git pull
 	cd ..
 )
@@ -128,7 +127,7 @@ deps_list=$(join_by ":" "${deps[@]}")
 
 # List of library files needed to run the cbstools core functions
 source imcntk-lib-files.sh
-echo $imcntk_files # result is in $cbstools_files
+echo ${imcntk_files} # result is in $cbstools_files
 
 imcntk_list=$(join_by " " "${imcntk_files[@]}")
 
@@ -145,7 +144,7 @@ javac_opts=(
 
 echo "Compiling..."
 cd imcn-imaging
-javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java $imcntk_list
+javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java ${imcntk_list}
 
 echo "Assembling..."
 jar uf ../nighresjava/src/nighresjava.jar nl/uva/imcn/algorithms/*.class

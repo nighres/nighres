@@ -484,7 +484,8 @@ def _write_gifti(surf_mesh, points, faces, data=None):
     else:
         gii = nb.gifti.GiftiImage(darrays=[coord_array, face_array])
 
-    nb.gifti.write(gii, surf_mesh)
+    #nb.gifti.write(gii, surf_mesh)
+    gii.to_filename(surf_mesh)
 
 
 def _write_obj(surf_mesh, points, faces):

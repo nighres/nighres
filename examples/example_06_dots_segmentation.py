@@ -20,13 +20,12 @@ Oriented Tract Segmentation (DOTS) algorithm [1]_:
 # -------------------
 # First we import ``nighres`` and ``os`` to set the output directory. Make sure
 # to run this file in a  directory you have write access to, or change the
-# ``out_dir`` variable below. We can downloadthe  DOTS atlas priors and an
+# ``out_dir`` variable below. We can download the DOTS atlas priors and an
 # example DTI dataset using the following command. The registration step of the
 # DOTS function relies on ``dipy``, so make sure you have installed it
 # (https://nipy.org/dipy/).
 
 import os
-import dipy
 import nighres
 
 in_dir = os.path.join(os.getcwd(), 'nighres_examples/data_sets')
