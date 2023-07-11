@@ -399,6 +399,68 @@ def download_AHEAD_template(data_dir=None, overwrite=False):
 
     figshare = 'https://uvaauas.figshare.com/ndownloader/files/'
 
+    file_sources = [figshare + x for x in
+                    ['22679537','22679543','22679546','']]
+
+    file_targets = [os.path.join(data_dir, filename) for filename in
+                    ['ahead_med_qr1.nii.gz',
+                     'ahead_med_qr2s.nii.gz',
+                     'ahead_med_qsm.nii.gz',
+                     'ahead_med_qpd.nii.gz']]
+
+    for source, target in zip(file_sources, file_targets):
+
+        if os.path.isfile(target) and overwrite is False:
+            print("\nThe file {0} exists and overwrite was set to False "
+                  "-- not downloading.".format(target))
+        else:
+            print("\nDownloading to {0}".format(target))
+            urlretrieve(source, target)
+
+    return {'qr1': file_targets[0],
+            'qr2s': file_targets[1],
+            'qsm': file_targets[2]}
+
+def download_AHEADmni2009b_template(data_dir=None, overwrite=False):
+    """
+    Downloads the AHEAD group template in MNI 2009b space _[1].
+
+    Parameters
+    ----------
+    data_dir: str
+        Writeable directory in which downloaded atlas files should be stored. A
+        subdirectory called 'ahead-template' will be created in this location
+        (default is ATLAS_DIR)
+    overwrite: bool
+        Overwrite existing files in the same exact path (default is False)
+
+    Returns
+    ----------
+    dict
+        Dictionary with keys pointing to the location of the downloaded files
+
+        * qr1 : path to quantitative R1 map image
+        * qr2s : path to quantitative R2* map image
+        * qsm : path to QSM image
+        * qpd : path to semi-quantitative PD image
+
+    References
+    ----------
+    .. [1] Alkemade et al (under review). The Amsterdam Ultra-high field adult
+       lifespan database (AHEAD): A freely available multimodal 7 Tesla
+       submillimeter magnetic resonance imaging database.
+    """
+
+    if (data_dir is None):
+        data_dir = ATLAS_DIR
+
+    data_dir = os.path.join(data_dir, 'ahead-template')
+
+    if not os.path.isdir(data_dir):
+        os.makedirs(data_dir)
+
+    figshare = 'https://uvaauas.figshare.com/ndownloader/files/'
+
 # older version of the template
 #    file_sources = [figshare + x for x in
 #                    ['22679537','22679543','22679546','']]
@@ -406,10 +468,10 @@ def download_AHEAD_template(data_dir=None, overwrite=False):
                     ['34892901','34892907','34892883','41498217']]
 
     file_targets = [os.path.join(data_dir, filename) for filename in
-                    ['ahead_med_qr1.nii.gz',
-                     'ahead_med_qr2s.nii.gz',
-                     'ahead_med_qsm.nii.gz',
-                     'ahead_med_qpd.nii.gz']]
+                    ['ahead_mni2009b_med_qr1.nii.gz',
+                     'ahead_mni2009b_med_qr2s.nii.gz',
+                     'ahead_mni2009b_med_qsm.nii.gz',
+                     'ahead_mni2009b_med_qpd.nii.gz']]
 
     for source, target in zip(file_sources, file_targets):
 
