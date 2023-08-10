@@ -47,13 +47,13 @@ test -f "${python_include_path}/Python.h" || fatal 'This script requires python 
 # Get cbstools git clone
 test -d cbstools-public && (
     cd cbstools-public
-	git checkout ${cbstools_sha}
+	git checkout $release
 	git pull
 	cd ..
 ) || (
-	git clone $cbstools_repo --depth 1
+	git clone -b $release $cbstools_repo --depth 1
 	cd cbstools-public
-	git checkout ${cbstools_sha}
+	git checkout
 	git pull
 	cd ..
 )
@@ -106,13 +106,13 @@ cd ..
 # Get imcntk git clone
 test -d imcn-imaging && (
     cd imcn-imaging
-	git checkout ${imcntk_sha}
+	git checkout $release
 	git pull
 	cd ..
 ) || (
-	git clone $imcntk_repo --depth 1
+	git clone -b $release $imcntk_repo --depth 1
 	cd imcn-imaging
-	git checkout ${imcntk_sha}
+	git checkout
 	git pull
 	cd ..
 )
