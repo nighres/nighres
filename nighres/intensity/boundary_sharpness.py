@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def boundary_sharpness(image, mask=None, scaling=4.0, noise_level=0.1, output_type='average',
+def boundary_sharpness(image, mask=None, scaling=16.0, noise_level=0.002, iterations=10,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Boundary Sharpness
@@ -26,8 +26,8 @@ def boundary_sharpness(image, mask=None, scaling=4.0, noise_level=0.1, output_ty
         Scaling factor for the new super-voxel grid (default is 4)
     noise_level: float, optional
         Weighting parameter to balance image intensity and spatial variability
-    output_type: string, optional
-        Output measures: "average", "difference" "distance" "sharpness" (default is "average")
+    iterations: int, optional
+        Maximum number of iterations in the boundary estimate (default is 10)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -140,6 +140,7 @@ def boundary_sharpness(image, mask=None, scaling=4.0, noise_level=0.1, output_ty
     # set algorithm parameters
     bsharp.setScalingFactor(scaling)
     bsharp.setNoiseLevel(noise_level)
+    bsharp.setIterations(iterations)
     
     # execute the algorithm
     try:
