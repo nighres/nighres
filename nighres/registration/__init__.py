@@ -9,3 +9,5 @@ from nighres.registration.embedded_antspy import embedded_antspy
 from nighres.registration.embedded_antspy import embedded_antspy_2d
 from nighres.registration.embedded_antspy import embedded_antspy_multi
 from nighres.registration.embedded_antspy import embedded_antspy_2d_multi
+from nighres.registration.rescale_mapping import rescale_mapping
+from nighres.registration.crop_mapping import crop_mapping
