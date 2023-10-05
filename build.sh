@@ -18,7 +18,7 @@ fbpa_repo="https://github.com/piloubazin/fbpa-tools.git"
 
 #release="release-1.5.0"
 # for the latest development version
-release=""
+release="master"
 
 # Check the system has the necessary commands
 hash wget tar javac jar python3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3"
