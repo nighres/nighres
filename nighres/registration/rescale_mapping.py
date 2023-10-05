@@ -97,7 +97,10 @@ def rescale_mapping(source_image=None,
     rsx = rx/scaling_factor
     rsy = ry/scaling_factor
     rsz = rz/scaling_factor
-    header.set_zooms((rsx,rsy,rsz,))
+    if len(source.header.get_zooms())==3:
+        header.set_zooms((rsx,rsy,rsz))
+    elif len(source.header.get_zooms())==4:
+        header.set_zooms((rsx,rsy,rsz,source.header.get_zooms()[3]))
 
     # build coordinate mapping matrices and save them to disk
     mapping = numpy.zeros((nsx,nsy,nsz,3))
