@@ -153,6 +153,9 @@ echo "Assembling..."
 jar uf ../nighresjava/src/nighresjava.jar nl/uva/imcn/algorithms/*.class
 jar cf ../nighresjava/src/imcntk-lib.jar nl/uva/imcn/libraries/*.class nl/uva/imcn/methods/*.class nl/uva/imcn/structures/*.class nl/uva/imcn/utilities/*.class
 
+cp lib/*.jar ../nighresjava/lib/
+cd ..
+
 #
 ## COMPILE FbpA tools
 #
@@ -180,7 +183,7 @@ deps_list=$(join_by ":" "${deps[@]}")
 
 # List of library files needed to run the core functions
 source fbpa-tools-files.sh
-echo ${fbpa_files} # result is in $fbpa_files
+echo $fbpa_files # result is in $fbpa_files
 
 fbpa_list=$(join_by " " "${fbpa_files[@]}")
 
