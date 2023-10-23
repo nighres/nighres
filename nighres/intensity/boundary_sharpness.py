@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def boundary_sharpness(image, mask=None, scaling=16.0, noise_level=0.002, iterations=10,
+def boundary_sharpness(image, mask=None, scaling=16.0, noise_level=0.002, iterations=-1,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Boundary Sharpness
