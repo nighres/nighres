@@ -9,4 +9,5 @@ from nighres.surface.surface_som_mapping import surface_som_mapping
 from nighres.surface.volume_som_mapping import volume_som_mapping
 from nighres.surface.parcellation_to_meshes import parcellation_to_meshes
 from nighres.surface.levelset_curvature import levelset_curvature
-
+from nighres.surface.mesh_label_distances import mesh_label_inside_distance
+from nighres.surface.mesh_label_distances import mesh_label_outside_distance
