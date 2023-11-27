@@ -12,3 +12,5 @@ from nighres.surface.levelset_curvature import levelset_curvature
 from nighres.surface.mesh_label_distances import mesh_label_inside_distance
 from nighres.surface.mesh_label_distances import mesh_label_outside_distance
 from nighres.surface.mesh_label_distances import mesh_label_signed_distance
+from nighres.surface.mesh_label_distances import mesh_label_minimum_distance
+from nighres.surface.mesh_label_distances import mesh_label_distance_weighting
