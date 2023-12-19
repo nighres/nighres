@@ -7,3 +7,4 @@ from nighres.shape.spectral_embedding import spectral_embedding
 from nighres.shape.spectral_embedding import spectral_flatmap
 from nighres.shape.spectral_embedding import spectral_tsne
 from nighres.shape.spectral_mesh_embedding import spectral_mesh_embedding
+from nighres.shape.spectral_mesh_embedding import spectral_mesh_spatial_embedding
