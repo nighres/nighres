@@ -181,7 +181,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     rrd.setMaxIterations(max_iter)
     rrd.setMaxDifference(max_diff)
     rrd.setDetectionThreshold(threshold)
-    rrd.setUseScale(rescale)
+    if dimensions[2]>1: rrd.setUseScale(rescale)
 
     rrd.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     rrd.setResolutions(resolution[0], resolution[1], resolution[2])

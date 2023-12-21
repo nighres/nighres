@@ -302,16 +302,16 @@ def save_mesh_geometry(filename, surf_dict):
 
 
 def _read_gifti(file):
-    points = nb.gifti.read(file).get_arrays_from_intent(
+    points = nb.load(file).get_arrays_from_intent(
                 nb.nifti1.intent_codes['NIFTI_INTENT_POINTSET'])[0].data
-    faces = nb.gifti.read(file).get_arrays_from_intent(
+    faces = nb.load(file).get_arrays_from_intent(
                 nb.nifti1.intent_codes['NIFTI_INTENT_TRIANGLE'])[0].data
 
-    narrays = len(nb.gifti.read(file).darrays)-2
+    narrays = len(nb.load(file).darrays)-2
     if narrays>0:
         data = np.zeros([points.shape[0], narrays])
         n=0;
-        for darray in nb.gifti.read(file).darrays:
+        for darray in nb.load(file).darrays:
             if darray.intent is not nb.nifti1.intent_codes['NIFTI_INTENT_POINTSET'] \
                 and darray.intent is not nb.nifti1.intent_codes['NIFTI_INTENT_TRIANGLE']:
                 data[:,n] = darray.data

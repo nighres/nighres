@@ -4,6 +4,7 @@ clean:
 	rm -rf nighresjava/
 	rm -rf cbstools-public/
 	rm -rf imcn-imaging/
+	rm -rf fbpa-tools/
 	rm -rf nighres.egg-info/
 	rm -rf nighres_examples/
 

@@ -137,7 +137,7 @@ deps=(
 )
 deps_list=$(join_by ":" "${deps[@]}")
 
-# List of library files needed to run the cbstools core functions
+# List of library files needed to run the core functions
 source $nighres_local/fbpa-tools-files.sh
 echo $fbpa_files # result is in $fbpa_files
 
