@@ -3,10 +3,9 @@ import numpy as np
 import nibabel as nb
 import nighresjava
 from ..io import load_volume, save_volume
-from ..utils import _output_dir_4saving, _fname_4saving
+from ..utils import _output_dir_4saving, _fname_4saving, _check_available_memory
 
-
-def levelset_curvature(levelset_image, distance=1.0,
+def levelset_curvature(levelset_image, distance=1.0, kernel=3,
                             save_data=False, overwrite=False, output_dir=None,
                             file_name=None):
 
@@ -20,6 +19,8 @@ def levelset_curvature(levelset_image, distance=1.0,
         Levelset image to be turned into probabilities
     distance: float, optional
         Distance from the boundary in voxels where to estimate the curvature
+    kernel: int, optional
+        Kernel size for the quadric approximation (default is 3)
     save_data: bool, optional
         Save output data to file (default is False)
     overwrite: bool, optional
@@ -38,6 +39,8 @@ def levelset_curvature(levelset_image, distance=1.0,
 
         * mcurv (niimg): Mean curvature (output file suffix _curv-mean)
         * gcurv (niimg): Gaussian curvature (output file suffix _curv-gauss)
+        * crvd (niimg): Curvedness (output file suffix _curv-crvd)
+        * shid (niimg): Shape index (output file suffix _curv-shid)
 
     Notes
     ----------
@@ -60,12 +63,25 @@ def levelset_curvature(levelset_image, distance=1.0,
                                        rootfile=levelset_image,
                                        suffix='curv-gauss'))
 
+        crvd_file = os.path.join(output_dir,
+                        _fname_4saving(module=__name__,file_name=file_name,
+                                       rootfile=levelset_image,
+                                       suffix='curv-crvd'))
+
+        shid_file = os.path.join(output_dir,
+                        _fname_4saving(module=__name__,file_name=file_name,
+                                       rootfile=levelset_image,
+                                       suffix='curv-shid'))
+
         if overwrite is False \
             and os.path.isfile(mcurv_file) \
-            and os.path.isfile(gcurv_file) :
+            and os.path.isfile(gcurv_file) \
+            and os.path.isfile(crvd_file) \
+            and os.path.isfile(shid_file) :
 
             print("skip computation (use existing results)")
-            output = {'mcurv': mcurv_file, 'gcurv': gcurv_file}
+            output = {'mcurv': mcurv_file, 'gcurv': gcurv_file, \
+                      'crvd': crvd_file, 'shid': shid_file}
             return output
 
     # load the data
@@ -88,6 +104,7 @@ def levelset_curvature(levelset_image, distance=1.0,
 
     # set parameters
     algorithm.setMaxDistance(distance)
+    algorithm.setKernelParameter(kernel)
 
     # load images and set dimensions and resolution
     input_image = load_volume(levelset_image)
@@ -121,6 +138,12 @@ def levelset_curvature(levelset_image, distance=1.0,
     gcurv_data = np.reshape(np.array(
                                     algorithm.getGaussCurvatureImage(),
                                     dtype=np.float32), dimensions, 'F')
+    crvd_data = np.reshape(np.array(
+                                    algorithm.getCurvednessImage(),
+                                    dtype=np.float32), dimensions, 'F')
+    shid_data = np.reshape(np.array(
+                                    algorithm.getShapeIndexImage(),
+                                    dtype=np.float32), dimensions, 'F')
 
     hdr['cal_min'] = np.nanmin(mcurv_data)
     hdr['cal_max'] = np.nanmax(mcurv_data)
@@ -130,9 +153,20 @@ def levelset_curvature(levelset_image, distance=1.0,
     hdr['cal_max'] = np.nanmax(gcurv_data)
     gcurv = nb.Nifti1Image(gcurv_data, aff, hdr)
 
+    hdr['cal_min'] = np.nanmin(crvd_data)
+    hdr['cal_max'] = np.nanmax(crvd_data)
+    crvd = nb.Nifti1Image(crvd_data, aff, hdr)
+
+    hdr['cal_min'] = np.nanmin(shid_data)
+    hdr['cal_max'] = np.nanmax(shid_data)
+    shid = nb.Nifti1Image(shid_data, aff, hdr)
+
     if save_data:
         save_volume(mcurv_file, mcurv)
         save_volume(gcurv_file, gcurv)
-        return {'mcurv': mcurv_file, 'gcurv': gcurv_file}
+        save_volume(crvd_file, crvd)
+        save_volume(shid_file, shid)
+        return {'mcurv': mcurv_file, 'gcurv': gcurv_file, \
+                'crvd': crvd_file, 'shid': shid_file}
     else:
-        return {'mcurv': mcurv, 'gcurv': gcurv}
+        return {'mcurv': mcurv, 'gcurv': gcurv, 'crvd': crvd, 'shid': shid}
