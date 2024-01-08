@@ -878,6 +878,9 @@ def apply_coordinate_mappings_mesh(surface_mesh, mapping1,
         return
 
     # collect data
+    npt = int(np.array(applydef.getDeformedMeshPoints(), 
+                dtype=np.float32).shape[0]/3)
+    
     def_points = np.reshape(np.array(applydef.getDeformedMeshPoints(),
                                dtype=np.float32), (npt,3), 'C')
 
