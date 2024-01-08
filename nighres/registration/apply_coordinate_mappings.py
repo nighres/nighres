@@ -878,7 +878,7 @@ def apply_coordinate_mappings_mesh(surface_mesh, mapping1,
         return
 
     # collect data
-    def_points = np.reshape(np.array(algorithm.getDeformedMeshPoints(),
+    def_points = np.reshape(np.array(applydef.getDeformedMeshPoints(),
                                dtype=np.float32), (npt,3), 'C')
 
     # create the mesh dictionary
