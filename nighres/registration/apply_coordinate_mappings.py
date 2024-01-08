@@ -812,7 +812,7 @@ def apply_coordinate_mappings_mesh(surface_mesh, mapping1,
     # load the data
     mesh = load_mesh(surface_mesh)
     
-    algorithm.setMeshPointsToDeform(nighresjava.JArray('float')(
+    applydef.setMeshPointsToDeform(nighresjava.JArray('float')(
                             (mesh['points'].flatten('C')).astype(float)))
 
     # set parameters from deformations
