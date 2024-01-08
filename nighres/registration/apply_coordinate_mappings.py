@@ -885,8 +885,11 @@ def apply_coordinate_mappings_mesh(surface_mesh, mapping1,
                                dtype=np.float32), (npt,3), 'C')
 
     # create the mesh dictionary
-    def_mesh = {"points": def_points, "faces": mesh['faces'], 
-                        "data": mesh['data']}
+    if 'data' in mesh:
+        def_mesh = {"points": def_points, "faces": mesh['faces'], 
+                                                "data": mesh['data']}
+    else:
+        def_mesh = {"points": def_points, "faces": mesh['faces']}
 
     if save_data:
         save_mesh(deformed_file, def_mesh)
