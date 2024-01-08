@@ -3,7 +3,7 @@ import numpy as np
 import nibabel as nb
 import sys
 import nighresjava
-from ..io import load_volume, save_volume
+from ..io import load_volume, save_volume, load_mesh, save_mesh
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
@@ -886,7 +886,7 @@ def apply_coordinate_mappings_mesh(surface_mesh, mapping1,
                         "data": mesh['data']}
 
     if save_data:
-        save_volume(deformed_file, def_mesh)
+        save_mesh(deformed_file, def_mesh)
         return {'result': deformed_file}
     else:
         return {'result': def_mesh}
