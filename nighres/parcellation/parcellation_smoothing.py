@@ -106,6 +106,14 @@ def parcellation_smoothing(parcellation, probability=None, connectivity="wcs",
     algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
     algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
 
+    algorithm.setParcellationImage(nighresjava.JArray('int')(
+                                (data.flatten('F')).astype(int).tolist()))
+
+    if probability is not None:
+        data = load_volume(probability).get_fdata()
+        algorithm.setProbabilityImage(nighresjava.JArray('float')(
+                                            (data.flatten('F')).astype(float)))
+
     algorithm.setTopology(connectivity)
     algorithm.setCurvatureWeight(0.5*smoothing/(smoothing+1.0))
     algorithm.setDataWeight(0.5/(smoothing+1.0))
@@ -124,12 +132,13 @@ def parcellation_smoothing(parcellation, probability=None, connectivity="wcs",
         return
     
     # collect outputs
-    proba_data = numpy.reshape(numpy.array(massp.getFinalProba(),
-                                    dtype=numpy.float32), dimensions, 'F')
-
-    label_data = numpy.reshape(numpy.array(massp.getFinalLabel(),
+    label_data = numpy.reshape(numpy.array(massp.getSmoothedLabel(),
                                     dtype=numpy.int32), dimensions, 'F')
 
+    proba_data = numpy.reshape(numpy.array(massp.getSmoothedProba(),
+                                    dtype=numpy.float32), dimensions, 'F')
+
+    
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
     hdr['cal_max'] = numpy.nanmax(proba_data)
