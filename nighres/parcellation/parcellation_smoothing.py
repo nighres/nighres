@@ -132,10 +132,10 @@ def parcellation_smoothing(parcellation, probability=None, connectivity="wcs",
         return
     
     # collect outputs
-    label_data = numpy.reshape(numpy.array(massp.getSmoothedLabel(),
+    label_data = numpy.reshape(numpy.array(algorithm.getSmoothedLabel(),
                                     dtype=numpy.int32), dimensions, 'F')
 
-    proba_data = numpy.reshape(numpy.array(massp.getSmoothedProba(),
+    proba_data = numpy.reshape(numpy.array(algorithm.getSmoothedProba(),
                                     dtype=numpy.float32), dimensions, 'F')
 
     
