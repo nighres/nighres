@@ -722,3 +722,250 @@ def mesh_label_minimum_distance(surface_mesh, surface_labels=None, selected_labe
         return {'dist': dist_file, 'label':lb_file}
     else:
         return {'dist': meshd, 'label': meshl}
+
+
+def mesh_value_inside_distance(surface_mesh, surface_values=None, 
+                      normalize=False, log_scale=False,
+                      save_data=False, overwrite=False, output_dir=None,
+                      file_name=None):
+    """ Mesh value distances
+
+    Compute approximate geodesic distances within a region defined on a surface mesh, where the
+    distance is weighted by the value inside the region.
+
+    Parameters
+    ----------
+    surface_mesh: mesh
+        Mesh model of the surface
+    surface_values: array
+        Values associated with the surface, if not included as surface values. 
+        Note: distances are computed on strictly positive regions
+    normalize: bool
+        Normalize values to the maximum (default is False)
+    log_scale: bool
+        Uses log scale for the distances (default is False)
+    save_data: bool
+        Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
+    output_dir: str, optional
+        Path to desired output directory, will be created if it doesn't exist
+    file_name: str, optional
+        Desired base name for output files with file extension
+        (suffixes will be added)
+
+    Returns
+    ----------
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files in brackets)
+
+        * result (mesh): The mesh with the weighted distance function
+
+    Notes
+    ----------
+    Original Java module by Pierre-Louis Bazin.
+
+    """
+
+    print('\nMesh value inside distance')
+
+    # make sure that saving related parameters are correct
+    if save_data:
+        output_dir = _output_dir_4saving(output_dir, surface_mesh)
+
+        out_file = os.path.join(output_dir, 
+                        _fname_4saving(module=__name__,file_name=file_name,
+                                   rootfile=surface_mesh,
+                                   suffix='mvi-dist', ext="vtk"))
+
+        if overwrite is False \
+            and os.path.isfile(out_file) :
+                print("skip computation (use existing results)")
+                output = {'result': out_file}
+                return output
+
+    # start virtual machine, if not already running
+    try:
+        mem = _check_available_memory()
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
+    except ValueError:
+        pass
+    # create instance
+    algorithm = nighresjava.MeshDistances()
+
+    # set parameters
+    if normalize:
+        algorithm.setNormalizeWeights()
+    
+    # load the data
+    mesh = load_mesh(surface_mesh)
+    
+    if surface_values is not None:
+        values = load_mesh_data(surface_values)
+    else:
+        values = mesh['data']
+        
+
+    algorithm.setSurfacePoints(nighresjava.JArray('float')(
+                            (mesh['points'].flatten('C')).astype(float)))
+    algorithm.setSurfaceTriangles(nighresjava.JArray('int')(
+                            (mesh['faces'].flatten('C')).astype(int).tolist()))   
+    algorithm.setSurfaceValues(nighresjava.JArray('float')(
+                            (values.flatten('F')).astype(float)))
+    
+    
+    # execute the algorithm
+    try:
+        algorithm.computeWeightedDistances()
+
+    except:
+        # if the Java module fails, reraise the error it throws
+        print("\n The underlying Java code did not execute cleanly: ")
+        print(sys.exc_info()[0])
+        raise
+        return
+
+    
+    npt = int(numpy.array(algorithm.getSurfacePoints(), 
+                dtype=numpy.float32).shape[0]/3)
+    nfc = int(numpy.array(algorithm.getSurfaceTriangles(), 
+                dtype=numpy.int32).shape[0]/3) 
+    
+    points = numpy.reshape(numpy.array(algorithm.getSurfacePoints(),
+                               dtype=numpy.float32), (npt,3), 'C')
+    faces = numpy.reshape(numpy.array(algorithm.getSurfaceTriangles(),
+                               dtype=numpy.int32), (nfc,3), 'C')
+    data = numpy.reshape(numpy.array(algorithm.getDistanceValues(),
+                               dtype=numpy.float32), (npt), 'F')
+
+    if log_scale:
+       data = numpy.log(1+data)
+
+    mesh = {"points": points, "faces": faces, 
+                        "data": data}
+    if save_data:
+        save_mesh(out_file, mesh)
+        return {'result': out_file}
+    else:
+        return {'result': mesh}
+
+
+def mesh_value_skeleton(surface_mesh, surface_values=None, 
+                      save_data=False, overwrite=False, output_dir=None,
+                      file_name=None):
+    """ Mesh value distances
+
+    Compute approximate geodesic distances within a region defined on a surface mesh, where the
+    distance is weighted by the value inside the region.
+
+    Parameters
+    ----------
+    surface_mesh: mesh
+        Mesh model of the surface
+    surface_values: array
+        Values associated with the surface, if not included as surface values. 
+        Note: distances are computed on strictly positive regions
+    save_data: bool
+        Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
+    output_dir: str, optional
+        Path to desired output directory, will be created if it doesn't exist
+    file_name: str, optional
+        Desired base name for output files with file extension
+        (suffixes will be added)
+
+    Returns
+    ----------
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files in brackets)
+
+        * result (mesh): The mesh with the weighted distance function
+
+    Notes
+    ----------
+    Original Java module by Pierre-Louis Bazin.
+
+    """
+
+    print('\nMesh value inside distance')
+
+    # make sure that saving related parameters are correct
+    if save_data:
+        output_dir = _output_dir_4saving(output_dir, surface_mesh)
+
+        out_file = os.path.join(output_dir, 
+                        _fname_4saving(module=__name__,file_name=file_name,
+                                   rootfile=surface_mesh,
+                                   suffix='mvi-skel', ext="vtk"))
+
+        if overwrite is False \
+            and os.path.isfile(out_file) :
+                print("skip computation (use existing results)")
+                output = {'result': out_file}
+                return output
+
+    # start virtual machine, if not already running
+    try:
+        mem = _check_available_memory()
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
+    except ValueError:
+        pass
+    # create instance
+    algorithm = nighresjava.MeshDistances()
+
+    # set parameters
+    algorithm.setNormalizeWeights()
+    
+    # load the data
+    mesh = load_mesh(surface_mesh)
+    
+    if surface_values is not None:
+        values = load_mesh_data(surface_values)
+    else:
+        values = mesh['data']
+        
+
+    algorithm.setSurfacePoints(nighresjava.JArray('float')(
+                            (mesh['points'].flatten('C')).astype(float)))
+    algorithm.setSurfaceTriangles(nighresjava.JArray('int')(
+                            (mesh['faces'].flatten('C')).astype(int).tolist()))   
+    algorithm.setSurfaceValues(nighresjava.JArray('float')(
+                            (values.flatten('F')).astype(float)))
+    
+    
+    # execute the algorithm
+    try:
+        algorithm.computeWeightedDistances()
+        algorithm.setSurfaceValues(algorithm.getDistanceValues())
+        algorithm.computeValueSkeleton()
+
+    except:
+        # if the Java module fails, reraise the error it throws
+        print("\n The underlying Java code did not execute cleanly: ")
+        print(sys.exc_info()[0])
+        raise
+        return
+
+    
+    npt = int(numpy.array(algorithm.getSurfacePoints(), 
+                dtype=numpy.float32).shape[0]/3)
+    nfc = int(numpy.array(algorithm.getSurfaceTriangles(), 
+                dtype=numpy.int32).shape[0]/3) 
+    
+    points = numpy.reshape(numpy.array(algorithm.getSurfacePoints(),
+                               dtype=numpy.float32), (npt,3), 'C')
+    faces = numpy.reshape(numpy.array(algorithm.getSurfaceTriangles(),
+                               dtype=numpy.int32), (nfc,3), 'C')
+    data = numpy.reshape(numpy.array(algorithm.getLabelValues(),
+                               dtype=numpy.int32), (npt), 'F')
+
+    mesh = {"points": points, "faces": faces, 
+                        "data": data}
+    if save_data:
+        save_mesh(out_file, mesh)
+        return {'result': out_file}
+    else:
+        return {'result': mesh}
