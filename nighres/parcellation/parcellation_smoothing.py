@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving,_check_available_memory
 
 
 def parcellation_smoothing(parcellation, probability=None, connectivity="wcs", 
-                     smoothing=1.0,
+                     smoothing=1.0, distance=2.0,
                      save_data=False, overwrite=False,
                      output_dir=None, file_name=None):
 
@@ -27,6 +27,8 @@ def parcellation_smoothing(parcellation, probability=None, connectivity="wcs",
         Choice of digital connectivity to build the mesh (default is 18/6)
     smoothing: float, optional
         Smoothing of the boundary, high values may bring distortions (default is 1.0)
+    distance: float, optional
+        Distance in voxel for the downscaling of probabilities (default is 2.0)
     save_data: bool, optional
         Save output data to file (default is False)
     overwrite: bool, optional
@@ -119,6 +121,7 @@ def parcellation_smoothing(parcellation, probability=None, connectivity="wcs",
     algorithm.setDataWeight(0.5/(smoothing+1.0))
     algorithm.setMaxIterations(500)
     algorithm.setMinChange(0.001)
+    algorithm.setDistanceWeight(distance)
     
     # execute class
     try:
