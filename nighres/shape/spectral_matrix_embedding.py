@@ -18,11 +18,11 @@ def spectral_matrix_embedding(distance_matrix,
                     reference_matrix=None,
                     surface_mesh=None,
                     reference_mesh=None,
-                    dims=3,
+                    dims=10,
                     msize=500,
-                    scale=1.0,
-                    space=1.0,
-                    link=0.1,
+                    scale=50.0,
+                    space=50.0,
+                    link=2.0,
                     rotate=True,
                     save_data=False, 
                     overwrite=False, 
@@ -47,15 +47,15 @@ def spectral_matrix_embedding(distance_matrix,
     reference_mesh: mesh, optional
         Mesh model of a surface to define the reference geometry.
     dims: int
-        Number of kept dimensions in the representation (default is 3)
+        Number of kept dimensions in the representation (default is 10)
     msize: int
         Target matrix size for subsampling (default is 500)
     scale: float
-        Distance scaling factor (default is 1.0)
+        Distance scaling factor (default is 50.0)
     space: float
-        Spatial scaling factor (default is 1.0)
+        Spatial scaling factor (default is 50.0)
     link: float
-        Spatial linking factor (default is 0.1)
+        Spatial linking factor (default is 2.0)
     rotate: bool
         Rotate joint embeddings to match the reference (default is True)
     save_data: bool, optional
