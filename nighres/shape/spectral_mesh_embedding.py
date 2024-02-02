@@ -94,7 +94,7 @@ def spectral_mesh_embedding(surface_mesh,
     except ValueError:
         pass
     # create algorithm instance
-    algorithm = nighresjava.SpectralMeshEmbedding()
+    algorithm = nighresjava.SpectralMeshDenseJointEmbedding()
 
     # load the data
     mesh = load_mesh(surface_mesh)
@@ -122,9 +122,11 @@ def spectral_mesh_embedding(surface_mesh,
     # execute
     try:
         if reference_mesh is not None:
-            algorithm.pointDistanceJointEmbedding();
+            #algorithm.pointDistanceJointEmbedding()
+            algorithm.pointDistanceJointRotatedEmbedding()
         else:
-            algorithm.pointDistanceEmbedding();
+            #algorithm.pointDistanceEmbedding()
+            algorithm.pointDistanceSparseEmbedding()
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")
