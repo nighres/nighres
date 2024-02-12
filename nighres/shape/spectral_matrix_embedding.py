@@ -16,6 +16,8 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def spectral_matrix_embedding(distance_matrix, 
                     reference_matrix=None,
+                    correspondence_matrix=None,
+                    ref_correspondence_matrix=None,
                     surface_mesh=None,
                     reference_mesh=None,
                     dims=10,
@@ -23,6 +25,7 @@ def spectral_matrix_embedding(distance_matrix,
                     scale=50.0,
                     space=50.0,
                     link=2.0,
+                    normalize=True,
                     rotate=True,
                     save_data=False, 
                     overwrite=False, 
@@ -41,7 +44,11 @@ def spectral_matrix_embedding(distance_matrix,
     distance_matrix: npy
         Full distance matrix (2D numpy array)
     reference_matrix: npy
-        Reference distance matrix (2D numpy array)
+        Reference distance matrix, optional (2D numpy array)
+    correspondence_matrix: npy
+        User-provided subject-to-reference correspondence distance matrix, optional (2D numpy array)
+    ref_correspondence_matrix: npy
+        User-provided reference-to-reference geodesic distance matrix, optional (2D numpy array)
     surface_mesh: mesh, optional
         Mesh model of a surface to define the geometry and display the results on.
     reference_mesh: mesh, optional
@@ -56,6 +63,8 @@ def spectral_matrix_embedding(distance_matrix,
         Spatial scaling factor (default is 50.0)
     link: float
         Spatial linking factor (default is 2.0)
+    normalize: bool
+        Normalizes embeddings to unit norm (default is True)
     rotate: bool
         Rotate joint embeddings to match the reference (default is True)
     save_data: bool, optional
@@ -104,6 +113,12 @@ def spectral_matrix_embedding(distance_matrix,
                                   rootfile=distance_matrix,
                                   suffix='smx-surf',ext='vtk'))
             
+        if reference_mesh is not None:
+            surf_ref_file = os.path.join(output_dir, 
+                            _fname_4saving(module=__name__,file_name=file_name,
+                                  rootfile=distance_matrix,
+                                  suffix='smx-refsurf',ext='vtk'))
+            
         if overwrite is False \
             and os.path.isfile(matrix_file) :
                 print("skip computation (use existing results)")
@@ -138,20 +153,32 @@ def spectral_matrix_embedding(distance_matrix,
         algorithm.setReferenceMatrix(nighresjava.JArray('float')(
                                 (reference_matrix.flatten('C')).astype(float)))
         
+        if correspondence_matrix is not None:
+            if not isinstance(correspondence_matrix,np.ndarray): 
+                correspondence_matrix = np.load(correspondence_matrix)
+            
+            algorithm.setCorrespondenceMatrix(nighresjava.JArray('float')(
+                                (correspondence_matrix.flatten('C')).astype(float)))
+            
+        if ref_correspondence_matrix is not None:
+            if not isinstance(ref_correspondence_matrix,np.ndarray): 
+                ref_correspondence_matrix = np.load(ref_correspondence_matrix)
+            
+            algorithm.setRefCorrespondenceMatrix(nighresjava.JArray('float')(
+                                (ref_correspondence_matrix.flatten('C')).astype(float)))
+            
         if reference_mesh is not None:
             reference_mesh = load_mesh(reference_mesh)
             algorithm.setReferencePoints(nighresjava.JArray('float')(
                                 (reference_mesh['points'].flatten('C')).astype(float)))
 
+    # parameters
     algorithm.setDimensions(dims)
-    
     algorithm.setMatrixSize(msize)
-    
     algorithm.setDistanceScale(scale)
-    
     algorithm.setSpatialScale(space)
-    
     algorithm.setLinkingFactor(link)
+    algorithm.setNormalize(normalize)
     
     # execute
     try:
@@ -177,13 +204,17 @@ def spectral_matrix_embedding(distance_matrix,
     data = np.reshape(np.array(algorithm.getSubjectEmbeddings(),
                                dtype=np.float32), (npt,dims), 'F')
 
+    if surface_mesh is not None:
+        surface_mesh['data'] = data
+
+
     if reference_matrix is not None:
         nrf = reference_matrix.shape[0]
         ref_data = np.reshape(np.array(algorithm.getReferenceEmbeddings(),
                                    dtype=np.float32), (nrf,dims), 'F')
 
-    if surface_mesh is not None:
-        surface_mesh['data'] = data
+        if reference_mesh is not None:
+            reference_mesh['data'] = ref_data
 
     if save_data:
         if (reference_matrix is not None) and (surface_mesh is not None):
