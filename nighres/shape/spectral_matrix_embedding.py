@@ -138,38 +138,38 @@ def spectral_matrix_embedding(distance_matrix,
     if not isinstance(distance_matrix,np.ndarray): 
         distance_matrix = np.load(distance_matrix)
         
-    algorithm.setSubjectMatrix(nighresjava.JArray('float')(
+    algorithm.setSubjectMatrix(nighresjava.JArray('double')(
                             (distance_matrix.flatten('C')).astype(float)))
     
     if surface_mesh is not None:
         surface_mesh = load_mesh(surface_mesh)
-        algorithm.setSubjectPoints(nighresjava.JArray('float')(
+        algorithm.setSubjectPoints(nighresjava.JArray('double')(
                             (surface_mesh['points'].flatten('C')).astype(float)))
         
     if reference_matrix is not None:
         if not isinstance(reference_matrix,np.ndarray): 
             reference_matrix = np.load(reference_matrix)
         
-        algorithm.setReferenceMatrix(nighresjava.JArray('float')(
+        algorithm.setReferenceMatrix(nighresjava.JArray('double')(
                                 (reference_matrix.flatten('C')).astype(float)))
         
         if correspondence_matrix is not None:
             if not isinstance(correspondence_matrix,np.ndarray): 
                 correspondence_matrix = np.load(correspondence_matrix)
             
-            algorithm.setCorrespondenceMatrix(nighresjava.JArray('float')(
+            algorithm.setCorrespondenceMatrix(nighresjava.JArray('double')(
                                 (correspondence_matrix.flatten('C')).astype(float)))
             
         if ref_correspondence_matrix is not None:
             if not isinstance(ref_correspondence_matrix,np.ndarray): 
                 ref_correspondence_matrix = np.load(ref_correspondence_matrix)
             
-            algorithm.setRefCorrespondenceMatrix(nighresjava.JArray('float')(
+            algorithm.setRefCorrespondenceMatrix(nighresjava.JArray('double')(
                                 (ref_correspondence_matrix.flatten('C')).astype(float)))
             
         if reference_mesh is not None:
             reference_mesh = load_mesh(reference_mesh)
-            algorithm.setReferencePoints(nighresjava.JArray('float')(
+            algorithm.setReferencePoints(nighresjava.JArray('double')(
                                 (reference_mesh['points'].flatten('C')).astype(float)))
 
     # parameters
@@ -183,13 +183,16 @@ def spectral_matrix_embedding(distance_matrix,
     # execute
     try:
         if reference_matrix is not None:
-            if reference_mesh is not None and surface_mesh is not None:
-                if rotate: 
-                    algorithm.matrixRotatedSpatialEmbedding()
-                else:
-                    algorithm.matrixSpatialJointEmbedding()
+            if reference_matrix is distance_matrix:
+                algorithm.matrixReferenceJointEmbedding()
             else:
-                algorithm.matrixSimpleJointEmbedding()
+                if reference_mesh is not None and surface_mesh is not None:
+                    if rotate: 
+                        algorithm.matrixRotatedSpatialEmbedding()
+                    else:
+                        algorithm.matrixSpatialJointEmbedding()
+                else:
+                    algorithm.matrixSimpleJointEmbedding()
         else:
             algorithm.matrixSimpleEmbedding()
     except:
@@ -202,7 +205,7 @@ def spectral_matrix_embedding(distance_matrix,
     # Collect output
     npt = distance_matrix.shape[0]
     data = np.reshape(np.array(algorithm.getSubjectEmbeddings(),
-                               dtype=np.float32), (npt,dims), 'F')
+                               dtype=np.float64), (npt,dims), 'F')
 
     if surface_mesh is not None:
         surface_mesh['data'] = data
@@ -211,7 +214,7 @@ def spectral_matrix_embedding(distance_matrix,
     if reference_matrix is not None:
         nrf = reference_matrix.shape[0]
         ref_data = np.reshape(np.array(algorithm.getReferenceEmbeddings(),
-                                   dtype=np.float32), (nrf,dims), 'F')
+                                   dtype=np.float64), (nrf,dims), 'F')
 
         if reference_mesh is not None:
             reference_mesh['data'] = ref_data
@@ -221,7 +224,8 @@ def spectral_matrix_embedding(distance_matrix,
             np.save(matrix_file, data)
             np.save(ref_matrix_file, ref_data)
             save_mesh(surf_matrix_file, surface_mesh)
-            return {'result': matrix_file, 'reference': ref_matrix_file, 'surface': surf_matrix_file}
+            save_mesh(surf_ref_file, reference_mesh)
+            return {'result': matrix_file, 'reference': ref_matrix_file, 'surface': surf_matrix_file, 'ref-surface': surf_ref_file}
         elif surface_mesh is not None:
             np.save(matrix_file, data)
             save_mesh(surf_matrix_file, surface_mesh)

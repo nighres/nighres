@@ -16,7 +16,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def spectral_mesh_embedding(surface_mesh, 
                     reference_mesh=None,
-                    dims=1,
+                    dims=3,
                     msize=200,
                     scale=100.0,
                     save_data=False, 
@@ -73,13 +73,13 @@ def spectral_mesh_embedding(surface_mesh,
         mesh_file = os.path.join(output_dir, 
                             _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=surface_mesh,
-                                  suffix='sme-coord'))
+                                  suffix='sme-coord',ext='vtk'))
 
         if reference_mesh is not None:
             ref_mesh_file = os.path.join(output_dir, 
                             _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=surface_mesh,
-                                  suffix='sme-ref'))
+                                  suffix='sme-ref',ext='vtk'))
 
         if overwrite is False \
             and os.path.isfile(mesh_file) :
@@ -170,9 +170,11 @@ def spectral_mesh_embedding(surface_mesh,
 
 
 def spectral_mesh_spatial_embedding(surface_mesh, 
+                    reference_mesh=None,
                     dims=3,
                     msize=2000,
                     scale=10.0,
+                    link=1.0,
                     depth=12,
                     alpha=0.0,
                     eigengame=True,
@@ -189,12 +191,16 @@ def spectral_mesh_spatial_embedding(surface_mesh,
     ----------
     surface_mesh: mesh
         Mesh model of the surface
+    reference_mesh: mesh
+        Mesh model of the reference (optional)
     dims: int
         Number of kept dimensions in the representation (default is 1)
     msize: int
         Target matrix size for subsampling (default is 2000)
     scale: float
         Distance scale between sample points (default is 10.0)
+    link: float
+        Spatial linking factor (default is 1.0)
     depth: int
         Number of nearest neighbors used in first approximation (default is 12)
     alpha: float
@@ -233,7 +239,13 @@ def spectral_mesh_spatial_embedding(surface_mesh,
         mesh_file = os.path.join(output_dir, 
                             _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=surface_mesh,
-                                  suffix='sme-coord'))
+                                  suffix='sme-coord',ext='vtk'))
+        
+        if reference_mesh is not None:
+            ref_mesh_file = os.path.join(output_dir, 
+                            _fname_4saving(module=__name__,file_name=file_name,
+                                  rootfile=surface_mesh,
+                                  suffix='sme-ref',ext='vtk'))
 
         if overwrite is False \
             and os.path.isfile(mesh_file) :
@@ -258,15 +270,31 @@ def spectral_mesh_spatial_embedding(surface_mesh,
     algorithm.setSurfaceTriangles(nighresjava.JArray('int')(
                             (mesh['faces'].flatten('C')).astype(int).tolist()))
 
+    if reference_mesh is not None:
+        
+        ref_mesh = load_mesh(reference_mesh)
+        
+        algorithm.setReferencePoints(nighresjava.JArray('float')(
+                                (ref_mesh['points'].flatten('C')).astype(float)))
+        algorithm.setReferenceTriangles(nighresjava.JArray('int')(
+                                (ref_mesh['faces'].flatten('C')).astype(int).tolist()))
+    
     algorithm.setDimensions(dims)
     
     algorithm.setMatrixSize(msize)
     
     algorithm.setDistanceScale(scale)
     
+    algorithm.setLinkingFactor(link)
+    
     # execute
     try:
-        algorithm.meshDistanceSparseEmbedding(depth,eigengame,False,alpha);
+        if reference_mesh is not None:
+            #algorithm.meshDistanceSparseEmbedding2(depth,eigengame,False,alpha);
+            #algorithm.meshDistanceReferenceSparseEmbedding(depth,eigengame,False,alpha);
+            algorithm.meshDistanceJointSparseEmbedding(depth,eigengame,False,alpha);
+        else:
+            algorithm.meshDistanceSparseEmbedding2(depth,eigengame,False,alpha);
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")
@@ -283,10 +311,28 @@ def spectral_mesh_spatial_embedding(surface_mesh,
     # create the mesh dictionary
     mesh = {"points": mesh_points, "faces": mesh_faces, "data": mesh_data}
 
+    if reference_mesh is not None:
+        nrf = ref_mesh['points'].shape[0]
+        ref_mesh_points = ref_mesh['points']
+        ref_mesh_faces = ref_mesh['faces']    
+        ref_mesh_data = np.reshape(np.array(algorithm.getReferenceEmbeddingValues(),
+                                   dtype=np.float32), (nrf,dims), 'F')
+        # create the mesh dictionary
+        ref_mesh = {"points": ref_mesh_points, "faces": ref_mesh_faces, "data": ref_mesh_data}
+        
+
     if save_data:
-        save_mesh(mesh_file, mesh)
-        return {'result': mesh_file}
+        if reference_mesh is not None:
+            save_mesh(mesh_file, mesh)
+            save_mesh(ref_mesh_file, ref_mesh)
+            return {'result': mesh_file, 'reference': ref_mesh_file}
+        else:
+            save_mesh(mesh_file, mesh)
+            return {'result': mesh_file}
     else:
-        return {'result': mesh}
+        if reference_mesh is not None:
+            return {'result': mesh, 'reference': ref_mesh}
+        else:
+            return {'result': mesh}
 
 

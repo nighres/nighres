@@ -28,7 +28,7 @@ def parcellation_smoothing(parcellation, probability=None, connectivity="wcs",
     smoothing: float, optional
         Smoothing of the boundary, high values may bring distortions (default is 1.0)
     distance: float, optional
-        Distance in voxel for the downscaling of probabilities (default is 2.0)
+        Distance parameter in voxels for the downscaling of probabilities (default is 2.0)
     save_data: bool, optional
         Save output data to file (default is False)
     overwrite: bool, optional

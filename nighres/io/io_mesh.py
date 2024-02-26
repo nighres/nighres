@@ -80,9 +80,11 @@ def save_mesh(filename, surf_dict):
     if filename.endswith('vtk'):
         _write_vtk(filename, surf_dict['points'], surf_dict['faces'],
                            surf_dict['data'])
+        print("\nSaving {0}".format(filename))
     elif filename.endswith('gii'):
         _write_gifti(filename, surf_dict['points'], surf_dict['faces'],
                            surf_dict['data'])
+        print("\nSaving {0}".format(filename))
     else:
         save_mesh_geometry(filename, surf_dict)
 
