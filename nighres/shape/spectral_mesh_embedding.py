@@ -171,13 +171,15 @@ def spectral_mesh_embedding(surface_mesh,
 
 def spectral_mesh_spatial_embedding(surface_mesh, 
                     reference_mesh=None,
-                    dims=3,
-                    msize=2000,
-                    scale=10.0,
+                    dims=10,
+                    msize=500,
+                    scale=50.0,
+                    space=50.0,
                     link=1.0,
-                    depth=12,
+                    depth=18,
                     alpha=0.0,
-                    eigengame=True,
+                    rotate=True,
+                    eigengame=False,
                     save_data=False, 
                     overwrite=False, 
                     output_dir=None,
@@ -199,14 +201,18 @@ def spectral_mesh_spatial_embedding(surface_mesh,
         Target matrix size for subsampling (default is 2000)
     scale: float
         Distance scale between sample points (default is 10.0)
+    space: float
+        Spatial scaling factor (default is 10.0)
     link: float
         Spatial linking factor (default is 1.0)
     depth: int
-        Number of nearest neighbors used in first approximation (default is 12)
+        Number of nearest neighbors used in first approximation (default is 18)
     alpha: float
         Laplacian norm parameter in [0:1] (default is 0.0)
     eigengame: bool, optional
         Run the eigengame full scale decomposition (default is True)
+    rotate: bool
+        Rotate joint embeddings to match the reference (default is True)
     save_data: bool, optional
         Save output data to file (default is False)
     output_dir: str, optional
@@ -284,17 +290,21 @@ def spectral_mesh_spatial_embedding(surface_mesh,
     algorithm.setMatrixSize(msize)
     
     algorithm.setDistanceScale(scale)
-    
+    algorithm.setSpatialScale(space)    
     algorithm.setLinkingFactor(link)
     
     # execute
     try:
         if reference_mesh is not None:
-            #algorithm.meshDistanceSparseEmbedding2(depth,eigengame,False,alpha);
-            #algorithm.meshDistanceReferenceSparseEmbedding(depth,eigengame,False,alpha);
-            algorithm.meshDistanceJointSparseEmbedding(depth,eigengame,False,alpha);
+            if reference_mesh is surface_mesh:
+                algorithm.meshDistanceReferenceSparseEmbedding(depth,eigengame,True,alpha)
+            else:
+                if rotate: 
+                    algorithm.rotatedJointSpatialEmbedding(depth,eigengame,True,alpha)
+                else:
+                    algorithm.meshDistanceJointSparseEmbedding(depth,eigengame,True,alpha)
         else:
-            algorithm.meshDistanceSparseEmbedding2(depth,eigengame,False,alpha);
+            algorithm.meshDistanceSparseEmbedding2(depth,eigengame,False,alpha)
     except:
         # if the Java module fails, reraise the error it throws
         print("\n The underlying Java code did not execute cleanly: ")

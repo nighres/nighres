@@ -24,7 +24,7 @@ def spectral_matrix_embedding(distance_matrix,
                     msize=500,
                     scale=50.0,
                     space=50.0,
-                    link=2.0,
+                    link=1.0,
                     normalize=True,
                     rotate=True,
                     save_data=False, 
@@ -62,7 +62,7 @@ def spectral_matrix_embedding(distance_matrix,
     space: float
         Spatial scaling factor (default is 50.0)
     link: float
-        Spatial linking factor (default is 2.0)
+        Spatial linking factor (default is 1.0)
     normalize: bool
         Normalizes embeddings to unit norm (default is True)
     rotate: bool
