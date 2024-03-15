@@ -24,6 +24,7 @@ def spectral_mesh_spatial_embedding(surface_mesh,
                     depth=18,
                     alpha=0.0,
                     rotate=True,
+                    affinity="linear",
                     save_data=False, 
                     overwrite=False, 
                     output_dir=None,
@@ -55,6 +56,8 @@ def spectral_mesh_spatial_embedding(surface_mesh,
         Laplacian norm parameter in [0:1] (default is 0.0)
     rotate: bool
         Rotate joint embeddings to match the reference (default is True)
+    affinity: String
+        Type of affinity kernel to use ({'linear', 'Cauchy', 'Gauss'}, default is 'linear')
     save_data: bool, optional
         Save output data to file (default is False)
     output_dir: str, optional
@@ -134,6 +137,7 @@ def spectral_mesh_spatial_embedding(surface_mesh,
     algorithm.setDistanceScale(scale)
     algorithm.setSpatialScale(space)    
     algorithm.setLinkingFactor(link)
+    algorithm.setAffinityType(affinity)
     
     # execute
     try:

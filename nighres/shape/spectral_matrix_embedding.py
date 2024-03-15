@@ -27,6 +27,7 @@ def spectral_matrix_embedding(distance_matrix,
                     link=1.0,
                     normalize=True,
                     rotate=True,
+                    affinity="linear",
                     save_data=False, 
                     overwrite=False, 
                     output_dir=None,
@@ -67,6 +68,8 @@ def spectral_matrix_embedding(distance_matrix,
         Normalizes embeddings to unit norm (default is True)
     rotate: bool
         Rotate joint embeddings to match the reference (default is True)
+    affinity: String
+        Type of affinity kernel to use ({'linear', 'Cauchy', 'Gauss'}, default is 'linear')
     save_data: bool, optional
         Save output data to file (default is False)
     output_dir: str, optional
@@ -179,6 +182,7 @@ def spectral_matrix_embedding(distance_matrix,
     algorithm.setSpatialScale(space)
     algorithm.setLinkingFactor(link)
     algorithm.setNormalize(normalize)
+    algorithm.setAffinityType(affinity)
     
     # execute
     try:
