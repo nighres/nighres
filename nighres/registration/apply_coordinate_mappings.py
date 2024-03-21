@@ -3,13 +3,13 @@ import numpy as np
 import nibabel as nb
 import sys
 import nighresjava
-from ..io import load_volume, save_volume
+from ..io import load_volume, save_volume, load_mesh, save_mesh
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
 def apply_coordinate_mappings(image, mapping1,
-                        mapping2=None, mapping3=None, mapping4=None,
+                        mapping2=None, mapping3=None, mapping4=None, mapping5=None,
                         interpolation="nearest", padding="closest",
                         zero_border=0,
                         save_data=False, overwrite=False, output_dir=None,
@@ -29,6 +29,8 @@ def apply_coordinate_mappings(image, mapping1,
         Third coordinate mapping to apply
     mapping4 : niimg, optional
         Fourth coordinate mapping to apply
+    mapping4 : niimg, optional
+        Fifth coordinate mapping to apply
     interpolation: {'nearest', 'linear'}
         Interpolation method (default is 'nearest')
     padding: {'closest', 'zero', 'max'}
@@ -160,6 +162,18 @@ def apply_coordinate_mappings(image, mapping1,
                 applydef.setDeformation4Dimensions(def4data.shape[0],
                                             def4data.shape[1],def4data.shape[2])
                 applydef.setDeformationType4("mapping(voxels)")
+
+                if not (mapping5==None):
+                    def5 = load_volume(mapping5)
+                    def5data = def5.get_fdata()
+                    aff = def5.affine
+                    hdr = def5.header
+                    trgdim = def5data.shape
+                    applydef.setDeformationMapping5(nighresjava.JArray('float')(
+                                            (def5data.flatten('F')).astype(float)))
+                    applydef.setDeformation5Dimensions(def5data.shape[0],
+                                                def5data.shape[1],def5data.shape[2])
+                    applydef.setDeformationType5("mapping(voxels)")
 
     applydef.setInterpolationType(interpolation)
     applydef.setImagePadding(padding)
@@ -812,7 +826,7 @@ def apply_coordinate_mappings_mesh(surface_mesh, mapping1,
     # load the data
     mesh = load_mesh(surface_mesh)
     
-    algorithm.setMeshPointsToDeform(nighresjava.JArray('float')(
+    applydef.setMeshPointsToDeform(nighresjava.JArray('float')(
                             (mesh['points'].flatten('C')).astype(float)))
 
     # set parameters from deformations
@@ -878,15 +892,21 @@ def apply_coordinate_mappings_mesh(surface_mesh, mapping1,
         return
 
     # collect data
-    def_points = np.reshape(np.array(algorithm.getDeformedMeshPoints(),
+    npt = int(np.array(applydef.getDeformedMeshPoints(), 
+                dtype=np.float32).shape[0]/3)
+    
+    def_points = np.reshape(np.array(applydef.getDeformedMeshPoints(),
                                dtype=np.float32), (npt,3), 'C')
 
     # create the mesh dictionary
-    def_mesh = {"points": def_points, "faces": mesh['faces'], 
-                        "data": mesh['data']}
+    if 'data' in mesh:
+        def_mesh = {"points": def_points, "faces": mesh['faces'], 
+                                                "data": mesh['data']}
+    else:
+        def_mesh = {"points": def_points, "faces": mesh['faces']}
 
     if save_data:
-        save_volume(deformed_file, def_mesh)
+        save_mesh(deformed_file, def_mesh)
         return {'result': deformed_file}
     else:
         return {'result': def_mesh}
