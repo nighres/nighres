@@ -15,6 +15,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def spectral_voxel_spatial_embedding(image, 
                     reference=None,
+                    mapping=None,
                     dims=10,
                     msize=500,
                     scale=50.0,
@@ -37,8 +38,10 @@ def spectral_voxel_spatial_embedding(image,
     ----------
     image: niimg
         Image of the structure of interest
-    reference_mesh: mesh
+    reference: niimg
         Image of the reference (optional)
+    mapping: niimg
+        Coordinate mapping from the reference to the image (optional)
     dims: int
         Number of kept dimensions in the representation (default is 1)
     msize: int
@@ -136,6 +139,15 @@ def spectral_voxel_spatial_embedding(image,
         
         algorithm.setReferenceDimensions(dimref[0], dimref[1], dimref[2])
         algorithm.setReferenceResolutions(resref[0], resref[1], resref[2])
+
+        algorithm.setReferenceImage(nighresjava.JArray('float')(
+                               (reference.get_fdata().flatten('F')).astype(float)))
+
+        if mapping is not None:            
+            mapping = load_volume(mapping)
+            algorithm.setReferenceToImageMapping(nighresjava.JArray('float')(
+                               (mapping.get_fdata().flatten('F')).astype(float)))
+            
     
     algorithm.setDimensions(dims)
     
