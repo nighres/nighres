@@ -9,3 +9,4 @@ from nighres.shape.spectral_embedding import spectral_tsne
 from nighres.shape.spectral_mesh_embedding import spectral_mesh_spatial_embedding
 from nighres.shape.spectral_matrix_embedding import spectral_matrix_embedding
 from nighres.shape.spectral_voxel_embedding import spectral_voxel_spatial_embedding
+from nighres.shape.spectral_voxel_embedding import spectral_voxel_data_embedding
