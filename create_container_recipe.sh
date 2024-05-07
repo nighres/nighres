@@ -26,27 +26,30 @@ else
 
 fi
 
-docker run --rm repronim/neurodocker:0.7.0 generate "${container_type}" \
-    --base debian:stretch-slim \
+docker run ${expose} \
+    --rm repronim/neurodocker:0.9.5 generate "${container_type}" \
+    --base-image debian:stable \
     --pkg-manager apt \
-    --install "openjdk-8-jdk git wget build-essential software-properties-common libffi-dev" \
+    --install "openjdk-17-jdk git wget build-essential software-properties-common libffi-dev" \
+    --env JAVA_HOME="/docker-java-temurin-home" \
+    --env JCC_JDK="/docker-java-temurin-home" \
+    --run 'ln -svT "/usr/lib/jvm/java-17-openjdk-$(dpkg --print-architecture)" /docker-java-temurin-home' \
     --miniconda \
-        create_env="nighres" \
-        conda_install="python=3.9 pip jcc Nilearn" \
-        activate="true" \
-    --env JAVA_HOME="/docker-java-home" \
-    --env JCC_JDK="/docker-java-home" \
-    --run 'ln -svT "/usr/lib/jvm/java-8-openjdk-$(dpkg --print-architecture)" /docker-java-home' \
+        version="latest" \
+        env_name="nighres" \
+        env_exists="false" \
+        conda_install="python=3.9 pip JCC Nilearn" \
     --copy build.sh cbstools-lib-files.sh imcntk-lib-files.sh dependencies_sha.sh setup.py setup.cfg MANIFEST.in README.rst LICENSE /nighres/ \
     --copy nighres /nighres/nighres \
     --workdir /nighres \
-    --run "conda init && . /root/.bashrc && conda activate nighres && conda info --envs && ./build.sh && rm -rf cbstools-public imcn-imaging nighresjava/build nighresjava/src" \
+    --run "conda init && . /root/.bashrc && activate nighres && conda info --envs && pip install jcc && ./build.sh && rm -rf cbstools-public imcn-imaging nighresjava/build nighresjava/src" \
     --miniconda \
-        use_env="nighres" \
+        version="latest" \
+        installed="true" \
+        env_name="nighres" \
         conda_install="jupyterlab" \
         pip_install="." \
     --copy docker/jupyter_notebook_config.py /etc/jupyter \
-    "${expose}" \
     --user neuro \
     --workdir /home/neuro >"${output_file}"
 

@@ -7,25 +7,25 @@ from ..io import load_volume, save_volume, load_mesh_geometry, save_mesh_geometr
 from ..utils import _output_dir_4saving, _fname_4saving,_check_available_memory
 
 
-def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
+def probability_to_mesh(probability_image, connectivity="18/6", threshold=0.5,
                      inclusive=True, save_data=False, overwrite=False,
                      output_dir=None, file_name=None):
 
-    """Levelset to mesh
+    """Probability to mesh
 
-    Creates a triangulated mesh from the distance to a levelset surface
+    Creates a triangulated mesh from a probability or partial volume map
     representation using a connectivity-consistent marching cube algorithm.
 
     Parameters
     ----------
-    levelset_image: niimg
-        Levelset image to be turned into a mesh
+    probability_image: niimg
+        Probability image to be turned into a mesh
     connectivity: {"6/18","6/26","18/6","26/6"}, optional
         Choice of digital connectivity to build the mesh (default is 18/6)
-    level: float, optional
-        Value of the levelset function to use as isosurface (default is 0)
+    threshold: float, optional
+        Value of the probability function to use as isosurface (default is 0.5)
     inclusive: bool, optional
-        Whether voxels at the exact 'level' value are inside the isosurface
+        Whether voxels at the exact 'threshold' value are inside the isosurface
         (default is True)
     save_data: bool, optional
         Save output data to file (default is False)
@@ -44,7 +44,7 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
         (suffix of output files in brackets)
 
         * result (mesh): Surface mesh dictionary of "points" and "faces"
-          (_l2m-mesh)
+          (_p2m-mesh)
 
     Notes
     ----------
@@ -65,12 +65,12 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
 
     # make sure that saving related parameters are correct
     if save_data:
-        output_dir = _output_dir_4saving(output_dir, levelset_image)
+        output_dir = _output_dir_4saving(output_dir, probability_image)
 
         mesh_file = os.path.join(output_dir,
                         _fname_4saving(module=__name__,file_name=file_name,
-                                       rootfile=levelset_image,
-                                       suffix='l2m-mesh',ext="vtk"))
+                                       rootfile=probability_image,
+                                       suffix='p2m-mesh',ext="vtk"))
 
         if overwrite is False \
             and os.path.isfile(mesh_file) :
@@ -90,21 +90,21 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
     algorithm = nighresjava.SurfaceLevelsetToMesh()
 
     # load the data
-    lvl_img = load_volume(levelset_image)
-    lvl_data = lvl_img.get_fdata()
-    hdr = lvl_img.header
-    aff = lvl_img.affine
+    proba_img = load_volume(probability_image)
+    proba_data = proba_img.get_fdata()
+    hdr = proba_img.header
+    aff = proba_img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
-    dimensions = lvl_data.shape
+    dimensions = proba_data.shape
 
     algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
     algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
 
     algorithm.setLevelsetImage(nighresjava.JArray('float')(
-                            (lvl_data.flatten('F')).astype(float)))
+                            (threshold-proba_data.flatten('F')).astype(float)))
 
     algorithm.setConnectivity(connectivity)
-    algorithm.setZeroLevel(level)
+    algorithm.setZeroLevel(0.0)
     algorithm.setInclusive(inclusive)
 
     # execute class

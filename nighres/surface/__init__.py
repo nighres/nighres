@@ -3,10 +3,17 @@ from nighres.surface.levelset_to_mesh import levelset_to_mesh
 from nighres.surface.levelset_to_probability import levelset_to_probability
 from nighres.surface.mesh_to_levelset import mesh_to_levelset
 from nighres.surface.mesh_data_to_volume import mesh_data_to_volume
+from nighres.surface.probability_to_mesh import probability_to_mesh
 from nighres.surface.surface_inflation import surface_inflation
 from nighres.surface.surface_mesh_mapping import surface_mesh_mapping
 from nighres.surface.surface_som_mapping import surface_som_mapping
 from nighres.surface.volume_som_mapping import volume_som_mapping
 from nighres.surface.parcellation_to_meshes import parcellation_to_meshes
 from nighres.surface.levelset_curvature import levelset_curvature
-
+from nighres.surface.mesh_label_distances import mesh_label_inside_distance
+from nighres.surface.mesh_label_distances import mesh_label_outside_distance
+from nighres.surface.mesh_label_distances import mesh_label_signed_distance
+from nighres.surface.mesh_label_distances import mesh_label_minimum_distance
+from nighres.surface.mesh_label_distances import mesh_label_distance_weighting
+from nighres.surface.mesh_label_distances import mesh_value_inside_distance
+from nighres.surface.mesh_label_distances import mesh_value_skeleton

@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving,_check_available_memory
 
 
 def surface_inflation(surface_mesh, step_size=0.75, max_iter=2000, max_curv=10.0,
-                        method='area', regularization=0.0,
+                        method='area', regularization=0.001, centering=0.001,
                         save_data=False, overwrite=False, output_dir=None,
                         file_name=None):
 
@@ -32,7 +32,9 @@ def surface_inflation(surface_mesh, step_size=0.75, max_iter=2000, max_curv=10.0
         'dist' based on the vertex distance, 'numv' based on number of vertices
         (default is 'area')
     regularization: float
-        Regularization parameter for reducing local singularities (default is 0.0)
+        Regularization parameter for reducing local singularities (default is 0.001)
+    centering: float
+        Parameter to favor triangle center rather than incircle (default is 0.001)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -105,6 +107,7 @@ def surface_inflation(surface_mesh, step_size=0.75, max_iter=2000, max_curv=10.0
         algorithm.setWeightingMethod(algorithm.NUMV)
         
     algorithm.setRegularization(regularization)
+    algorithm.setCentering(centering)
         
     # execute class
     try:
