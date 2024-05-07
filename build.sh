@@ -14,8 +14,11 @@ function join_by { local IFS="$1"; shift; echo "$*"; }
 source dependencies_sha.sh
 cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
 imcntk_repo="https://github.com/piloubazin/imcn-imaging.git"
+fbpa_repo="https://github.com/piloubazin/fbpa-tools.git"
 
-release="release-1.5.0"
+#release="release-1.5.0"
+# for the latest development version
+release="master"
 
 # Check the system has the necessary commands
 hash wget tar javac jar python3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3"
@@ -154,6 +157,59 @@ cp lib/*.jar ../nighresjava/lib/
 cd ..
 
 #
+## COMPILE FbpA tools
+#
+
+# Get FbpA git clone
+test -d fbpa-tools && (
+    cd fbpa-tools
+	git checkout $release
+	git pull
+	cd ..
+) || (
+	git clone -b $release $fbpa_repo --depth 1
+	cd fbpa-tools
+	git checkout
+	git pull
+	cd ..
+)
+
+# Java dependencies. Order matters
+deps=(
+	"."
+	"lib/commons-math3-3.5.jar"
+)
+deps_list=$(join_by ":" "${deps[@]}")
+
+# List of library files needed to run the core functions
+source fbpa-tools-files.sh
+echo $fbpa_files # result is in $fbpa_files
+
+fbpa_list=$(join_by " " "${fbpa_files[@]}")
+
+# Compilation options
+javac_opts=(
+	# "-d build"        # Output dir
+	"-Xlint:none"     # Disable all warnings
+	# "-server"         # ?
+	"-g"              # Generate all debugging info
+	"-O"              # ?
+	"-deprecation"    # Show information about deprecated Java calls
+	"-encoding UTF-8" # Require UTF-8, rather than platform-specifc
+)
+
+echo "Compiling..."
+cd fbpa-tools
+javac -cp ${deps_list} ${javac_opts[@]} nl/fullbrainpicture/algorithms/*.java ${fbpa_list}
+
+echo "Assembling..."
+jar uf ../nighresjava/src/nighresjava.jar nl/fullbrainpicture/algorithms/*.class
+jar cf ../nighresjava/src/fbpa-lib.jar nl/fullbrainpicture/libraries/*.class nl/fullbrainpicture/structures/*.class nl/fullbrainpicture/utilities/*.class
+
+cp lib/*.jar ../nighresjava/lib/
+cd ..
+
+#
 ## WRAP TO PYTHON
 #
 cd nighresjava
@@ -165,6 +221,7 @@ jcc_args=(
 	# Dependencies
 	"--include src/cbstools-lib.jar"
 	"--include src/imcntk-lib.jar"
+	"--include src/fbpa-lib.jar"
 	"--include lib/commons-math3-3.5.jar"
 	"--include lib/Jama-mipav.jar"
 

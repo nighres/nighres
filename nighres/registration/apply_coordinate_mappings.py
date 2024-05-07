@@ -3,15 +3,15 @@ import numpy as np
 import nibabel as nb
 import sys
 import nighresjava
-from ..io import load_volume, save_volume
+from ..io import load_volume, save_volume, load_mesh, save_mesh
 from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
 def apply_coordinate_mappings(image, mapping1,
-                        mapping2=None, mapping3=None, mapping4=None,
+                        mapping2=None, mapping3=None, mapping4=None, mapping5=None,
                         interpolation="nearest", padding="closest",
-                        zero_border=0,
+                        zero_border=0, check_boundaries=False,
                         save_data=False, overwrite=False, output_dir=None,
                         file_name=None):
 
@@ -29,12 +29,16 @@ def apply_coordinate_mappings(image, mapping1,
         Third coordinate mapping to apply
     mapping4 : niimg, optional
         Fourth coordinate mapping to apply
+    mapping5 : niimg, optional
+        Fifth coordinate mapping to apply
     interpolation: {'nearest', 'linear'}
         Interpolation method (default is 'nearest')
     padding: {'closest', 'zero', 'max'}
         Image padding method (default is 'closest')
     zero_border: int
         Number of border voxels to remove, for partial slab images (default is 0)
+    check_boundaries: bool
+        Check for boundary interoplation errors (may be slow...) (default is True)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -161,8 +165,21 @@ def apply_coordinate_mappings(image, mapping1,
                                             def4data.shape[1],def4data.shape[2])
                 applydef.setDeformationType4("mapping(voxels)")
 
+                if not (mapping5==None):
+                    def5 = load_volume(mapping5)
+                    def5data = def5.get_fdata()
+                    aff = def5.affine
+                    hdr = def5.header
+                    trgdim = def5data.shape
+                    applydef.setDeformationMapping5(nighresjava.JArray('float')(
+                                            (def5data.flatten('F')).astype(float)))
+                    applydef.setDeformation5Dimensions(def5data.shape[0],
+                                                def5data.shape[1],def5data.shape[2])
+                    applydef.setDeformationType5("mapping(voxels)")
+
     applydef.setInterpolationType(interpolation)
     applydef.setImagePadding(padding)
+    applydef.setCheckBoundaries(check_boundaries)
 
     # execute class
     try:
@@ -728,3 +745,172 @@ def apply_angular_coordinate_mappings_2d(image, mapping1,
         return {'result': deformed_file}
     else:
         return {'result': deformed}
+
+def apply_coordinate_mappings_mesh(surface_mesh, mapping1,
+                        mapping2=None, mapping3=None, mapping4=None,
+                        interpolation="nearest", padding="closest",
+                        save_data=False, overwrite=False, output_dir=None,
+                        file_name=None):
+
+    '''Apply a coordinate mapping (or a succession of coordinate mappings) to a surface mesh.
+    Note: mesh transformations are inverse from the transformations of corresponding images!
+
+    Parameters
+    ----------
+    surface_mesh: mesh
+        Mesh model of the surface to deform
+    mapping1 : niimg
+        First coordinate mapping to apply
+    mapping2 : niimg, optional
+        Second coordinate mapping to apply
+    mapping3 : niimg, optional
+        Third coordinate mapping to apply
+    mapping4 : niimg, optional
+        Fourth coordinate mapping to apply
+    interpolation: {'nearest', 'linear'}
+        Interpolation method (default is 'nearest')
+    padding: {'closest', 'zero', 'max'}
+        Image padding method (default is 'closest')
+    zero_border: int
+        Number of border voxels to remove, for partial slab images (default is 0)
+    save_data: bool
+        Save output data to file (default is False)
+    overwrite: bool
+        Overwrite existing results (default is False)
+    output_dir: str, optional
+        Path to desired output directory, will be created if it doesn't exist
+    file_name: str, optional
+        Desired base name for output files with file extension
+        (suffixes will be added)
+
+    Returns
+    ----------
+    dict
+        Dictionary collecting outputs under the following keys
+        (suffix of output files in brackets)
+
+        * result (mesh): Surface mesh dictionary of "points", "faces" and 
+          "data" with transformed coordinates
+
+    Notes
+    ----------
+    Original Java module by Pierre-Louis Bazin
+
+    '''
+
+    print('\nApply coordinate mappings')
+
+    # make sure that saving related parameters are correct
+    if save_data:
+        output_dir = _output_dir_4saving(output_dir, surface_mesh)
+
+        deformed_file = os.path.join(output_dir,
+                        _fname_4saving(module=__name__,
+                                    file_name=file_name,
+                                    rootfile=surface_mesh,
+                                    suffix='def-mesh'))
+        if overwrite is False \
+            and os.path.isfile(deformed_file) :
+
+            print("skip computation (use existing results)")
+            output = {'result': deformed_file}
+            return output
+
+    # start virutal machine if not already running
+    try:
+        mem = _check_available_memory()
+        nighresjava.initVM(initialheap=mem['init'], maxheap=mem['max'])
+    except ValueError:
+        pass
+
+    # initate class
+    applydef = nighresjava.RegistrationApplyMeshDeformations()
+
+    # load the data
+    mesh = load_mesh(surface_mesh)
+    
+    applydef.setMeshPointsToDeform(nighresjava.JArray('float')(
+                            (mesh['points'].flatten('C')).astype(float)))
+
+    # set parameters from deformations
+    def1 = load_volume(mapping1)
+    def1data = def1.get_fdata()
+    aff = def1.affine
+    hdr = def1.header
+    trgdim = def1data.shape
+    applydef.setDeformationMapping1(nighresjava.JArray('float')(
+                                    (def1data.flatten('F')).astype(float)))
+    applydef.setDeformation1Dimensions(def1data.shape[0],
+                                        def1data.shape[1],def1data.shape[2])
+    applydef.setDeformationType1("mapping(voxels)")
+
+    if not (mapping2==None):
+        def2 = load_volume(mapping2)
+        def2data = def2.get_fdata()
+        aff = def2.affine
+        hdr = def2.header
+        trgdim = def2data.shape
+        applydef.setDeformationMapping2(nighresjava.JArray('float')(
+                                        (def2data.flatten('F')).astype(float)))
+        applydef.setDeformation2Dimensions(def2data.shape[0],
+                                        def2data.shape[1],def2data.shape[2])
+        applydef.setDeformationType2("mapping(voxels)")
+
+        if not (mapping3==None):
+            def3 = load_volume(mapping3)
+            def3data = def3.get_fdata()
+            aff = def3.affine
+            hdr = def3.header
+            trgdim = def3data.shape
+            applydef.setDeformationMapping3(nighresjava.JArray('float')(
+                                            (def3data.flatten('F')).astype(float)))
+            applydef.setDeformation3Dimensions(def3data.shape[0],
+                                            def3data.shape[1],def3data.shape[2])
+            applydef.setDeformationType3("mapping(voxels)")
+
+            if not (mapping4==None):
+                def4 = load_volume(mapping4)
+                def4data = def4.get_fdata()
+                aff = def4.affine
+                hdr = def4.header
+                trgdim = def4data.shape
+                applydef.setDeformationMapping4(nighresjava.JArray('float')(
+                                        (def4data.flatten('F')).astype(float)))
+                applydef.setDeformation4Dimensions(def4data.shape[0],
+                                            def4data.shape[1],def4data.shape[2])
+                applydef.setDeformationType4("mapping(voxels)")
+
+    applydef.setInterpolationType(interpolation)
+    applydef.setImagePadding(padding)
+
+    # execute class
+    try:
+        applydef.execute()
+
+    except:
+        # if the Java module fails, reraise the error it throws
+        print("\n The underlying Java code did not execute cleanly: ")
+        print(sys.exc_info()[0])
+        raise
+        return
+
+    # collect data
+    npt = int(np.array(applydef.getDeformedMeshPoints(), 
+                dtype=np.float32).shape[0]/3)
+    
+    def_points = np.reshape(np.array(applydef.getDeformedMeshPoints(),
+                               dtype=np.float32), (npt,3), 'C')
+
+    # create the mesh dictionary
+    if 'data' in mesh:
+        def_mesh = {"points": def_points, "faces": mesh['faces'], 
+                                                "data": mesh['data']}
+    else:
+        def_mesh = {"points": def_points, "faces": mesh['faces']}
+
+    if save_data:
+        save_mesh(deformed_file, def_mesh)
+        return {'result': deformed_file}
+    else:
+        return {'result': def_mesh}
+
