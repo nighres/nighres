@@ -16,9 +16,9 @@ cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
 imcntk_repo="https://github.com/piloubazin/imcn-imaging.git"
 fbpa_repo="https://github.com/piloubazin/fbpa-tools.git"
 
-#release="release-1.5.0"
+release="release-1.5.1"
 # for the latest development version
-release="master"
+#release="master"
 
 # Check the system has the necessary commands
 hash wget tar javac jar python3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3"
@@ -28,19 +28,19 @@ pip_modules=$(python3 -m pip list | tr -s ' ' | cut -f 1 -d ' ')
 echo "${pip_modules}" | grep setuptools > /dev/null || fatal 'This script requires setuptools.\nInstall with `python3 -m pip install --upgrade setuptools`'
 echo "${pip_modules}" | grep wheel > /dev/null || fatal 'This script requires wheel.\nInstall with `python3 -m pip install --upgrade wheel`'
 
-# echo "Before detection: $JAVA_HOME"
+#echo "Before detection: $JAVA_HOME"
 
 # Set the JAVA_HOME variable if it is not set
 detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=')
 export JAVA_HOME=${JAVA_HOME:-"$detected_home"}
-# echo "After detection: $JAVA_HOME"
+#echo "After detection: $JAVA_HOME"
 
 # Check that JCC is installed
 echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.\nInstall with `apt-get install jcc` or equivalent and `python3 -m pip install jcc`'
 
 # Attempt to check for python development headers
 # Inspired by https://stackoverflow.com/a/4850603
-python_include_path=$(python3 -c "from distutils import sysconfig as s; print(s.get_config_vars()['INCLUDEPY'])")
+python_include_path=$(python3 -c "import sysconfig as s; print(s.get_config_vars()['INCLUDEPY'])")
 test -f "${python_include_path}/Python.h" || fatal 'This script requires python development headers.\nInstall with `apt-get install python-dev`, or \n `apt-get install python3-dev`, or equivalent'
 
 #
@@ -88,7 +88,7 @@ javac_opts=(
 
 echo "Compiling..."
 cd cbstools-public
-javac -cp ${deps_list} ${javac_opts[@]} ca/concordia/qpi/*/*.java de/mpg/cbs/core/*/*.java $cbstools_list
+$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} ca/concordia/qpi/*/*.java de/mpg/cbs/core/*/*.java $cbstools_list
 
 
 echo "Assembling..."
@@ -147,7 +147,7 @@ javac_opts=(
 
 echo "Compiling..."
 cd imcn-imaging
-javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java ${imcntk_list}
+$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java ${imcntk_list}
 
 echo "Assembling..."
 jar uf ../nighresjava/src/nighresjava.jar nl/uva/imcn/algorithms/*.class
@@ -200,7 +200,7 @@ javac_opts=(
 
 echo "Compiling..."
 cd fbpa-tools
-javac -cp ${deps_list} ${javac_opts[@]} nl/fullbrainpicture/algorithms/*.java ${fbpa_list}
+$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} nl/fullbrainpicture/algorithms/*.java ${fbpa_list}
 
 echo "Assembling..."
 jar uf ../nighresjava/src/nighresjava.jar nl/fullbrainpicture/algorithms/*.class
