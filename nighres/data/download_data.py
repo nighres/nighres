@@ -400,13 +400,12 @@ def download_AHEAD_template(data_dir=None, overwrite=False):
     figshare = 'https://uvaauas.figshare.com/ndownloader/files/'
 
     file_sources = [figshare + x for x in
-                    ['22679537','22679543','22679546','']]
+                    ['22679537','22679543','22679546']]
 
     file_targets = [os.path.join(data_dir, filename) for filename in
                     ['ahead_med_qr1.nii.gz',
                      'ahead_med_qr2s.nii.gz',
-                     'ahead_med_qsm.nii.gz',
-                     'ahead_med_qpd.nii.gz']]
+                     'ahead_med_qsm.nii.gz']]
 
     for source, target in zip(file_sources, file_targets):
 

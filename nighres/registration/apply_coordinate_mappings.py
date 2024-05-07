@@ -11,7 +11,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 def apply_coordinate_mappings(image, mapping1,
                         mapping2=None, mapping3=None, mapping4=None, mapping5=None,
                         interpolation="nearest", padding="closest",
-                        zero_border=0,
+                        zero_border=0, check_boundaries=False,
                         save_data=False, overwrite=False, output_dir=None,
                         file_name=None):
 
@@ -37,6 +37,8 @@ def apply_coordinate_mappings(image, mapping1,
         Image padding method (default is 'closest')
     zero_border: int
         Number of border voxels to remove, for partial slab images (default is 0)
+    check_boundaries: bool
+        Check for boundary interoplation errors (may be slow...) (default is True)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -177,6 +179,7 @@ def apply_coordinate_mappings(image, mapping1,
 
     applydef.setInterpolationType(interpolation)
     applydef.setImagePadding(padding)
+    applydef.setCheckBoundaries(check_boundaries)
 
     # execute class
     try:
