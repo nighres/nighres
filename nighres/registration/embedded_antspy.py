@@ -618,7 +618,7 @@ def embedded_antspy_2d_multi(source_images, target_images, image_weights=None,
     iter_rigid = str(rigid_iterations)
     iter_affine = str(affine_iterations)
     iter_syn = str(coarse_iterations)
-    smooth = str(scaling_factor)
+    smooth = str(float(scaling_factor))
     shrink = str(scaling_factor)
     for n in range(n_scales):
         iter_rigid = iter_rigid+'x'+str(rigid_iterations)
@@ -1373,7 +1373,7 @@ def embedded_antspy_multi(source_images, target_images,
     iter_rigid = str(rigid_iterations)
     iter_affine = str(affine_iterations)
     iter_syn = str(coarse_iterations)
-    smooth = str(scaling_factor)
+    smooth = str(float(scaling_factor))
     shrink = str(scaling_factor)
     for n in range(n_scales):
         iter_rigid = iter_rigid+'x'+str(rigid_iterations)

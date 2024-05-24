@@ -19,6 +19,14 @@ labels_17structures = ['Str-l','Str-r','STN-l','STN-r','SN-l','SN-r',\
                        'ic-l','ic-r','VTA-l','VTA-r','fx','PAG-l','PAG-r',\
                        'PPN-l','PPN-r','Cl-l','Cl-r']
 
+labels_27structures = ['Str-l','Str-r','STN-l','STN-r','SN-l','SN-r',\
+                       'RN-l','RN-r','GPi-l','GPi-r','GPe-l','GPe-r',\
+                       'Tha-l','Tha-r','LV-l','LV-r','3V','4V','Amg-l','Amg-r',\
+                       'ic-l','ic-r','VTA-l','VTA-r','fx','PAG-l','PAG-r',\
+                       'PPN-l','PPN-r','Cl-l','Cl-r','ICO-l','ICO-r','SCO-l','SCO-r',\
+                       'LH-l','LH-r','ac-lr','pc-lr','CHN-l','CHN-r',\
+                       'DRN-lr','MRN-lr','RMG-lr','RPO-lr']
+
 def massp_17structures_label(name):
     return 1+labels_17structures.index(name)
 
