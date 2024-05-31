@@ -38,7 +38,7 @@ def massp(target_images, structures=31,
                       intensity_atlas_hist=None,
                       skeleton_atlas_probas=None, skeleton_atlas_labels=None, 
                       map_to_target=None,
-                      max_iterations=80, max_difference=0.1, volume_scaling=1.0,
+                      max_iterations=80, max_difference=0.1,
                       atlas_file=None, intensity_prior=1.0,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
