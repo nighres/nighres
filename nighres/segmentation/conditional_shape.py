@@ -18,6 +18,7 @@ def conditional_shape(target_images, structures, contrasts, background=1,
                       max_iterations=80, max_difference=0.1, ngb_size=4,
                       intensity_prior=1.0,
                       intensity_baseline=0.1,
+                      volume_prior=1.0,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Conditioanl Shape Parcellation
@@ -60,6 +61,8 @@ def conditional_shape(target_images, structures, contrasts, background=1,
         Importance scaling factor for the intensities in [0,1] (default is 1.0)
     intensity_baseline: float
         Baseline uniform intensity prior to compensate intensity outliers (default is 0.1)
+    volume_prior: float
+        Importance scaling factor for the volume prior in [0,1] (default is 1.0)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -166,6 +169,7 @@ def conditional_shape(target_images, structures, contrasts, background=1,
     cspmax.setDiffusionParameters(max_iterations, max_difference)
     cspmax.setIntensityImportancePrior(intensity_prior)
     cspmax.setIntensityBaselinePrior(intensity_baseline)
+    cspmax.setVolumeImportancePrior(volume_prior)
     
     # load atlas metadata, if given (after setting up the numbers above!!)
     if atlas_file is not None:

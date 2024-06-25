@@ -38,8 +38,9 @@ def massp(target_images, structures=31,
                       intensity_atlas_hist=None,
                       skeleton_atlas_probas=None, skeleton_atlas_labels=None, 
                       map_to_target=None,
-                      max_iterations=80, max_difference=0.1, volume_scaling=1.0,
-                      atlas_file=None, intensity_prior=1.0, intensity_baseline=0.1,
+                      max_iterations=80, max_difference=0.1, 
+                      atlas_file=None, 
+                      intensity_prior=1.0, intensity_baseline=0.1, volume_prior=1.0,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Multi-contrast Anatomical Subcortical Structure parcellation (MASSP)
@@ -74,6 +75,8 @@ def massp(target_images, structures=31,
         Importance scaling factor for the intensities in [0,1] (default is 1.0)
     intensity_baseline: float
         Baseline uniform intensity prior to compensate intensity outliers (default is 0.1)
+    volume_prior: float
+        Importance scaling factor for the volume prior in [0,1] (default is 1.0)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -144,6 +147,7 @@ def massp(target_images, structures=31,
     massp.setDiffusionParameters(max_iterations, max_difference)
     massp.setIntensityImportancePrior(intensity_prior)
     massp.setIntensityBaselinePrior(intensity_baseline)
+    massp.setVolumeImportancePrior(volume_prior)
     
     # load atlas metadata, if given (after setting up the numbers above!!)
     if atlas_file is not None:
