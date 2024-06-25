@@ -107,7 +107,10 @@ def spectral_mesh_spatial_embedding(surface_mesh,
         if overwrite is False \
             and os.path.isfile(mesh_file) :
                 print("skip computation (use existing results)")
-                output = {'result': mesh_file}
+                if reference_mesh is not None:
+                    output = {'result': mesh_file, 'reference': ref_mesh_file}
+                else:    
+                    output = {'result': mesh_file}
                 return output
 
     # start virtual machine, if not already running
