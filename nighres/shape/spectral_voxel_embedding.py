@@ -101,9 +101,13 @@ def spectral_voxel_spatial_embedding(image,
                                   suffix='svse-ref'))
 
         if overwrite is False \
-            and os.path.isfile(coord_file) :
+            and os.path.isfile(coord_file) \
+            and (reference is None or os.path.isfile(ref_file)) :
                 print("skip computation (use existing results)")
-                output = {'result': coord_file}
+                if reference is None:
+                    output = {'result': coord_file}
+                else:
+                    output = {'result': coord_file, 'reference': ref_file}
                 return output
 
     # start virtual machine, if not already running
@@ -199,7 +203,7 @@ def spectral_voxel_spatial_embedding(image,
     if save_data:
         if reference is not None:
             save_volume(coord_file, coord_img)
-            save_mesh(ref_file, ref_img)
+            save_volume(ref_file, ref_img)
             return {'result': coord_file, 'reference': ref_file}
         else:
             save_volume(coord_file, coord_img)
@@ -404,7 +408,7 @@ def spectral_voxel_data_embedding(image,
     if save_data:
         if reference is not None:
             save_volume(coord_file, coord_img)
-            save_mesh(ref_file, ref_img)
+            save_volume(ref_file, ref_img)
             return {'result': coord_file, 'reference': ref_file}
         else:
             save_volume(coord_file, coord_img)
