@@ -21,7 +21,7 @@ release="release-1.5.1"
 #release="master"
 
 # Check the system has the necessary commands
-hash wget tar javac jar python3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3"
+hash tar javac jar python3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3"
 
 # Check for setuptools and wheels
 pip_modules=$(python3 -m pip list | tr -s ' ' | cut -f 1 -d ' ')
