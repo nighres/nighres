@@ -770,7 +770,7 @@ def conditional_shape_map_intensities(structures, contrasts, targets,
     intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+6,targets)
 
     intens_hist_data = numpy.reshape(numpy.array(cspmax.getTargetConditionalHistogram(),
-                                       dtype=numpy.float32), intens_hist_dims, 'F')
+                                       dtype=numpy.float32), shape=intens_hist_dims, order='F')
 
 
     # adapt header max for each image so that correct max is displayed
