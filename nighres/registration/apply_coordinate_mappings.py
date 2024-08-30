@@ -9,7 +9,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 
 def apply_coordinate_mappings(image, mapping1,
-                        mapping2=None, mapping3=None, mapping4=None, mapping5=None,
+                        mapping2=None, mapping3=None, mapping4=None, mapping5=None, mapping6=None,
                         interpolation="nearest", padding="closest",
                         zero_border=0, check_boundaries=False,
                         save_data=False, overwrite=False, output_dir=None,
@@ -31,6 +31,8 @@ def apply_coordinate_mappings(image, mapping1,
         Fourth coordinate mapping to apply
     mapping5 : niimg, optional
         Fifth coordinate mapping to apply
+    mapping6 : niimg, optional
+        Sixth coordinate mapping to apply
     interpolation: {'nearest', 'linear'}
         Interpolation method (default is 'nearest')
     padding: {'closest', 'zero', 'max'}
@@ -176,6 +178,18 @@ def apply_coordinate_mappings(image, mapping1,
                     applydef.setDeformation5Dimensions(def5data.shape[0],
                                                 def5data.shape[1],def5data.shape[2])
                     applydef.setDeformationType5("mapping(voxels)")
+
+                    if not (mapping6==None):
+                        def6 = load_volume(mapping6)
+                        def6data = def6.get_fdata()
+                        aff = def6.affine
+                        hdr = def6.header
+                        trgdim = def6data.shape
+                        applydef.setDeformationMapping6(nighresjava.JArray('float')(
+                                                (def6data.flatten('F')).astype(float)))
+                        applydef.setDeformation6Dimensions(def6data.shape[0],
+                                                    def6data.shape[1],def6data.shape[2])
+                        applydef.setDeformationType6("mapping(voxels)")
 
     applydef.setInterpolationType(interpolation)
     applydef.setImagePadding(padding)
