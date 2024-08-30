@@ -64,7 +64,7 @@ def levelsets_to_mesh_connector(levelset_image1, levelset_image2, label='lvl1_lv
         mesh_file = os.path.join(output_dir,
                         _fname_4saving(module=__name__,file_name=file_name,
                                        rootfile=label,
-                                       suffix='l2c-mesh',ext="vtk"))
+                                       suffix='l2c-mesh',ext="obj"))
 
         if overwrite is False \
             and os.path.isfile(mesh_file) :
@@ -98,7 +98,7 @@ def levelsets_to_mesh_connector(levelset_image1, levelset_image2, label='lvl1_lv
                             (lvl1_data.flatten('F')).astype(float)))
 
     lvl2_data = load_volume(levelset_image2).get_fdata()
-    algorithm.setLevelsetImage1(nighresjava.JArray('float')(
+    algorithm.setLevelsetImage2(nighresjava.JArray('float')(
                             (lvl2_data.flatten('F')).astype(float)))
 
     algorithm.setConnectorLength(length)
@@ -116,20 +116,24 @@ def levelsets_to_mesh_connector(levelset_image1, levelset_image2, label='lvl1_lv
         raise
         return
 
-    # collect outputs
-    npt = int(np.array(algorithm.getPointList(), dtype=np.float32).shape[0]/3)
-    mesh_points = np.reshape(np.array(algorithm.getPointList(),
-                               dtype=np.float32), (npt,3), 'C')
-
-    nfc = int(np.array(algorithm.getTriangleList(), dtype=np.int32).shape[0]/3)
-    mesh_faces = np.reshape(np.array(algorithm.getTriangleList(),
-                               dtype=np.int32), (nfc,3), 'C')
-
-    # create the mesh dictionary
-    mesh = {"points": mesh_points, "faces": mesh_faces}
-
-    if save_data:
-        save_mesh_geometry(mesh_file, mesh)
-        return {'result': mesh_file}
+    # collect outputs, if any
+    if algorithm.isBoundaryFound():
+        npt = int(np.array(algorithm.getPointList(), dtype=np.float32).shape[0]/3)
+        mesh_points = np.reshape(np.array(algorithm.getPointList(),
+                                   dtype=np.float32), (npt,3), 'C')
+    
+        nfc = int(np.array(algorithm.getTriangleList(), dtype=np.int32).shape[0]/3)
+        mesh_faces = np.reshape(np.array(algorithm.getTriangleList(),
+                                   dtype=np.int32), (nfc,3), 'C')
+    
+        # create the mesh dictionary
+        mesh = {"points": mesh_points, "faces": mesh_faces}
+    
+        if save_data:
+            save_mesh_geometry(mesh_file, mesh)
+            return {'result': mesh_file}
+        else:
+            return {'result': mesh}
     else:
-        return {'result': mesh}
+        return {'result': None}
+       
