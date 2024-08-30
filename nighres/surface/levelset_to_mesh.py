@@ -128,11 +128,11 @@ def levelset_to_mesh(levelset_image, connectivity="18/6", level=0.0,
     # collect outputs
     npt = int(np.array(algorithm.getPointList(), dtype=np.float32).shape[0]/3)
     mesh_points = np.reshape(np.array(algorithm.getPointList(),
-                               dtype=np.float32), (npt,3), 'C')
+                               dtype=np.float32), shape=(npt,3), order='C')
 
     nfc = int(np.array(algorithm.getTriangleList(), dtype=np.int32).shape[0]/3)
     mesh_faces = np.reshape(np.array(algorithm.getTriangleList(),
-                               dtype=np.int32), (nfc,3), 'C')
+                               dtype=np.int32), shape=(nfc,3), order='C')
 
     # create the mesh dictionary
     mesh = {"points": mesh_points, "faces": mesh_faces}

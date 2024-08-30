@@ -183,7 +183,7 @@ def spectral_mesh_spatial_embedding(surface_mesh,
     mesh_points = mesh['points']
     mesh_faces = mesh['faces']    
     mesh_data = np.reshape(np.array(algorithm.getEmbeddingValues(),
-                               dtype=np.float32), (npt,dims), 'F')
+                               dtype=np.float32), shape=(npt,dims), order='F')
     # create the mesh dictionary
     mesh = {"points": mesh_points, "faces": mesh_faces, "data": mesh_data}
 
@@ -192,7 +192,7 @@ def spectral_mesh_spatial_embedding(surface_mesh,
         ref_mesh_points = ref_mesh['points']
         ref_mesh_faces = ref_mesh['faces']    
         ref_mesh_data = np.reshape(np.array(algorithm.getReferenceEmbeddingValues(),
-                                   dtype=np.float32), (nrf,dims), 'F')
+                                   dtype=np.float32), shape=(nrf,dims), order='F')
         # create the mesh dictionary
         ref_mesh = {"points": ref_mesh_points, "faces": ref_mesh_faces, "data": ref_mesh_data}
         

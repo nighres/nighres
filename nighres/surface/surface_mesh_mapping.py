@@ -154,24 +154,24 @@ def surface_mesh_mapping(intensity_image, surface_mesh, inflated_mesh=None,
 
     orig_points = np.reshape(np.array(
                             algorithm.getMappedOriginalSurfacePoints(),
-                            dtype=np.float32), (npt, 3), 'C')
+                            dtype=np.float32), shape=(npt,3), order='C')
     orig_faces = np.reshape(np.array(
                             algorithm.getMappedOriginalSurfaceTriangles(),
-                            dtype=np.int32), (nfc, 3), 'C')
+                            dtype=np.int32), shape=(nfc,3), order='C')
     orig_data = np.reshape(np.array(
                            algorithm.getMappedOriginalSurfaceValues(),
-                           dtype=np.float32), (npt, nt), 'C')
+                           dtype=np.float32), shape=(npt,nt), order='C')
 
     if inflated_mesh is not None:
         inf_points = np.reshape(np.array(
                                 algorithm.getMappedInflatedSurfacePoints(),
-                                dtype=np.float32), (npt, 3), 'C')
+                                dtype=np.float32), shape=(npt,3), order='C')
         inf_faces = np.reshape(np.array(
                                algorithm.getMappedInflatedSurfaceTriangles(),
-                               dtype=np.int32), (nfc, 3), 'C')
+                               dtype=np.int32), shape=(nfc,3), order='C')
         inf_data = np.reshape(np.array(
                               algorithm.getMappedInflatedSurfaceValues(),
-                              dtype=np.float32), (npt, nt), 'C')
+                              dtype=np.float32), shape=(npt,nt), order='C')
 
     # create the mesh dictionary
     mapped_orig_mesh = {"points": orig_points, "faces": orig_faces,

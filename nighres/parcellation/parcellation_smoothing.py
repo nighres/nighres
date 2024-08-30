@@ -136,10 +136,10 @@ def parcellation_smoothing(parcellation, probability=None, connectivity="wcs",
     
     # collect outputs
     label_data = numpy.reshape(numpy.array(algorithm.getSmoothedLabel(),
-                                    dtype=numpy.int32), dimensions, 'F')
+                                    dtype=numpy.int32), shape=dimensions, order='F')
 
     proba_data = numpy.reshape(numpy.array(algorithm.getSmoothedProba(),
-                                    dtype=numpy.float32), dimensions, 'F')
+                                    dtype=numpy.float32), shape=dimensions, order='F')
 
     
     # adapt header max for each image so that correct max is displayed

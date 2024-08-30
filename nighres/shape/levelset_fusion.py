@@ -136,7 +136,7 @@ def levelset_fusion(levelset_images,
 
     # collect outputs
     levelset_data = np.reshape(np.array(algorithm.getLevelsetAverage(),
-                               dtype=np.float32), dimensions, 'F')
+                               dtype=np.float32), shape=dimensions, order='F')
 
     hdr['cal_min'] = np.nanmin(levelset_data)
     hdr['cal_max'] = np.nanmax(levelset_data)

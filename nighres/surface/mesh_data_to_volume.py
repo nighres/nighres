@@ -158,7 +158,7 @@ def mesh_data_to_volume(surface_mesh, reference_image,
 
     # reshape output to what nibabel likes
     propag_data = numpy.reshape(numpy.array(propag.getResultImage(),
-                                    dtype=numpy.float32), dimensions, 'F')
+                                    dtype=numpy.float32), shape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
