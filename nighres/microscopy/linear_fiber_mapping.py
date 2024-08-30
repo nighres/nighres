@@ -218,26 +218,26 @@ def linear_fiber_mapping(input_image, ridge_intensities,
         
     # reshape output to what nibabel likes
     proba_data = np.reshape(np.array(lfm.getProbabilityResponseImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     lines_data = np.reshape(np.array(lfm.getLineImage(),
-                                   dtype=np.int32), dimensions, 'F')
+                                   dtype=np.int32), shape=dimensions, order='F')
 
     length_data = np.reshape(np.array(lfm.getLengthImage(),
-                                   dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), shape=dimensions, order='F')
 
     theta_data = np.reshape(np.array(lfm.getAngleImage(),
-                                    dtype=np.float32), dim4d, 'F')
+                                    dtype=np.float32), shape=dim4d, order='F')
 
     ani_data = np.reshape(np.array(lfm.getAnisotropyImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     if diameter:
        dia_data = np.reshape(np.array(lfm.getDiameterImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
         
        pv_data = np.reshape(np.array(lfm.getPartialVolumeImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
         
 
     # adapt header max for each image so that correct max is displayed

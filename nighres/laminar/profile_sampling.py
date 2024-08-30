@@ -104,7 +104,7 @@ def profile_sampling(profile_surface_image, intensity_image,
     # collecting outputs
     profile_data = np.reshape(np.array(
                                 sampler.getProfileMappedIntensityImage(),
-                                dtype=np.float32), dimensions, 'F')
+                                dtype=np.float32), shape=dimensions, order='F')
 
     hdr['cal_max'] = np.nanmax(profile_data)
     profiles = nb.Nifti1Image(profile_data, aff, hdr)

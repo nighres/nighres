@@ -130,7 +130,7 @@ def phase_unwrapping(image, mask=None, nquadrants=3, rescale_phs=True,
 
     # reshape output to what nibabel likes
     unwrap_data = np.reshape(np.array(unwrap.getCorrectedImage(),
-                                    dtype=np.float32), dimensions3D, 'F')
+                                    dtype=np.float32), shape=dimensions3D, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

@@ -172,25 +172,25 @@ def intensity_based_skullstripping(main_image, extra_image=None,
     # collect outputs and potentially save
     main_masked_data = np.reshape(np.array(
                                 algo.getMaskedMainImage(),
-                                dtype=np.float32), dimensions, 'F')
+                                dtype=np.float32), shape=dimensions, order='F')
     main_hdr['cal_max'] = np.nanmax(main_masked_data)
     main_masked = nb.Nifti1Image(main_masked_data, main_affine, main_hdr)
 
     mask_data = np.reshape(np.array(algo.getBrainMaskImage(),
-                                    dtype=np.uint32), dimensions, 'F')
+                                    dtype=np.uint32), shape=dimensions, order='F')
     main_hdr['cal_max'] = np.nanmax(mask_data)
     mask = nb.Nifti1Image(mask_data, main_affine, main_hdr)
 
     proba_data = np.reshape(np.array(
                                 algo.getForegroundProbabilityImage(),
-                                dtype=np.float32), dimensions, 'F')
+                                dtype=np.float32), shape=dimensions, order='F')
     main_hdr['cal_max'] = np.nanmax(proba_data)
     proba = nb.Nifti1Image(proba_data, main_affine, main_hdr)
 
     if extra_image is not None:
         extra_data = np.reshape(np.array(
                                 algo.getMaskedExtraImage(),
-                                dtype=np.float32), dimensions, 'F')
+                                dtype=np.float32), shape=dimensions, order='F')
         extra_hdr['cal_max'] = np.nanmax(extra_data)
         extra_masked = nb.Nifti1Image(extra_data, extra_affine, extra_hdr)
 

@@ -40,7 +40,7 @@ def massp(target_images, structures=31,
                       map_to_target=None,
                       max_iterations=80, max_difference=0.1, 
                       atlas_file=None, 
-                      intensity_prior=1.0, intensity_baseline=0.02, volume_prior=0.25,
+                      intensity_prior=0.5, intensity_baseline=0.02, volume_prior=0.25,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ Multi-contrast Anatomical Subcortical Structure parcellation (MASSP)
@@ -72,7 +72,7 @@ def massp(target_images, structures=31,
     atlas_file: json
         File with atlas labels and metadata (opt)
     intensity_prior: float
-        Importance scaling factor for the intensities in [0,1] (default is 1.0)
+        Importance scaling factor for the intensities in [0,1] (default is 0.5)
     intensity_baseline: float
         Baseline uniform intensity prior to compensate intensity outliers (default is 0.02)
     volume_prior: float
@@ -277,10 +277,10 @@ def massp(target_images, structures=31,
     dims3Dtrg = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2])
 
     proba_data = numpy.reshape(numpy.array(massp.getFinalProba(),
-                                    dtype=numpy.float32), dims3Dtrg, 'F')
+                                    dtype=numpy.float32), shape=dims3Dtrg, order='F')
 
     label_data = numpy.reshape(numpy.array(massp.getFinalLabel(),
-                                    dtype=numpy.int32), dims3Dtrg, 'F')
+                                    dtype=numpy.int32), shape=dims3Dtrg, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -487,19 +487,19 @@ def massp_atlasing(subjects, structures, contrasts,
     intens_hist_dims = ((structures+1)*(structures+1),massp.getNumberOfBins()+6,contrasts)
 
     spatial_proba_data = numpy.reshape(numpy.array(massp.getBestSpatialProbabilityMaps(dimensions[3]),
-                                   dtype=numpy.float32), dimensions, 'F')
+                                   dtype=numpy.float32), shape=dimensions, order='F')
 
     spatial_label_data = numpy.reshape(numpy.array(massp.getBestSpatialProbabilityLabels(dimensions[3]),
-                                    dtype=numpy.int32), dimensions, 'F')    
+                                    dtype=numpy.int32), shape=dimensions, order='F')    
 
     intens_hist_data = numpy.reshape(numpy.array(massp.getConditionalHistogram(),
-                                       dtype=numpy.float32), intens_hist_dims, 'F')
+                                       dtype=numpy.float32), shape=intens_hist_dims, order='F')
 
     skeleton_proba_data = numpy.reshape(numpy.array(massp.getBestSkeletonProbabilityMaps(dimskel[3]),
-                                   dtype=numpy.float32), dimskel, 'F')
+                                   dtype=numpy.float32), shape=dimskel, order='F')
 
     skeleton_label_data = numpy.reshape(numpy.array(massp.getBestSkeletonProbabilityLabels(dimskel[3]),
-                                    dtype=numpy.int32), dimskel, 'F')    
+                                    dtype=numpy.int32), shape=dimskel, order='F')    
 
 
     # adapt header max for each image so that correct max is displayed

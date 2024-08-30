@@ -200,10 +200,10 @@ def mgdm_cells(contrast_image1, contrast_type1,
 
     # reshape output to what nibabel likes
     seg_data = np.reshape(np.array(mgdm.getSegmentedImage(),
-                                   dtype=np.int32), dimensions, 'F')
+                                   dtype=np.int32), shape=dimensions, order='F')
 
     dist_data = np.reshape(np.array(mgdm.getLevelsetBoundaryImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
