@@ -127,16 +127,16 @@ def surface_som_mapping(surface_mesh, mask_zeros=False,
     
     print("surface...")
     orig_points = np.reshape(np.array(algorithm.getMappedSurfacePoints(),
-                               dtype=np.float32), shape=(npt,3), order='C')
+                               dtype=np.float32), newshape=(npt,3), order='C')
     orig_faces = np.reshape(np.array(algorithm.getMappedSurfaceTriangles(),
-                               dtype=np.int32), shape=(nfc,3), order='C')
+                               dtype=np.int32), newshape=(nfc,3), order='C')
     orig_data = np.reshape(np.array(algorithm.getMappedSurfaceValues(),
-                               dtype=np.float32), shape=(npt,2), order='F')
+                               dtype=np.float32), newshape=(npt,2), order='F')
  
     #    som_points = np.reshape(np.array(algorithm.getMappedSurfacePoints(),
-    #                               dtype=np.float32), shape=(npt,3), order='C')
+    #                               dtype=np.float32), newshape=(npt,3), order='C')
     #    som_faces = np.reshape(np.array(algorithm.getMappedSurfaceTriangles(),
-    #                               dtype=np.int32), shape=(nfc,3), order='C')
+    #                               dtype=np.int32), newshape=(nfc,3), order='C')
     #    som_data = np.reshape(np.array(algorithm.getMappedSurfaceValues(),
     #                               dtype=np.float32), (npt,2), order='C')
  
@@ -147,11 +147,11 @@ def surface_som_mapping(surface_mesh, mask_zeros=False,
     
     print("som... ("+str(npt2)+", "+str(nfc2)+")")
     som_points = np.reshape(np.array(algorithm.getMappedSomPoints(),
-                               dtype=np.float32), shape=(npt2,3), order='C')
+                               dtype=np.float32), newshape=(npt2,3), order='C')
     som_faces = np.reshape(np.array(algorithm.getMappedSomTriangles(),
-                               dtype=np.int32), shape=(nfc2,3), order='C')
+                               dtype=np.int32), newshape=(nfc2,3), order='C')
     som_data = np.reshape(np.array(algorithm.getMappedSomValues(),
-                               dtype=np.float32), shape=(npt2,2), order='F')
+                               dtype=np.float32), newshape=(npt2,2), order='F')
     
     # create the mesh dictionary
     mapped_orig_mesh = {"points": orig_points, "faces": orig_faces, 

@@ -129,7 +129,7 @@ def profile_averaging(profile_surface_image, intensity_image, roi_image,
     # collecting outputs
     weight_data = numpy.reshape(numpy.array(
                                 sampler.getProfileWeights(),
-                                dtype=numpy.float32), shape=(dimensions[0],dimensions[1],dimensions[2]), order='F')
+                                dtype=numpy.float32), newshape=(dimensions[0],dimensions[1],dimensions[2]), order='F')
 
     sample = numpy.array(sampler.getSampleProfile(), dtype=numpy.float32)
     median = numpy.array(sampler.getMedianProfile(), dtype=numpy.float32)

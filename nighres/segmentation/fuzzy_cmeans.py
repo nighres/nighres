@@ -162,7 +162,7 @@ def fuzzy_cmeans(image, clusters=3, max_iterations=50, max_difference=0.01,
 
     # reshape output to what nibabel likes
     classification_data = np.reshape(np.array(rfcm.getClassification(),
-                                   dtype=np.int32), shape=dimensions, order='F')
+                                   dtype=np.int32), newshape=dimensions, order='F')
 
     header['cal_max'] = np.nanmax(classification_data)
     classification = nb.Nifti1Image(classification_data, affine, header)
@@ -170,14 +170,14 @@ def fuzzy_cmeans(image, clusters=3, max_iterations=50, max_difference=0.01,
     memberships = []
     for c in range(clusters):
         mem_data = np.reshape(np.array(rfcm.getMembership(c),
-                                    dtype=np.float32), shape=dimensions, order='F')    
+                                    dtype=np.float32), newshape=dimensions, order='F')    
         header['cal_max'] = np.nanmax(mem_data)
         membership = nb.Nifti1Image(mem_data, affine, header)
         memberships.append(membership)
 
     if map_intensity:
         intens_data = np.reshape(np.array(rfcm.getClassImage(),
-                                   dtype=np.float32), shape=dimensions, order='F')
+                                   dtype=np.float32), newshape=dimensions, order='F')
 
         header['cal_min'] = np.nanmin(intens_data)
         header['cal_max'] = np.nanmax(intens_data)

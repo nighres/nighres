@@ -318,19 +318,19 @@ def mgdm_segmentation(contrast_image1, contrast_type1,
 
     # reshape output to what nibabel likes
     seg_data = np.reshape(np.array(mgdm.getSegmentedBrainImage(),
-                                   dtype=np.int32), shape=dimensions, order='F')
+                                   dtype=np.int32), newshape=dimensions, order='F')
 
     dist_data = np.reshape(np.array(mgdm.getLevelsetBoundaryImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     # if using label_memberships output, 
     # membership and labels output has a 4th dimension, set to 6
     dimensions4d = [dimensions[0], dimensions[1], dimensions[2], 6]
     
     lbl_data = np.reshape(np.array(mgdm.getPosteriorMaximumLabels4D(),
-                                   dtype=np.int32), shape=dimensions, order='F')
+                                   dtype=np.int32), newshape=dimensions, order='F')
     mems_data = np.reshape(np.array(mgdm.getPosteriorMaximumMemberships4D(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

@@ -129,7 +129,7 @@ def competing_probability_diffusion(probas, prior,
 
     # reshape output to what nibabel likes
     data = np.reshape(np.array(cpd.getPosteriorImages(),
-                                    dtype=np.float32), shape=dim4d, order='F')
+                                    dtype=np.float32), newshape=dim4d, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -139,7 +139,7 @@ def competing_probability_diffusion(probas, prior,
 
     # reshape output to what nibabel likes
     data = np.reshape(np.array(cpd.getClusteringImage(),
-                                    dtype=np.int32), shape=dimensions, order='F')
+                                    dtype=np.int32), newshape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

@@ -124,7 +124,7 @@ def mp2rage_dura_estimation(second_inversion, skullstrip_mask,
     # collect outputs and potentially save
     result_data = np.reshape(np.array(
                                 algo.getDuraImage(),
-                                dtype=np.float32), shape=dimensions, order='F')
+                                dtype=np.float32), newshape=dimensions, order='F')
     inv2_hdr['cal_max'] = np.nanmax(result_data)
     result_img = nb.Nifti1Image(result_data, inv2_affine, inv2_hdr)
 

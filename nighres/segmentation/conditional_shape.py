@@ -288,31 +288,31 @@ def conditional_shape(target_images, structures, contrasts, background=1,
     intens_hist_dims = ((structures+background)*(structures+background),cspmax.getNumberOfBins()+6,contrasts)
 
     spatial_proba_data = numpy.reshape(numpy.array(cspmax.getBestSpatialProbabilityMaps(1),
-                                   dtype=numpy.float32), shape=dims3Dtrg, order='F')
+                                   dtype=numpy.float32), newshape=dims3Dtrg, order='F')
 
     spatial_label_data = numpy.reshape(numpy.array(cspmax.getBestSpatialProbabilityLabels(1),
-                                    dtype=numpy.int32), shape=dims3Dtrg, order='F')    
+                                    dtype=numpy.int32), newshape=dims3Dtrg, order='F')    
 
 #    combined_proba_data = numpy.reshape(numpy.array(cspmax.getBestProbabilityMaps(1),
-#                                   dtype=numpy.float32), shape=dims3Dtrg, order='F')
+#                                   dtype=numpy.float32), newshape=dims3Dtrg, order='F')
 
 #    combined_label_data = numpy.reshape(numpy.array(cspmax.getBestProbabilityLabels(1),
-#                                    dtype=numpy.int32), shape=dims3Dtrg, order='F')
+#                                    dtype=numpy.int32), newshape=dims3Dtrg, order='F')
 
     combined_proba_data = numpy.reshape(numpy.array(cspmax.getJointProbabilityMaps(4),
-                                   dtype=numpy.float32), shape=dims_extra, order='F')
+                                   dtype=numpy.float32), newshape=dims_extra, order='F')
 
     combined_label_data = numpy.reshape(numpy.array(cspmax.getJointProbabilityLabels(4),
-                                    dtype=numpy.int32), shape=dims_extra, order='F')
+                                    dtype=numpy.int32), newshape=dims_extra, order='F')
 
     proba_data = numpy.reshape(numpy.array(cspmax.getFinalProba(),
-                                    dtype=numpy.float32), shape=dims3Dtrg, order='F')
+                                    dtype=numpy.float32), newshape=dims3Dtrg, order='F')
 
     label_data = numpy.reshape(numpy.array(cspmax.getFinalLabel(),
-                                    dtype=numpy.int32), shape=dims3Dtrg, order='F')
+                                    dtype=numpy.int32), newshape=dims3Dtrg, order='F')
 
     neighbor_data = numpy.reshape(numpy.array(cspmax.getNeighborhoodMaps(ngb_size),
-                                        dtype=numpy.float32), shape=dims_ngb, order='F')
+                                        dtype=numpy.float32), newshape=dims_ngb, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -550,19 +550,19 @@ def conditional_shape_atlasing(subjects, structures, contrasts,
     intens_hist_dims = ((structures+background)*(structures+background),cspmax.getNumberOfBins()+6,contrasts)
 
     spatial_proba_data = numpy.reshape(numpy.array(cspmax.getBestSpatialProbabilityMaps(dimensions[3]),
-                                   dtype=numpy.float32), shape=dimensions, order='F')
+                                   dtype=numpy.float32), newshape=dimensions, order='F')
 
     spatial_label_data = numpy.reshape(numpy.array(cspmax.getBestSpatialProbabilityLabels(dimensions[3]),
-                                    dtype=numpy.int32), shape=dimensions, order='F')    
+                                    dtype=numpy.int32), newshape=dimensions, order='F')    
 
     intens_hist_data = numpy.reshape(numpy.array(cspmax.getConditionalHistogram(),
-                                       dtype=numpy.float32), shape=intens_hist_dims, order='F')
+                                       dtype=numpy.float32), newshape=intens_hist_dims, order='F')
 
     skeleton_proba_data = numpy.reshape(numpy.array(cspmax.getBestSkeletonProbabilityMaps(dimskel[3]),
-                                   dtype=numpy.float32), shape=dimskel, order='F')
+                                   dtype=numpy.float32), newshape=dimskel, order='F')
 
     skeleton_label_data = numpy.reshape(numpy.array(cspmax.getBestSkeletonProbabilityLabels(dimskel[3]),
-                                    dtype=numpy.int32), shape=dimskel, order='F')    
+                                    dtype=numpy.int32), newshape=dimskel, order='F')    
 
 
     # adapt header max for each image so that correct max is displayed
@@ -770,7 +770,7 @@ def conditional_shape_map_intensities(structures, contrasts, targets,
     intens_hist_dims = ((structures+1)*(structures+1),cspmax.getNumberOfBins()+6,targets)
 
     intens_hist_data = numpy.reshape(numpy.array(cspmax.getTargetConditionalHistogram(),
-                                       dtype=numpy.float32), shape=intens_hist_dims, order='F')
+                                       dtype=numpy.float32), newshape=intens_hist_dims, order='F')
 
 
     # adapt header max for each image so that correct max is displayed

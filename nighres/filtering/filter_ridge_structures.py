@@ -115,7 +115,7 @@ def filter_ridge_structures(input_image,
     # Collect output
     ridge_structure_image_data = np.reshape(np.array(
                                     filter_ridge.getRidgeStructureImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     if output_type == 'probability':
         header['cal_min'] = 0.0

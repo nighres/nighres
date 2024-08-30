@@ -228,13 +228,13 @@ def extract_brain_region(segmentation, levelset_boundary,
     # inside region
     # reshape output to what nibabel likes
     mask_data = np.reshape(np.array(xbr.getInsideWMmask(),
-                                    dtype=np.int32), shape=dimensions, order='F')
+                                    dtype=np.int32), newshape=dimensions, order='F')
 
     proba_data = np.reshape(np.array(xbr.getInsideWMprobability(),
-                                     dtype=np.float32), shape=dimensions, order='F')
+                                     dtype=np.float32), newshape=dimensions, order='F')
 
     lvl_data = np.reshape(np.array(xbr.getInsideWMlevelset(),
-                                   dtype=np.float32), shape=dimensions, order='F')
+                                   dtype=np.float32), newshape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -253,13 +253,13 @@ def extract_brain_region(segmentation, levelset_boundary,
     # main region
     # reshape output to what nibabel likes
     mask_data = np.reshape(np.array(xbr.getStructureGMmask(),
-                                    dtype=np.int32), shape=dimensions, order='F')
+                                    dtype=np.int32), newshape=dimensions, order='F')
 
     proba_data = np.reshape(np.array(xbr.getStructureGMprobability(),
-                                     dtype=np.float32), shape=dimensions, order='F')
+                                     dtype=np.float32), newshape=dimensions, order='F')
 
     lvl_data = np.reshape(np.array(xbr.getStructureGMlevelset(),
-                                   dtype=np.float32), shape=dimensions, order='F')
+                                   dtype=np.float32), newshape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -278,13 +278,13 @@ def extract_brain_region(segmentation, levelset_boundary,
     # background region
     # reshape output to what nibabel likes
     mask_data = np.reshape(np.array(xbr.getBackgroundCSFmask(),
-                                    dtype=np.int32), shape=dimensions, order='F')
+                                    dtype=np.int32), newshape=dimensions, order='F')
 
     proba_data = np.reshape(np.array(xbr.getBackgroundCSFprobability(),
-                                     dtype=np.float32), shape=dimensions, order='F')
+                                     dtype=np.float32), newshape=dimensions, order='F')
 
     lvl_data = np.reshape(np.array(xbr.getBackgroundCSFlevelset(),
-                                   dtype=np.float32), shape=dimensions, order='F')
+                                   dtype=np.float32), newshape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

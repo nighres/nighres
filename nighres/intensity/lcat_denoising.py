@@ -200,7 +200,7 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
     denoised_list = []
     for idx, image in enumerate(image_list):
         den_data = np.reshape(np.array(lcat.getDenoisedMagnitudeAt(idx),
-                                   dtype=np.float32), shape=dimensions, order='F')
+                                   dtype=np.float32), newshape=dimensions, order='F')
         header['cal_min'] = np.nanmin(den_data)
         header['cal_max'] = np.nanmax(den_data)
         denoised = nb.Nifti1Image(den_data, affine, header)
@@ -212,7 +212,7 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
     if phase_list is not None:
         for idx,image in enumerate(phase_list):
             den_data = np.reshape(np.array(lcat.getDenoisedPhaseAt(idx),
-                                       dtype=np.float32), shape=dimensions, order='F')
+                                       dtype=np.float32), newshape=dimensions, order='F')
             header['cal_min'] = np.nanmin(den_data)
             header['cal_max'] = np.nanmax(den_data)
             denoised = nb.Nifti1Image(den_data, affine, header)
@@ -222,10 +222,10 @@ def lcat_denoising(image_list, image_mask, phase_list=None,
                 save_volume(den_files[len(image_list)+idx], denoised)
 
     dim_data = np.reshape(np.array(lcat.getLocalDimensionImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     err_data = np.reshape(np.array(lcat.getNoiseFitImage(),
-                                    dtype=np.float32), shape=dims3d, order='F')
+                                    dtype=np.float32), newshape=dims3d, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

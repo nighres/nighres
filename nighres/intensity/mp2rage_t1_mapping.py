@@ -175,13 +175,13 @@ def mp2rage_t1_mapping(first_inversion, second_inversion,
 
     # reshape output to what nibabel likes
     t1_data = np.reshape(np.array(qt1map.getQuantitativeT1mapImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     r1_data = np.reshape(np.array(qt1map.getQuantitativeR1mapImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     uni_data = np.reshape(np.array(qt1map.getUniformT1weightedImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -350,10 +350,10 @@ def mp2rage_t1_from_uni(uniform_image,
 
     # reshape output to what nibabel likes
     t1_data = np.reshape(np.array(qt1map.getQuantitativeT1mapImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     r1_data = np.reshape(np.array(qt1map.getQuantitativeR1mapImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

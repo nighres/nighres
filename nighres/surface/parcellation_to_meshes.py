@@ -148,11 +148,11 @@ def parcellation_to_meshes(parcellation_image, connectivity="18/6",
             # collect outputs
             npt = int(numpy.array(algorithm.getPointList(), dtype=numpy.float32).shape[0]/3)
             mesh_points = numpy.reshape(numpy.array(algorithm.getPointList(),
-                                   dtype=numpy.float32), shape=(npt,3), order='C')
+                                   dtype=numpy.float32), newshape=(npt,3), order='C')
     
             nfc = int(numpy.array(algorithm.getTriangleList(), dtype=numpy.int32).shape[0]/3)
             mesh_faces = numpy.reshape(numpy.array(algorithm.getTriangleList(),
-                                   dtype=numpy.int32), shape=(nfc,3), order='C')
+                                   dtype=numpy.int32), newshape=(nfc,3), order='C')
     
             mesh_label = label*numpy.ones((npt,1))
     

@@ -143,16 +143,16 @@ def flash_t2s_fitting(image_list, te_list, r2s_threshold=None,
 
     # reshape output to what nibabel likes
     t2s_data = np.reshape(np.array(qt2fit.getT2sImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     r2s_data = np.reshape(np.array(qt2fit.getR2sImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     s0_data = np.reshape(np.array(qt2fit.getS0Image(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     err_data = np.reshape(np.array(qt2fit.getResidualImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

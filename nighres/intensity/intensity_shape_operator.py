@@ -102,7 +102,7 @@ def intensity_shape_operator(image,
     # Collect output
     tensor_data = np.reshape(np.array(
                                     algorithm.getTensorImage(),
-                                    dtype=np.float32), shape=dims4d, order='F')
+                                    dtype=np.float32), newshape=dims4d, order='F')
 
     hdr['cal_min'] = np.nanmin(tensor_data)
     hdr['cal_max'] = np.nanmax(tensor_data)

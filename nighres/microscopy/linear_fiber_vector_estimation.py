@@ -214,7 +214,7 @@ def linear_fiber_vector_estimation(proba_image, theta_image, lambda_image,
     print('extract output file...')
     for n in range(3*vec_dim):
         vec_data[:,:,:,n] = numpy.reshape(numpy.array(lfve.getVectorImageAt(n),
-                                    dtype=numpy.float32), shape=dim_space, order='F')
+                                    dtype=numpy.float32), newshape=dim_space, order='F')
  
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

@@ -124,11 +124,11 @@ def mesh_label_inside_distance(surface_mesh, surface_labels=None, selected_label
                 dtype=numpy.int32).shape[0]/3) 
     
     points = numpy.reshape(numpy.array(algorithm.getSurfacePoints(),
-                               dtype=numpy.float32), shape=(npt,3), order='C')
+                               dtype=numpy.float32), newshape=(npt,3), order='C')
     faces = numpy.reshape(numpy.array(algorithm.getSurfaceTriangles(),
-                               dtype=numpy.int32), shape=(nfc,3), order='C')
+                               dtype=numpy.int32), newshape=(nfc,3), order='C')
     data = numpy.reshape(numpy.array(algorithm.getDistanceValues(),
-                               dtype=numpy.float32), shape=(npt), order='F')
+                               dtype=numpy.float32), newshape=(npt), order='F')
 
     mesh = {"points": points, "faces": faces, 
                         "data": data}
@@ -258,11 +258,11 @@ def mesh_label_distance_weighting(surface_mesh, surface_labels=None, selected_la
                 dtype=numpy.int32).shape[0]/3) 
     
     points = numpy.reshape(numpy.array(algorithm.getSurfacePoints(),
-                               dtype=numpy.float32), shape=(npt,3), order='C')
+                               dtype=numpy.float32), newshape=(npt,3), order='C')
     faces = numpy.reshape(numpy.array(algorithm.getSurfaceTriangles(),
-                               dtype=numpy.int32), shape=(nfc,3), order='C')
+                               dtype=numpy.int32), newshape=(nfc,3), order='C')
     data = numpy.reshape(numpy.array(algorithm.getDistanceValues(),
-                               dtype=numpy.float32), shape=(npt), order='F')
+                               dtype=numpy.float32), newshape=(npt), order='F')
 
     mesh = {"points": points, "faces": faces, 
                         "data": data}
@@ -398,19 +398,19 @@ def mesh_label_outside_distance(surface_mesh, surface_labels=None, selected_labe
                 dtype=numpy.int32).shape[0]/3) 
     
     points = numpy.reshape(numpy.array(algorithm.getSurfacePoints(),
-                               dtype=numpy.float32), shape=(npt,3), order='C')
+                               dtype=numpy.float32), newshape=(npt,3), order='C')
     faces = numpy.reshape(numpy.array(algorithm.getSurfaceTriangles(),
-                               dtype=numpy.int32), shape=(nfc,3), order='C')
+                               dtype=numpy.int32), newshape=(nfc,3), order='C')
     
     data = numpy.zeros((npt,depth))
     for d in range(depth):
         data[:,d] = numpy.reshape(numpy.array(algorithm.getDistanceValuesAt(d),
-                               dtype=numpy.float32), shape=(npt), order='F')
+                               dtype=numpy.float32), newshape=(npt), order='F')
     
     label = numpy.zeros((npt,depth))
     for d in range(depth):
         label[:,d] = numpy.reshape(numpy.array(algorithm.getClosestLabelsAt(d),
-                               dtype=numpy.int32), shape=(npt), order='F')
+                               dtype=numpy.int32), newshape=(npt), order='F')
 
     meshd = {"points": points, "faces": faces, 
                         "data": data}
@@ -550,18 +550,18 @@ def mesh_label_signed_distance(surface_mesh, surface_labels=None, selected_label
                 dtype=numpy.int32).shape[0]/3) 
     
     points = numpy.reshape(numpy.array(algorithm.getSurfacePoints(),
-                               dtype=numpy.float32), shape=(npt,3), order='C')
+                               dtype=numpy.float32), newshape=(npt,3), order='C')
     faces = numpy.reshape(numpy.array(algorithm.getSurfaceTriangles(),
-                               dtype=numpy.int32), shape=(nfc,3), order='C')
+                               dtype=numpy.int32), newshape=(nfc,3), order='C')
     data = numpy.zeros((npt,depth))
     for d in range(depth):
         data[:,d] = numpy.reshape(numpy.array(algorithm.getDistanceValuesAt(d),
-                               dtype=numpy.float32), shape=(npt), order='F')
+                               dtype=numpy.float32), newshape=(npt), order='F')
     
     label = numpy.zeros((npt,depth))
     for d in range(depth):
         label[:,d] = numpy.reshape(numpy.array(algorithm.getClosestLabelsAt(d),
-                               dtype=numpy.int32), shape=(npt), order='F')
+                               dtype=numpy.int32), newshape=(npt), order='F')
 
     meshd = {"points": points, "faces": faces, 
                         "data": data}
@@ -701,15 +701,15 @@ def mesh_label_minimum_distance(surface_mesh, surface_labels=None, selected_labe
                 dtype=numpy.int32).shape[0]/3) 
     
     points = numpy.reshape(numpy.array(algorithm.getSurfacePoints(),
-                               dtype=numpy.float32), shape=(npt,3), order='C')
+                               dtype=numpy.float32), newshape=(npt,3), order='C')
     faces = numpy.reshape(numpy.array(algorithm.getSurfaceTriangles(),
-                               dtype=numpy.int32), shape=(nfc,3), order='C')
+                               dtype=numpy.int32), newshape=(nfc,3), order='C')
     
     data = numpy.reshape(numpy.array(algorithm.getDistanceValuesAt(0),
-                               dtype=numpy.float32), shape=(npt), order='F')
+                               dtype=numpy.float32), newshape=(npt), order='F')
     
     label = numpy.reshape(numpy.array(algorithm.getClosestLabelsAt(0),
-                               dtype=numpy.int32), shape=(npt), order='F')
+                               dtype=numpy.int32), newshape=(npt), order='F')
 
     meshd = {"points": points, "faces": faces, 
                         "data": data}
@@ -833,11 +833,11 @@ def mesh_value_inside_distance(surface_mesh, surface_values=None,
                 dtype=numpy.int32).shape[0]/3) 
     
     points = numpy.reshape(numpy.array(algorithm.getSurfacePoints(),
-                               dtype=numpy.float32), shape=(npt,3), order='C')
+                               dtype=numpy.float32), newshape=(npt,3), order='C')
     faces = numpy.reshape(numpy.array(algorithm.getSurfaceTriangles(),
-                               dtype=numpy.int32), shape=(nfc,3), order='C')
+                               dtype=numpy.int32), newshape=(nfc,3), order='C')
     data = numpy.reshape(numpy.array(algorithm.getDistanceValues(),
-                               dtype=numpy.float32), shape=(npt), order='F')
+                               dtype=numpy.float32), newshape=(npt), order='F')
 
     if log_scale:
        data = numpy.log(1+data)
@@ -956,11 +956,11 @@ def mesh_value_skeleton(surface_mesh, surface_values=None,
                 dtype=numpy.int32).shape[0]/3) 
     
     points = numpy.reshape(numpy.array(algorithm.getSurfacePoints(),
-                               dtype=numpy.float32), shape=(npt,3), order='C')
+                               dtype=numpy.float32), newshape=(npt,3), order='C')
     faces = numpy.reshape(numpy.array(algorithm.getSurfaceTriangles(),
-                               dtype=numpy.int32), shape=(nfc,3), order='C')
+                               dtype=numpy.int32), newshape=(nfc,3), order='C')
     data = numpy.reshape(numpy.array(algorithm.getLabelValues(),
-                               dtype=numpy.int32), shape=(npt), order='F')
+                               dtype=numpy.int32), newshape=(npt), order='F')
 
     mesh = {"points": points, "faces": faces, 
                         "data": data}

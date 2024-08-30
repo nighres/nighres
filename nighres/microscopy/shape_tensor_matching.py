@@ -145,7 +145,7 @@ def shape_tensor_matching(ani, theta, images, references, img_types=None,
 
     # reshape output to what nibabel likes
     data = np.reshape(np.array(stm.getMatchingImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

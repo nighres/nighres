@@ -137,7 +137,7 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
 
     # reshape output to what nibabel likes
     masked_data = np.reshape(np.array(bge.getMaskedImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -146,7 +146,7 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
     masked = nb.Nifti1Image(masked_data, affine, header)
 
     proba_data = np.reshape(np.array(bge.getProbaImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -155,7 +155,7 @@ def background_estimation(image, distribution='exponential', ratio=1e-3,
     proba = nb.Nifti1Image(proba_data, affine, header)
 
     mask_data = np.reshape(np.array(bge.getMask(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

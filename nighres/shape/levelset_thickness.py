@@ -130,14 +130,14 @@ def levelset_thickness(input_image,
     # Collect output
     axis_data = np.reshape(np.array(
                                     algorithm.getMedialAxisImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
     dist_data = np.reshape(np.array(
                                     algorithm.getMedialDistanceImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     thickness_data = np.reshape(np.array(
                                     algorithm.geThicknessImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
 
     # adapt header max for each image so that correct max is displayed

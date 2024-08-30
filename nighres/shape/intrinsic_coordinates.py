@@ -121,10 +121,10 @@ def intrinsic_coordinates(label_image,
     # Collect output
     coord_data = np.reshape(np.array(
                                     algorithm.getCoordinateImage(),
-                                    dtype=np.float32), shape=dimensions4, order='F')
+                                    dtype=np.float32), newshape=dimensions4, order='F')
     img_data = np.reshape(np.array(
                                     algorithm.getTransformedImage(),
-                                    dtype=np.int32), shape=dimensions, order='F')
+                                    dtype=np.int32), newshape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

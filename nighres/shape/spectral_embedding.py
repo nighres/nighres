@@ -165,7 +165,7 @@ def spectral_embedding(label_image,
     # Collect output
     coord_data = np.reshape(np.array(
                                     algorithm.getCoordinateImage(),
-                                    dtype=np.float32), shape=dimensions4, order='F')
+                                    dtype=np.float32), newshape=dimensions4, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -316,7 +316,7 @@ def spectral_flatmap(label_image, coord_image,
     
     flatmap_data = np.reshape(np.array(
                                     algorithm.getFlatMapImage(),
-                                    dtype=np.float32), shape=flatdim, order='F')
+                                    dtype=np.float32), newshape=flatdim, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -470,7 +470,7 @@ def spectral_tsne(label_image, coord_image,
     # Collect output
     coord_data = np.reshape(np.array(
                                     algorithm.getCoordinateImage(),
-                                    dtype=np.float32), shape=dimensions4, order='F')
+                                    dtype=np.float32), newshape=dimensions4, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

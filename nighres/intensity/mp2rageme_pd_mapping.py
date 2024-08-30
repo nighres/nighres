@@ -180,7 +180,7 @@ def mp2rageme_pd_mapping(first_inversion, second_inversion,
 
     # reshape output to what nibabel likes
     pd_data = np.reshape(np.array(qpdmap.getProtonDensityImage(),
-                                    dtype=np.float32), shape=dimensions, order='F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

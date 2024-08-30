@@ -213,7 +213,7 @@ def apply_coordinate_mappings(image, mapping1,
         trgdim = [trgdim[0],trgdim[1],trgdim[2]]
     deformed_data = np.reshape(np.array(
                                 applydef.getDeformedImage(),
-                                dtype=np.float32), shape=trgdim, order='F')
+                                dtype=np.float32), newshape=trgdim, order='F')
     hdr['cal_min'] = np.nanmin(deformed_data)
     hdr['cal_max'] = np.nanmax(deformed_data)
     deformed = nb.Nifti1Image(deformed_data, aff, hdr)
@@ -393,7 +393,7 @@ def apply_vector_coordinate_mappings(image, mapping1,
         trgdim = [trgdim[0],trgdim[1],trgdim[2]]
     deformed_data = np.reshape(np.array(
                                 applydef.getDeformedImage(),
-                                dtype=np.float32), shape=trgdim, order='F')
+                                dtype=np.float32), newshape=trgdim, order='F')
     hdr['cal_min'] = np.nanmin(deformed_data)
     hdr['cal_max'] = np.nanmax(deformed_data)
     deformed = nb.Nifti1Image(deformed_data, aff, hdr)
@@ -565,7 +565,7 @@ def apply_coordinate_mappings_2d(image, mapping1,
         trgdim = [trgdim[0],trgdim[1]]
     deformed_data = np.reshape(np.array(
                                 applydef.getDeformedImage(),
-                                dtype=np.float32), shape=trgdim, order='F')
+                                dtype=np.float32), newshape=trgdim, order='F')
     hdr['cal_min'] = np.nanmin(deformed_data)
     hdr['cal_max'] = np.nanmax(deformed_data)
     deformed = nb.Nifti1Image(deformed_data, aff, hdr)
@@ -745,7 +745,7 @@ def apply_angular_coordinate_mappings_2d(image, mapping1,
         trgdim = [trgdim[0],trgdim[1]]
     deformed_data = np.reshape(np.array(
                                 applydef.getDeformedImage(),
-                                dtype=np.float32), shape=trgdim, order='F')
+                                dtype=np.float32), newshape=trgdim, order='F')
     
     if unit=='deg':
         deformed_data = deformed_data/np.pi*180.0
@@ -913,7 +913,7 @@ def apply_coordinate_mappings_mesh(surface_mesh, mapping1,
                 dtype=np.float32).shape[0]/3)
     
     def_points = np.reshape(np.array(applydef.getDeformedMeshPoints(),
-                               dtype=np.float32), shape=(npt,3), order='C')
+                               dtype=np.float32), newshape=(npt,3), order='C')
 
     # create the mesh dictionary
     if 'data' in mesh:
