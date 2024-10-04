@@ -25,18 +25,19 @@ T=3
 
 def focused_antspy(source_images, target_images, source_label=None, target_label=None,
                     label_list=None, label_distance=3.0,
-                    run_rigid=True,
-                    rigid_iterations=1000,
-                    run_affine=False,
-                    affine_iterations=1000,
-                    run_syn=True,
-                    coarse_iterations=40,
-                    medium_iterations=50, fine_iterations=40,
-					scaling_factor=8,
-					cost_function='MutualInformation',
-					interpolation='NearestNeighbor',
-					regularization='High',
-					convergence=1e-6,
+                    run_rigid=[True,False],
+                    rigid_iterations=[1000,0],
+                    run_affine=[False,False],
+                    affine_iterations=[0,0],
+                    run_syn=[True,True],
+                    coarse_iterations=[40,40],
+                    medium_iterations=[50,50], 
+                    fine_iterations=[40,40],
+					scaling_factor=[8,8],
+					cost_function=['MutualInformation','MutualInformation'],
+					interpolation=['NearestNeighbor','NearestNeighbor'],
+					regularization=['High','High'],
+					convergence=[1e-6,1e-6],
 					mask_zero=False, smooth_mask=0.0,
 					ignore_affine=False, ignore_header=False,
                     save_data=False, overwrite=False, output_dir=None,
@@ -63,30 +64,32 @@ def focused_antspy(source_images, target_images, source_label=None, target_label
     label_distance: float
         Maximum distance around the region of interest to keep as a ratio of the region internal
         thickness (default is 3.0)
-    run_rigid: bool
-        Whether or not to run a rigid registration first (default is False)
-    rigid_iterations: float
+    run_rigid: bool or [bool]
+        Whether or not to run a rigid registration first (default is True)
+    rigid_iterations: float or [float]
         Number of iterations in the rigid step (default is 1000)
-    run_affine: bool
+    run_affine: bool or [bool]
         Whether or not to run a affine registration first (default is False)
-    affine_iterations: float
-        Number of iterations in the affine step (default is 1000)
-    run_syn: bool
+    affine_iterations: float or [float]
+        Number of iterations in the affine step (default is 0)
+    run_syn: bool or [bool]
         Whether or not to run a SyN registration (default is True)
-    coarse_iterations: float
+    coarse_iterations: float or [float]
         Number of iterations at the coarse level (default is 40)
-    medium_iterations: float
+    medium_iterations: float or [float]
         Number of iterations at the medium level (default is 50)
-    fine_iterations: float
+    fine_iterations: float or [float]
         Number of iterations at the fine level (default is 40)
-    cost_function: {'CrossCorrelation', 'MutualInformation'}
+    scaling_factor: int or [int]
+        Number of spatial scales to use the SyN image pyramid (default is 8)
+    cost_function: {'CrossCorrelation', 'MutualInformation'} or list
         Cost function for the registration (default is 'MutualInformation')
-    interpolation: {'NearestNeighbor', 'Linear'}
+    interpolation: {'NearestNeighbor', 'Linear'} or list
         Interpolation for the registration result (default is 'NearestNeighbor')
-    regularization: {'Low', 'Medium', 'High'}
+    regularization: {'Low', 'Medium', 'High'} or list
         Regularization preset for the SyN deformation (default is 'Medium')
-    convergence: float
-        Threshold for convergence, can make the algorithm very slow (default is convergence)
+    convergence: float or [float]
+        Threshold for convergence, can make the algorithm very slow (default is 1e-6)
     mask_zero: bool
         Mask regions with zero value using ANTs masking option (default is False)
     smooth_mask: float
@@ -189,13 +192,42 @@ def focused_antspy(source_images, target_images, source_label=None, target_label
                       'inverse': inverse_mapping_file}
                 return output
 
+    # set identical parameter in a list for first and second registrations
+    if isinstance(run_rigid,bool):
+        run_rigid = [run_rigid]
+    if isinstance(rigid_iterations,int):
+        rigid_iterations = [rigid_iterations]        
+    if isinstance(run_affine,bool):
+        run_affine = [run_affine]
+    if isinstance(affine_iterations,int):
+        affine_iterations = [affine_iterations]
+    if isinstance(run_syn,bool):
+        run_syn = [run_syn]
+    if isinstance(coarse_iterations,int):
+        coarse_iterations = [coarse_iterations]
+    if isinstance(medium_iterations,int):
+        medium_iterations = [medium_iterations]
+    if isinstance(fine_iterations,int):
+        fine_iterations = [fine_iterations]
+    if isinstance(scaling_factor,int):
+        scaling_factor = [scaling_factor]
+    if isinstance(cost_function,str):
+        cost_function = [cost_function]
+    if isinstance(interpolation,str):
+        interpolation = [interpolation]
+    if isinstance(regularization,str):
+        regularization = [regularization]
+    if isinstance(convergence,str):
+        convergence = [convergence]
+        
+        
 
     print('\nStep 1: Global Registration')
     step1 = embedded_antspy_multi(source_images, target_images,
-                    run_rigid, rigid_iterations, run_affine, affine_iterations,
-                    run_syn, coarse_iterations, medium_iterations, fine_iterations,
-					scaling_factor, cost_function, interpolation, regularization, 
-					convergence, mask_zero, smooth_mask, ignore_affine, ignore_header,
+                    run_rigid[0], rigid_iterations[0], run_affine[0], affine_iterations[0],
+                    run_syn[0], coarse_iterations[0], medium_iterations[0], fine_iterations[0],
+					scaling_factor[0], cost_function[0], interpolation[0], regularization[0], 
+					convergence[0], mask_zero, smooth_mask, ignore_affine, ignore_header,
 					save_data, overwrite, output_dir, file_name=None) 
 	
     print('\nStep 2: Focused Registration')
@@ -274,15 +306,16 @@ def focused_antspy(source_images, target_images, source_label=None, target_label
     
     print('\nRegister focused images')
     step2 = embedded_antspy_multi(transformed_source_files, focused_target_files,
-                    run_rigid=False,run_affine=False,run_syn=True,
-                    coarse_iterations=coarse_iterations,
-                    medium_iterations=medium_iterations, 
-                    fine_iterations=fine_iterations,
-					scaling_factor=scaling_factor,
-					cost_function=cost_function,
-					interpolation=interpolation,
-					regularization=regularization,
-					convergence=convergence,
+                    run_rigid=run_rigid[-1], rigid_iterations=rigid_iterations[-1], 
+                    run_affine=run_affine[-1], affine_iterations=affine_iterations[-1],
+                    coarse_iterations=coarse_iterations[-1],
+                    medium_iterations=medium_iterations[-1], 
+                    fine_iterations=fine_iterations[-1],
+					scaling_factor=scaling_factor[-1],
+					cost_function=cost_function[-1],
+					interpolation=interpolation[-1],
+					regularization=regularization[-1],
+					convergence=convergence[-1],
 					mask_zero=False, smooth_mask=0.0, 
 					ignore_affine=False, ignore_header=False,
 					save_data=save_data, overwrite=overwrite, output_dir=output_dir, file_name=None) 
