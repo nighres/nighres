@@ -137,7 +137,7 @@ def stack_intensity_mapping(image, references, mapped, weights = None,
 
     # reshape output to what nibabel likes
     data = np.reshape(np.array(sim.getMappedImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

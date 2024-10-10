@@ -17,8 +17,9 @@ def linear_fiber_mapping(input_image, ridge_intensities,
                               threshold=0.5,
                               max_dist=1.0,
                               inclusion_ratio=0.1,
-                              extend=True,
+                              extend=False,
                               extend_ratio=0.5,
+                              diameter=False,
                               save_data=False, overwrite=False, output_dir=None,
                               file_name=None):
 
@@ -54,9 +55,11 @@ def linear_fiber_mapping(input_image, ridge_intensities,
         Ratio of the highest detection value to include in lines (default is 0.1)
     extend: bool
         Whether or not to extend the estimation results into the background 
-        and/or lower values (default is True)
+        and/or lower values (default is False)
     extend_ratio: float
         Ratio of the detection value to extend out (default is 0.5)
+    diameter: bool
+        Whether or not to estimate diameter and partial volume (default is False)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -78,11 +81,13 @@ def linear_fiber_mapping(input_image, ridge_intensities,
         * length (niimg): estimated line length (_lfm-length)
         * theta (niimg): estimated line orientation angle (_lfm-theta)
         * ani (niimg): estimated line anisotropy (_lfm-ani)
+        * dia (niimg): estimated local diameter (_lfm-dia)
+        * pv (niimg): estimated local partial volume (_lfm-pv)
 
     Notes
     ----------
     Original Java module by Pierre-Louis Bazin. Based on the recursive ridge
-    filter in [1]_.
+    filter and vessel diameter estimation in [1]_.
 
     References
     ----------
@@ -124,6 +129,16 @@ def linear_fiber_mapping(input_image, ridge_intensities,
                         _fname_4saving(module=__name__,file_name=file_name,
                                   rootfile=input_image,
                                   suffix='lfm-ani'))
+
+        dia_file = os.path.join(output_dir,
+                        _fname_4saving(module=__name__,file_name=file_name,
+                                  rootfile=input_image,
+                                  suffix='lfm-dia'))
+
+        pv_file = os.path.join(output_dir,
+                        _fname_4saving(module=__name__,file_name=file_name,
+                                  rootfile=input_image,
+                                  suffix='lfm-pv'))
 
         if overwrite is False \
             and os.path.isfile(proba_file) \
@@ -176,6 +191,7 @@ def linear_fiber_mapping(input_image, ridge_intensities,
     lfm.setInclusionRatio(inclusion_ratio)
     lfm.setExtendResult(extend)
     lfm.setExtendRatio(extend_ratio)
+    lfm.setEstimateDiameter(diameter)
     
     lfm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
     lfm.setResolutions(resolution[0], resolution[1], resolution[2])
@@ -202,20 +218,27 @@ def linear_fiber_mapping(input_image, ridge_intensities,
         
     # reshape output to what nibabel likes
     proba_data = np.reshape(np.array(lfm.getProbabilityResponseImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     lines_data = np.reshape(np.array(lfm.getLineImage(),
-                                   dtype=np.int32), dimensions, 'F')
+                                   dtype=np.int32), newshape=dimensions, order='F')
 
     length_data = np.reshape(np.array(lfm.getLengthImage(),
-                                   dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), newshape=dimensions, order='F')
 
     theta_data = np.reshape(np.array(lfm.getAngleImage(),
-                                    dtype=np.float32), dim4d, 'F')
+                                    dtype=np.float32), newshape=dim4d, order='F')
 
     ani_data = np.reshape(np.array(lfm.getAnisotropyImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
+    if diameter:
+       dia_data = np.reshape(np.array(lfm.getDiameterImage(),
+                                    dtype=np.float32), newshape=dimensions, order='F')
+        
+       pv_data = np.reshape(np.array(lfm.getPartialVolumeImage(),
+                                    dtype=np.float32), newshape=dimensions, order='F')
+        
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -233,6 +256,14 @@ def linear_fiber_mapping(input_image, ridge_intensities,
 
     header['cal_max'] = np.nanmax(ani_data)
     ani_img = nb.Nifti1Image(ani_data, affine, header)
+    
+    if diameter:
+        header['cal_max'] = np.nanmax(dia_data)
+        dia_img = nb.Nifti1Image(dia_data, affine, header)
+        
+        header['cal_max'] = np.nanmax(pv_data)
+        pv_img = nb.Nifti1Image(pv_data, affine, header)
+        
 
     if save_data:
         save_volume(proba_file, proba_img)
@@ -240,11 +271,23 @@ def linear_fiber_mapping(input_image, ridge_intensities,
         save_volume(length_file, length_img)
         save_volume(theta_file, theta_img)
         save_volume(ani_file, ani_img)
-
-        return {'proba': proba_file, 'lines': lines_file,
+        if diameter:
+            save_volume(dia_file, dia_img)
+            save_volume(pv_file, pv_img)
+            
+            return {'proba': proba_file, 'lines': lines_file,
+                'length': length_file, 'theta': theta_file,
+                'ani': ani_file, 'dia': dia_file, 'pv': pv_file}
+        else:
+            return {'proba': proba_file, 'lines': lines_file,
                 'length': length_file, 'theta': theta_file,
                 'ani': ani_file}
     else:
-        return {'proba': proba_img, 'lines': lines_img,
+        if diameter:
+            return {'proba': proba_img, 'lines': lines_img,
+                'length': length_img, 'theta': theta_img,
+                'ani': ani_img, 'dia': dia_img, 'pv': pv_img}
+        else:
+            return {'proba': proba_img, 'lines': lines_img,
                 'length': length_img, 'theta': theta_img,
                 'ani': ani_img}

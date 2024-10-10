@@ -134,16 +134,16 @@ def levelset_curvature(levelset_image, distance=1.0, kernel=3,
     # Collect output
     mcurv_data = np.reshape(np.array(
                                     algorithm.getMeanCurvatureImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
     gcurv_data = np.reshape(np.array(
                                     algorithm.getGaussCurvatureImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
     crvd_data = np.reshape(np.array(
                                     algorithm.getCurvednessImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
     shid_data = np.reshape(np.array(
                                     algorithm.getShapeIndexImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     hdr['cal_min'] = np.nanmin(mcurv_data)
     hdr['cal_max'] = np.nanmax(mcurv_data)

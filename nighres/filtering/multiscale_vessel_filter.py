@@ -230,31 +230,31 @@ def multiscale_vessel_filter(input_image,
     # Collect output
     vesselImage_data = np.reshape(np.array(
                                     vessel_filter.getSegmentedVesselImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
     filterImage_data = np.reshape(np.array(
                                     vessel_filter.getFilteredImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
     probaImage_data = np.reshape(np.array(
                                     vessel_filter.getProbabilityImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
     scaleImage_data = np.reshape(np.array(
                                     vessel_filter.getScaleImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
     diameterImage_data = np.reshape(np.array(
                                     vessel_filter.getDiameterImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
     pvImage_data = np.reshape(np.array(
                                     vessel_filter.getPVimage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
     lengthImage_data = np.reshape(np.array(
                                     vessel_filter.getLengthImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
     labelImage_data = np.reshape(np.array(
                                     vessel_filter.getLabelImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
     directionImage_data = np.reshape(np.array(
                                     vessel_filter.getDirectionImage(),
-                                    dtype=np.float32), dimensions4d, 'F')
+                                    dtype=np.float32), newshape=dimensions4d, order='F')
 
 
     # adapt header max for each image so that correct max is displayed

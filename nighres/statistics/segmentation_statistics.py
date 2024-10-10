@@ -171,7 +171,7 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
 
     if (output):
         data = np.reshape(np.array(stats.getOutputImage(),
-                                       dtype=np.int32), dimensions, 'F')
+                                       dtype=np.int32), newshape=dimensions, order='F')
         header['cal_min'] = np.nanmin(data)
         header['cal_max'] = np.nanmax(data)
         output = nb.Nifti1Image(data, affine, header)

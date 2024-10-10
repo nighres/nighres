@@ -17,3 +17,4 @@ from nighres.surface.mesh_label_distances import mesh_label_minimum_distance
 from nighres.surface.mesh_label_distances import mesh_label_distance_weighting
 from nighres.surface.mesh_label_distances import mesh_value_inside_distance
 from nighres.surface.mesh_label_distances import mesh_value_skeleton
+from nighres.surface.levelsets_to_mesh_connector import levelsets_to_mesh_connector

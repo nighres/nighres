@@ -129,9 +129,9 @@ def profile_meshing(profile_surface_image, starting_surface_mesh,
     lines = np.zeros((nlayers,npt,3))
     for n in range(nlayers):
         points = np.reshape(np.array(algorithm.getSampledSurfacePoints(n),
-                               dtype=np.float32), (npt,3), 'C')
+                               dtype=np.float32), newshape=(npt,3), order='C')
         faces = np.reshape(np.array(algorithm.getSampledSurfaceTriangles(n),
-                               dtype=np.int32), (nfc,3), 'C')
+                               dtype=np.int32), newshape=(nfc,3), order='C')
         # create the mesh dictionary
         meshes.append({"points": points, "faces": faces})
 

@@ -138,10 +138,10 @@ def simple_skeleton(input_image,
     # Collect output
     medialImage_data = np.reshape(np.array(
                                     skeleton.getMedialSurfaceImage(),
-                                    dtype=np.int8), dimensions, 'F')
+                                    dtype=np.int8), newshape=dimensions, order='F')
     skelImage_data = np.reshape(np.array(
                                     skeleton.getMedialCurveImage(),
-                                    dtype=np.int8), dimensions, 'F')
+                                    dtype=np.int8), newshape=dimensions, order='F')
 
 
     # adapt header max for each image so that correct max is displayed

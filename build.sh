@@ -16,12 +16,12 @@ cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
 imcntk_repo="https://github.com/piloubazin/imcn-imaging.git"
 fbpa_repo="https://github.com/piloubazin/fbpa-tools.git"
 
-release="release-1.5.1"
+#release="release-1.5.1"
 # for the latest development version
-#release="master"
+release="master"
 
 # Check the system has the necessary commands
-hash wget tar javac jar python3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3"
+hash tar javac jar python3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3"
 
 # Check for setuptools and wheels
 pip_modules=$(python3 -m pip list | tr -s ' ' | cut -f 1 -d ' ')

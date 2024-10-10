@@ -243,21 +243,21 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
 
     # reshape output to what nibabel likes
     cortex_data = np.reshape(np.array(cruise.getCortexMask(),
-                                      dtype=np.int32), dimensions, 'F')
+                                      dtype=np.int32), newshape=dimensions, order='F')
     gwb_data = np.reshape(np.array(cruise.getWMGMLevelset(),
-                                   dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), newshape=dimensions, order='F')
     cgb_data = np.reshape(np.array(cruise.getGMCSFLevelset(),
-                                   dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), newshape=dimensions, order='F')
     avg_data = np.reshape(np.array(cruise.getCentralLevelset(),
-                                   dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), newshape=dimensions, order='F')
     thick_data = np.reshape(np.array(cruise.getCorticalThickness(),
-                                     dtype=np.float32), dimensions, 'F')
+                                     dtype=np.float32), newshape=dimensions, order='F')
     pwm_data = np.reshape(np.array(cruise.getCerebralWMprobability(),
-                                   dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), newshape=dimensions, order='F')
     pgm_data = np.reshape(np.array(cruise.getCorticalGMprobability(),
-                                   dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), newshape=dimensions, order='F')
     pcsf_data = np.reshape(np.array(cruise.getSulcalCSFprobability(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     # adapt header min, max for each image so that correct max is displayed
     # and create nifiti objects
