@@ -236,7 +236,7 @@ def focused_antspy(source_images, target_images, source_label=None, target_label
     
     if target_label is not None:
         print('\ntarget focus region')
-        img = load_volume(source_label)
+        img = load_volume(target_label)
         data = img.get_fdata()
         
         mask = numpy.zeros(data.shape)
