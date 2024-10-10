@@ -296,8 +296,8 @@ def save_mesh_geometry(filename, surf_dict):
         elif filename.endswith('obj'):
             _write_obj(filename, surf_dict['points'], surf_dict['faces'])
             print("\nSaving {0}".format(filename))
-            print('To view mesh in brainview, run the command:\n')
-            print('average_objects ' + filename + ' ' + filename)
+            #print('To view mesh in brainview, run the command:\n')
+            #print('average_objects ' + filename + ' ' + filename)
     else:
         raise ValueError('Filename must be a string and surf_dict must be a '
                          'dictionary with keys "points" and "faces"')
@@ -490,7 +490,7 @@ def _write_gifti(surf_mesh, points, faces, data=None):
     gii.to_filename(surf_mesh)
 
 
-def _write_obj(surf_mesh, points, faces):
+def _write_MNI_obj(surf_mesh, points, faces):
     # write out MNI - obj format
     n_vert = len(points)
     XYZ = points.tolist()
@@ -513,7 +513,7 @@ def _write_obj(surf_mesh, points, faces):
         s.write('\n')
         nt = len(Tri) * 3
         Triangles = np.arange(3, nt + 1, 3)
-        Rounded8 = np.shape(Triangles)[0] / 8
+        Rounded8 = int(np.shape(Triangles)[0] / 8)
         N8 = 8 * Rounded8
         Triangles8 = Triangles[0:N8]
         RowsOf8 = np.split(Triangles8, N8 / 8)
@@ -528,7 +528,7 @@ def _write_obj(surf_mesh, points, faces):
         s.write('%s\n' % Line)
         s.write('\n')
         ListOfTriangles = np.array(Tri).flatten()
-        Rounded8 = np.shape(ListOfTriangles)[0] / 8
+        Rounded8 = int(np.shape(ListOfTriangles)[0] / 8)
         N8 = 8 * Rounded8
         Triangles8 = ListOfTriangles[0:N8]
         ListTri8 = ListOfTriangles[0:N8]
@@ -542,6 +542,29 @@ def _write_obj(surf_mesh, points, faces):
         Lint = map(int, L)
         Line = ' ' + ' '.join(map(str, Lint))
         s.write('%s\n' % Line)
+
+def _write_obj(surf_mesh, points, faces):
+    # add 1 to vertex indices in face list
+    faces = faces+1
+    # write out MNI - obj format
+    n_vert = len(points)
+    XYZ = points.tolist()
+    Tri = faces.tolist()
+    with open(surf_mesh, 'w') as s:
+        s.write('o 1\n')
+        s.write('# vertices\n')
+        k = -1
+        for a in XYZ:
+            k += 1
+            cor = ' ' + ' '.join(map(str, XYZ[k]))
+            s.write('v %s\n' % cor)
+        s.write('# faces\n')
+        s.write('usemtl Default\n')
+        k = -1
+        for b in Tri:
+            k += 1
+            cor = ' ' + ' '.join(map(str, Tri[k]))
+            s.write('f %s\n' % cor)
 
 
 def _write_vtk(filename, vertices, faces, data=None, comment=None):

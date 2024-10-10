@@ -138,14 +138,14 @@ def topology_correction(image, shape_type,
 
     # collect outputs
     corrected_data = np.reshape(np.array(algorithm.getCorrectedImage(),
-                               dtype=np.float32), dimensions, 'F')
+                               dtype=np.float32), newshape=dimensions, order='F')
 
     hdr['cal_min'] = np.nanmin(corrected_data)
     hdr['cal_max'] = np.nanmax(corrected_data)
     corrected = nb.Nifti1Image(corrected_data, aff, hdr)
 
     corrected_obj_data = np.reshape(np.array(algorithm.getCorrectedObjectImage(),
-                               dtype=np.int32), dimensions, 'F')
+                               dtype=np.int32), newshape=dimensions, order='F')
 
     hdr['cal_min'] = np.nanmin(corrected_obj_data)
     hdr['cal_max'] = np.nanmax(corrected_obj_data)

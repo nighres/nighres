@@ -105,7 +105,7 @@ def mesh_to_levelset(surface_mesh, reference_image,
 
     # collect outputs
     lvl_data = np.reshape(np.array(algorithm.getLevelsetImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     # create the mesh dictionary
     header['cal_min'] = np.nanmin(lvl_data)

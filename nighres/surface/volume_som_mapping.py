@@ -122,7 +122,7 @@ def volume_som_mapping(proba_image,
     print("volume...")
     dimensions = (dimensions[0],dimensions[1],dimensions[2],2)
     map_data = np.reshape(np.array(algorithm.getMappedImage(),
-                               dtype=np.float32), dimensions, 'F')
+                               dtype=np.float32), newshape=dimensions, order='F')
 
     hdr['cal_max'] = np.nanmax(map_data)
     mapped_img = nb.Nifti1Image(map_data, aff, hdr)
@@ -134,11 +134,11 @@ def volume_som_mapping(proba_image,
     
     print("som... ("+str(npt)+", "+str(nfc)+")")
     som_points = np.reshape(np.array(algorithm.getMappedSomPoints(),
-                               dtype=np.float32), (npt,3), 'C')
+                               dtype=np.float32), newshape=(npt,3), order='C')
     som_faces = np.reshape(np.array(algorithm.getMappedSomTriangles(),
-                               dtype=np.int32), (nfc,3), 'C')
+                               dtype=np.int32), newshape=(nfc,3), order='C')
     som_data = np.reshape(np.array(algorithm.getMappedSomValues(),
-                               dtype=np.float32), (npt,2), 'F')
+                               dtype=np.float32), newshape=(npt,2), order='F')
     
     # create the mesh dictionary
     mapped_som_mesh = {"points": som_points, "faces": som_faces, 

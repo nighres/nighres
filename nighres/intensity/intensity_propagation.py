@@ -131,7 +131,7 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
 
     # reshape output to what nibabel likes
     propag_data = np.reshape(np.array(propag.getResultImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
