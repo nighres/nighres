@@ -125,7 +125,7 @@ def laminar_iterative_smoothing(profile_surface_image, intensity_image, fwhm_mm,
     # collecting outputs
     smoothed_data = np.reshape(np.array(
                                 smoother.getSmoothedIntensityImage(),
-                                dtype=np.float32), dimensions, 'F')
+                                dtype=np.float32), newshape=dimensions, order='F')
 
     hdr['cal_max'] = np.nanmax(smoothed_data)
     smoothed = nb.Nifti1Image(smoothed_data, aff, hdr)

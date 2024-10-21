@@ -16,6 +16,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def spectral_mesh_spatial_embedding(surface_mesh, 
                     reference_mesh=None,
+                    mapping=None,
                     dims=10,
                     msize=500,
                     scale=50.0,
@@ -25,6 +26,7 @@ def spectral_mesh_spatial_embedding(surface_mesh,
                     alpha=0.0,
                     rotate=True,
                     affinity="linear",
+                    normalize=True,
                     save_data=False, 
                     overwrite=False, 
                     output_dir=None,
@@ -40,6 +42,8 @@ def spectral_mesh_spatial_embedding(surface_mesh,
         Mesh model of the surface
     reference_mesh: mesh
         Mesh model of the reference (optional)
+    mapping: niimg
+        Coordinate mapping from the image to the reference (optional)
     dims: int
         Number of kept dimensions in the representation (default is 1)
     msize: int
@@ -58,6 +62,8 @@ def spectral_mesh_spatial_embedding(surface_mesh,
         Rotate joint embeddings to match the reference (default is True)
     affinity: String
         Type of affinity kernel to use ({'linear', 'Cauchy', 'Gauss'}, default is 'linear')
+    normalize: bool
+        Re-normalize embeddings to unit norm (default is True)
     save_data: bool, optional
         Save output data to file (default is False)
     output_dir: str, optional
@@ -101,7 +107,10 @@ def spectral_mesh_spatial_embedding(surface_mesh,
         if overwrite is False \
             and os.path.isfile(mesh_file) :
                 print("skip computation (use existing results)")
-                output = {'result': mesh_file}
+                if reference_mesh is not None:
+                    output = {'result': mesh_file, 'reference': ref_mesh_file}
+                else:    
+                    output = {'result': mesh_file}
                 return output
 
     # start virtual machine, if not already running
@@ -129,6 +138,15 @@ def spectral_mesh_spatial_embedding(surface_mesh,
                                 (ref_mesh['points'].flatten('C')).astype(float)))
         algorithm.setReferenceTriangles(nighresjava.JArray('int')(
                                 (ref_mesh['faces'].flatten('C')).astype(int).tolist()))
+        
+        if mapping is not None:
+            mapping = load_volume(mapping)
+            algorithm.setMapping(nighresjava.JArray('float')(
+                               (mapping.get_fdata().flatten('F')).astype(float)))
+            algorithm.setMappingDimensions(mapping.get_fdata().shape[0], 
+                                           mapping.get_fdata().shape[1], 
+                                           mapping.get_fdata().shape[2])
+        
     
     algorithm.setDimensions(dims)
     
@@ -138,6 +156,7 @@ def spectral_mesh_spatial_embedding(surface_mesh,
     algorithm.setSpatialScale(space)    
     algorithm.setLinkingFactor(link)
     algorithm.setAffinityType(affinity)
+    algorithm.setRenormalize(normalize)
     
     # execute
     try:
@@ -148,7 +167,8 @@ def spectral_mesh_spatial_embedding(surface_mesh,
                 if rotate: 
                     algorithm.rotatedJointSpatialEmbedding(depth,alpha)
                 else:
-                    algorithm.meshDistanceJointSparseEmbedding(depth,alpha)
+                    #algorithm.meshDistanceJointSparseEmbedding(depth,alpha)
+                    algorithm.meshDistanceJointSparseMappedEmbedding(depth,alpha)
         else:
             algorithm.meshDistanceSparseEmbedding(depth,alpha)
     except:
@@ -163,7 +183,7 @@ def spectral_mesh_spatial_embedding(surface_mesh,
     mesh_points = mesh['points']
     mesh_faces = mesh['faces']    
     mesh_data = np.reshape(np.array(algorithm.getEmbeddingValues(),
-                               dtype=np.float32), (npt,dims), 'F')
+                               dtype=np.float32), newshape=(npt,dims), order='F')
     # create the mesh dictionary
     mesh = {"points": mesh_points, "faces": mesh_faces, "data": mesh_data}
 
@@ -172,7 +192,7 @@ def spectral_mesh_spatial_embedding(surface_mesh,
         ref_mesh_points = ref_mesh['points']
         ref_mesh_faces = ref_mesh['faces']    
         ref_mesh_data = np.reshape(np.array(algorithm.getReferenceEmbeddingValues(),
-                                   dtype=np.float32), (nrf,dims), 'F')
+                                   dtype=np.float32), newshape=(nrf,dims), order='F')
         # create the mesh dictionary
         ref_mesh = {"points": ref_mesh_points, "faces": ref_mesh_faces, "data": ref_mesh_data}
         

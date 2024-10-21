@@ -159,13 +159,13 @@ def linear_fiber_scaling(proba_image, theta_image, length_image,
 
     # reshape output to what nibabel likes
     proba_data = np.reshape(np.array(lfs.getScaledProbabilityImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
     length_data = np.reshape(np.array(lfs.getScaledLengthImage(),
-                                   dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), newshape=dimensions, order='F')
 
     theta_data = np.reshape(np.array(lfs.getScaledAngleImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), newshape=dimensions, order='F')
 
  
     # adapt header max for each image so that correct max is displayed

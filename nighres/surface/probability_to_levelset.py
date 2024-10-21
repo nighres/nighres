@@ -114,7 +114,7 @@ def probability_to_levelset(probability_image, mask_image=None,
 
     # collect outputs
     levelset_data = np.reshape(np.array(prob2level.getLevelSetImage(),
-                               dtype=np.float32), dimensions, 'F')
+                               dtype=np.float32), newshape=dimensions, order='F')
 
     hdr['cal_max'] = np.nanmax(levelset_data)
     levelset = nb.Nifti1Image(levelset_data, aff, hdr)

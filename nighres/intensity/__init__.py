@@ -1,6 +1,7 @@
 from nighres.intensity.background_estimation import background_estimation
 from nighres.intensity.flash_t2s_fitting import flash_t2s_fitting
 from nighres.intensity.intensity_propagation import intensity_propagation
+from nighres.intensity.intensity_shape_operator import intensity_shape_operator
 from nighres.intensity.lcat_denoising import lcat_denoising
 from nighres.intensity.lcpca_denoising import lcpca_denoising
 from nighres.intensity.mp2rageme_pd_mapping import mp2rageme_pd_mapping

@@ -8,7 +8,7 @@ from ..utils import _output_dir_4saving, _fname_4saving,_check_available_memory
 
 
 def parcellation_to_meshes(parcellation_image, connectivity="18/6", 
-                     spacing = 0.0, smoothing=1.0,
+                     spacing = 0.0, smoothing=1.0, offset=0.0,
                      save_data=False, overwrite=False,
                      output_dir=None, file_name=None):
 
@@ -28,6 +28,8 @@ def parcellation_to_meshes(parcellation_image, connectivity="18/6",
     smoothing: float, optional
         Smoothing of the boundary for prettier meshes, high values may bring 
         small distortions (default is 1.0)
+    offset: float, optional
+        Adds a boundary offset to leave space between meshes for printing (default is 0.0)
     save_data: bool, optional
         Save output data to file (default is False)
     overwrite: bool, optional
@@ -118,7 +120,7 @@ def parcellation_to_meshes(parcellation_image, connectivity="18/6",
     algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
 
     algorithm.setConnectivity(connectivity)
-    algorithm.setZeroLevel(0.0)
+    algorithm.setZeroLevel(-offset)
     algorithm.setInclusive(True)
     algorithm.setSmoothing(smoothing)
 	
@@ -146,11 +148,11 @@ def parcellation_to_meshes(parcellation_image, connectivity="18/6",
             # collect outputs
             npt = int(numpy.array(algorithm.getPointList(), dtype=numpy.float32).shape[0]/3)
             mesh_points = numpy.reshape(numpy.array(algorithm.getPointList(),
-                                   dtype=numpy.float32), (npt,3), 'C')
+                                   dtype=numpy.float32), newshape=(npt,3), order='C')
     
             nfc = int(numpy.array(algorithm.getTriangleList(), dtype=numpy.int32).shape[0]/3)
             mesh_faces = numpy.reshape(numpy.array(algorithm.getTriangleList(),
-                                   dtype=numpy.int32), (nfc,3), 'C')
+                                   dtype=numpy.int32), newshape=(nfc,3), order='C')
     
             mesh_label = label*numpy.ones((npt,1))
     
