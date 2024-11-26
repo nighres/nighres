@@ -54,7 +54,7 @@ test -d cbstools-public && (
 	git pull
 	cd ..
 ) || (
-	git clone -b $release $cbstools_repo --depth 1
+	git clone -b $release $cbstools_repo --single-branch
 	cd cbstools-public
 	git checkout
 	git pull
@@ -113,7 +113,7 @@ test -d imcn-imaging && (
 	git pull
 	cd ..
 ) || (
-	git clone -b $release $imcntk_repo --depth 1
+	git clone -b $release $imcntk_repo --single-branch
 	cd imcn-imaging
 	git checkout
 	git pull
@@ -167,7 +167,7 @@ test -d fbpa-tools && (
 	git pull
 	cd ..
 ) || (
-	git clone -b $release $fbpa_repo --depth 1
+	git clone -b $release $fbpa_repo --single-branch
 	cd fbpa-tools
 	git checkout
 	git pull
