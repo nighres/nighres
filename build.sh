@@ -31,9 +31,24 @@ echo "${pip_modules}" | grep wheel > /dev/null || fatal 'This script requires wh
 #echo "Before detection: $JAVA_HOME"
 
 # Set the JAVA_HOME variable if it is not set
-detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=')
-export JAVA_HOME=${JAVA_HOME:-"$detected_home"}
-#echo "After detection: $JAVA_HOME"
+if [[ -z ${JAVA_HOME+x} ]] ; then
+    # handle RHEL-like systems
+    rhel=false
+    . /etc/os-release
+    echo "$ID_LIKE" | grep "rhel" > /dev/null 2>&1
+    if [[ $? ]] ; then
+        rhel=true
+    fi
+
+    if [[ "$rhel" == "true" ]] ; then
+        detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=' | rev | cut -d '/' -f 2- | rev)
+    else
+        detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=')
+    fi
+    export JAVA_HOME=$detected_home
+fi
+
+# echo "After detection: $JAVA_HOME"
 
 # Check that JCC is installed
 echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.\nInstall with `apt-get install jcc` or equivalent and `python3 -m pip install jcc`'
