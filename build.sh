@@ -40,7 +40,7 @@ if [[ -z ${JAVA_HOME+x} ]] ; then
         rhel=true
     fi
 
-    if [[ "$rhel" == "true" ]] ; then
+    if [[ "$rhel" = "true" ]] ; then
         detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=' | rev | cut -d '/' -f 2- | rev)
     else
         detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=')
