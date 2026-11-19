@@ -1,0 +1,14 @@
+nighres/atlases/lesion_toads/atlas_Cerebellum-GM.raw filter=lfs diff=lfs merge=lfs -text
+nighres/atlases/lesion_toads/atlas_Putamen.raw filter=lfs diff=lfs merge=lfs -text
+nighres/atlases/lesion_toads/atlas_Thalamus.raw filter=lfs diff=lfs merge=lfs -text
+nighres/atlases/lesion_toads/atlas_Ventricles.raw filter=lfs diff=lfs merge=lfs -text
+nighres/atlases/lesion_toads/brain-atlas-cruise-12obj-lesions-topology_calc.raw filter=lfs diff=lfs merge=lfs -text
+nighres/atlases/lesion_toads/atlas_Brainstem.raw filter=lfs diff=lfs merge=lfs -text
+nighres/atlases/lesion_toads/atlas_Caudate.raw filter=lfs diff=lfs merge=lfs -text
+nighres/atlases/lesion_toads/atlas_Cerebellum-WM.raw filter=lfs diff=lfs merge=lfs -text
+nighres/atlases/lesion_toads/atlas_Cerebrum-GM.raw filter=lfs diff=lfs merge=lfs -text
+nighres/atlases/lesion_toads/atlas_Cerebrum-WM.raw filter=lfs diff=lfs merge=lfs -text
+nighres/atlases/lesion_toads/atlas_Inferior-WM.raw filter=lfs diff=lfs merge=lfs -text
+nighres/atlases/lesion_toads/atlas_InterVentricular-WM.raw filter=lfs diff=lfs merge=lfs -text
+nighres/atlases/lesion_toads/atlas_Sulcal-CSF.raw filter=lfs diff=lfs merge=lfs -text
+nighres/atlases/lesion_toads/atlas_Background.raw filter=lfs diff=lfs merge=lfs -text
