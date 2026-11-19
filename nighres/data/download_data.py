@@ -117,7 +117,7 @@ def download_DTI_2mm(data_dir, overwrite=False):
 
 def download_DOTS_atlas(data_dir=None, overwrite=False):
     """
-    Downloads the statistical atlas presented in [1]_
+    Downloads the statistical atlas presented in [2]_
 
     Parameters
     ----------
@@ -137,7 +137,7 @@ def download_DOTS_atlas(data_dir=None, overwrite=False):
 
     References
     ----------
-    .. [1] Bazin et al (2011). Direct segmentation of the major white matter
+    .. [2] Bazin et al (2011). Direct segmentation of the major white matter
            tracts in diffusion tensor images.
            DOI: 10.1016/j.neuroimage.2011.06.020
     """
@@ -172,7 +172,7 @@ def download_DOTS_atlas(data_dir=None, overwrite=False):
 
 def download_MASSP_atlas(data_dir=None, overwrite=False):
     """
-    Downloads the MASSP atlas presented in [1]_
+    Downloads the MASSP atlas presented in [3]_
 
     Parameters
     ----------
@@ -195,7 +195,7 @@ def download_MASSP_atlas(data_dir=None, overwrite=False):
 
     References
     ----------
-    .. [1] Bazin et al (2020). Multi-contrast Anatomical Subcortical
+    .. [3] Bazin et al (2020). Multi-contrast Anatomical Subcortical
     Structure Parcellation. Under review.
     """
 
@@ -236,7 +236,7 @@ def download_MASSP_atlas(data_dir=None, overwrite=False):
 
 def download_MASSP2p0_atlas(data_dir=None, overwrite=False):
     """
-    Downloads the MASSP2.0 atlas presented in [1]_
+    Downloads the MASSP2.0 atlas presented in [4]_
 
     Parameters
     ----------
@@ -264,7 +264,7 @@ def download_MASSP2p0_atlas(data_dir=None, overwrite=False):
 
     References
     ----------
-    .. [1] Bazin et al (2025). Automated parcellation and atlasing of the human subcortex with 
+    .. [4] Bazin et al (2025). Automated parcellation and atlasing of the human subcortex with 
         ultra-high resolution quantitative MRI. Imaging Neuroscience, 2025.
     """
 
@@ -319,7 +319,7 @@ def download_MASSP2p0_atlas(data_dir=None, overwrite=False):
 
 def download_MP2RAGEME_sample(data_dir, overwrite=False):
     """
-    Downloads an example data set from a MP2RAGEME acquisition _[1].
+    Downloads an example data set from a MP2RAGEME acquisition _[5].
 
     Parameters
     ----------
@@ -339,7 +339,7 @@ def download_MP2RAGEME_sample(data_dir, overwrite=False):
 
     References
     ----------
-    .. [1] Caan et al (2018). MP2RAGEME: T1, T2*, and QSM mapping in one
+    .. [5] Caan et al (2018). MP2RAGEME: T1, T2*, and QSM mapping in one
     sequence at 7 tesla. doi:10.1002/hbm.24490
     """
 
@@ -372,7 +372,7 @@ def download_MP2RAGEME_sample(data_dir, overwrite=False):
 
 def download_MP2RAGEME_testdata(data_dir, overwrite=False):
     """
-    Downloads a down-sampled example data set from a MP2RAGEME acquisition _[1]
+    Downloads a down-sampled example data set from a MP2RAGEME acquisition _[6]
     for testing purposes.
 
     Parameters
@@ -396,7 +396,7 @@ def download_MP2RAGEME_testdata(data_dir, overwrite=False):
         
     References
     ----------
-    .. [1] Caan et al (2018). MP2RAGEME: T1, T2*, and QSM mapping in one
+    .. [6] Caan et al (2018). MP2RAGEME: T1, T2*, and QSM mapping in one
     sequence at 7 tesla. doi:10.1002/hbm.24490
     """
 
@@ -445,7 +445,7 @@ def download_MP2RAGEME_testdata(data_dir, overwrite=False):
 
 def download_AHEAD_template(data_dir=None, overwrite=False):
     """
-    Downloads the AHEAD group template _[1].
+    Downloads the AHEAD group template _[7].
 
     Parameters
     ----------
@@ -467,7 +467,7 @@ def download_AHEAD_template(data_dir=None, overwrite=False):
 
     References
     ----------
-    .. [1] Alkemade et al (under review). The Amsterdam Ultra-high field adult
+    .. [7] Alkemade et al (under review). The Amsterdam Ultra-high field adult
        lifespan database (AHEAD): A freely available multimodal 7 Tesla
        submillimeter magnetic resonance imaging database.
     """
@@ -505,7 +505,7 @@ def download_AHEAD_template(data_dir=None, overwrite=False):
 
 def download_AHEADmni2009b_template(data_dir=None, overwrite=False):
     """
-    Downloads the AHEAD group template in MNI 2009b space _[1].
+    Downloads the AHEAD group template in MNI 2009b space _[8].
 
     Parameters
     ----------
@@ -528,7 +528,7 @@ def download_AHEADmni2009b_template(data_dir=None, overwrite=False):
 
     References
     ----------
-    .. [1] Alkemade et al (under review). The Amsterdam Ultra-high field adult
+    .. [8] Alkemade et al (under review). The Amsterdam Ultra-high field adult
        lifespan database (AHEAD): A freely available multimodal 7 Tesla
        submillimeter magnetic resonance imaging database.
     """

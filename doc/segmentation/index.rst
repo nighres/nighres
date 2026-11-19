@@ -5,4 +5,4 @@ Segmentation
    :maxdepth: 1
 
    conditional_shape
-   fuzzy_cmeans
+   fuzzy_cmeans_multi

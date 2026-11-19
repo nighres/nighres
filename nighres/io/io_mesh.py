@@ -69,11 +69,11 @@ def save_mesh(filename, surf_dict):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]_
+    Originally created as part of Laminar Python [2]_
 
     References
     -----------
-    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+    .. [2] Huntenburg et al. (2017), Laminar Python: Tools for cortical
        depth-resolved analysis of high-resolution brain imaging data in
        Python. DOI: 10.3897/rio.3.e12346
     '''
@@ -111,11 +111,11 @@ def load_mesh_geometry(surf_mesh):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]_
+    Originally created as part of Laminar Python [3]_
 
     References
     -----------
-    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+    .. [3] Huntenburg et al. (2017), Laminar Python: Tools for cortical
        depth-resolved analysis of high-resolution brain imaging data in
        Python. DOI: 10.3897/rio.3.e12346
     '''
@@ -170,11 +170,11 @@ def load_mesh_data(surf_data, gii_darray=None):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]_
+    Originally created as part of Laminar Python [4]_
 
     References
     -----------
-    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+    .. [4] Huntenburg et al. (2017), Laminar Python: Tools for cortical
        depth-resolved analysis of high-resolution brain imaging data in
        Python. DOI: 10.3897/rio.3.e12346
     '''
@@ -222,11 +222,11 @@ def save_mesh_data(filename, surf_data):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]_
+    Originally created as part of Laminar Python [5]_
 
     References
     -----------
-    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+    .. [5] Huntenburg et al. (2017), Laminar Python: Tools for cortical
        depth-resolved analysis of high-resolution brain imaging data in
        Python. DOI: 10.3897/rio.3.e12346
     '''
@@ -264,11 +264,11 @@ def save_mesh_geometry(filename, surf_dict):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]_
+    Originally created as part of Laminar Python [6]_
 
     References
     -----------
-    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+    .. [6] Huntenburg et al. (2017), Laminar Python: Tools for cortical
        depth-resolved analysis of high-resolution brain imaging data in
        Python. DOI: 10.3897/rio.3.e12346
     '''

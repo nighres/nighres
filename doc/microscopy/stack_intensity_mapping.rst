@@ -1,5 +1,5 @@
 stack\_intensity\_mapping
-=================================
+=========================
 
 .. autofunction:: nighres.microscopy.stack_intensity_mapping
 

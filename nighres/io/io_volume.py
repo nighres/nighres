@@ -63,11 +63,11 @@ def save_volume(filename, volume, dtype='float32', overwrite_file=True):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]_ .
+    Originally created as part of Laminar Python [2]_ .
 
     References
     -----------
-    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+    .. [2] Huntenburg et al. (2017), Laminar Python: Tools for cortical
        depth-resolved analysis of high-resolution brain imaging data in
        Python. DOI: 10.3897/rio.3.e12346
     """  # noqa
