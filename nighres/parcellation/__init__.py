@@ -8,4 +8,4 @@ from nighres.parcellation.massp import massp_2p1_label
 from nighres.parcellation.massp import massp_2p1_list
 from nighres.parcellation.super_voxels import super_voxels
 from nighres.parcellation.parcellation_smoothing import parcellation_smoothing
-
+from nighres.parcellation.lesion_toads import lesion_toads

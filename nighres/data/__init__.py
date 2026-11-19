@@ -7,3 +7,4 @@ from nighres.data.download_data import download_MP2RAGEME_sample
 from nighres.data.download_data import download_MP2RAGEME_testdata
 from nighres.data.download_data import download_AHEAD_template
 from nighres.data.download_data import download_AHEADmni2009b_template
+from nighres.data.download_data import download_LesionTOADS_atlas

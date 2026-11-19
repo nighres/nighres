@@ -569,3 +569,7 @@ def download_AHEADmni2009b_template(data_dir=None, overwrite=False):
             'qsm': file_targets[2],
             'qpd': file_targets[3]}
 
+
+def download_LesionTOADS_atlas(data_dir=None, overwrite=False):
+    
+    return

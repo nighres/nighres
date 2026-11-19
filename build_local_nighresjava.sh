@@ -16,6 +16,7 @@ function join_by { local IFS="$1"; shift; echo "$*"; }
 cbstools_local="/home/pilou/Code/github/cbstools-public"
 imcntk_local="/home/pilou/Code/github/imcn-imaging"
 fbpa_local="/home/pilou/Code/github/fbpa-tools"
+medic_local="/home/pilou/Code/github/medic-legacy"
 nighres_local="/home/pilou/Code/github/nighres"
 
 
@@ -163,7 +164,48 @@ $JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} nl/fullbrainpicture/algor
 echo "Assembling..."
 #jar cf imcntk.jar     nl/uva/imcn/algorithms/*.class
 $JAVA_HOME/bin/jar uf $nighres_local/nighresjava/src/nighresjava.jar nl/fullbrainpicture/algorithms/*.class
-$JAVA_HOME/bin/jar cf $nighres_local/nighresjava/src/fbpa-lib.jar nl/fullbrainpicture/libraries/*.class nl/fullbrainpicture/structures/*.class nl/fullbrainpicture/structures/*.raw.gz nl/fullbrainpicture/utilities/*.class
+$JAVA_HOME/bin/jar cf $nighres_local/nighresjava/src/fbpa-lib.jar nl/fullbrainpicture/libraries/*.class nl/fullbrainpicture/structures/*.class nl/fullbrainpicture/utilities/*.class
+
+cp lib/*.jar $nighres_local/nighresjava/lib/
+
+#
+## COMPILE MEDIC legacy
+#
+
+# Java dependencies. Order matters
+deps=(
+	"."
+	"lib/Jama-mipav.jar"
+	"lib/commons-math3-3.5.jar"
+)
+deps_list=$(join_by ":" "${deps[@]}")
+
+# List of library files needed to run the core functions
+source $nighres_local/medic-lib-files.sh
+echo $medic_files # result is in $medic_files
+
+medic_list=$(join_by " " "${medic_files[@]}")
+
+# Compilation options
+javac_opts=(
+	# "-d build"        # Output dir
+	"-Xlint:none"     # Disable all warnings
+	"-server"         # ?
+	"-g"              # Generate all debugging info
+	"-O"              # ?
+	"-deprecation"    # Show information about deprecated Java calls
+	"-encoding UTF-8" # Require UTF-8, rather than platform-specifc
+)
+
+echo "Compiling..."
+cd $medic_local
+#mkdir -p build
+$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} edu/jhmi/rad/medic/algorithms/*.java $medic_list
+
+echo "Assembling..."
+#jar cf imcntk.jar     nl/uva/imcn/algorithms/*.class
+$JAVA_HOME/bin/jar uf $nighres_local/nighresjava/src/nighresjava.jar edu/jhmi/rad/medic/algorithms/*.class
+$JAVA_HOME/bin/jar cf $nighres_local/nighresjava/src/medic-lib.jar edu/jhmi/rad/medic/libraries/*.class edu/jhmi/rad/medic/methods/*.class edu/jhmi/rad/medic/structures/*.class edu/jhmi/rad/medic/utilities/*.class
 
 cp lib/*.jar $nighres_local/nighresjava/lib/
 
@@ -180,6 +222,7 @@ jcc_args=(
 	"--include src/cbstools-lib.jar"
 	"--include src/imcntk-lib.jar"
 	"--include src/fbpa-lib.jar"
+	"--include src/medic-lib.jar"
 	"--include lib/commons-math3-3.5.jar"
 	"--include lib/Jama-mipav.jar"
 
