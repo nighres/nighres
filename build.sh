@@ -4,6 +4,7 @@
 #
 ## SETUP
 #
+echo "Setup..."
 
 set -euo pipefail
 unset CDPATH; cd "$( dirname "${BASH_SOURCE[0]}" )"; cd "$(pwd -P)"
@@ -22,37 +23,22 @@ medic_repo="https://github.com/piloubazin/medic-legacy.git"
 release="master"
 
 # Check the system has the necessary commands
-hash tar javac jar python3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3"
+hash wget tar javac jar python3 uv 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3 uv"
 
 # Check for setuptools and wheels
-pip_modules=$(python3 -m pip list | tr -s ' ' | cut -f 1 -d ' ')
+pip_modules=$(uv pip list --format=columns | tr -s ' ' | cut -f 1 -d ' ')
 echo "${pip_modules}" | grep setuptools > /dev/null || fatal 'This script requires setuptools.\nInstall with `python3 -m pip install --upgrade setuptools`'
 echo "${pip_modules}" | grep wheel > /dev/null || fatal 'This script requires wheel.\nInstall with `python3 -m pip install --upgrade wheel`'
 
 #echo "Before detection: $JAVA_HOME"
 
-# Set the JAVA_HOME variable if it is not set
-if [[ -z ${JAVA_HOME+x} ]] ; then
-    # handle RHEL-like systems
-    rhel=false
-    . /etc/os-release
-    echo "$ID_LIKE" | grep "rhel" > /dev/null 2>&1
-    if [[ $? ]] ; then
-        rhel=true
-    fi
-
-    if [[ "$rhel" = "true" ]] ; then
-        detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=' | rev | cut -d '/' -f 2- | rev)
-    else
-        detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=')
-    fi
-    export JAVA_HOME=$detected_home
-fi
-
-# echo "After detection: $JAVA_HOME"
+detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=')
+# for RHEL-like systems use this: detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=' | rev | cut -d '/' -f 2- | rev)
+export JAVA_HOME=$detected_home
+echo "After detection: $JAVA_HOME"
 
 # Check that JCC is installed
-echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.\nInstall with `apt-get install jcc` or equivalent and `python3 -m pip install jcc`'
+echo "${pip_modules}" | grep jcc > /dev/null || fatal 'This script requires JCC.\nInstall with `apt-get install jcc` or equivalent and `python3 -m pip install jcc`'
 
 # Attempt to check for python development headers
 # Inspired by https://stackoverflow.com/a/4850603
@@ -320,14 +306,13 @@ sed -i -e 's/__dir__/__ndir__/g' build/nighresjava/__init__.py
 
 echo "Copying necessary files for nires pypi package..."
 
-cd ..
-#cp -rv build/nighresjava/ ../
-cp -rv nighresjava/build/nighresjava/* nighresjava/
+cp -rv build/nighresjava/ ../
+#cp -rv nighresjava/build/nighresjava/* nighresjava/
 
 # Find and copy the shared object file for the current architecture
-#find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' ../nighresjava/_nighresjava.so
-find nighresjava/build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' nighresjava/_nighresjava.so
-#cd ..
+find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' ../nighresjava/_nighresjava.so
+#find nighresjava/build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' nighresjava/_nighresjava.so
+cd ..
 
 echo ""
 echo "======="
