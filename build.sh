@@ -17,6 +17,7 @@ cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
 imcntk_repo="https://github.com/piloubazin/imcn-imaging.git"
 fbpa_repo="https://github.com/piloubazin/fbpa-tools.git"
 medic_repo="https://github.com/piloubazin/medic-legacy.git"
+nighres_repo=$(pwd)
 
 #release="release-1.5.1"
 # for the latest development version
@@ -32,6 +33,7 @@ echo "${pip_modules}" | grep wheel > /dev/null || fatal 'This script requires wh
 
 #echo "Before detection: $JAVA_HOME"
 
+# Set the JAVA_HOME variable if it is not set
 detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=')
 # for RHEL-like systems use this: detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=' | rev | cut -d '/' -f 2- | rev)
 export JAVA_HOME=$detected_home
@@ -54,13 +56,13 @@ test -d cbstools-public && (
     cd cbstools-public
 	git checkout $release
 	git pull
-	cd ..
+	cd $nighres_repo
 ) || (
 	git clone -b $release $cbstools_repo --single-branch
 	cd cbstools-public
 	git checkout
 	git pull
-	cd ..
+	cd $nighres_repo
 )
 
 # Java dependencies. Order matters
@@ -81,7 +83,7 @@ cbstools_list=$(join_by " " "${cbstools_files[@]}")
 javac_opts=(
 	# "-d build"        # Output dir
 	"-Xlint:none"     # Disable all warnings
-	# "-server"         # ?
+	"-server"         # ?
 	"-g"              # Generate all debugging info
 	"-O"              # ?
 	"-deprecation"    # Show information about deprecated Java calls
@@ -94,15 +96,15 @@ $JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} ca/concordia/qpi/*/*.java
 
 
 echo "Assembling..."
-mkdir -p ../nighresjava/src
-mkdir -p ../nighresjava/lib
+mkdir -p $nighres_repo/nighresjava/src
+mkdir -p $nighres_repo/nighresjava/lib
 
 #jar cf cbstools.jar     de/mpg/cbs/core/*/*.class
-jar cf ../nighresjava/src/nighresjava.jar de/mpg/cbs/core/*/*.class ca/concordia/qpi/*/*.class
-jar cf ../nighresjava/src/cbstools-lib.jar de/mpg/cbs/*/*.class
+jar cf $nighres_repo/nighresjava/src/nighresjava.jar de/mpg/cbs/core/*/*.class ca/concordia/qpi/*/*.class
+jar cf $nighres_repo/nighresjava/src/cbstools-lib.jar de/mpg/cbs/*/*.class
 
-cp lib/*.jar ../nighresjava/lib/
-cd ..
+cp lib/*.jar $nighres_repo/nighresjava/lib/
+cd $nighres_repo
 
 #
 ## COMPILE IMCNTK
@@ -113,13 +115,13 @@ test -d imcn-imaging && (
     cd imcn-imaging
 	git checkout $release
 	git pull
-	cd ..
+	cd $nighres_repo
 ) || (
 	git clone -b $release $imcntk_repo --single-branch
 	cd imcn-imaging
 	git checkout
 	git pull
-	cd ..
+	cd $nighres_repo
 )
 
 # Java dependencies. Order matters
@@ -140,7 +142,7 @@ imcntk_list=$(join_by " " "${imcntk_files[@]}")
 javac_opts=(
 	# "-d build"        # Output dir
 	"-Xlint:none"     # Disable all warnings
-	# "-server"         # ?
+	"-server"         # ?
 	"-g"              # Generate all debugging info
 	"-O"              # ?
 	"-deprecation"    # Show information about deprecated Java calls
@@ -152,11 +154,11 @@ cd imcn-imaging
 $JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java ${imcntk_list}
 
 echo "Assembling..."
-jar uf ../nighresjava/src/nighresjava.jar nl/uva/imcn/algorithms/*.class
-jar cf ../nighresjava/src/imcntk-lib.jar nl/uva/imcn/libraries/*.class nl/uva/imcn/methods/*.class nl/uva/imcn/structures/*.class nl/uva/imcn/utilities/*.class
+jar uf $nighres_repo/nighresjava/src/nighresjava.jar nl/uva/imcn/algorithms/*.class
+jar cf $nighres_repo/nighresjava/src/imcntk-lib.jar nl/uva/imcn/libraries/*.class nl/uva/imcn/methods/*.class nl/uva/imcn/structures/*.class nl/uva/imcn/utilities/*.class
 
-cp lib/*.jar ../nighresjava/lib/
-cd ..
+cp lib/*.jar $nighres_repo/nighresjava/lib/
+cd $nighres_repo
 
 #
 ## COMPILE FbpA tools
@@ -167,13 +169,13 @@ test -d fbpa-tools && (
     cd fbpa-tools
 	git checkout $release
 	git pull
-	cd ..
+	cd $nighres_repo
 ) || (
 	git clone -b $release $fbpa_repo --single-branch
 	cd fbpa-tools
 	git checkout
 	git pull
-	cd ..
+	cd $nighres_repo
 )
 
 # Java dependencies. Order matters
@@ -193,7 +195,7 @@ fbpa_list=$(join_by " " "${fbpa_files[@]}")
 javac_opts=(
 	# "-d build"        # Output dir
 	"-Xlint:none"     # Disable all warnings
-	# "-server"         # ?
+	"-server"         # ?
 	"-g"              # Generate all debugging info
 	"-O"              # ?
 	"-deprecation"    # Show information about deprecated Java calls
@@ -205,11 +207,11 @@ cd fbpa-tools
 $JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} nl/fullbrainpicture/algorithms/*.java ${fbpa_list}
 
 echo "Assembling..."
-jar uf ../nighresjava/src/nighresjava.jar nl/fullbrainpicture/algorithms/*.class
-jar cf ../nighresjava/src/fbpa-lib.jar nl/fullbrainpicture/libraries/*.class nl/fullbrainpicture/structures/*.class nl/fullbrainpicture/utilities/*.class
+jar uf $nighres_repo/nighresjava/src/nighresjava.jar nl/fullbrainpicture/algorithms/*.class
+jar cf $nighres_repo/nighresjava/src/fbpa-lib.jar nl/fullbrainpicture/libraries/*.class nl/fullbrainpicture/structures/*.class nl/fullbrainpicture/utilities/*.class
 
-cp lib/*.jar ../nighresjava/lib/
-cd ..
+cp lib/*.jar $nighres_repo/nighresjava/lib/
+cd $nighres_repo
 
 #
 ## COMPILE MEDIC legacy
@@ -220,13 +222,13 @@ test -d medic-legacy && (
     cd medic-legacy
 	git checkout $release
 	git pull
-	cd ..
+	cd $nighres_repo
 ) || (
 	git clone -b $release $medic_repo --depth 1
 	cd medic-legacy
 	git checkout
 	git pull
-	cd ..
+	cd $nighres_repo
 )
 
 # Java dependencies. Order matters
@@ -259,15 +261,19 @@ cd medic-legacy
 $JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} edu/jhmi/rad/medic/algorithms/*.java $medic_list
 
 echo "Assembling..."
-jar uf ../nighresjava/src/nighresjava.jar edu/jhmi/rad/medic/algorithms/*.class
-jar cf ../nighresjava/src/medic-lib.jar edu/jhmi/rad/medic/libraries/*.class edu/jhmi/rad/medic/methods/*.class edu/jhmi/rad/medic/structures/*.class edu/jhmi/rad/medic/utilities/*.class
+jar uf $nighres_repo/nighresjava/src/nighresjava.jar edu/jhmi/rad/medic/algorithms/*.class
+jar cf $nighres_repo/nighresjava/src/medic-lib.jar edu/jhmi/rad/medic/libraries/*.class edu/jhmi/rad/medic/methods/*.class edu/jhmi/rad/medic/structures/*.class edu/jhmi/rad/medic/utilities/*.class
 
-cp lib/*.jar ../nighresjava/lib/
-cd ..
+cp lib/*.jar $nighres_repo/nighresjava/lib/
+cd $nighres_repo
 
 #
 ## WRAP TO PYTHON
 #
+
+# link to libjvm.so
+ln -s $JAVA_HOME/lib/server/libjvm.so libjvm.so
+
 cd nighresjava
 
 jcc_args=(
@@ -306,13 +312,14 @@ sed -i -e 's/__dir__/__ndir__/g' build/nighresjava/__init__.py
 
 echo "Copying necessary files for nires pypi package..."
 
-cp -rv build/nighresjava/ ../
-#cp -rv nighresjava/build/nighresjava/* nighresjava/
+cd $nighres_repo
+#cp -rv build/nighresjava/ $nighres_repo/
+cp -rv nighresjava/build/nighresjava/* nighresjava/
 
 # Find and copy the shared object file for the current architecture
-find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' ../nighresjava/_nighresjava.so
-#find nighresjava/build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' nighresjava/_nighresjava.so
-cd ..
+#find build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' $nighres_repo/nighresjava/_nighresjava.so
+find nighresjava/build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp '{}' nighresjava/_nighresjava.so
+#cd $nighres_repo
 
 echo ""
 echo "======="
