@@ -61,7 +61,7 @@ dataset = nighres.data.download_MP2RAGEME_testdata(in_dir)
 
 ############################################################################
 # Denoising
-# ----------------
+# ---------
 # First we perform some denoising. Quantitative MRI sequences combine multiple
 # acquisitions (in this case 10, counting magnitude and phase) which can be efficiently
 # denoised with a local PCA approach without compromising spatial resolution [2]_.
@@ -102,7 +102,7 @@ if not skip_plots:
 
 ############################################################################
 # T1 quantitative mapping
-# ----------------
+# -----------------------
 # Now we can generate a T1 and R1 map (with R1=1/T1). 
 # Note that we could skip the denoising and use the original data directly. 
 # The T1 mapping requires several of the imaging parameters, which are often 
@@ -135,7 +135,7 @@ t1mapping_results = nighres.intensity.mp2rage_t1_mapping(
 
 ############################################################################
 # Quantitative T2* fitting
-# ----------------
+# ------------------------
 # The relevant images for T2* fitting are the 4 echoes from the second inversion.
 # As with T1 mapping, echo times (TE) are explicitly provided
 
@@ -151,7 +151,7 @@ t2sfitting_results = nighres.intensity.flash_t2s_fitting(
 
 ############################################################################
 # Semi-quantitative PD mapping
-# ----------------
+# ----------------------------
 # PD mapping combines information from T1 and T2* mapping with the data from
 # the first and second inversion. PD estimates are not normalized to a specific
 # region value (e.g. ventricles, white matter...)
@@ -172,7 +172,7 @@ pdmapping_results = nighres.intensity.mp2rageme_pd_mapping(
 
 ############################################################################
 # Quantitative susceptibility mapping (QSM)
-# ----------------
+# -----------------------------------------
 # Note that this data can also be used to obtain QSM, using the phase data
 # from the second inversion. Nighres does not include a QSM reconstruction
 # technique, but we have used successfully TGV-QSM, which has the advantage
@@ -182,7 +182,7 @@ pdmapping_results = nighres.intensity.mp2rageme_pd_mapping(
 
 ############################################################################
 # Skull stripping
-# ----------------
+# ---------------
 # Finally, we perform skull stripping, and apply it to all the quantitative maps. 
 # Only the second inversion, first echo image is required to calculate the brain mask. 
 # But if we input the T1map and/or T1w image as well, they will help refine the CSF
@@ -195,7 +195,7 @@ skullstripping_results = nighres.brain.intensity_based_skullstripping(
 
 ############################################################################
 # Masking, Thresholding, and Reorientation
-# ----------------
+# ----------------------------------------
 # Here we use nibabel and numpy routines to perform these simple steps,
 # rather than having a dedicated nighres module
 # Note that thresholds have been set for 7T qMRI values, and would need
@@ -255,7 +255,7 @@ if not skip_plots:
 
 #############################################################################
 # References
-# -----------
+# ----------
 # .. [1] Alkemade, A., Mulder, M.J., Groot, J.M., Isaacs, B.R., van Berendonk, N., Lute, N., 
 #        Isherwood, S.J., Bazin, P.-L., Forstmann, B.U., 2020. The Amsterdam Ultra-high field 
 #        adult lifespan database (AHEAD): A freely available multimodal 7 Tesla submillimeter 
