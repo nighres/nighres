@@ -17,3 +17,6 @@ DEFAULT_MASSP_SKEL_PROBA = os.path.join(DEFAULT_MASSP_ATLAS,'massp_17structures_
 DEFAULT_MASSP_SKEL_LABEL = os.path.join(DEFAULT_MASSP_ATLAS,'massp_17structures_skeleton_label.nii.gz')
 
 DEFAULT_AHEAD_TEMPLATE_DIR = os.path.join(ATLAS_DIR, 'ahead-template')
+
+DEFAULT_LESIONTOADS_DIR = os.path.join(ATLAS_DIR, 'lesion_toads')
+DEFAULT_LESIONTOADS_ATLAS = os.path.join(DEFAULT_LESIONTOADS_DIR, 'cruise-atlas-12obj-lesiontoads2012.txt')

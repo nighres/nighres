@@ -48,7 +48,7 @@ General wrapper content
     
 **5 Retrieve the outputs**
 
-    ``my_result_data = np.reshape(np.array(my_module.getCoolResultImage(), dtype=np.float32), dimensions, 'F')``
+    ``my_result_data = np.reshape(np.array(my_module.getCoolResultImage(), dtype=np.float32), shape=dimensions, order='F')``
 
     Note that because you are passing simple 1D arrays, you need to keep a record
     of image dimensions, resolutions, headers, etc.

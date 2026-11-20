@@ -7,7 +7,7 @@ from ..io import load_volume, save_volume, load_mesh, save_mesh
 from ..utils import _output_dir_4saving, _fname_4saving,_check_available_memory
 
 
-def parcellation_smoothing(parcellation, probability=None, connectivity="wcs", 
+def parcellation_smoothing(parcellation, probability=None, connectivity="none", 
                      smoothing=1.0, distance=2.0,
                      save_data=False, overwrite=False,
                      output_dir=None, file_name=None):
@@ -23,8 +23,8 @@ def parcellation_smoothing(parcellation, probability=None, connectivity="wcs",
         Parcellation image to be regularized
     probability: niimg
         Probability image associated to the parcellation (certainty of the parcellation)
-    connectivity: {"6/18","6/26","18/6","26/6"}, optional
-        Choice of digital connectivity to build the mesh (default is 18/6)
+    connectivity: {"6/18","6/26","18/6","26/6",'wcs','none'}, optional
+        Choice of digital connectivity to build the mesh (default is "none")
     smoothing: float, optional
         Smoothing of the boundary, high values may bring distortions (default is 1.0)
     distance: float, optional
@@ -104,9 +104,16 @@ def parcellation_smoothing(parcellation, probability=None, connectivity="wcs",
     aff = img.affine
     resolution = [x.item() for x in hdr.get_zooms()]
     dimensions = data.shape
-
-    algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
-    algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+    if (len(dimensions)==2 or dimensions[2]==1):
+        print("2D version")
+        algorithm.setDimensions(dimensions[0], dimensions[1], 1)
+        algorithm.setResolutions(resolution[0], resolution[1], 1.0)
+    
+    else:
+        print("3D version")
+        algorithm.setDimensions(dimensions[0], dimensions[1], dimensions[2])
+        algorithm.setResolutions(resolution[0], resolution[1], resolution[2])
+    
 
     algorithm.setParcellationImage(nighresjava.JArray('int')(
                                 (data.flatten('F')).astype(int).tolist()))
@@ -136,10 +143,10 @@ def parcellation_smoothing(parcellation, probability=None, connectivity="wcs",
     
     # collect outputs
     label_data = numpy.reshape(numpy.array(algorithm.getSmoothedLabel(),
-                                    dtype=numpy.int32), dimensions, 'F')
+                                    dtype=numpy.int32), shape=dimensions, order='F')
 
     proba_data = numpy.reshape(numpy.array(algorithm.getSmoothedProba(),
-                                    dtype=numpy.float32), dimensions, 'F')
+                                    dtype=numpy.float32), shape=dimensions, order='F')
 
     
     # adapt header max for each image so that correct max is displayed

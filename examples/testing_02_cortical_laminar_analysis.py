@@ -1,5 +1,5 @@
 """
-Cortical laminar analysis
+Cortical laminar analysis (testing)
 =======================================
 
 This example shows how to obtain a cortical laminar depth representation from
@@ -78,7 +78,7 @@ else:
     
 ############################################################################
 # MGDM classification
-# ---------------------
+# -------------------
 # Next, we use the masked data as input for tissue classification with the MGDM
 # algorithm. MGDM can work with a single T1-weighted contrast, but can  work with
 # additional contrasts. Here we use a quantitative T1map, which we derive from
@@ -109,7 +109,7 @@ if not skip_plots:
 
 ###########################################################################
 # Region Extraction
-# ------------------
+# -----------------
 # Here we pull from the MGDM output the needed regions for cortical
 # reconstruction: the GM cortex ('region'), the underlying WM (with filled
 # subcortex and ventricles, 'inside') and the surrounding CSF (with masked
@@ -141,7 +141,7 @@ if not skip_plots:
 
 #############################################################################
 # CRUISE cortical reconstruction
-# --------------------------------
+# ------------------------------
 # Next, we use the extracted data as input for cortex reconstruction with the
 # CRUISE algorithm. CRUISE works with the membership functions as a guide and
 # the WM inside mask as a (topologically spherical) starting point to grow a
@@ -167,7 +167,7 @@ if not skip_plots:
 
 ###########################################################################
 # Volumetric layering
-# ---------------------
+# -------------------
 # Then, we use the GM/WM boundary (GWB) and CSF/GM boundary (CGB) from
 # CRUISE to compute cortical depth with a volume-preserving technique.
 # Note that the number of layers is arbitrary, and does not reflect
@@ -193,7 +193,7 @@ if not skip_plots:
 
 #############################################################################
 # Cortical surface inflation
-# --------------------------------
+# --------------------------
 # For display purposes, we create a surface mesh from the average cortical
 # CRUISE surface, which we then inflate
 cortical_surface = nighres.surface.levelset_to_mesh(
@@ -212,7 +212,7 @@ inflated_surface = nighres.surface.surface_inflation(
 
 #############################################################################
 # Laminar data sampling and cortical surface mapping
-# --------------------------------
+# --------------------------------------------------
 # To sample data along the cortical depth, you need to combine the depth estimates
 # and the underlying contrast of interest, here the T1 map.
 laminar_profile = nighres.laminar.profile_sampling(
@@ -260,7 +260,7 @@ if not skip_3d:
     
 #############################################################################
 # References
-# -----------
+# ----------
 # .. [1] Bogovic, J.A., Prince, J.L., Bazin, P.-L., 2013. A multiple object 
 #        geometric deformable model for image segmentation. Computer Vision and Image 
 #        Understanding 117, 145–157. https://doi.org/10.1016/j.cviu.2012.10.006

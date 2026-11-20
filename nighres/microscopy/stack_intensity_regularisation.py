@@ -8,7 +8,8 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, _check_available_memory
 
 
-def stack_intensity_regularisation(image, cutoff=50, mask=None,
+def stack_intensity_regularisation(image, cutoff=1, rmax=99, memory=3, mask=None,
+                            split=5, shift=1, rescale=10.0, noise=0.001,
                             save_data=False, overwrite=False, output_dir=None,
                             file_name=None):
     """ Stack intensity regularisation
@@ -20,9 +21,21 @@ def stack_intensity_regularisation(image, cutoff=50, mask=None,
     image: niimg
         Input 2D images, stacked in the Z dimension
     cutoff: float, optional 
-        Range of image differences to keep (default is middle 50%)
+        Range of image differences to keep (default is middle 1%)
+    rmax: float, optional 
+        Maximum intensity to keep for robustness to outliers (default is 99%)
+    memory: int, optional 
+        Number of neighboring images to use for alignment (default is 3)
     mask: niimg
         Input mask or probability image of the data to use (optional)
+    split: int, optional 
+        Number of image subdivisions per dimension if using the local algorithm (default is 5)
+    shift: int, optional 
+        Pixel shift allowed when looking for neighboring slice intensities (default is 1)
+    rescale: int, optional 
+        Scaling factor for supervoxel modeling (default is 10)
+    noise: float, optional 
+        Noise factor for supervoxel modeling (default is 0.001)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -94,10 +107,15 @@ def stack_intensity_regularisation(image, cutoff=50, mask=None,
     
     # set algorithm parameters
     sir.setVariationRatio(float(cutoff))
+    sir.setIntensityRatio(float(rmax))
+    sir.setMemory(int(memory))
+    sir.setShift(int(shift))
     
     # execute the algorithm
     try:
-        sir.execute()
+        if (rescale>1.0 and noise>0): sir.executeSupervoxel(float(rescale), float(noise), int(split))
+        elif (split>0): sir.executeSubdivide(int(split))
+        else: sir.execute()
 
     except:
         # if the Java module fails, reraise the error it throws
@@ -108,7 +126,7 @@ def stack_intensity_regularisation(image, cutoff=50, mask=None,
 
     # reshape output to what nibabel likes
     regularised_data = np.reshape(np.array(sir.getRegularisedImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

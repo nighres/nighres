@@ -153,12 +153,12 @@ def volumetric_layering(inner_levelset, outer_levelset,
 
     # collect data
     depth_data = np.reshape(np.array(lamination.getContinuousDepthMeasurement(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
     hdr['cal_max'] = np.nanmax(depth_data)
     depth = nb.Nifti1Image(depth_data, aff, hdr)
 
     layer_data = np.reshape(np.array(lamination.getDiscreteSampledLayers(),
-                                     dtype=np.int32), dimensions, 'F')
+                                     dtype=np.int32), shape=dimensions, order='F')
     hdr['cal_max'] = np.nanmax(layer_data)
     layers = nb.Nifti1Image(layer_data, aff, hdr)
 

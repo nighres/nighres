@@ -130,11 +130,11 @@ def surface_inflation(surface_mesh, step_size=0.75, max_iter=2000, max_curv=10.0
     
     print("surface...")
     orig_points = np.reshape(np.array(algorithm.getInflatedSurfacePoints(),
-                               dtype=np.float32), (npt,3), 'C')
+                               dtype=np.float32), shape=(npt,3), order='C')
     orig_faces = np.reshape(np.array(algorithm.getInflatedSurfaceTriangles(),
-                               dtype=np.int32), (nfc,3), 'C')
+                               dtype=np.int32), shape=(nfc,3), order='C')
     orig_data = np.reshape(np.array(algorithm.getInflatedSurfaceValues(),
-                               dtype=np.float32), (npt), 'F')
+                               dtype=np.float32), shape=(npt), order='F')
  
      
     # create the mesh dictionary

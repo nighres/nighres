@@ -1,8 +1,8 @@
 # Plots are currently included as images, because example is too big to
 # run on readthedocs servers
 """
-Subcortex Parcellation
-======================
+Subcortex Parcellation (testing)
+====================================
 
 This example shows how to perform multi-contrast subcortical parcellation
 with the MASSP algorithm on MP2RAGEME data by performing the following steps:

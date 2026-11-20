@@ -1,5 +1,5 @@
 """
-Quantitative MRI
+Quantitative MRI (testing)
 =======================================
 
 This example shows how to build quantitative maps of R1 and R2* and semi-quantitative

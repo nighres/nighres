@@ -149,19 +149,19 @@ def t2s_optimal_combination(image_list, te_list, depth=None,
 
     # reshape output to what nibabel likes
     comb_data = np.reshape(np.array(qt2scomb.getCombinedImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     t2s_data = np.reshape(np.array(qt2scomb.getT2sImage(),
-                                    dtype=np.float32), dim3d, 'F')
+                                    dtype=np.float32), shape=dim3d, order='F')
 
     r2s_data = np.reshape(np.array(qt2scomb.getR2sImage(),
-                                    dtype=np.float32), dim3d, 'F')
+                                    dtype=np.float32), shape=dim3d, order='F')
 
     s0_data = np.reshape(np.array(qt2scomb.getS0Image(),
-                                    dtype=np.float32), dim3d, 'F')
+                                    dtype=np.float32), shape=dim3d, order='F')
 
     err_data = np.reshape(np.array(qt2scomb.getResidualImage(),
-                                    dtype=np.float32), dim3d, 'F')
+                                    dtype=np.float32), shape=dim3d, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

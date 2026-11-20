@@ -168,7 +168,7 @@ def directional_line_clustering(labels, scales, directions, thickness,
 
     # reshape output to what nibabel likes
     data = np.reshape(np.array(dlc.getDirectionImage(),
-                                    dtype=np.float32), dim3d, 'F')
+                                    dtype=np.float32), shape=dim3d, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -178,7 +178,7 @@ def directional_line_clustering(labels, scales, directions, thickness,
 
     # reshape output to what nibabel likes
     data = np.reshape(np.array(dlc.getGroupImage(),
-                                    dtype=np.int32), dim2d, 'F')
+                                    dtype=np.int32), shape=dim2d, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

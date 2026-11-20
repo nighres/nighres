@@ -141,7 +141,7 @@ def linear_fiber_vector_averaging(vector_image,
     print('extract output file...')
     for n in range(6*kept_dim):
         vec_data[:,:,:,n] = numpy.reshape(numpy.array(lfva.getAveragedVectorImageAt(n),
-                                    dtype=numpy.float32), dim_space, 'F')
+                                    dtype=numpy.float32), shape=dim_space, order='F')
 
  
     # adapt header max for each image so that correct max is displayed

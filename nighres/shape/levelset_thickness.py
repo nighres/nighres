@@ -78,6 +78,7 @@ def levelset_thickness(input_image,
             and os.path.isfile(thickness_file) \
             and os.path.isfile(axis_file) \
             and os.path.isfile(dist_file) :
+                print("skip computation (use existing results)")
                 output = {'thickness': thickness_file,
                           'axis':axis_file,
                           'dist':dist_file}
@@ -130,14 +131,14 @@ def levelset_thickness(input_image,
     # Collect output
     axis_data = np.reshape(np.array(
                                     algorithm.getMedialAxisImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
     dist_data = np.reshape(np.array(
                                     algorithm.getMedialDistanceImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     thickness_data = np.reshape(np.array(
                                     algorithm.geThicknessImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
 
     # adapt header max for each image so that correct max is displayed

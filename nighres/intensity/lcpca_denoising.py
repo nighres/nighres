@@ -218,7 +218,7 @@ def lcpca_denoising(image_list, phase_list=None,
     denoised_list = []
     for idx, image in enumerate(image_list):
         den_data = np.reshape(np.array(lcpca.getDenoisedMagnitudeImageAt(idx),
-                                   dtype=np.float32), dimensions, 'F')
+                                   dtype=np.float32), shape=dimensions, order='F')
         hdr = load_volume(image).header
         hdr['cal_min'] = np.nanmin(den_data)
         hdr['cal_max'] = np.nanmax(den_data)
@@ -231,7 +231,7 @@ def lcpca_denoising(image_list, phase_list=None,
     if (phase_list!=None):
         for idx, image in enumerate(phase_list):
             den_data = np.reshape(np.array(lcpca.getDenoisedPhaseImageAt(idx),
-                                       dtype=np.float32), dimensions, 'F')
+                                       dtype=np.float32), shape=dimensions, order='F')
             hdr = load_volume(image).header
             hdr['cal_min'] = np.nanmin(den_data)
             hdr['cal_max'] = np.nanmax(den_data)
@@ -242,10 +242,10 @@ def lcpca_denoising(image_list, phase_list=None,
                 save_volume(den_files[idx+len(image_list)], denoised)
 
     dim_data = np.reshape(np.array(lcpca.getLocalDimensionImage(),
-                                    dtype=np.float32), dim3D, 'F')
+                                    dtype=np.float32), shape=dim3D, order='F')
 
     err_data = np.reshape(np.array(lcpca.getNoiseFitImage(),
-                                    dtype=np.float32), dim3D, 'F')
+                                    dtype=np.float32), shape=dim3D, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

@@ -69,11 +69,11 @@ def save_mesh(filename, surf_dict):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]_
+    Originally created as part of Laminar Python [2]_
 
     References
     -----------
-    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+    .. [2] Huntenburg et al. (2017), Laminar Python: Tools for cortical
        depth-resolved analysis of high-resolution brain imaging data in
        Python. DOI: 10.3897/rio.3.e12346
     '''
@@ -111,11 +111,11 @@ def load_mesh_geometry(surf_mesh):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]_
+    Originally created as part of Laminar Python [3]_
 
     References
     -----------
-    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+    .. [3] Huntenburg et al. (2017), Laminar Python: Tools for cortical
        depth-resolved analysis of high-resolution brain imaging data in
        Python. DOI: 10.3897/rio.3.e12346
     '''
@@ -170,11 +170,11 @@ def load_mesh_data(surf_data, gii_darray=None):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]_
+    Originally created as part of Laminar Python [4]_
 
     References
     -----------
-    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+    .. [4] Huntenburg et al. (2017), Laminar Python: Tools for cortical
        depth-resolved analysis of high-resolution brain imaging data in
        Python. DOI: 10.3897/rio.3.e12346
     '''
@@ -222,11 +222,11 @@ def save_mesh_data(filename, surf_data):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]_
+    Originally created as part of Laminar Python [5]_
 
     References
     -----------
-    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+    .. [5] Huntenburg et al. (2017), Laminar Python: Tools for cortical
        depth-resolved analysis of high-resolution brain imaging data in
        Python. DOI: 10.3897/rio.3.e12346
     '''
@@ -264,11 +264,11 @@ def save_mesh_geometry(filename, surf_dict):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]_
+    Originally created as part of Laminar Python [6]_
 
     References
     -----------
-    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
+    .. [6] Huntenburg et al. (2017), Laminar Python: Tools for cortical
        depth-resolved analysis of high-resolution brain imaging data in
        Python. DOI: 10.3897/rio.3.e12346
     '''
@@ -296,8 +296,8 @@ def save_mesh_geometry(filename, surf_dict):
         elif filename.endswith('obj'):
             _write_obj(filename, surf_dict['points'], surf_dict['faces'])
             print("\nSaving {0}".format(filename))
-            print('To view mesh in brainview, run the command:\n')
-            print('average_objects ' + filename + ' ' + filename)
+            #print('To view mesh in brainview, run the command:\n')
+            #print('average_objects ' + filename + ' ' + filename)
     else:
         raise ValueError('Filename must be a string and surf_dict must be a '
                          'dictionary with keys "points" and "faces"')
@@ -350,7 +350,7 @@ def _read_vtk(file):
     start_vertices = (vtk_df[vtk_df[0].str.contains(
                                             'POINTS')].index.tolist()[0]) + 1
     vertex_df = pd.read_csv(file, skiprows=range(start_vertices),
-                            nrows=number_vertices, delim_whitespace=True,
+                            nrows=number_vertices, sep=' ',
                             header=None, engine='python')
     if np.array(vertex_df).shape[1] == 3:
         vertex_array = np.array(vertex_df)
@@ -359,7 +359,7 @@ def _read_vtk(file):
     elif np.array(vertex_df).shape[1] == 9:
         vertex_df = pd.read_csv(file, skiprows=range(start_vertices),
                                 nrows=int(number_vertices / 3) + 1,
-                                delim_whitespace=True, header=None,
+                                sep=r'\s+', header=None,
                                 engine='python')
         vertex_array = np.array(vertex_df.iloc[0:1, 0:3])
         vertex_array = np.append(vertex_array, vertex_df.iloc[0:1, 3:6],
@@ -376,11 +376,10 @@ def _read_vtk(file):
     else:
         print("vertex indices out of shape")
     # read faces into df and array
-    start_faces = (vtk_df[vtk_df[0].str.contains(
-                                            'POLYGONS')].index.tolist()[0]) + 1
+    start_faces = (vtk_df[vtk_df[0].str.contains('POLYGONS')].index.tolist()[0]) + 1
     face_df = pd.read_csv(file, skiprows=range(start_faces),
-                          nrows=number_faces, delim_whitespace=True,
-                          header=None, engine='python')
+                            nrows=number_faces, sep=r'\s+',
+                            header=None, engine='python')
     face_array = np.array(face_df.iloc[:, 1:4])
     # read data into df and array if exists
     if vtk_df[vtk_df[0].str.contains('POINT_DATA')].index.tolist() != []:
@@ -388,7 +387,7 @@ def _read_vtk(file):
                                         'POINT_DATA')].index.tolist()[0]) + 3
         number_data = number_vertices
         data_df = pd.read_csv(file, skiprows=range(start_data),
-                              nrows=number_data, delim_whitespace=True,
+                              nrows=number_data, sep=r'\s+',
                               header=None, engine='python')
         data_array = np.array(data_df)
     else:
@@ -416,13 +415,13 @@ def _read_ply(file):
     end_header = ply_df[ply_df[0].str.contains('end_header')].index.tolist()[0]
     # read vertex coordinates into dict
     vertex_df = pd.read_csv(file, skiprows=range(end_header + 1),
-                            nrows=number_vertices, sep='\s*', header=None,
+                            nrows=number_vertices, sep=r'\s*', header=None,
                             engine='python')
     vertex_array = np.array(vertex_df)
     # read face indices into dict
     face_df = pd.read_csv(file,
                           skiprows=range(end_header + number_vertices + 1),
-                          nrows=number_faces, sep='\s*', header=None,
+                          nrows=number_faces, sep='\\s*', header=None,
                           engine='python')
     face_array = np.array(face_df.iloc[:, 1:4])
 
@@ -490,7 +489,7 @@ def _write_gifti(surf_mesh, points, faces, data=None):
     gii.to_filename(surf_mesh)
 
 
-def _write_obj(surf_mesh, points, faces):
+def _write_MNI_obj(surf_mesh, points, faces):
     # write out MNI - obj format
     n_vert = len(points)
     XYZ = points.tolist()
@@ -513,7 +512,7 @@ def _write_obj(surf_mesh, points, faces):
         s.write('\n')
         nt = len(Tri) * 3
         Triangles = np.arange(3, nt + 1, 3)
-        Rounded8 = np.shape(Triangles)[0] / 8
+        Rounded8 = int(np.shape(Triangles)[0] / 8)
         N8 = 8 * Rounded8
         Triangles8 = Triangles[0:N8]
         RowsOf8 = np.split(Triangles8, N8 / 8)
@@ -528,7 +527,7 @@ def _write_obj(surf_mesh, points, faces):
         s.write('%s\n' % Line)
         s.write('\n')
         ListOfTriangles = np.array(Tri).flatten()
-        Rounded8 = np.shape(ListOfTriangles)[0] / 8
+        Rounded8 = int(np.shape(ListOfTriangles)[0] / 8)
         N8 = 8 * Rounded8
         Triangles8 = ListOfTriangles[0:N8]
         ListTri8 = ListOfTriangles[0:N8]
@@ -542,6 +541,29 @@ def _write_obj(surf_mesh, points, faces):
         Lint = map(int, L)
         Line = ' ' + ' '.join(map(str, Lint))
         s.write('%s\n' % Line)
+
+def _write_obj(surf_mesh, points, faces):
+    # add 1 to vertex indices in face list
+    faces = faces+1
+    # write out MNI - obj format
+    n_vert = len(points)
+    XYZ = points.tolist()
+    Tri = faces.tolist()
+    with open(surf_mesh, 'w') as s:
+        s.write('o 1\n')
+        s.write('# vertices\n')
+        k = -1
+        for a in XYZ:
+            k += 1
+            cor = ' ' + ' '.join(map(str, XYZ[k]))
+            s.write('v %s\n' % cor)
+        s.write('# faces\n')
+        s.write('usemtl Default\n')
+        k = -1
+        for b in Tri:
+            k += 1
+            cor = ' ' + ' '.join(map(str, Tri[k]))
+            s.write('f %s\n' % cor)
 
 
 def _write_vtk(filename, vertices, faces, data=None, comment=None):

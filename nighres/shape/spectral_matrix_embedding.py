@@ -209,7 +209,7 @@ def spectral_matrix_embedding(distance_matrix,
     # Collect output
     npt = distance_matrix.shape[0]
     data = np.reshape(np.array(algorithm.getSubjectEmbeddings(),
-                               dtype=np.float64), (npt,dims), 'F')
+                               dtype=np.float64), shape=(npt,dims), order='F')
 
     if surface_mesh is not None:
         surface_mesh['data'] = data
@@ -218,7 +218,7 @@ def spectral_matrix_embedding(distance_matrix,
     if reference_matrix is not None:
         nrf = reference_matrix.shape[0]
         ref_data = np.reshape(np.array(algorithm.getReferenceEmbeddings(),
-                                   dtype=np.float64), (nrf,dims), 'F')
+                                   dtype=np.float64), shape=(nrf,dims), order='F')
 
         if reference_mesh is not None:
             reference_mesh['data'] = ref_data

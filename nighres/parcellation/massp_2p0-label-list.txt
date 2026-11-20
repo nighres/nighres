@@ -1,0 +1,64 @@
+Label : Structure name : Acronym : Hemisphere
+1 : Caudate : cau : l
+2 : Caudate : cau : r
+3 : Subthalamic nucleus : stn : l
+4 : Subthalamic nucleus : stn : r
+5 : Substantia nigra : sn : l
+6 : Substantia nigra : sn : r
+7 : Red nucleus : rn : l
+8 : Red nucleus : rn : r
+9 : Globus pallidus pars interna : gpi : l
+10 : Globus pallidus pars interna : gpi : r
+11 : Globus pallidus pars externa : gpe : l
+12 : Globus pallidus pars externa : gpe : r
+13 : Thalamus : tha : l
+14 : Thalamus : tha : r
+15 : Lateral ventricle : vent : l
+16 : Lateral ventricle : vent : r
+17 : Third ventricle : vent : 3
+18 : Fourth ventricle : vent : 4
+19 : Amygdala : amg : l
+20 : Amygdala : amg : r
+21 : Internal capsule : ic : l
+22 : Internal capsule : ic : r
+23 : Ventral tegmental area : vta : l
+24 : Ventral tegmental area : vta : r
+25 : Fornix : fx : lr
+26 : Periaqueductal gray : pag : l
+27 : Periaqueductal gray : pag : r
+28 : Pedunculopontine nucleus : ppn : l
+29 : Pedunculopontine nucleus : ppn : r
+30 : Claustrum : cl : l
+31 : Claustrum : cl : r
+32 : Inferior colliculus : ico : l
+33 : Inferior colliculus : ico : r
+34 : Superior colliculus : sco : l
+35 : Superior colliculus : sco : r
+36 : Lateral habenula : lh : l
+37 : Lateral habenula : lh : r
+38 : Putamen : put : l
+39 : Putamen : put : r
+40 : Accumbens : acc : l
+41 : Accumbens : acc : r
+42 : Cornu ammonis 1 : ca1 : l
+43 : Cornu ammonis 1 : ca1 : r
+44 : Cornu ammonis 2,3 : ca23 : l
+45 : Cornu ammonis 2,3 : ca23 : r
+46 : Dentate gyrus : dg : l
+47 : Dentate gyrus : dg : r
+48 : Pre/pro subiculum : presub : l
+49 : Pre/pro subiculum : presub : r
+50 : Subiculum : sub : l
+51 : Subiculum : sub : r
+52 : Uncus : unc : l
+53 : Uncus : unc : r
+54 : Anterior commissure : ac : lr
+55 : Posterior commissure : pc : lr
+56 : Cholinergic forebrain nuclei : chn : l
+57 : Cholinergic forebrain nuclei : chn : r
+58:  Dorsal raphe nucleus : drn : lr
+59 : Medial raphe nucleus : mrn : lr
+60 : Lateral geniculate nucleus : lgn : l
+61 : Lateral geniculate nucleus : lgn : r
+62 : Medial geniculate nucleus : mgn : l
+63 : Medial geniculate nucleus : mgn : r

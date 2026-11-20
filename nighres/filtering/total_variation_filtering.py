@@ -131,7 +131,7 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
 
     # reshape output to what nibabel likes
     filtered_data = np.reshape(np.array(algo.getFilteredImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -141,7 +141,7 @@ def total_variation_filtering(image, mask=None, lambda_scale=0.05,
 
     # reshape output to what nibabel likes
     residual_data = np.reshape(np.array(algo.getResidualImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

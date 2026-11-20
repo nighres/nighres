@@ -15,13 +15,14 @@ source dependencies_sha.sh
 cbstools_repo="https://github.com/piloubazin/cbstools-public.git"
 imcntk_repo="https://github.com/piloubazin/imcn-imaging.git"
 fbpa_repo="https://github.com/piloubazin/fbpa-tools.git"
+medic_repo="https://github.com/piloubazin/medic-legacy.git"
 
-release="release-1.5.1"
+#release="release-1.5.1"
 # for the latest development version
-#release="master"
+release="master"
 
 # Check the system has the necessary commands
-hash wget tar javac jar python3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3"
+hash tar javac jar python3 2>/dev/null || fatal "This script needs the following commands available: wget tar javac jar python3"
 
 # Check for setuptools and wheels
 pip_modules=$(python3 -m pip list | tr -s ' ' | cut -f 1 -d ' ')
@@ -31,9 +32,24 @@ echo "${pip_modules}" | grep wheel > /dev/null || fatal 'This script requires wh
 #echo "Before detection: $JAVA_HOME"
 
 # Set the JAVA_HOME variable if it is not set
-detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=')
-export JAVA_HOME=${JAVA_HOME:-"$detected_home"}
-#echo "After detection: $JAVA_HOME"
+if [[ -z ${JAVA_HOME+x} ]] ; then
+    # handle RHEL-like systems
+    rhel=false
+    . /etc/os-release
+    echo "$ID_LIKE" | grep "rhel" > /dev/null 2>&1
+    if [[ $? ]] ; then
+        rhel=true
+    fi
+
+    if [[ "$rhel" = "true" ]] ; then
+        detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=' | rev | cut -d '/' -f 2- | rev)
+    else
+        detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=')
+    fi
+    export JAVA_HOME=$detected_home
+fi
+
+# echo "After detection: $JAVA_HOME"
 
 # Check that JCC is installed
 echo "${pip_modules}" | grep JCC > /dev/null || fatal 'This script requires JCC.\nInstall with `apt-get install jcc` or equivalent and `python3 -m pip install jcc`'
@@ -54,7 +70,7 @@ test -d cbstools-public && (
 	git pull
 	cd ..
 ) || (
-	git clone -b $release $cbstools_repo --depth 1
+	git clone -b $release $cbstools_repo --single-branch
 	cd cbstools-public
 	git checkout
 	git pull
@@ -113,7 +129,7 @@ test -d imcn-imaging && (
 	git pull
 	cd ..
 ) || (
-	git clone -b $release $imcntk_repo --depth 1
+	git clone -b $release $imcntk_repo --single-branch
 	cd imcn-imaging
 	git checkout
 	git pull
@@ -167,7 +183,7 @@ test -d fbpa-tools && (
 	git pull
 	cd ..
 ) || (
-	git clone -b $release $fbpa_repo --depth 1
+	git clone -b $release $fbpa_repo --single-branch
 	cd fbpa-tools
 	git checkout
 	git pull
@@ -210,6 +226,60 @@ cp lib/*.jar ../nighresjava/lib/
 cd ..
 
 #
+## COMPILE MEDIC legacy
+#
+
+# Get Medic git clone
+test -d medic-legacy && (
+    cd medic-legacy
+	git checkout $release
+	git pull
+	cd ..
+) || (
+	git clone -b $release $medic_repo --depth 1
+	cd medic-legacy
+	git checkout
+	git pull
+	cd ..
+)
+
+# Java dependencies. Order matters
+deps=(
+	"."
+	"lib/Jama-mipav.jar"
+	"lib/commons-math3-3.5.jar"
+)
+deps_list=$(join_by ":" "${deps[@]}")
+
+# List of library files needed to run the core functions
+source medic-lib-files.sh
+echo $medic_files # result is in $medic_files
+
+medic_list=$(join_by " " "${medic_files[@]}")
+
+# Compilation options
+javac_opts=(
+	# "-d build"        # Output dir
+	"-Xlint:none"     # Disable all warnings
+    "-server"         # ?
+	"-g"              # Generate all debugging info
+	"-O"              # ?
+	"-deprecation"    # Show information about deprecated Java calls
+	"-encoding UTF-8" # Require UTF-8, rather than platform-specifc
+)
+
+echo "Compiling..."
+cd medic-legacy
+$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} edu/jhmi/rad/medic/algorithms/*.java $medic_list
+
+echo "Assembling..."
+jar uf ../nighresjava/src/nighresjava.jar edu/jhmi/rad/medic/algorithms/*.class
+jar cf ../nighresjava/src/medic-lib.jar edu/jhmi/rad/medic/libraries/*.class edu/jhmi/rad/medic/methods/*.class edu/jhmi/rad/medic/structures/*.class edu/jhmi/rad/medic/utilities/*.class
+
+cp lib/*.jar ../nighresjava/lib/
+cd ..
+
+#
 ## WRAP TO PYTHON
 #
 cd nighresjava
@@ -222,6 +292,7 @@ jcc_args=(
 	"--include src/cbstools-lib.jar"
 	"--include src/imcntk-lib.jar"
 	"--include src/fbpa-lib.jar"
+	"--include src/medic-lib.jar"
 	"--include lib/commons-math3-3.5.jar"
 	"--include lib/Jama-mipav.jar"
 
@@ -233,6 +304,10 @@ jcc_args=(
 
 	# Compile
 	"--build"
+
+    # Lib paths to include
+    "--libpath $JAVA_HOME/lib"
+    "--libpath $JAVA_HOME/lib/server"
 )
 
 python3 -m jcc ${jcc_args[@]}
@@ -256,8 +331,8 @@ find nighresjava/build/ -type f | grep '.so$' | head -n 1 | xargs -I '{}' -- cp 
 
 echo ""
 echo "======="
-echo "You should now be able to install nighres with pip"
-echo " python3 -m pip install ."
+echo "You should now be able to install nighres with pip or uv pip"
+echo " (uv) pip install ."
 echo "======="
 echo ""
 

@@ -22,7 +22,7 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
         Input image
     mask: niimg, optional
         Data mask to specify acceptable seeding regions
-    combine: {'min','mean','max'}, optional
+    combine: {'min','mean','max','maxmag','none'}, optional
         Propagate using the mean (default), max or min data from neighboring voxels
     distance_mm: float, optional 
         Distance for the propagation (note: this algorithm will be slow for 
@@ -93,7 +93,10 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
     resolution = [x.item() for x in header.get_zooms()]
     dimensions = data.shape
 
-    if len(dimensions)>2:
+    if len(dimensions)>3:
+        propag.setDimensions(dimensions[0], dimensions[1], dimensions[2], dimensions[3])
+        propag.setResolutions(resolution[0], resolution[1], resolution[2])
+    elif len(dimensions)>2:
         propag.setDimensions(dimensions[0], dimensions[1], dimensions[2])
         propag.setResolutions(resolution[0], resolution[1], resolution[2])
     else:
@@ -112,6 +115,7 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
         propag.setDomainImage(nighresjava.JArray('int')(
                 (load_volume(domain).get_fdata().flatten('F')).astype(int).tolist()))
     
+            
     # set algorithm parameters
     propag.setCombinationMethod(combine)
     propag.setPropagationDistance(distance_mm)
@@ -131,7 +135,7 @@ def intensity_propagation(image, mask=None, combine='mean', distance_mm=5.0,
 
     # reshape output to what nibabel likes
     propag_data = np.reshape(np.array(propag.getResultImage(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

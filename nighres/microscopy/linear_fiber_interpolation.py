@@ -169,7 +169,7 @@ def linear_fiber_interpolation(image, references, mapped_proba, mapped_theta,
     # reshape output to what nibabel likes
     dimensions = (dimensions[0],dimensions[1],mapped_dim)
     data = np.reshape(np.array(lfi.getMappedProba(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -180,7 +180,7 @@ def linear_fiber_interpolation(image, references, mapped_proba, mapped_theta,
     # reshape output to what nibabel likes
     dimensions = (dimensions[0],dimensions[1],mapped_dim)
     data = np.reshape(np.array(lfi.getMappedTheta(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -191,7 +191,7 @@ def linear_fiber_interpolation(image, references, mapped_proba, mapped_theta,
     # reshape output to what nibabel likes
     dimensions = (dimensions[0],dimensions[1],mapped_dim)
     data = np.reshape(np.array(lfi.getMappedLambda(),
-                                    dtype=np.float32), dimensions, 'F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

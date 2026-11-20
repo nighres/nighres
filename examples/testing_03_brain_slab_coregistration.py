@@ -1,7 +1,7 @@
 # Plots are currently included as images, because example is too big to
 # run on readthedocs servers
 """
-Brain co-registration from MP2RAGE data
+Brain co-registration (testing)
 ========================================
 
 This example shows how to co-register MP2RAGE data
