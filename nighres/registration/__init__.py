@@ -11,6 +11,12 @@ from nighres.registration.embedded_antspy import embedded_antspy_2d
 from nighres.registration.embedded_antspy import embedded_antspy_multi
 from nighres.registration.embedded_antspy import embedded_antspy_2d_multi
 from nighres.registration.rescale_mapping import rescale_mapping
+from nighres.registration.rescale_mapping import rescale_mapping_2d
 from nighres.registration.crop_mapping import crop_mapping
 from nighres.registration.flip_mapping import flip_mapping
 from nighres.registration.focused_antspy import focused_antspy
+from nighres.registration.embedded_antspy2 import embedded_antspy2
+from nighres.registration.embedded_antspy2 import embedded_antspy2_2d
+from nighres.registration.embedded_antspy2 import embedded_antspy2_multi
+from nighres.registration.embedded_antspy2 import embedded_antspy2_2d_multi
+from nighres.registration.restricted_antspy import restricted_antspy

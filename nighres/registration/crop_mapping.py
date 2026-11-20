@@ -59,8 +59,8 @@ def crop_mapping(source_image=None,
     print('\nCrop mapping')
 
     # make sure that saving related parameters are correct
-    output_dir = _output_dir_4saving(output_dir, source_image) # needed for intermediate results
     if save_data:
+        output_dir = _output_dir_4saving(output_dir, source_image) # needed for intermediate results
         mapping_file = os.path.join(output_dir, 
                         _fname_4saving(module=__name__,file_name=file_name,
                                    rootfile=source_image,
@@ -104,20 +104,33 @@ def crop_mapping(source_image=None,
     nsz = zmax-zmin+2*boundary
 
     # build coordinate mapping matrices and save them to disk
-    mapping = numpy.zeros((nsx,nsy,nsz,3))
-    inverse = numpy.zeros((nx,ny,nz,3))
-    for x in range(nsx):
-        for y in range(nsy):
-            for z in range(nsz):
-                mapping[x,y,z,X] = x+xmin-boundary
-                mapping[x,y,z,Y] = y+ymin-boundary
-                mapping[x,y,z,Z] = z+zmin-boundary
+    #mapping = numpy.zeros((nsx,nsy,nsz,3))
+    #inverse = numpy.zeros((nx,ny,nz,3))
+    #for x in range(nsx):
+    #    for y in range(nsy):
+    #        for z in range(nsz):
+    #            mapping[x,y,z,X] = x+xmin-boundary
+    #            mapping[x,y,z,Y] = y+ymin-boundary
+    #            mapping[x,y,z,Z] = z+zmin-boundary
+    #
+    #            if x+xmin-boundary>=0 and y+ymin-boundary>=0 and z+zmin-boundary>=0 \
+    #                and  x+xmin-boundary<nx and y+ymin-boundary<ny and z+zmin-boundary<nz:
+    #                inverse[x+xmin-boundary,y+ymin-boundary,z+zmin-boundary,X] = x
+    #                inverse[x+xmin-boundary,y+ymin-boundary,z+zmin-boundary,Y] = y
+    #                inverse[x+xmin-boundary,y+ymin-boundary,z+zmin-boundary,Z] = z
 
-                if x+xmin-boundary>=0 and y+ymin-boundary>=0 and z+zmin-boundary>=0 \
-                    and  x+xmin-boundary<nx and y+ymin-boundary<ny and z+zmin-boundary<nz:
-                    inverse[x+xmin-boundary,y+ymin-boundary,z+zmin-boundary,X] = x
-                    inverse[x+xmin-boundary,y+ymin-boundary,z+zmin-boundary,Y] = y
-                    inverse[x+xmin-boundary,y+ymin-boundary,z+zmin-boundary,Z] = z
+    # faster version?
+    mapping = numpy.ones((nsx,nsy,nsz))
+    mapx = numpy.arange(nsx)[:,numpy.newaxis,numpy.newaxis]*mapping+xmin-boundary
+    mapy = numpy.arange(nsy)[numpy.newaxis,:,numpy.newaxis]*mapping+ymin-boundary
+    mapz = numpy.arange(nsz)[numpy.newaxis,numpy.newaxis,:]*mapping+zmin-boundary
+    mapping = numpy.stack([mapx,mapy,mapz],axis=-1)
+
+    inverse = numpy.ones((nx,ny,nz))
+    invx = numpy.arange(nx)[:,numpy.newaxis,numpy.newaxis]*inverse-xmin+boundary
+    invy = numpy.arange(ny)[numpy.newaxis,:,numpy.newaxis]*inverse-ymin+boundary
+    invz = numpy.arange(nz)[numpy.newaxis,numpy.newaxis,:]*inverse-zmin+boundary
+    inverse = numpy.stack([invx,invy,invz],axis=-1)
 
     mapping_img = nibabel.Nifti1Image(mapping, affine, header)
     inverse_img = nibabel.Nifti1Image(inverse, affine, header)

@@ -107,11 +107,19 @@ def generate_coordinate_mapping(reference_image,
             # assuming the MIPAV file type here (others would need modification)
             f.readline()
             f.readline()
-            str_text = f.readline()+f.readline()+f.readline()+f.readline()
-            str_list = str_text.split('\n')
+            str_list = []
+            str_list.append(f.readline())
+            str_list.append(f.readline())
+            str_list.append(f.readline())
+            str_list.append(f.readline())
+            #str_text = +f.readline()+f.readline()+f.readline()
+            #str_list = str_text.split('\n')
+            #print(str_list)    
             str_array = []
             for sl in str_list:
-                str_array.append(sl.split())
+                str_array.append(sl.split())    
+            print(str_array)    
+                
             transform = numpy.array(str_array,dtype='float')
     else:
         transform = numpy.eye(4,4)

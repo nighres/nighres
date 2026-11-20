@@ -27,11 +27,45 @@ labels_27structures = ['Str-l','Str-r','STN-l','STN-r','SN-l','SN-r',\
                        'LH-l','LH-r','ac-lr','pc-lr','CHN-l','CHN-r',\
                        'DRN-lr','MRN-lr','RMG-lr','RPO-lr']
 
+labels_2p0 = ['Cau-l','Cau-r','STN-l','STN-r','SN-l','SN-r',\
+              'RN-l','RN-r','GPi-l','GPi-r','GPe-l','GPe-r',\
+              'Tha-l','Tha-r','LV-l','LV-r','3V','4V','Amg-l','Amg-r',\
+              'ic-l','ic-r','VTA-l','VTA-r','fx','PAG-l','PAG-r',\
+              'PPN-l','PPN-r','Cl-l','Cl-r','ICO-l','ICO-r','SCO-l','SCO-r',\
+              'LH-l','LH-r','Put-l','Put-r','Acc-l','Acc-r',\
+              'CA1-l','CA1-r','CA23-l','CA23-r','DG-l','DG-r',\
+              'Presub-l','Presub-r','Sub-l','Sub-r','Unc-l','Unc-r',\
+              'ac-lr','pc-lr','CHN-l','CHN-r',\
+              'DRN-lr','MRN-lr','LGN-l','LGN-r','MGN-l','MGN-r']
+
+labels_2p1 = ['Cau-l','Cau-r','STN-l','STN-r','SN-l','SN-r',\
+              'RN-l','RN-r','GPi-l','GPi-r','GPe-l','GPe-r',\
+              'Tha-l','Tha-r','LV-l','LV-r','3V','4V','Amg-l','Amg-r',\
+              'ic-l','ic-r','VTA-l','VTA-r','fx','PAG-l','PAG-r',\
+              'PPN-l','PPN-r','Cl-l','Cl-r','ICO-l','ICO-r','SCO-l','SCO-r',\
+              'LH-l','LH-r','Put-l','Put-r','Acc-l','Acc-r',\
+              'CA1-l','CA1-r','CA23-l','CA23-r','DG-l','DG-r',\
+              'Presub-l','Presub-r','Sub-l','Sub-r','Unc-l','Unc-r',\
+              'ac-lr','pc-lr','CHN-l','CHN-r',\
+              'DRN-lr','MRN-lr','LGN-l','LGN-r','MGN-l','MGN-r','LC-l','LC-r']
+
 def massp_17structures_label(name):
     return 1+labels_17structures.index(name)
 
 def massp_17structures_list():
     return labels_17structures
+ 
+def massp_2p0_label(name):
+    return 1+labels_2p0.index(name)
+
+def massp_2p0_list():
+    return labels_2p0
+ 
+def massp_2p1_label(name):
+    return 1+labels_2p1.index(name)
+
+def massp_2p1_list():
+    return labels_2p1
  
 def massp(target_images, structures=31,
                       shape_atlas_probas=None, shape_atlas_labels=None, 
@@ -261,9 +295,11 @@ def massp(target_images, structures=31,
         massp.estimateTarget()
         massp.fastSimilarityDiffusion(4)
         massp.collapseToJointMaps()
-        massp.precomputeStoppingStatistics(3.0)
+        #massp.precomputeStoppingStatistics(3.0)
         massp.topologyBoundaryDefinition("wcs", topology_lut_dir)
-        massp.conditionalPrecomputedDirectVolumeGrowth(3.0)
+        #massp.conditionalPrecomputedDirectVolumeGrowth(3.0)
+        #massp.conditionalPrecomputedOrderedVolumeGrowth(3.0)
+        massp.conditionalPriorVolumeGrowth(3.0)
         massp.collapseSpatialPriorMaps()
 
     except:
@@ -277,10 +313,10 @@ def massp(target_images, structures=31,
     dims3Dtrg = (trg_dimensions[0],trg_dimensions[1],trg_dimensions[2])
 
     proba_data = numpy.reshape(numpy.array(massp.getFinalProba(),
-                                    dtype=numpy.float32), newshape=dims3Dtrg, order='F')
+                                    dtype=numpy.float32), shape=dims3Dtrg, order='F')
 
     label_data = numpy.reshape(numpy.array(massp.getFinalLabel(),
-                                    dtype=numpy.int32), newshape=dims3Dtrg, order='F')
+                                    dtype=numpy.int32), shape=dims3Dtrg, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -301,9 +337,10 @@ def massp(target_images, structures=31,
         return output
 
 
+
 def massp_atlasing(subjects, structures, contrasts, 
                       levelset_images=None, skeleton_images=None, 
-                      contrast_images=None, 
+                      contrast_images=None, smoothing=1.0,
                       save_data=False, overwrite=False, output_dir=None,
                       file_name=None):
     """ MASSP Atlasing
@@ -324,6 +361,9 @@ def massp_atlasing(subjects, structures, contrasts,
         Atlas shape skeletons indexed by (subjects,structures)
     contrast_images: [niimg]
         Atlas images to use in the parcellation, indexed by (subjects, contrasts)
+    smoothing: float
+        Standard deviation in number of bins used in histogram smoothing 
+        (default is 1)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -407,11 +447,13 @@ def massp_atlasing(subjects, structures, contrasts,
     except ValueError:
         pass
     # create instance
-    massp = nighresjava.ConditionalShapeSegmentationSlabs()
+    #massp = nighresjava.ConditionalShapeSegmentationSlabs()
+    massp = nighresjava.ConditionalShapeSegmentationFaster()
 
     # set parameters
     massp.setNumberOfSubjectsObjectsBgAndContrasts(subjects,structures,1,contrasts)
     massp.setOptions(True, False, False, False, True)
+    massp.setHistogramSmoothing(smoothing)
      
     # load target image for parameters
     # load a first image for dim, res
@@ -446,7 +488,7 @@ def massp_atlasing(subjects, structures, contrasts,
     # execute first step
     scale = 1.0
     try:
-        scale = massp.computeAtlasPriors()
+        scale = massp.computeClassicAtlasPriors()
  
     except:
         # if the Java module fails, reraise the error it throws
@@ -487,19 +529,19 @@ def massp_atlasing(subjects, structures, contrasts,
     intens_hist_dims = ((structures+1)*(structures+1),massp.getNumberOfBins()+6,contrasts)
 
     spatial_proba_data = numpy.reshape(numpy.array(massp.getBestSpatialProbabilityMaps(dimensions[3]),
-                                   dtype=numpy.float32), newshape=dimensions, order='F')
+                                   dtype=numpy.float32), shape=dimensions, order='F')
 
     spatial_label_data = numpy.reshape(numpy.array(massp.getBestSpatialProbabilityLabels(dimensions[3]),
-                                    dtype=numpy.int32), newshape=dimensions, order='F')    
+                                    dtype=numpy.int32), shape=dimensions, order='F')    
 
     intens_hist_data = numpy.reshape(numpy.array(massp.getConditionalHistogram(),
-                                       dtype=numpy.float32), newshape=intens_hist_dims, order='F')
+                                       dtype=numpy.float32), shape=intens_hist_dims, order='F')
 
     skeleton_proba_data = numpy.reshape(numpy.array(massp.getBestSkeletonProbabilityMaps(dimskel[3]),
-                                   dtype=numpy.float32), newshape=dimskel, order='F')
+                                   dtype=numpy.float32), shape=dimskel, order='F')
 
     skeleton_label_data = numpy.reshape(numpy.array(massp.getBestSkeletonProbabilityLabels(dimskel[3]),
-                                    dtype=numpy.int32), newshape=dimskel, order='F')    
+                                    dtype=numpy.int32), shape=dimskel, order='F')    
 
 
     # adapt header max for each image so that correct max is displayed

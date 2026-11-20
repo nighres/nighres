@@ -22,8 +22,8 @@ def super_voxels(image, mask=None, scaling=4.0, noise_level=0.1, output_type='av
         Input image
     mask: niimg, optional
         Data mask to specify acceptable seeding regions
-    scaling: float, optional
-        Scaling factor for the new super-voxel grid (default is 4)
+    scaling: float or array, optional
+        Scaling factor for the new super-voxel grid, per dimension (default is 4 for all)
     noise_level: float, optional
         Weighting parameter to balance image intensity and spatial variability
     output_type: string, optional
@@ -46,8 +46,7 @@ def super_voxels(image, mask=None, scaling=4.0, noise_level=0.1, output_type='av
 
         * parcel (niimg): The super-voxel parcellation of the original image
         * rescaled (niimg): The rescaled image of supervoxels
-        * mems (niimg): The membership estimate of original image voxels to corresponding 
-        super-voxels
+        * mems (niimg): The membership estimate of original image voxels to corresponding super-voxels
 
     Notes
     ----------
@@ -125,7 +124,14 @@ def super_voxels(image, mask=None, scaling=4.0, noise_level=0.1, output_type='av
                 (load_volume(mask).get_fdata().flatten('F')).astype(int).tolist()))
     
     # set algorithm parameters
-    supervoxel.setScalingFactor(scaling)
+    if isinstance(scaling, list):
+        supervoxel.setScalingFactorX(scaling[0])
+        supervoxel.setScalingFactorY(scaling[1])
+        supervoxel.setScalingFactorZ(scaling[2])
+    else:
+        supervoxel.setScalingFactorX(scaling)
+        supervoxel.setScalingFactorY(scaling)
+        supervoxel.setScalingFactorZ(scaling)
     supervoxel.setNoiseLevel(noise_level)
     supervoxel.setOutputType(output_type)
     
@@ -142,7 +148,7 @@ def super_voxels(image, mask=None, scaling=4.0, noise_level=0.1, output_type='av
 
     # reshape output to what nibabel likes
     parcel_data = np.reshape(np.array(supervoxel.getParcelImage(),
-                                    dtype=np.float32), newshape=dimensions, order='F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -152,7 +158,7 @@ def super_voxels(image, mask=None, scaling=4.0, noise_level=0.1, output_type='av
 
     dims = supervoxel.getScaledDims()
     rescaled_data = np.reshape(np.array(supervoxel.getRescaledImage(),
-                                    dtype=np.float32), newshape=dims, order='F')
+                                    dtype=np.float32), shape=dims, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects
@@ -161,7 +167,7 @@ def super_voxels(image, mask=None, scaling=4.0, noise_level=0.1, output_type='av
     rescaled = nb.Nifti1Image(rescaled_data, affine, header)
 
     mems_data = np.reshape(np.array(supervoxel.getMemsImage(),
-                                    dtype=np.float32), newshape=dimensions, order='F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     # adapt header max for each image so that correct max is displayed
     # and create nifiti objects

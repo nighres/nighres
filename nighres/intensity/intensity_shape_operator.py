@@ -1,9 +1,10 @@
 import os
+import sys
 import numpy as np
 import nibabel as nb
 import nighresjava
 from ..io import load_volume, save_volume
-from ..utils import _output_dir_4saving, _fname_4saving
+from ..utils import _output_dir_4saving, _fname_4saving,_check_available_memory
 
 
 def intensity_shape_operator(image, 
@@ -42,7 +43,7 @@ def intensity_shape_operator(image,
     Ported from original Java module by Pierre-Louis Bazin
     """
 
-    print("\Intensity Shape Operator")
+    print("\n Intensity Shape Operator")
 
     # make sure that saving related parameters are correct
     if save_data:
@@ -77,7 +78,7 @@ def intensity_shape_operator(image,
     except ValueError:
         pass
     # create algorithm instance
-    algorithm = nighresjava.IntensityShapeOperator()
+    algorithm = nighresjava.ImageShapeOperator()
 
     # set parameters
     
@@ -101,8 +102,8 @@ def intensity_shape_operator(image,
 
     # Collect output
     tensor_data = np.reshape(np.array(
-                                    algorithm.getTensorImage(),
-                                    dtype=np.float32), newshape=dims4d, order='F')
+                                    algorithm.getShapeOperatorImage(),
+                                    dtype=np.float32), shape=dims4d, order='F')
 
     hdr['cal_min'] = np.nanmin(tensor_data)
     hdr['cal_max'] = np.nanmax(tensor_data)

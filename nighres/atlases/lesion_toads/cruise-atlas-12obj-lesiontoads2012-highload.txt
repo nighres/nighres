@@ -1,0 +1,73 @@
+Structure Atlas File (edit at your own risks)
+ 
+Structures:	13
+Background	1	mask
+Sulcal-CSF	5	optimized_csf
+Ventricles	6	optimized_csf
+Cerebellum-GM	14	obj
+Cerebrum-GM	15	obj
+Caudate	16	obj
+Thalamus	17	obj
+Putamen	18	obj
+Brainstem	22	obj
+Cerebellum-WM	24	obj
+OuterVentricular-WM	25	lesion
+InterVentricular-WM	26	obj
+Frontal-WM	27	obj
+ 
+Topology Atlas: 
+File:	brain-atlas-cruise-12obj-lesions-topology_calc.raw
+Dimensions:	172	216	164
+Resolutions:	0.9375	0.9375	0.9375
+ 
+Shape Atlas:	8
+Dimensions:	172	216	164
+Resolutions:	0.9375	0.9375	0.9375
+Orientations:	1	1	6	3
+Structure:	Background
+File:	atlas_Background.raw
+Structure:	Sulcal-CSF
+File:	atlas_Sulcal-CSF.raw
+Structure:	Ventricles
+File:	atlas_Ventricles.raw
+Structure:	Cerebellum-GM
+File:	atlas_Cerebellum-GM.raw
+Structure:	Cerebrum-GM
+File:	atlas_Cerebrum-GM.raw
+Structure:	Caudate
+File:	atlas_Caudate.raw
+Structure:	Thalamus
+File:	atlas_Thalamus.raw
+Structure:	Putamen
+File:	atlas_Putamen.raw
+Structure:	Brainstem
+File:	atlas_Brainstem.raw
+Structure:	Cerebellum-WM
+File:	atlas_Cerebellum-WM.raw
+Structure:	OuterVentricular-WM
+File:	atlas_Cerebrum-WM.raw
+Structure:	InterVentricular-WM
+File:	atlas_InterVentricular-WM.raw
+Structure:	Frontal-WM
+File:	atlas_Inferior-WM.raw
+  
+Intensity Atlas:	0
+T1_SPGR	0.0	0.2	0.2	0.5	0.5	0.5	0.7	0.7	0.9	0.9	0.9	0.9	0.9
+T2	0.0	0.9	0.9	0.4	0.4	0.4	0.4	0.4	0.3	0.3	0.3	0.3	0.3
+FLAIR	0.0	0.5	0.5	0.8	0.8	0.8	0.8	0.8	0.7	0.7	0.7	1.2	0.75
+T1_MPRAGE	0.0	0.1	0.1	0.7	0.7	0.6	0.6	0.8	1.0	1.0	1.0	1.0	1.0
+PD	0.0	1.0	1.0	0.8	0.8	0.8	0.8	0.8	0.7	0.7	0.7	0.7	0.7
+ 
+Lesions:
+T1_SPGR	0.5	T2	0.9	FLAIR	1.2	T1_MPRAGE	0.4	PD	1.2
+
+Black Holes:
+T1_SPGR	0.2	T2	0.8	FLAIR	0.6	T1_MPRAGE	0.1	PD	1.2
+ 
+Optimized factors:
+T1_SPGR		1.00	1.00	1.00	1.00
+T1_MPRAGE	0.80	1.00	1.00	1.00
+T2			1.00	1.00	1.00	1.00
+FLAIR		1.00	1.00	1.00	1.00
+PD			1.00	1.00	1.00	1.00
+ 

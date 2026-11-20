@@ -9,7 +9,8 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 
 def apply_coordinate_mappings(image, mapping1,
-                        mapping2=None, mapping3=None, mapping4=None, mapping5=None, mapping6=None,
+                        mapping2=None, mapping3=None, mapping4=None, mapping5=None, 
+                        mapping6=None, mapping7=None, mapping8=None, mapping9=None, 
                         interpolation="nearest", padding="closest",
                         zero_border=0, check_boundaries=False,
                         save_data=False, overwrite=False, output_dir=None,
@@ -33,6 +34,12 @@ def apply_coordinate_mappings(image, mapping1,
         Fifth coordinate mapping to apply
     mapping6 : niimg, optional
         Sixth coordinate mapping to apply
+    mapping7 : niimg, optional
+        Seventh coordinate mapping to apply
+    mapping8 : niimg, optional
+        Eigth coordinate mapping to apply
+    mapping9 : niimg, optional
+        Ninth coordinate mapping to apply
     interpolation: {'nearest', 'linear'}
         Interpolation method (default is 'nearest')
     padding: {'closest', 'zero', 'max'}
@@ -191,6 +198,42 @@ def apply_coordinate_mappings(image, mapping1,
                                                     def6data.shape[1],def6data.shape[2])
                         applydef.setDeformationType6("mapping(voxels)")
 
+                        if not (mapping7==None):
+                            def7 = load_volume(mapping7)
+                            def7data = def7.get_fdata()
+                            aff = def7.affine
+                            hdr = def7.header
+                            trgdim = def7data.shape
+                            applydef.setDeformationMapping7(nighresjava.JArray('float')(
+                                                    (def7data.flatten('F')).astype(float)))
+                            applydef.setDeformation7Dimensions(def7data.shape[0],
+                                                        def7data.shape[1],def7data.shape[2])
+                            applydef.setDeformationType7("mapping(voxels)")
+
+                            if not (mapping8==None):
+                                def8 = load_volume(mapping8)
+                                def8data = def8.get_fdata()
+                                aff = def8.affine
+                                hdr = def8.header
+                                trgdim = def8data.shape
+                                applydef.setDeformationMapping8(nighresjava.JArray('float')(
+                                                        (def8data.flatten('F')).astype(float)))
+                                applydef.setDeformation8Dimensions(def8data.shape[0],
+                                                            def8data.shape[1],def8data.shape[2])
+                                applydef.setDeformationType8("mapping(voxels)")
+
+                                if not (mapping9==None):
+                                    def9 = load_volume(mapping9)
+                                    def9data = def9.get_fdata()
+                                    aff = def9.affine
+                                    hdr = def9.header
+                                    trgdim = def9data.shape
+                                    applydef.setDeformationMapping9(nighresjava.JArray('float')(
+                                                            (def9data.flatten('F')).astype(float)))
+                                    applydef.setDeformation9Dimensions(def9data.shape[0],
+                                                                def9data.shape[1],def9data.shape[2])
+                                    applydef.setDeformationType9("mapping(voxels)")
+    
     applydef.setInterpolationType(interpolation)
     applydef.setImagePadding(padding)
     applydef.setCheckBoundaries(check_boundaries)
@@ -213,7 +256,7 @@ def apply_coordinate_mappings(image, mapping1,
         trgdim = [trgdim[0],trgdim[1],trgdim[2]]
     deformed_data = np.reshape(np.array(
                                 applydef.getDeformedImage(),
-                                dtype=np.float32), newshape=trgdim, order='F')
+                                dtype=np.float32), shape=trgdim, order='F')
     hdr['cal_min'] = np.nanmin(deformed_data)
     hdr['cal_max'] = np.nanmax(deformed_data)
     deformed = nb.Nifti1Image(deformed_data, aff, hdr)
@@ -393,7 +436,7 @@ def apply_vector_coordinate_mappings(image, mapping1,
         trgdim = [trgdim[0],trgdim[1],trgdim[2]]
     deformed_data = np.reshape(np.array(
                                 applydef.getDeformedImage(),
-                                dtype=np.float32), newshape=trgdim, order='F')
+                                dtype=np.float32), shape=trgdim, order='F')
     hdr['cal_min'] = np.nanmin(deformed_data)
     hdr['cal_max'] = np.nanmax(deformed_data)
     deformed = nb.Nifti1Image(deformed_data, aff, hdr)
@@ -565,7 +608,7 @@ def apply_coordinate_mappings_2d(image, mapping1,
         trgdim = [trgdim[0],trgdim[1]]
     deformed_data = np.reshape(np.array(
                                 applydef.getDeformedImage(),
-                                dtype=np.float32), newshape=trgdim, order='F')
+                                dtype=np.float32), shape=trgdim, order='F')
     hdr['cal_min'] = np.nanmin(deformed_data)
     hdr['cal_max'] = np.nanmax(deformed_data)
     deformed = nb.Nifti1Image(deformed_data, aff, hdr)
@@ -745,7 +788,7 @@ def apply_angular_coordinate_mappings_2d(image, mapping1,
         trgdim = [trgdim[0],trgdim[1]]
     deformed_data = np.reshape(np.array(
                                 applydef.getDeformedImage(),
-                                dtype=np.float32), newshape=trgdim, order='F')
+                                dtype=np.float32), shape=trgdim, order='F')
     
     if unit=='deg':
         deformed_data = deformed_data/np.pi*180.0
@@ -913,7 +956,7 @@ def apply_coordinate_mappings_mesh(surface_mesh, mapping1,
                 dtype=np.float32).shape[0]/3)
     
     def_points = np.reshape(np.array(applydef.getDeformedMeshPoints(),
-                               dtype=np.float32), newshape=(npt,3), order='C')
+                               dtype=np.float32), shape=(npt,3), order='C')
 
     # create the mesh dictionary
     if 'data' in mesh:

@@ -9,17 +9,21 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_available_memory
 
 
-def linear_fiber_mapping(input_image, ridge_intensities, 
+def linear_fiber_mapping(input_image, ridge_intensities='bright', 
                               min_scale=0, max_scale=3,
+                              max_proba=False,
                               diffusion_factor=1.0,
                               similarity_scale=0.1,
                               max_iter=100, max_diff=1e-3,
+                              skip_detect=False,
                               threshold=0.5,
                               max_dist=1.0,
-                              inclusion_ratio=0.1,
+                              min_ratio=0.1,
+                              inclusion=0.25,
                               extend=False,
                               extend_ratio=0.5,
                               diameter=False,
+                              full_output=True,
                               save_data=False, overwrite=False, output_dir=None,
                               file_name=None):
 
@@ -39,6 +43,9 @@ def linear_fiber_mapping(input_image, ridge_intensities,
         Minimum scale (in voxels) to look for features (default is 0)
     max_scale: int
         Maximum scale (in voxels) to look for features (default is 3)
+    max_proba: bool
+        Whether to use max or mean for grouped vessel probabilities
+        (default is False, using mean)
     diffusion_factor: float
         Scaling factor for the diffusion weighting in [0,1] (default is 1.0)
     similarity_scale: float
@@ -47,19 +54,27 @@ def linear_fiber_mapping(input_image, ridge_intensities,
         Maximum number of diffusion iterations
     max_diff: int
         Maximum difference to stop the diffusion
+    skip_detect: bool
+        Whether to perform the ridge detection step or assume the input is a vessel probability
+        (default is False)
     threshold: float
         Detection threshold for the structures to keep (default is 0.5)
     max_dist: float
         Maximum distance of voxels to include in lines (default is 1.0)
-    inclusion_ratio: float
-        Ratio of the highest detection value to include in lines (default is 0.1)
+    min_ratio: float
+        Minimum ratio of distance to length in lines (default is 0.1)
+    inclusion: float
+        Inclusion threshold for growing lines (default is 0.25)
     extend: bool
         Whether or not to extend the estimation results into the background 
         and/or lower values (default is False)
     extend_ratio: float
-        Ratio of the detection value to extend out (default is 0.5)
+        Ratio of the detection value to extend out (default is 0.5, 0.0 uses 
+        spatial distance only)
     diameter: bool
         Whether or not to estimate diameter and partial volume (default is False)
+    full_output: bool
+        Whether to output only the main result or the full set (default is True)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -76,6 +91,9 @@ def linear_fiber_mapping(input_image, ridge_intensities,
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
 
+        main:
+        * proba (niimg): propagated probabilistic response (_rrd-proba)
+        full:
         * proba (niimg): propagated probabilistic response (_lfm-proba)
         * lines (niimg): labeling of individual lines (_lfm-lines)
         * length (niimg): estimated line length (_lfm-length)
@@ -140,19 +158,43 @@ def linear_fiber_mapping(input_image, ridge_intensities,
                                   rootfile=input_image,
                                   suffix='lfm-pv'))
 
-        if overwrite is False \
+        if full_output is True and overwrite is False \
             and os.path.isfile(proba_file) \
             and os.path.isfile(lines_file) \
             and os.path.isfile(length_file) \
             and os.path.isfile(theta_file) \
-            and os.path.isfile(ani_file) :
+            and os.path.isfile(ani_file) \
+            and (not diameter 
+                or (os.path.isfile(dia_file) and os.path.isfile(pv_file) ) ):
 
             print("skip computation (use existing results)")
-            output = {'proba': proba_file,
-                      'lines': lines_file,
-                      'length': length_file,
-                      'theta': theta_file,
-                      'ani': ani_file}
+            if diameter:
+                output = {'proba': proba_file,
+                          'lines': lines_file,
+                          'length': length_file,
+                          'theta': theta_file,
+                          'ani': ani_file,
+                          'dia': dia_file,
+                          'pv': pv_file}
+            else:
+                output = {'proba': proba_file,
+                          'lines': lines_file,
+                          'length': length_file,
+                          'theta': theta_file,
+                          'ani': ani_file}
+            return output
+        elif full_output is False and overwrite is False \
+            and os.path.isfile(proba_file) \
+            and (not diameter 
+                or (os.path.isfile(dia_file) and os.path.isfile(pv_file) ) ):
+
+            print("skip computation (use existing results)")
+            if diameter:
+                output = {'proba': proba_file,
+                          'dia': dia_file,
+                          'pv': pv_file}
+            else:
+                output = {'proba': proba_file}
             return output
 
 
@@ -182,13 +224,17 @@ def linear_fiber_mapping(input_image, ridge_intensities,
     lfm.setRidgeIntensities(ridge_intensities)
     lfm.setMinimumScale(min_scale)
     lfm.setMaximumScale(max_scale)
+    lfm.setUseMaxProba(max_proba)
     lfm.setDiffusionFactor(diffusion_factor)
     lfm.setSimilarityScale(similarity_scale)
     lfm.setMaxIterations(max_iter)
     lfm.setMaxDifference(max_diff)
+    lfm.setSkipDetection(skip_detect)
+    if skip_detect: lfm.setMaskBackground(False)
     lfm.setDetectionThreshold(threshold)
     lfm.setMaxLineDistance(max_dist)
-    lfm.setInclusionRatio(inclusion_ratio)
+    lfm.setMinLineRatio(min_ratio)
+    lfm.setInclusionThreshold(inclusion)
     lfm.setExtendResult(extend)
     lfm.setExtendRatio(extend_ratio)
     lfm.setEstimateDiameter(diameter)
@@ -202,7 +248,7 @@ def linear_fiber_mapping(input_image, ridge_intensities,
 
     # execute Extraction
     try:
-        lfm.execute()
+        lfm.execute(full_output)
 
     except:
         # if the Java module fails, reraise the error it throws
@@ -218,26 +264,26 @@ def linear_fiber_mapping(input_image, ridge_intensities,
         
     # reshape output to what nibabel likes
     proba_data = np.reshape(np.array(lfm.getProbabilityResponseImage(),
-                                    dtype=np.float32), newshape=dimensions, order='F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     lines_data = np.reshape(np.array(lfm.getLineImage(),
-                                   dtype=np.int32), newshape=dimensions, order='F')
+                                   dtype=np.int32), shape=dimensions, order='F')
 
     length_data = np.reshape(np.array(lfm.getLengthImage(),
-                                   dtype=np.float32), newshape=dimensions, order='F')
+                                   dtype=np.float32), shape=dimensions, order='F')
 
     theta_data = np.reshape(np.array(lfm.getAngleImage(),
-                                    dtype=np.float32), newshape=dim4d, order='F')
+                                    dtype=np.float32), shape=dim4d, order='F')
 
     ani_data = np.reshape(np.array(lfm.getAnisotropyImage(),
-                                    dtype=np.float32), newshape=dimensions, order='F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     if diameter:
        dia_data = np.reshape(np.array(lfm.getDiameterImage(),
-                                    dtype=np.float32), newshape=dimensions, order='F')
+                                    dtype=np.float32), shape=dimensions, order='F')
         
        pv_data = np.reshape(np.array(lfm.getPartialVolumeImage(),
-                                    dtype=np.float32), newshape=dimensions, order='F')
+                                    dtype=np.float32), shape=dimensions, order='F')
         
 
     # adapt header max for each image so that correct max is displayed
@@ -245,17 +291,18 @@ def linear_fiber_mapping(input_image, ridge_intensities,
     header['cal_max'] = np.nanmax(proba_data)
     proba_img = nb.Nifti1Image(proba_data, affine, header)
 
-    header['cal_max'] = np.nanmax(lines_data)
-    lines_img = nb.Nifti1Image(lines_data, affine, header)
-
-    header['cal_max'] = np.nanmax(length_data)
-    length_img = nb.Nifti1Image(length_data, affine, header)
-
-    header['cal_max'] = np.nanmax(theta_data)
-    theta_img = nb.Nifti1Image(theta_data, affine, header)
-
-    header['cal_max'] = np.nanmax(ani_data)
-    ani_img = nb.Nifti1Image(ani_data, affine, header)
+    if full_output:
+        header['cal_max'] = np.nanmax(lines_data)
+        lines_img = nb.Nifti1Image(lines_data, affine, header)
+    
+        header['cal_max'] = np.nanmax(length_data)
+        length_img = nb.Nifti1Image(length_data, affine, header)
+    
+        header['cal_max'] = np.nanmax(theta_data)
+        theta_img = nb.Nifti1Image(theta_data, affine, header)
+    
+        header['cal_max'] = np.nanmax(ani_data)
+        ani_img = nb.Nifti1Image(ani_data, affine, header)
     
     if diameter:
         header['cal_max'] = np.nanmax(dia_data)
@@ -267,27 +314,38 @@ def linear_fiber_mapping(input_image, ridge_intensities,
 
     if save_data:
         save_volume(proba_file, proba_img)
-        save_volume(lines_file, lines_img)
-        save_volume(length_file, length_img)
-        save_volume(theta_file, theta_img)
-        save_volume(ani_file, ani_img)
+        if full_output:
+            save_volume(lines_file, lines_img)
+            save_volume(length_file, length_img)
+            save_volume(theta_file, theta_img)
+            save_volume(ani_file, ani_img)
         if diameter:
             save_volume(dia_file, dia_img)
             save_volume(pv_file, pv_img)
             
+        if diameter and full_output:    
             return {'proba': proba_file, 'lines': lines_file,
                 'length': length_file, 'theta': theta_file,
                 'ani': ani_file, 'dia': dia_file, 'pv': pv_file}
-        else:
+        elif full_output:
             return {'proba': proba_file, 'lines': lines_file,
                 'length': length_file, 'theta': theta_file,
                 'ani': ani_file}
+        elif diameter:
+            return {'proba': proba_file, 'dia': dia_file, 'pv': pv_file}
+        else:
+            return {'proba': proba_file}
     else:
-        if diameter:
+        if diameter and full_output:
             return {'proba': proba_img, 'lines': lines_img,
                 'length': length_img, 'theta': theta_img,
                 'ani': ani_img, 'dia': dia_img, 'pv': pv_img}
-        else:
+        elif full_output:
             return {'proba': proba_img, 'lines': lines_img,
                 'length': length_img, 'theta': theta_img,
                 'ani': ani_img}
+        if diameter:
+            return {'proba': proba_img, 'dia': dia_img, 'pv': pv_img}
+        else:
+            return {'proba': proba_img}
+                

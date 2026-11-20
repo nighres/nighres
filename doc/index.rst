@@ -20,7 +20,8 @@ Nighres is a Python package for processing of high-resolution neuroimaging data.
 It developed out of `CBS High-Res Brain Processing Tools
 <https://www.cbs.mpg.de/institute/software/cbs-tools>`_ and aims to make those
 tools easier to install, use and extend. Nighres now includes new functions from
-the `IMCN imaging toolkit <https://github.com/IMCN-UvA/imcn-imaging>`_.
+the `IMCN imaging toolkit <https://github.com/IMCN-UvA/imcn-imaging>`_ and is 
+further supported by `Full brain picture Analytics <https://www.fullbrainpicture.nl>`_.
 
 .. toctree::
    :maxdepth: 1
@@ -41,6 +42,7 @@ the `IMCN imaging toolkit <https://github.com/IMCN-UvA/imcn-imaging>`_.
    io/index
    laminar/index
    microscopy/index
+   parcellation/index
    registration/index
    segmentation/index
    shape/index
@@ -56,6 +58,7 @@ the `IMCN imaging toolkit <https://github.com/IMCN-UvA/imcn-imaging>`_.
    data_formats
    saving
    levelsets
+   mappings
 
 .. toctree::
    :maxdepth: 1
