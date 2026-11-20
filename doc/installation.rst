@@ -32,13 +32,17 @@ the :ref:`Docker image <docker-image>` or :ref:`Singularity container <singulari
 From Github (recommended)
 -------------------------
 
-You can also get the latest stable version from Github ::
+You can get the latest stable version from Github ::
 
    git clone https://github.com/nighres/nighres
 
 Or download and unpack the zip file from Github under **Clone and download** ->
 **Download ZIP**
 
+Note: some of the atlas files included in the GitHub repository are managed by 
+Git Large File Storage `git-lfs <https://git-lfs.com/>`_, which you will need
+to install in order to access the files (only relevant if you are using 
+:func:`nighres.brain.mgdm_segmentation` or :func:`nighres.parcellation.lesion_toads`)
 
 .. _build-nighres:
 
@@ -104,11 +108,15 @@ Complete 1., 2.and 3. to build Nighres as described above.
 Testing the installation
 ------------------------
 
-You can often catch installation problems by simply import Nighres in Python. Make sure to navigate out of the directory from which you installed to make sure Nighres has actually been installed correctly and can be accessed from any location ::
+You can often catch installation problems by simply import Nighres in Python. 
+Make sure to navigate out of the directory from which you installed to make sure 
+Nighres has actually been installed correctly and can be accessed from any location ::
 
-    python3 -c "import nighres"
+    python3 -c "import nighres"; print(nighres)
 
-If that works, you can try running one of the examples. You can find them inside the unpacked Nighres directory, in the subdirectory *examples*. Alternatively, you can also download the :ref:`examples <examples-index>` from the online documentation.
+If that works (it should print out the name and location of the installed module), you can try running one of the examples. 
+You can find them inside the unpacked Nighres directory, in the subdirectory *examples*. 
+Alternatively, you can also download the :ref:`examples <examples-index>` from the online documentation.
 
 
 .. _docker-image:
