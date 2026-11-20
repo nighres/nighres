@@ -12,6 +12,5 @@ Registration
    embedded_antspy_multi
    focused_antspy
    generate_coordinate_mapping
-   reorient
    rescale_mapping
    simple_align

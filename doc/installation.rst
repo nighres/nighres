@@ -28,8 +28,9 @@ Instead, please download and install from :ref:`GitHub <github>`,
 the :ref:`Docker image <docker-image>` or :ref:`Singularity container <singularity-image>`.
 
 .. _github:
+
 From Github (recommended)
-------------
+-------------------------
 
 You can also get the latest stable version from Github ::
 
