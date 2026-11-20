@@ -87,11 +87,11 @@ def flip_mapping(source_image, flip,
     
     # recode the axis
     direction = -1
-    if flip is 'X': 
+    if flip=='X': 
         direction = X
-    elif flip is 'Y':
+    elif flip=='Y':
         direction = Y
-    elif flip is 'Z':
+    elif flip=='Z':
         direction = Z
         
     if direction==-1:

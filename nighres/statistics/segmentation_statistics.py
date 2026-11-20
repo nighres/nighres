@@ -10,6 +10,7 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 def segmentation_statistics(segmentation, intensity=None, template=None,
                             statistics=None, output_csv=None,
+                            seg_name=None, int_name=None, temp_name=None,
                             atlas=None, skip_first=True, ignore_zero=True,
                             save_data=False, overwrite=False, output_dir=None,
                             file_name=None):
@@ -43,6 +44,12 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
         "Hausdorff_distance"
     output_csv: str
         File name of the statistics file to generate or expand
+    seg_name: str, optional
+        Name to use  for input segmentation image
+    int_name: str, optional
+        Name to use  for input intensity image for intensity-based statistics
+    temp_name: str, optional
+        Name to use  for input template segmentation for comparisons
     atlas: str, optional
         File name of an atlas file defining the segmentation labels
     skip_first: bool, optional
@@ -125,20 +132,29 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
         
     stats.setSegmentationImage(nighresjava.JArray('int')(
                                     (data.flatten('F')).astype(int).tolist()))
-    stats.setSegmentationName(_fname_4saving(module=__name__,rootfile=segmentation))
+    if seg_name is not None:
+        stats.setSegmentationName(seg_name)
+    else:
+        stats.setSegmentationName(_fname_4saving(module=__name__,rootfile=segmentation))
 
     # other input images, if any
     if intensity is not None:
         data = load_volume(intensity).get_fdata()
         stats.setIntensityImage(nighresjava.JArray('float')(
                                     (data.flatten('F')).astype(float)))
-        stats.setIntensityName(_fname_4saving(module=__name__,rootfile=intensity))
+        if int_name is not None:
+            stats.setIntensityName(int_name)
+        else:
+            stats.setIntensityName(_fname_4saving(module=__name__,rootfile=intensity))
 
     if template is not None:
         data = load_volume(template).get_fdata()
         stats.setTemplateImage(nighresjava.JArray('int')(
                                     (data.flatten('F')).astype(int).tolist()))
-        stats.setTemplateName(_fname_4saving(module=__name__,rootfile=template))
+        if temp_name is not None:
+            stats.setTemplateName(temp_name)
+        else:
+            stats.setTemplateName(_fname_4saving(module=__name__,rootfile=template))
 
     # set algorithm parameters
     if atlas is not None:
@@ -171,7 +187,7 @@ def segmentation_statistics(segmentation, intensity=None, template=None,
 
     if (output):
         data = np.reshape(np.array(stats.getOutputImage(),
-                                       dtype=np.int32), newshape=dimensions, order='F')
+                                       dtype=np.int32), shape=dimensions, order='F')
         header['cal_min'] = np.nanmin(data)
         header['cal_max'] = np.nanmax(data)
         output = nb.Nifti1Image(data, affine, header)

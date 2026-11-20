@@ -6,7 +6,7 @@ from nighres.global_settings import TOPOLOGY_LUT_DIR, MGDM_ATLAS_DIR, DEFAULT_MG
 
 def _output_dir_4saving(output_dir=None, rootfile=None):
     if (output_dir is None or output_dir==''):
-        if rootfile is None:
+        if rootfile is None or not isinstance(rootfile, os.PathLike) :
             # if nothing is specified, use current working dir
             output_dir = os.getcwd()
         else:

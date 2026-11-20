@@ -10,7 +10,8 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
 
 
 def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
-                             vd_image=None, data_weight=0.4,
+                             vd_image=None, edge_image=None, 
+                             data_weight=0.4, edge_weight=0.0,
                              regularization_weight=0.1,
                              max_iterations=500, normalize_probabilities=False,
                              correct_wm_pv=True, wm_dropoff_dist=1.0,
@@ -41,10 +42,15 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
         (values in [0,1], highest in CSf and masked regions)
     vd_image: niimg, optional
         Additional probability map of vessels and dura mater to be excluded
+    edge_image: niimg, optional
+        Additional probability map of vessels and dura mater to be excluded
     data_weight: float
         Weighting of probability-based balloon forces in CRUISE (default 0.4,
         sum of {data_weight,regularization_weight} should be below or equal
         to 1)
+    edge_weight: float
+        Weighting of edge-based balloon forces in CRUISE (default 0.0, range
+        is [-1,+1], competes with prooabilities for balloon force)
     regularization_weight: float
         Weighting of curvature regularization forces in CRUISE (default 0.1,
         sum of {data_weight,regularization_weight} should be below or equal
@@ -193,6 +199,7 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
 
     # set parameters
     cruise.setDataWeight(data_weight)
+    cruise.setEdgeWeight(edge_weight)
     cruise.setRegularizationWeight(regularization_weight)
     cruise.setMaxIterations(max_iterations)
     cruise.setNormalizeProbabilities(normalize_probabilities)
@@ -230,6 +237,11 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
         cruise.setVeinsAndDuraProbabilityImage(nighresjava.JArray('float')(
                                         (vd_data.flatten('F')).astype(float)))
 
+    if edge_image is not None:
+        edge_data = load_volume(edge_image).get_fdata()
+        cruise.setSignedEdgemapImage(nighresjava.JArray('float')(
+                                        (vd_data.flatten('F')).astype(float)))
+
     # execute
     try:
         cruise.execute()
@@ -243,21 +255,21 @@ def cruise_cortex_extraction(init_image, wm_image, gm_image, csf_image,
 
     # reshape output to what nibabel likes
     cortex_data = np.reshape(np.array(cruise.getCortexMask(),
-                                      dtype=np.int32), newshape=dimensions, order='F')
+                                      dtype=np.int32), shape=dimensions, order='F')
     gwb_data = np.reshape(np.array(cruise.getWMGMLevelset(),
-                                   dtype=np.float32), newshape=dimensions, order='F')
+                                   dtype=np.float32), shape=dimensions, order='F')
     cgb_data = np.reshape(np.array(cruise.getGMCSFLevelset(),
-                                   dtype=np.float32), newshape=dimensions, order='F')
+                                   dtype=np.float32), shape=dimensions, order='F')
     avg_data = np.reshape(np.array(cruise.getCentralLevelset(),
-                                   dtype=np.float32), newshape=dimensions, order='F')
+                                   dtype=np.float32), shape=dimensions, order='F')
     thick_data = np.reshape(np.array(cruise.getCorticalThickness(),
-                                     dtype=np.float32), newshape=dimensions, order='F')
+                                     dtype=np.float32), shape=dimensions, order='F')
     pwm_data = np.reshape(np.array(cruise.getCerebralWMprobability(),
-                                   dtype=np.float32), newshape=dimensions, order='F')
+                                   dtype=np.float32), shape=dimensions, order='F')
     pgm_data = np.reshape(np.array(cruise.getCorticalGMprobability(),
-                                   dtype=np.float32), newshape=dimensions, order='F')
+                                   dtype=np.float32), shape=dimensions, order='F')
     pcsf_data = np.reshape(np.array(cruise.getSulcalCSFprobability(),
-                                    dtype=np.float32), newshape=dimensions, order='F')
+                                    dtype=np.float32), shape=dimensions, order='F')
 
     # adapt header min, max for each image so that correct max is displayed
     # and create nifiti objects

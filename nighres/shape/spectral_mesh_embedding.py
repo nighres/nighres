@@ -45,13 +45,13 @@ def spectral_mesh_spatial_embedding(surface_mesh,
     mapping: niimg
         Coordinate mapping from the image to the reference (optional)
     dims: int
-        Number of kept dimensions in the representation (default is 1)
+        Number of kept dimensions in the representation (default is 10)
     msize: int
-        Target matrix size for subsampling (default is 2000)
+        Target matrix size for subsampling (default is 500)
     scale: float
-        Distance scale between sample points (default is 10.0)
+        Distance scale between sample points (default is 50.0)
     space: float
-        Spatial scaling factor (default is 10.0)
+        Spatial scaling factor (default is 50.0)
     link: float
         Spatial linking factor (default is 1.0)
     depth: int
@@ -183,7 +183,7 @@ def spectral_mesh_spatial_embedding(surface_mesh,
     mesh_points = mesh['points']
     mesh_faces = mesh['faces']    
     mesh_data = np.reshape(np.array(algorithm.getEmbeddingValues(),
-                               dtype=np.float32), newshape=(npt,dims), order='F')
+                               dtype=np.float32), shape=(npt,dims), order='F')
     # create the mesh dictionary
     mesh = {"points": mesh_points, "faces": mesh_faces, "data": mesh_data}
 
@@ -192,7 +192,7 @@ def spectral_mesh_spatial_embedding(surface_mesh,
         ref_mesh_points = ref_mesh['points']
         ref_mesh_faces = ref_mesh['faces']    
         ref_mesh_data = np.reshape(np.array(algorithm.getReferenceEmbeddingValues(),
-                                   dtype=np.float32), newshape=(nrf,dims), order='F')
+                                   dtype=np.float32), shape=(nrf,dims), order='F')
         # create the mesh dictionary
         ref_mesh = {"points": ref_mesh_points, "faces": ref_mesh_faces, "data": ref_mesh_data}
         

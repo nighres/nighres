@@ -8,7 +8,6 @@ from ..utils import _output_dir_4saving, _fname_4saving, \
                     _check_topology_lut_dir, \
                     _check_available_memory
 
-
 def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
                               surface_levelset=None, orientation='undefined',
                               loc_prior=None,
@@ -17,6 +16,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
                               similarity_scale=0.1,
                               max_iter=100, max_diff=1e-3,
                               threshold=0.5, rescale=False,
+                              full_output=True,
                               save_data=False, overwrite=False, output_dir=None,
                               file_name=None):
 
@@ -56,6 +56,8 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
         Detection threshold for the structures to keep (default is 0.5)
     rescale: bool
         Rescale filter responses by median intensity difference (default is False)
+    full_output: bool
+        Whether to output only the main result or the full set (default is True)
     save_data: bool
         Save output data to file (default is False)
     overwrite: bool
@@ -71,9 +73,12 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
     dict
         Dictionary collecting outputs under the following keys
         (suffix of output files in brackets)
-
-        * filter (niimg): raw filter response (_rrd-filter)
+        
+        main:
+        * result (niimg): propagated probabilistic response after diffusion (_rrd-propag)
+        full:
         * propagation (niimg): propagated probabilistic response after diffusion (_rrd-propag)
+        * filter (niimg): raw filter response (_rrd-filter)
         * scale (niimg): scale of the detection filter  (_rrd-scale)
         * ridge_dir (niimg): estimated local ridge direction (_rrd-dir)
         * ridge_pv (niimg): ridge partial volume map, taking size into account (_rrd-pv)
@@ -130,7 +135,7 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
                                   rootfile=input_image,
                                   suffix='rrd-size'))
 
-        if overwrite is False \
+        if full_output is True and overwrite is False \
             and os.path.isfile(filter_file) \
             and os.path.isfile(propagation_file) \
             and os.path.isfile(scale_file) \
@@ -146,7 +151,12 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
                       'ridge_pv': ridge_pv_file,
                       'ridge_size': ridge_size_file}
             return output
+        elif full_output is False and overwrite is False \
+            and os.path.isfile(propagation_file) :
 
+            print("skip computation (use existing results)")
+            output = {'result': propagation_file}
+            return output
 
     # load input image and use it to set dimensions and resolution
     img = load_volume(input_image)
@@ -209,7 +219,8 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
 
     # execute Extraction
     try:
-        rrd.execute()
+        if dimensions[2]==1: rrd.execute()
+        else: rrd.execute(full_output)
 
     except:
         # if the Java module fails, reraise the error it throws
@@ -219,65 +230,74 @@ def recursive_ridge_diffusion(input_image, ridge_intensities, ridge_filter,
         return
 
     # reshape output to what nibabel likes
-    filter_data = np.reshape(np.array(rrd.getFilterResponseImage(),
-                                   dtype=np.float32), newshape=dimensions, order='F')
-
     propagation_data = np.reshape(np.array(rrd.getPropagatedResponseImage(),
-                                    dtype=np.float32), newshape=dimensions, order='F')
-
-    scale_data = np.reshape(np.array(rrd.getDetectionScaleImage(),
-                                   dtype=np.int32), newshape=dimensions, order='F')
-
-    if dimensions[2]==1:
-        ridge_direction_data = np.reshape(np.array(rrd.getRidgeDirectionImage(),
-                                    dtype=np.float32),
-                                    (dimensions[0],dimensions[1],2),
-                                    'F')
-    else:
-        ridge_direction_data = np.reshape(np.array(rrd.getRidgeDirectionImage(),
-                                    dtype=np.float32),
-                                    (dimensions[0],dimensions[1],dimensions[2],3),
-                                    'F')
-
-    ridge_pv_data = np.reshape(np.array(rrd.getRidgePartialVolumeImage(),
-                                   dtype=np.float32), newshape=dimensions, order='F')
-
-    ridge_size_data = np.reshape(np.array(rrd.getRidgeSizeImage(),
-                                    dtype=np.float32), newshape=dimensions, order='F')
-
-
-    # adapt header max for each image so that correct max is displayed
-    # and create nifiti objects
-    header['cal_max'] = np.nanmax(filter_data)
-    filter_img = nb.Nifti1Image(filter_data, affine, header)
-
-    header['cal_max'] = np.nanmax(propagation_data)
+                                    dtype=np.float32), shape=dimensions, order='F')
+    
+    #header['cal_max'] = np.nanmax(propagation_data)
     propag_img = nb.Nifti1Image(propagation_data, affine, header)
 
-    header['cal_max'] = np.nanmax(scale_data)
-    scale_img = nb.Nifti1Image(scale_data, affine, header)
+    if full_output:
+        filter_data = np.reshape(np.array(rrd.getFilterResponseImage(),
+                                       dtype=np.float32), shape=dimensions, order='F')
+    
+        scale_data = np.reshape(np.array(rrd.getDetectionScaleImage(),
+                                       dtype=np.int32), shape=dimensions, order='F')
+    
+        if dimensions[2]==1:
+            ridge_direction_data = np.reshape(np.array(rrd.getRidgeDirectionImage(),
+                                        dtype=np.float32),
+                                        (dimensions[0],dimensions[1],2),
+                                        'F')
+        else:
+            ridge_direction_data = np.reshape(np.array(rrd.getRidgeDirectionImage(),
+                                        dtype=np.float32),
+                                        (dimensions[0],dimensions[1],dimensions[2],3),
+                                        'F')
+    
+        ridge_pv_data = np.reshape(np.array(rrd.getRidgePartialVolumeImage(),
+                                       dtype=np.float32), shape=dimensions, order='F')
+    
+        ridge_size_data = np.reshape(np.array(rrd.getRidgeSizeImage(),
+                                        dtype=np.float32), shape=dimensions, order='F')
+    
 
-    header['cal_max'] = np.nanmax(ridge_direction_data)
-    ridge_dir_img = nb.Nifti1Image(ridge_direction_data, affine, header)
+        # adapt header max for each image so that correct max is displayed
+        # and create nifiti objects
+        #header['cal_max'] = np.nanmax(filter_data)
+        filter_img = nb.Nifti1Image(filter_data, affine, header)
+    
+        #header['cal_max'] = np.nanmax(scale_data)
+        scale_img = nb.Nifti1Image(scale_data, affine, header)
+    
+        #header['cal_max'] = np.nanmax(ridge_direction_data)
+        ridge_dir_img = nb.Nifti1Image(ridge_direction_data, affine, header)
+    
+        #header['cal_max'] = np.nanmax(ridge_pv_data)
+        ridge_pv_img = nb.Nifti1Image(ridge_pv_data, affine, header)
+    
+        #header['cal_max'] = np.nanmax(ridge_size_data)
+        ridge_size_img = nb.Nifti1Image(ridge_size_data, affine, header)
 
-    header['cal_max'] = np.nanmax(ridge_pv_data)
-    ridge_pv_img = nb.Nifti1Image(ridge_pv_data, affine, header)
-
-    header['cal_max'] = np.nanmax(ridge_size_data)
-    ridge_size_img = nb.Nifti1Image(ridge_size_data, affine, header)
-
-    if save_data:
-        save_volume(filter_file, filter_img)
-        save_volume(propagation_file, propag_img)
-        save_volume(scale_file, scale_img)
-        save_volume(ridge_direction_file, ridge_dir_img)
-        save_volume(ridge_pv_file, ridge_pv_img)
-        save_volume(ridge_size_file, ridge_size_img)
-
-        return {'filter': filter_file, 'propagation': propagation_file, 'scale': scale_file,
-                'ridge_dir': ridge_direction_file, 'ridge_pv': ridge_pv_file,
-                'ridge_size': ridge_size_file}
+        if save_data:
+            save_volume(filter_file, filter_img)
+            save_volume(propagation_file, propag_img)
+            save_volume(scale_file, scale_img)
+            save_volume(ridge_direction_file, ridge_dir_img)
+            save_volume(ridge_pv_file, ridge_pv_img)
+            save_volume(ridge_size_file, ridge_size_img)
+    
+            return {'filter': filter_file, 'propagation': propagation_file, 'scale': scale_file,
+                    'ridge_dir': ridge_direction_file, 'ridge_pv': ridge_pv_file,
+                    'ridge_size': ridge_size_file}
+        else:
+            return {'filter': filter_img, 'propagation': propag_img, 'scale': scale_img,
+                    'ridge_dir': ridge_dir_img, 'ridge_pv': ridge_pv_img,
+                    'ridge_size': ridge_size_img}
     else:
-        return {'filter': filter_img, 'propagation': propag_img, 'scale': scale_img,
-                'ridge_dir': ridge_dir_img, 'ridge_pv': ridge_pv_img,
-                'ridge_size': ridge_size_img}
+        if save_data:
+            save_volume(propagation_file, propag_img)
+            
+            return {'result': propagation_file}
+        else:
+            return {'result': propag_img}
+        

@@ -1,1 +1,2 @@
 from nighres.cortex.cruise_cortex_extraction import cruise_cortex_extraction
+from nighres.cortex.cortical_boundary_adjustment import cortical_boundary_adjustment
