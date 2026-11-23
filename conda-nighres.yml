@@ -8,4 +8,4 @@ dependencies:
   - pip
   - jcc
   - Nilearn
-
+  - uv
