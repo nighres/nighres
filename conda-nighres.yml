@@ -9,3 +9,4 @@ dependencies:
   - jcc
   - Nilearn
   - uv
+  - psutil
