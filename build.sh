@@ -92,7 +92,8 @@ javac_opts=(
 
 echo "Compiling..."
 cd cbstools-public
-$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} ca/concordia/qpi/*/*.java de/mpg/cbs/core/*/*.java $cbstools_list
+javac -cp ${deps_list} ${javac_opts[@]} ca/concordia/qpi/*/*.java de/mpg/cbs/core/*/*.java $cbstools_list
+#$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} ca/concordia/qpi/*/*.java de/mpg/cbs/core/*/*.java $cbstools_list
 
 
 echo "Assembling..."
@@ -151,7 +152,8 @@ javac_opts=(
 
 echo "Compiling..."
 cd imcn-imaging
-$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java ${imcntk_list}
+javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java ${imcntk_list}
+#$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} nl/uva/imcn/algorithms/*.java ${imcntk_list}
 
 echo "Assembling..."
 jar uf $nighres_repo/nighresjava/src/nighresjava.jar nl/uva/imcn/algorithms/*.class
@@ -204,7 +206,8 @@ javac_opts=(
 
 echo "Compiling..."
 cd fbpa-tools
-$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} nl/fullbrainpicture/algorithms/*.java ${fbpa_list}
+javac -cp ${deps_list} ${javac_opts[@]} nl/fullbrainpicture/algorithms/*.java ${fbpa_list}
+#$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} nl/fullbrainpicture/algorithms/*.java ${fbpa_list}
 
 echo "Assembling..."
 jar uf $nighres_repo/nighresjava/src/nighresjava.jar nl/fullbrainpicture/algorithms/*.class
@@ -258,7 +261,8 @@ javac_opts=(
 
 echo "Compiling..."
 cd medic-legacy
-$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} edu/jhmi/rad/medic/algorithms/*.java $medic_list
+javac -cp ${deps_list} ${javac_opts[@]} edu/jhmi/rad/medic/algorithms/*.java $medic_list
+#$JAVA_HOME/bin/javac -cp ${deps_list} ${javac_opts[@]} edu/jhmi/rad/medic/algorithms/*.java $medic_list
 
 echo "Assembling..."
 jar uf $nighres_repo/nighresjava/src/nighresjava.jar edu/jhmi/rad/medic/algorithms/*.class
