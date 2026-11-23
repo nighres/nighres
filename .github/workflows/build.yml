@@ -58,6 +58,7 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }} env with conda
         uses: conda-incubator/setup-miniconda@v2
         with:
+          miniconda-version: "latest"
           activate-environment: nighres
           environment-file: conda-nighres.yml
           python-version: ${{ matrix.python-version }}
