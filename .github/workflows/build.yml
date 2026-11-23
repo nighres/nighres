@@ -64,6 +64,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
           auto-activate-base: false
 
+      - name: Install Java
+        uses: actions/setup-java@v6
+        with:
+            distribution: temurin
+            java-version: latest
+            
       - name: Update dependencies
         run: |
           make update_dep_shasum
