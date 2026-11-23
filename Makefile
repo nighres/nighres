@@ -9,7 +9,7 @@ clean:
 	rm -rf nighres_examples/
 
 install:
-	./build.sh
+	bash build.sh
 	pip install .
 
 clean_env_file: conda-nighres.yml
