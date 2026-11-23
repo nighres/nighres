@@ -1,88 +1,41 @@
-# Start from the official Debian image
 Bootstrap: docker
-From: debian:bookworm-slim
+From: ubuntu:22.04
 
-# NOTE Attempts at using Debian's Python 3.11 (both with and without venv), and
-#      and a manually compiled Python 3.11 fail due to JCC not properly linking
-#      to libjvm. Miniconda's Python 3.9 works
-
-%environment
-
-    # Conda stuff
-    export _CONDA_ROOT=/miniconda3
-    export CONDA_EXE=/miniconda3/bin/conda
-    export _CONDA_EXE=/miniconda3/bin/conda
-    export _CE_M=
-    export _CE_CONDA=
-    export CONDA_PYTHON_EXE=/miniconda3/bin/python
-
-    # nighres is in the "nighres" conda env
-    export PATH=/miniconda3/envs/nighres/bin:/miniconda3/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-    export CONDA_PREFIX=/miniconda3/envs/nighres
-    export CONDA_DEFAULT_ENV=nighres
-    export CONDA_PREFIX_1=/miniconda3
 
 %post
+    apt -y update
+    apt -y upgrade
+    apt -y install git python-is-python3 python3-pip curl locales wget
+	locale-gen en_US.UTF-8
 
-    # NOTE everything in the %post section is done as root by default, no need to "su"
+	# git-lfs
+    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
+    apt-get install git-lfs
+    git lfs install
 
-    export DEBIAN_FRONTEND="noninteractive"
+    #JCC
+	curl https://download.java.net/java/GA/jdk20.0.1/b4887098932d415489976708ad6d1a4b/9/GPL/openjdk-20.0.1_linux-x64_bin.tar.gz | tar -zx -C /opt --transform='s/jdk-20.0.1/jdk-temurin-20.0.1/'
 
-    # Install necessary tools and dependencies
-    apt-get update -qq
-    apt-get install -y wget gnupg ca-certificates apt-transport-https locales
+	export JCC_JDK=/opt/jdk-temurin-20.0.1
+	export JAVAHOME=/opt/jdk-temurin-20.0.1
+	export PATH=$PATH:$JAVAHOME/bin
 
-    dpkg-reconfigure locales
-    update-locale LANG="C.UTF-8"
+	pip3 install JCC matplotlib nilearn Cython ninja meson-python
+	
+	#nighres
+	cd /tmp
+	rm -rf nighres
+	git clone https://github.com/piloubazin/nighres.git 
+	cd nighres
+	make update_dep_shasum
+	make install
+	
+	# additional libraries
+	pip3 install pandas
 
-    apt-get install -y --no-install-recommends \
-        ca-certificates \
-        git \
-        gcc \
-        g++ \
-        libtool \
-        libtool-bin \
-        binutils \
-        build-essential \
-        pkg-config  \
-        binutils \
-        sqlite3 \
-        openssl \
-        wget
+%environment
+	export JCC_JDK=/opt/jdk-temurin-20.0.1
+	export JAVAHOME=/opt/jdk-temurin-20.0.1
+	export PATH=$PATH:$JAVAHOME/bin
 
-    # Install miniconda into /miniconda3 which will provide openjdk
-    miniconda_installer=Miniconda3-latest-Linux-x86_64.sh
-    wget https://repo.anaconda.com/miniconda/$miniconda_installer
-
-    mkdir /miniconda3
-    chmod +x $miniconda_installer
-    ./$miniconda_installer -b -u -p /miniconda3
-    . /miniconda3/bin/activate
-    conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
-    conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
-    conda update -yq -nbase conda
-    conda config --system --prepend channels conda-forge
-    conda config --system --set auto_update_conda false
-    conda config --system --set show_channel_urls true
-    conda clean -y -all
-
-    # create a conda env "nighres"
-    conda create -y -q --name nighres
-    conda activate nighres
-    conda install -y -q \
-        python==3.9 \
-        pip \
-        conda-forge::openjdk==8.0.412 \
-        jcc \
-        Nilearn \
-        jupyterlab
-    conda clean -y --all
-
-    git clone https://github.com/nighres/nighres /nighres
-    cd /nighres
-    ./build.sh
-
-    rm -rf cbstools-public imcn-imaging fbpa-tools nighresjava/build nighresjava/src
-
-    python3 -m pip install --root-user-action=ignore . 
 

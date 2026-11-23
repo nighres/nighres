@@ -3,9 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. image:: https://travis-ci.org/nighres/nighres.svg?branch=master
-   :target: https://travis-ci.org/nighres
-   :alt: Travis CI build status (Linux Trusty)
+.. image:: https://github.com/nighres/nighres/actions/workflows/build.yml/badge.svg
+   :target: https://github.com/nighres/nighres/actions/workflows/build.yml
+   :alt: Github build status (Linux Trusty)
 .. image:: https://readthedocs.org/projects/nighres/badge/?version=latest
    :target: http://nighres.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status

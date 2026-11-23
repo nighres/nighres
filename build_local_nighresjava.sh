@@ -32,8 +32,7 @@ echo "${pip_modules}" | grep wheel > /dev/null || fatal 'This script requires wh
 
 # Set the JAVA_HOME variable if it is not set
 detected_home=$(java -XshowSettings:properties -version 2>&1 | tr -d ' '| grep java.home | cut -f 2 -d '=')
-detected_home=${detected_home/jre/""}
-export JAVA_HOME=${JAVA_HOME:-"$detected_home"}
+export JAVA_HOME=$detected_home
 echo "After detection: $JAVA_HOME"
 
 # Check that JCC is installed
@@ -149,7 +148,7 @@ fbpa_list=$(join_by " " "${fbpa_files[@]}")
 javac_opts=(
 	# "-d build"        # Output dir
 	"-Xlint:none"     # Disable all warnings
-	"-server"         # ?
+	#"-server"         # ?
 	"-g"              # Generate all debugging info
 	"-O"              # ?
 	"-deprecation"    # Show information about deprecated Java calls
@@ -190,7 +189,7 @@ medic_list=$(join_by " " "${medic_files[@]}")
 javac_opts=(
 	# "-d build"        # Output dir
 	"-Xlint:none"     # Disable all warnings
-	"-server"         # ?
+	#"-server"         # ?
 	"-g"              # Generate all debugging info
 	"-O"              # ?
 	"-deprecation"    # Show information about deprecated Java calls
@@ -208,10 +207,14 @@ $JAVA_HOME/bin/jar uf $nighres_local/nighresjava/src/nighresjava.jar edu/jhmi/ra
 $JAVA_HOME/bin/jar cf $nighres_local/nighresjava/src/medic-lib.jar edu/jhmi/rad/medic/libraries/*.class edu/jhmi/rad/medic/methods/*.class edu/jhmi/rad/medic/structures/*.class edu/jhmi/rad/medic/utilities/*.class
 
 cp lib/*.jar $nighres_local/nighresjava/lib/
+cd $nighres_local
 
 #
 ## WRAP TO PYTHON
 #
+# link to libjvm.so
+ln -s $JAVA_HOME/lib/server/libjvm.so libjvm.so
+
 cd $nighres_local/nighresjava
 
 jcc_args=(

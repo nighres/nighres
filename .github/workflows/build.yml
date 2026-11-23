@@ -34,7 +34,7 @@ jobs:
     strategy:
       matrix:
         os: ["ubuntu-latest"]
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.10", "3.12"]
         cmd:
           [
             "python3 examples/testing_01*.py",
@@ -58,18 +58,25 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }} env with conda
         uses: conda-incubator/setup-miniconda@v2
         with:
+          miniconda-version: "latest"
           activate-environment: nighres
           environment-file: conda-nighres.yml
           python-version: ${{ matrix.python-version }}
           auto-activate-base: false
 
+      - name: Install Java
+        uses: actions/setup-java@v6
+        with:
+            distribution: temurin
+            java-version: latest
+            
       - name: Update dependencies
         run: |
           make update_dep_shasum
 
       - name: Build java dependencies
         run: |
-          ./build.sh
+          make install
 
       - name: Install nighres
         run: |

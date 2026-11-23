@@ -1,0 +1,7 @@
+sphinx>=1.8.3
+pillow
+sphinx-gallery
+sphinx-rtd-theme>=0.4.2
+scikit-learn
+ipython
+mock
